@@ -1,90 +1,118 @@
 import { Link } from 'react-router-dom';
-import { Play, AlertTriangle, ChevronRight } from 'lucide-react';
-import { practiceHub, getScore } from '@/lib/mockData';
+import { Play, ChevronRight, Clock, BarChart3 } from 'lucide-react';
+import { practiceHome, getScore } from '@/lib/mockData';
+import ScorePreview from '@/components/library/ScorePreview';
 
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function PracticeHub() {
-  const { continuePractice, queue, weekly, needsAttention } = practiceHub;
+  const { continuePractice, recentlyLoved, havenPlayed, trickySection, thisWeek } = practiceHome;
+  const trickyScore = getScore(trickySection.scoreId);
 
   return (
     <div className="px-4 py-6 md:px-8">
-      <h1 className="font-display text-2xl font-medium">Practice</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Today</p>
+      <h1 className="font-display text-[clamp(1.75rem,3.5vw,2.5rem)] font-medium leading-tight">What do you feel like playing?</h1>
 
-      <div className="mt-6 grid gap-5 lg:grid-cols-3">
-        <div className="lg:col-span-2 rounded-md border border-border bg-card p-5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Continue practicing</p>
-          <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      {/* Section 1 — pick up where you left off */}
+      <section className="mt-8">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pick up where you left off</h2>
+        <Link to={`/score/${continuePractice.scoreId}/practice`} className="mt-3 flex flex-col gap-4 rounded-md border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <div className="h-16 w-24 shrink-0 overflow-hidden rounded border border-border"><ScorePreview id={continuePractice.scoreId} className="h-full w-full" /></div>
             <div>
-              <h2 className="font-display text-xl font-medium">{continuePractice.title}</h2>
-              <p className="text-sm text-muted-foreground">{continuePractice.composer} · Last practiced {continuePractice.lastPracticed}</p>
-              <p className="mt-1 text-sm text-primary">Continue from measure {continuePractice.measure}</p>
+              <p className="font-display text-xl font-medium">{continuePractice.title}</p>
+              <p className="text-sm text-muted-foreground">{continuePractice.composer} · last played {continuePractice.lastPlayed}</p>
+              <p className="mt-0.5 text-sm text-primary">Continue from measure {continuePractice.measure}</p>
             </div>
-            <Link
-              to={`/score/${continuePractice.scoreId}/practice`}
-              className="flex items-center gap-2 self-start rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90"
-            >
-              <Play className="h-4 w-4" /> Continue
+          </div>
+          <span className="flex shrink-0 items-center gap-1.5 self-start rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90 sm:self-center">
+            <Play className="h-4 w-4" /> Continue
+          </span>
+        </Link>
+      </section>
+
+      {/* Section 2 — recently loved */}
+      <section className="mt-10">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recently loved</h2>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {recentlyLoved.map((r) => (
+            <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="group flex items-center gap-3 rounded-md border border-border bg-card p-3 hover:bg-accent/40">
+              <div className="h-14 w-20 shrink-0 overflow-hidden rounded border border-border"><ScorePreview id={r.scoreId} className="h-full w-full" /></div>
+              <div className="min-w-0">
+                <p className="truncate font-medium">{r.title}</p>
+                <p className="truncate text-sm text-muted-foreground">{r.composer}</p>
+                <p className="text-xs text-muted-foreground">{r.reason}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Section 3 — haven't played in a while */}
+      <section className="mt-10">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Haven’t played in a while</h2>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          {havenPlayed.map((r) => (
+            <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="group flex items-center justify-between rounded-md border border-border bg-card p-4 hover:bg-accent/40">
+              <div>
+                <p className="font-medium">{r.title}</p>
+                <p className="text-sm text-muted-foreground">{r.composer} · last played {r.lastPlayed}</p>
+                <p className="mt-1 text-sm text-primary">Feel like revisiting this one?</p>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Section 4 — tricky section */}
+      <section className="mt-10">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Want to try this part again?</h2>
+        <div className="mt-3 rounded-md border border-border bg-card p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-display text-lg font-medium">{trickySection.title}</p>
+              <p className="text-sm text-muted-foreground">{trickySection.label}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{trickySection.note}</p>
+            </div>
+            <Link to={`/score/${trickySection.scoreId}/practice`} className="flex shrink-0 items-center gap-1.5 self-start rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
+              Try this section
             </Link>
           </div>
         </div>
+      </section>
 
-        <div className="rounded-md border border-border bg-card p-5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">This week</p>
-          <div className="mt-3 flex items-baseline gap-4">
-            <div>
-              <p className="font-display text-3xl font-medium">{weekly.minutes}<span className="text-base text-muted-foreground"> min</span></p>
-              <p className="text-xs text-muted-foreground">{weekly.daysPracticed} days · {weekly.scores} scores</p>
+      {/* Section 5 — this week */}
+      <section className="mt-10">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">This week</h2>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-md border border-border bg-card p-4">
+            <p className="font-display text-2xl font-medium">{thisWeek.minutes}<span className="text-base text-muted-foreground"> min</span></p>
+            <p className="text-xs text-muted-foreground">across {thisWeek.sessions} sessions</p>
+          </div>
+          <div className="rounded-md border border-border bg-card p-4">
+            <p className="font-display text-2xl font-medium">{thisWeek.pieces}</p>
+            <p className="text-xs text-muted-foreground">pieces played</p>
+          </div>
+          <div className="rounded-md border border-border bg-card p-4">
+            <div className="flex justify-between">
+              {days.map((d, i) => (
+                <div key={d} className="flex flex-col items-center gap-1">
+                  <span className={`h-2.5 w-2.5 rounded-full ${thisWeek.marks[i] ? 'bg-primary' : 'bg-muted'}`} />
+                  <span className="text-[10px] text-muted-foreground">{d}</span>
+                </div>
+              ))}
             </div>
-          </div>
-          <div className="mt-4 flex justify-between">
-            {days.map((d, i) => (
-              <div key={d} className="flex flex-col items-center gap-1">
-                <span className={`h-2.5 w-2.5 rounded-full ${weekly.marks[i] ? 'bg-primary' : 'bg-muted'}`} />
-                <span className="text-xs text-muted-foreground">{d}</span>
-              </div>
-            ))}
+            <p className="mt-2 text-xs text-muted-foreground">{thisWeek.marks.filter(Boolean).length} days</p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-2">
-        <div className="rounded-md border border-border bg-card p-5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Your practice queue</p>
-          <div className="mt-3 divide-y divide-border">
-            {queue.map((item) => (
-              <Link key={item.scoreId} to={`/score/${item.scoreId}/practice`} className="flex items-center justify-between py-3 group">
-                <div>
-                  <p className="font-medium">{item.title}</p>
-                  <p className="text-sm text-muted-foreground">{item.composer} · {item.reason}</p>
-                </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-md border border-border bg-card p-5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Needs attention</p>
-          <div className="mt-3 space-y-3">
-            {needsAttention.map((n) => (
-              <div key={n.scoreId} className="flex items-center justify-between rounded-md border border-border p-3">
-                <div className="flex items-start gap-3">
-                  <AlertTriangle className="mt-0.5 h-4 w-4 text-gold" />
-                  <div>
-                    <p className="font-medium">{n.title}</p>
-                    <p className="text-sm text-muted-foreground">{n.section} · {n.accuracy}% accuracy</p>
-                  </div>
-                </div>
-                <Link to={`/score/${n.scoreId}/practice`} className="rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
-                  Practice section
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* Links */}
+      <section className="mt-10 flex flex-wrap gap-3">
+        <Link to="/practice/history" className="flex items-center gap-2 rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-accent"><Clock className="h-4 w-4" /> Practice history</Link>
+        <Link to="/practice/progress" className="flex items-center gap-2 rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-accent"><BarChart3 className="h-4 w-4" /> Progress</Link>
+      </section>
     </div>
   );
 }

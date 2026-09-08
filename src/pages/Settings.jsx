@@ -4,8 +4,9 @@ const items = [
   { to: '/settings/account', label: 'Account' },
   { to: '/settings/security', label: 'Security' },
   { to: '/settings/preferences', label: 'Preferences' },
-  { to: '/settings/plan', label: 'Plan' },
-  { to: '/settings/privacy', label: 'Privacy' },
+  { to: '/settings/notifications', label: 'Notifications' },
+  { to: '/settings/plan', label: 'Plan & billing' },
+  { to: '/settings/privacy', label: 'Data & privacy' },
 ];
 
 export default function Settings() {
@@ -21,9 +22,7 @@ export default function Settings() {
                   to={i.to}
                   className={({ isActive }) =>
                     `block whitespace-nowrap rounded-md px-3 py-2 text-sm ${
-                      isActive
-                        ? 'bg-accent font-medium text-accent-foreground'
-                        : 'text-muted-foreground hover:bg-accent/50'
+                      isActive ? 'bg-accent font-medium text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50'
                     }`
                   }
                 >

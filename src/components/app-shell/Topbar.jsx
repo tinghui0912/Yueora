@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Bell, HelpCircle, ChevronDown, LogOut, Settings } from 'lucide-react';
+import { Search, Bell, HelpCircle, ChevronDown, LogOut, Settings, CreditCard, LifeBuoy } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { notifications } from '@/lib/mockData';
 import SearchPalette from './SearchPalette';
@@ -44,7 +44,7 @@ export default function Topbar() {
           <DropdownMenuContent align="end" className="w-80">
             <DropdownMenuLabel className="text-sm font-semibold">Activity</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {notifications.map((n) => (
+            {notifications.slice(0, 4).map((n) => (
               <DropdownMenuItem
                 key={n.id}
                 onClick={() => navigate(n.href)}
@@ -67,6 +67,7 @@ export default function Topbar() {
         <button
           onClick={() => navigate('/help')}
           className="hidden h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:bg-accent/60 hover:text-foreground md:flex"
+          aria-label="Help"
         >
           <HelpCircle className="h-5 w-5" />
         </button>
@@ -89,6 +90,13 @@ export default function Topbar() {
             <DropdownMenuItem onClick={() => navigate('/settings/account')}>
               <Settings className="mr-2 h-4 w-4" /> Settings
             </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/settings/plan')}>
+              <CreditCard className="mr-2 h-4 w-4" /> Plan & billing
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/help')}>
+              <LifeBuoy className="mr-2 h-4 w-4" /> Help
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => logout()}>
               <LogOut className="mr-2 h-4 w-4" /> Sign out
             </DropdownMenuItem>

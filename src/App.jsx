@@ -9,34 +9,51 @@ import ScrollToTop from './components/ScrollToTop';
 import { Navigate } from 'react-router-dom';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AppShell from '@/components/app-shell/AppShell';
+
+// Public
+import Landing from '@/pages/Landing';
+import Pricing from '@/pages/Pricing';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
-import Landing from '@/pages/Landing';
-import Library from '@/pages/Library';
-import PracticeHub from '@/pages/PracticeHub';
-import ScoreDetail from '@/pages/ScoreDetail';
-import AddScore from '@/pages/AddScore';
-import PracticeSession from '@/pages/PracticeSession';
-import PracticeSummary from '@/pages/PracticeSummary';
-import Imports from '@/pages/Imports';
-import Editor from '@/pages/Editor';
+import VerifyEmail from '@/pages/VerifyEmail';
 import SharedScore from '@/pages/SharedScore';
 import InviteAcceptance from '@/pages/InviteAcceptance';
+import Terms from '@/pages/legal/Terms';
+import Privacy from '@/pages/legal/Privacy';
+import AcceptableUse from '@/pages/legal/AcceptableUse';
+import Copyright from '@/pages/legal/Copyright';
+
+// App (in shell)
+import Library from '@/pages/Library';
+import ScoreDetail from '@/pages/ScoreDetail';
+import AddScore from '@/pages/AddScore';
+import Imports from '@/pages/Imports';
+import ImportDetail from '@/pages/ImportDetail';
+import PracticeHub from '@/pages/PracticeHub';
+import PracticeHistory from '@/pages/PracticeHistory';
+import PracticeProgress from '@/pages/PracticeProgress';
+import Notifications from '@/pages/Notifications';
+import Help from '@/pages/Help';
+import HelpArticle from '@/pages/HelpArticle';
 import Settings from '@/pages/Settings';
 import AccountSettings from '@/pages/settings/AccountSettings';
 import SecuritySettings from '@/pages/settings/SecuritySettings';
 import PreferencesSettings from '@/pages/settings/PreferencesSettings';
+import NotificationSettings from '@/pages/settings/NotificationSettings';
 import PlanSettings from '@/pages/settings/PlanSettings';
 import PrivacySettings from '@/pages/settings/PrivacySettings';
-import Notifications from '@/pages/Notifications';
-import Help from '@/pages/Help';
+
+// Workspaces (full screen)
+import Editor from '@/pages/Editor';
+import PracticeSession from '@/pages/PracticeSession';
+import PracticeSummary from '@/pages/PracticeSummary';
+import RecognitionReview from '@/pages/RecognitionReview';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
-  // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -45,57 +62,70 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
       navigateToLogin();
       return null;
     }
   }
 
-  // Render the main app
   return (
     <Routes>
+      {/* Public */}
       <Route path="/" element={<Landing />} />
+      <Route path="/pricing" element={<Pricing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/s/:shareToken" element={<SharedScore />} />
       <Route path="/invite/:inviteToken" element={<InviteAcceptance />} />
+      <Route path="/legal/terms" element={<Terms />} />
+      <Route path="/legal/privacy" element={<Privacy />} />
+      <Route path="/legal/acceptable-use" element={<AcceptableUse />} />
+      <Route path="/legal/copyright" element={<Copyright />} />
+
+      {/* Authenticated */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        {/* App shell pages */}
         <Route element={<AppShell />}>
           <Route path="/library" element={<Library />} />
-          <Route path="/practice" element={<PracticeHub />} />
           <Route path="/score/:scoreId" element={<ScoreDetail />} />
           <Route path="/add-score" element={<AddScore />} />
-          <Route path="/score/:scoreId/practice" element={<PracticeSession />} />
-          <Route path="/practice/:sessionId/summary" element={<PracticeSummary />} />
           <Route path="/imports" element={<Imports />} />
+          <Route path="/imports/:importId" element={<ImportDetail />} />
+          <Route path="/practice" element={<PracticeHub />} />
+          <Route path="/practice/history" element={<PracticeHistory />} />
+          <Route path="/practice/progress" element={<PracticeProgress />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/help" element={<Help />} />
-          <Route path="/score/:scoreId/edit" element={<Editor />} />
+          <Route path="/help/:slug" element={<HelpArticle />} />
           <Route path="/settings" element={<Settings />}>
             <Route index element={<Navigate to="/settings/account" replace />} />
             <Route path="account" element={<AccountSettings />} />
             <Route path="security" element={<SecuritySettings />} />
             <Route path="preferences" element={<PreferencesSettings />} />
+            <Route path="notifications" element={<NotificationSettings />} />
             <Route path="plan" element={<PlanSettings />} />
             <Route path="privacy" element={<PrivacySettings />} />
           </Route>
         </Route>
+        {/* Full-screen workspaces */}
+        <Route path="/score/:scoreId/edit" element={<Editor />} />
+        <Route path="/score/:scoreId/practice" element={<PracticeSession />} />
+        <Route path="/review/:importId" element={<RecognitionReview />} />
+        <Route path="/practice/:sessionId/summary" element={<PracticeSummary />} />
       </Route>
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
 
-
 function App() {
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>

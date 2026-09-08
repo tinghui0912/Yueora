@@ -1,22 +1,16 @@
 import { Link } from 'react-router-dom';
-import { Play, Star, Share2, MoreHorizontal } from 'lucide-react';
+import { Play, Star } from 'lucide-react';
 import ScorePreview from './ScorePreview';
 
-const statusLabel = {
-  to_practice: 'To practice',
-  recently_practiced: 'Recently practiced',
-  mastered: 'Mastered',
+const ownershipLabel = {
+  shared: (s) => `Shared by ${s.sharedBy}`,
+  saved: () => 'Saved',
+  mine: () => 'Mine',
 };
 
-const statusColor = {
-  to_practice: 'text-gold',
-  recently_practiced: 'text-primary',
-  mastered: 'text-muted-foreground',
-};
-
-export default function ScoreCard({ score }) {
+export default function ScoreCard({ score, selected, onToggleSelect }) {
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-md border border-border bg-card transition-shadow hover:shadow-sm">
+    <div className={`group relative flex flex-col overflow-hidden rounded-md border bg-card transition-shadow hover:shadow-sm ${selected ? 'border-primary ring-1 ring-primary' : 'border-border'}`}>
       <Link to={`/score/${score.id}`} className="block">
         <div className="aspect-[16/10] border-b border-border bg-card">
           <ScorePreview id={score.id} className="h-full w-full" />
@@ -28,29 +22,24 @@ export default function ScoreCard({ score }) {
             <h3 className="truncate font-display text-base font-medium leading-tight text-foreground">{score.title}</h3>
             <p className="truncate text-sm text-muted-foreground">{score.composer}</p>
           </Link>
-          <button className="rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-accent group-hover:opacity-100">
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
-          <span className={`text-xs font-medium ${statusColor[score.practiceState.status]}`}>
-            {statusLabel[score.practiceState.status]}
-          </span>
-          {score.practiceState.accuracy > 0 && (
-            <span className="text-xs text-muted-foreground">· {score.practiceState.accuracy}% accuracy</span>
+          {onToggleSelect && (
+            <button
+              onClick={(e) => { e.preventDefault(); onToggleSelect(score.id); }}
+              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border ${selected ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-transparent hover:border-foreground/40'}`}
+              aria-label="Select score"
+            >
+              <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 8.5l3.5 3.5L13 4" /></svg>
+            </button>
           )}
         </div>
-        <p className="text-xs text-muted-foreground">
-          {score.practiceState.lastPracticed === 'never' ? 'Not practiced yet' : `Practiced ${score.practiceState.lastPracticed}`}
+
+        <p className="mt-1 text-xs text-muted-foreground">
+          {score.lastPlayed === 'never' || !score.lastPlayed ? 'Not played yet' : `Played ${score.lastPlayed}`}
         </p>
 
-        <div className="mt-2 flex items-center gap-2">
-          {score.ownership === 'shared' && (
-            <span className="rounded bg-accent px-1.5 py-0.5 text-xs text-accent-foreground">Shared by {score.sharedBy}</span>
-          )}
-          {score.ownership === 'saved' && (
-            <span className="rounded bg-accent px-1.5 py-0.5 text-xs text-accent-foreground">Saved</span>
+        <div className="mt-1 flex flex-wrap items-center gap-1.5">
+          {score.ownership !== 'mine' && (
+            <span className="rounded bg-accent px-1.5 py-0.5 text-xs text-accent-foreground">{ownershipLabel[score.ownership]?.(score)}</span>
           )}
           {score.favorite && <Star className="h-3.5 w-3.5 fill-gold text-gold" />}
         </div>
@@ -62,9 +51,6 @@ export default function ScoreCard({ score }) {
           >
             <Play className="h-3 w-3" /> Practice
           </Link>
-          <button className="rounded-md border border-border p-1.5 text-muted-foreground hover:bg-accent">
-            <Share2 className="h-3.5 w-3.5" />
-          </button>
         </div>
       </div>
     </div>
