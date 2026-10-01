@@ -30,6 +30,7 @@ export default function Landing() {
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <span className="font-display text-2xl tracking-tight">Yueora</span>
         <nav className="flex items-center gap-2 text-sm">
+          <Link to="/about" className="hidden rounded-md px-3 py-2 text-muted-foreground hover:text-foreground sm:inline">About</Link>
           <Link to="/pricing" className="hidden rounded-md px-3 py-2 text-muted-foreground hover:text-foreground sm:inline">Pricing</Link>
           {isAuthenticated ? (
             <Link to="/library" className="rounded-md bg-primary px-4 py-2 font-semibold text-primary-foreground">Open library</Link>
@@ -229,7 +230,10 @@ export default function Landing() {
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-6 text-sm text-muted-foreground md:flex-row">
           <span>© 2026 Yueora</span>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link to="/about" className="hover:text-foreground">About</Link>
+            <Link to="/pricing" className="hover:text-foreground">Pricing</Link>
+            <Link to="/help" className="hover:text-foreground">Help</Link>
             <Link to="/legal/terms" className="hover:text-foreground">Terms</Link>
             <Link to="/legal/privacy" className="hover:text-foreground">Privacy</Link>
             <Link to="/legal/acceptable-use" className="hover:text-foreground">Acceptable use</Link>

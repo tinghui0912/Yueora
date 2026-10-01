@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Plus, Music2, Bell, Settings, Library as LibraryIcon, Folder, Inbox, Clock, ArrowRight } from 'lucide-react';
-import { scores, folders } from '@/lib/mockData';
+import { usePrototypeStore } from '@/stores/prototypeStore';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
@@ -18,6 +18,8 @@ const commands = [
 export default function SearchPalette({ open, onOpenChange }) {
   const [q, setQ] = useState('');
   const navigate = useNavigate();
+  const scores = usePrototypeStore((s) => s.scores);
+  const folders = usePrototypeStore((s) => s.folders);
 
   const results = useMemo(() => {
     const query = q.trim().toLowerCase();

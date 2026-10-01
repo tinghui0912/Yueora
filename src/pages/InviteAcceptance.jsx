@@ -1,18 +1,39 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { CheckCircle2, Clock, Ban, LogIn, AlertTriangle, UserX } from 'lucide-react';
-import { getInvite } from '@/lib/mockData';
+import { usePrototypeStore } from '@/stores/prototypeStore';
 import { useAuth } from '@/lib/AuthContext';
 import ExternalShell from '@/components/external/ExternalShell';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function InviteAcceptance() {
   const { inviteToken } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const { user, isAuthenticated } = useAuth();
-  const invite = getInvite(inviteToken);
-  const { score, invitedBy, invitedEmail, permission, status } = invite;
+  const scores = usePrototypeStore((s) => s.scores);
 
-  const accept = () => navigate(`/score/${score.id}`);
+  // Determine status from token
+  let status = 'valid';
+  if (inviteToken?.includes('expired')) status = 'expired';
+  else if (inviteToken?.includes('revoked')) status = 'revoked';
+  else if (inviteToken?.includes('accepted')) status = 'already_accepted';
+  else if (inviteToken?.includes('wrong')) status = 'wrong_account';
+
+  const score = scores.find((s) => s.id === inviteToken) || scores.find((s) => s.ownership === 'shared') || scores[0];
+  const invitedBy = 'Alice';
+  const invitedEmail = 'you@example.com';
+  const permission = 'Can edit';
+
+  const accept = () => {
+    toast({ title: 'Invitation accepted', description: `${score.title} is now in Shared with me.` });
+    navigate(`/score/${score.id}`);
+  };
+
+  const decline = () => {
+    toast({ title: 'Invitation declined' });
+    navigate('/');
+  };
 
   return (
     <ExternalShell>
@@ -35,7 +56,7 @@ export default function InviteAcceptance() {
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" onClick={() => navigate('/login')}>Switch account</Button>
-                    <Button variant="ghost" onClick={() => navigate('/')}>Decline</Button>
+                    <Button variant="ghost" onClick={decline}>Decline</Button>
                   </div>
                 </div>
               )
@@ -43,7 +64,7 @@ export default function InviteAcceptance() {
               <div className="mt-8 flex flex-col items-center gap-3">
                 <Button onClick={() => navigate(`/login?returnTo=/invite/${inviteToken}`)} className="bg-primary px-6 text-primary-foreground"><LogIn className="mr-1.5 h-4 w-4" /> Continue to log in</Button>
                 <p className="text-sm text-muted-foreground">You’ll return here to accept after logging in.</p>
-                <Link to="/register" className="text-sm font-medium text-primary hover:underline">Don’t have an account? Sign up</Link>
+                <Link to={`/register?returnTo=/invite/${inviteToken}`} className="text-sm font-medium text-primary hover:underline">Don’t have an account? Sign up</Link>
               </div>
             )}
           </>
@@ -54,7 +75,7 @@ export default function InviteAcceptance() {
             <StateCard icon={UserX} title="This invitation isn’t for this account" body={`It was sent to ${invitedEmail}. Sign in with that email to accept.`} />
             <div className="mt-6 flex gap-2">
               <Button variant="outline" onClick={() => navigate('/login')}>Switch account</Button>
-              <Button variant="ghost" onClick={() => navigate('/')}>Decline</Button>
+              <Button variant="ghost" onClick={decline}>Decline</Button>
             </div>
           </>
         )}

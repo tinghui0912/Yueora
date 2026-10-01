@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { usePrototypeStore } from '@/stores/prototypeStore';
 
 const categories = [
   { key: 'imports', label: 'Imports', desc: 'Recognition finished, ready to review, or failed.' },
@@ -12,16 +12,8 @@ const categories = [
 ];
 
 export default function NotificationSettings() {
-  const [prefs, setPrefs] = useState({
-    imports: { inApp: true, email: true },
-    sharing: { inApp: true, email: true },
-    security: { inApp: true, email: true },
-    billing: { inApp: true, email: false },
-    practice: { inApp: true, email: false },
-    updates: { inApp: false, email: false },
-  });
-
-  const toggle = (cat, channel) => setPrefs((p) => ({ ...p, [cat]: { ...p[cat], [channel]: !p[cat][channel] } }));
+  const prefs = usePrototypeStore((s) => s.notificationPrefs);
+  const toggle = usePrototypeStore((s) => s.toggleNotificationPref);
 
   return (
     <div className="space-y-6">
@@ -50,7 +42,7 @@ export default function NotificationSettings() {
 
       <div className="rounded-md border border-border bg-accent/30 p-4">
         <Label className="text-sm">Practice reminder tone</Label>
-        <p className="mt-1 text-xs text-muted-foreground">We’ll never say “you haven’t practiced.” Instead: “Feel like playing something today?”</p>
+        <p className="mt-1 text-xs text-muted-foreground">We'll never say "you haven't practiced." Instead: "Feel like playing something today?"</p>
       </div>
     </div>
   );

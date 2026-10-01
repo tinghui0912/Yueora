@@ -3,11 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { usePrototypeStore } from '@/stores/prototypeStore';
+import { useAuth } from '@/lib/AuthContext';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 
 export default function PrivacySettings() {
+  const resetPrototype = usePrototypeStore((s) => s.resetPrototype);
+  const { logout } = useAuth();
   const [analytics, setAnalytics] = useState(true);
   const [practiceShare, setPracticeShare] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -22,7 +26,14 @@ export default function PrivacySettings() {
   };
 
   const doDelete = () => {
-    if (confirmText === 'DELETE') { setDeleted(true); setDeleteOpen(false); }
+    if (confirmText === 'DELETE') {
+      setDeleted(true);
+      setDeleteOpen(false);
+      setTimeout(() => {
+        resetPrototype();
+        logout?.('/');
+      }, 2500);
+    }
   };
 
   return (
@@ -42,14 +53,14 @@ export default function PrivacySettings() {
 
       <Section title="Your data" desc="Export a copy of everything Yueora holds for you.">
         {exported ? (
-          <p className="text-sm text-primary">Export ready — we’ve saved a copy to your downloads.</p>
+          <p className="text-sm text-primary">Export ready — we've saved a copy to your downloads.</p>
         ) : (
           <Button variant="outline" onClick={exportData} disabled={exporting}>{exporting ? 'Preparing export…' : 'Export my data'}</Button>
         )}
       </Section>
 
       <Section title="Delete account" desc="Permanently delete your account, scores, and practice history.">
-        <p className="text-sm text-muted-foreground">This can’t be undone. If you just want a break, you can sign out instead.</p>
+        <p className="text-sm text-muted-foreground">This can't be undone. If you just want a break, you can sign out instead.</p>
         <Button variant="outline" className="mt-3 text-destructive hover:text-destructive" onClick={() => setDeleteOpen(true)}>Delete account</Button>
       </Section>
 
@@ -59,7 +70,7 @@ export default function PrivacySettings() {
           {deleted ? (
             <div className="py-4 text-center">
               <p className="font-medium">Account scheduled for deletion</p>
-              <p className="mt-1 text-sm text-muted-foreground">You’ll be signed out shortly. We’re sorry to see you go.</p>
+              <p className="mt-1 text-sm text-muted-foreground">You'll be signed out shortly. We're sorry to see you go.</p>
             </div>
           ) : (
             <>
@@ -71,7 +82,6 @@ export default function PrivacySettings() {
               </DialogFooter>
             </>
           )}
-          {deleted && <DialogFooter><Button onClick={() => setDeleted(false)}>Close</Button></DialogFooter>}
         </DialogContent>
       </Dialog>
     </div>

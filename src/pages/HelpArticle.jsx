@@ -73,7 +73,7 @@ export default function HelpArticle() {
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button variant="outline" size="sm" onClick={() => setSupportOpen(true)}><LifeBuoy className="mr-1.5 h-4 w-4" /> Contact support</Button>
-          <Button variant="ghost" size="sm"><Flag className="mr-1.5 h-4 w-4" /> Report a problem</Button>
+          <Button variant="ghost" size="sm" onClick={() => setSupportOpen(true)}><Flag className="mr-1.5 h-4 w-4" /> Report a problem</Button>
         </div>
       </div>
 

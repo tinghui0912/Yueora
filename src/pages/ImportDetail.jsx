@@ -1,6 +1,12 @@
-import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, FileMusic, RefreshCw, AlertTriangle, CheckCircle2, Pencil, ArrowRight } from 'lucide-react';
-import { getImport } from '@/lib/mockData';
+import { useState } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, FileMusic, RefreshCw, AlertTriangle, CheckCircle2, Pencil, ArrowRight, Trash2 } from 'lucide-react';
+import { usePrototypeStore } from '@/stores/prototypeStore';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from '@/components/ui/dialog';
+import { useToast } from '@/components/ui/use-toast';
 
 const statusMeta = {
   processing: { label: 'Processing your score…', color: 'text-primary' },
@@ -11,7 +17,15 @@ const statusMeta = {
 
 export default function ImportDetail() {
   const { importId } = useParams();
-  const imp = getImport(importId);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const imp = usePrototypeStore((s) => s.imports.find((i) => i.id === importId));
+  const retryImport = usePrototypeStore((s) => s.retryImport);
+  const replaceImportSource = usePrototypeStore((s) => s.replaceImportSource);
+  const removeImport = usePrototypeStore((s) => s.removeImport);
+
+  const [removeOpen, setRemoveOpen] = useState(false);
+  const [replaceOpen, setReplaceOpen] = useState(false);
 
   if (!imp) {
     return (
@@ -23,6 +37,10 @@ export default function ImportDetail() {
   }
 
   const meta = statusMeta[imp.status];
+
+  const handleRetry = () => { retryImport(imp.id); toast({ title: 'Recognition restarted', description: `${imp.title} is processing again.` }); };
+  const handleReplace = () => { replaceImportSource(imp.id); setReplaceOpen(false); toast({ title: 'Source replaced', description: 'Recognition restarted with the new file.' }); };
+  const handleRemove = () => { removeImport(imp.id); setRemoveOpen(false); navigate('/imports'); toast({ title: 'Import removed', description: 'The score in your library was not affected.' }); };
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 md:px-8">
@@ -59,7 +77,7 @@ export default function ImportDetail() {
               <AlertTriangle className="h-5 w-5 text-destructive" />
               <p className="text-sm text-foreground">{imp.failure}</p>
             </div>
-            <button className="mt-4 flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm font-medium hover:bg-accent"><RefreshCw className="h-4 w-4" /> Try again</button>
+            <button onClick={handleRetry} className="mt-4 flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm font-medium hover:bg-accent"><RefreshCw className="h-4 w-4" /> Try again</button>
           </div>
         )}
         {imp.status === 'completed' && (
@@ -78,7 +96,7 @@ export default function ImportDetail() {
             <div key={i} className="flex items-center gap-3 rounded-md border border-border bg-card p-3">
               <FileMusic className="h-5 w-5 text-muted-foreground" />
               <span className="flex-1 text-sm">Page {i + 1}.pdf</span>
-              <button className="rounded p-1.5 text-muted-foreground hover:bg-accent" aria-label="Replace"><RefreshCw className="h-4 w-4" /></button>
+              <button onClick={() => setReplaceOpen(true)} className="rounded p-1.5 text-muted-foreground hover:bg-accent" aria-label="Replace"><RefreshCw className="h-4 w-4" /></button>
             </div>
           ))}
         </div>
@@ -107,8 +125,43 @@ export default function ImportDetail() {
             Open score
           </Link>
         )}
-        <button className="rounded-md border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent">Remove from import history</button>
+        {imp.status === 'failed' && (
+          <button onClick={handleRetry} className="flex items-center gap-2 rounded-md border border-border px-4 py-2.5 text-sm font-medium hover:bg-accent">
+            <RefreshCw className="h-4 w-4" /> Try again
+          </button>
+        )}
+        <button onClick={() => setRemoveOpen(true)} className="flex items-center gap-2 rounded-md border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent">
+          <Trash2 className="h-4 w-4" /> Remove from import history
+        </button>
       </div>
+
+      {/* Replace source dialog */}
+      <Dialog open={replaceOpen} onOpenChange={setReplaceOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Replace source file</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">Choose a replacement file. Recognition will start over with the new source.</p>
+          <div className="mt-3 rounded-md border border-dashed border-border p-6 text-center">
+            <FileMusic className="mx-auto h-8 w-8 text-muted-foreground" />
+            <p className="mt-2 text-sm text-muted-foreground">Drop a file here, or click to browse</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setReplaceOpen(false)}>Cancel</Button>
+            <Button onClick={handleReplace}>Replace and restart</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Remove confirmation */}
+      <Dialog open={removeOpen} onOpenChange={setRemoveOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Remove from import history?</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">This removes the import record only. The score in your library will not be deleted.</p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRemoveOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleRemove}>Remove</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

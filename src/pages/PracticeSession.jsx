@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Play, Pause, Flag, Timer, RotateCcw, Mic, Piano, Check, AlertCircle } from 'lucide-react';
-import { getScore } from '@/lib/mockData';
-import ScoreCanvas from '@/components/editor/ScoreCanvas';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { ArrowLeft, Play, Pause, Flag, Timer, RotateCcw, Mic, Piano, Check, AlertCircle, Repeat } from 'lucide-react';
+import { usePrototypeStore } from '@/stores/prototypeStore';
 import { generateNotes } from '@/lib/mockData';
+import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -14,22 +15,31 @@ const noteSeq = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'E', 'G', 'F', 'D', 'C'
 export default function PracticeSession() {
   const { scoreId } = useParams();
   const navigate = useNavigate();
-  const score = getScore(scoreId);
+  const location = useLocation();
+  const inheritedRange = location.state?.range;
+  const inheritedFrom = location.state?.rangeFrom;
+  const inheritedTo = location.state?.rangeTo;
+  const score = usePrototypeStore((s) => s.scores.find((sc) => sc.id === scoreId));
+  const addPracticeSession = usePrototypeStore((s) => s.addPracticeSession);
+  const updateScoreLastPlayed = usePrototypeStore((s) => s.updateScoreLastPlayed);
 
   const [setup, setSetup] = useState(true);
   const [mode, setMode] = useState('follow');
   const [input, setInput] = useState('microphone');
-  const [range, setRange] = useState('whole');
+  const [range, setRange] = useState(inheritedRange || 'whole');
+  const [rangeFrom, setRangeFrom] = useState(inheritedFrom || 1);
+  const [rangeTo, setRangeTo] = useState(inheritedTo || 16);
   const [tempoPct, setTempoPct] = useState(100);
   const [metronome, setMetronome] = useState(true);
   const [countIn, setCountIn] = useState(true);
   const [autoScroll, setAutoScroll] = useState(true);
   const [loop, setLoop] = useState(false);
-  const [micReady, setMicReady] = useState(null); // null untested, true, false
+  const [micReady, setMicReady] = useState(null);
   const [midiReady, setMidiReady] = useState(null);
 
   const [running, setRunning] = useState(false);
   const [idx, setIdx] = useState(0);
+  const [activeMeasure, setActiveMeasure] = useState(1);
   const [correct, setCorrect] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [exitOpen, setExitOpen] = useState(false);
@@ -51,7 +61,24 @@ export default function PracticeSession() {
 
   const advance = () => {
     setCorrect((c) => c + 1);
-    setIdx((i) => { if (i + 1 >= noteSeq.length) { finish(); return i; } return i + 1; });
+    setIdx((i) => {
+      const next = i + 1;
+      if (next >= noteSeq.length) {
+        if (loop) { setActiveMeasure(rangeFrom); return 0; }
+        finish();
+        return i;
+      }
+      return next;
+    });
+    setActiveMeasure((m) => {
+      const nextM = m + 1;
+      const maxM = range === 'whole' ? (score?.measures || 32) : rangeTo;
+      if (nextM > maxM) {
+        if (loop) return rangeFrom;
+        return maxM;
+      }
+      return nextM;
+    });
   };
 
   const finish = () => {
@@ -59,13 +86,32 @@ export default function PracticeSession() {
     const accuracy = Math.round((correct / noteSeq.length) * 100) || 88;
     const mins = Math.floor(elapsed / 60);
     const secs = elapsed % 60;
-    navigate(`/practice/${scoreId}-session/summary`, { state: { scoreId, accuracy, duration: `${mins}:${secs.toString().padStart(2, '0')}`, mode, input, tempo: tempoPct } });
+    const duration = `${mins}:${secs.toString().padStart(2, '0')}`;
+    const rangeLabel = range === 'whole' ? 'Whole score' : range === 'tricky' ? `Measures ${rangeFrom}–${rangeTo}` : `Measures ${rangeFrom}–${rangeTo}`;
+    const sessionId = `s-${Date.now()}`;
+    addPracticeSession({
+      id: sessionId,
+      scoreId,
+      duration: `${mins || 1} min`,
+      mode: mode === 'follow' ? 'Follow' : 'Performance',
+      input: input === 'microphone' ? 'Microphone' : 'MIDI',
+      range: rangeLabel,
+      insight: 'Nice session.',
+      accuracy,
+      trickyFrom: 34,
+      trickyTo: 38,
+    });
+    updateScoreLastPlayed(scoreId, activeMeasure);
+    navigate(`/practice/${sessionId}/summary`, {
+      state: { scoreId, accuracy, duration, mode, input, tempo: tempoPct, trickyFrom: 34, trickyTo: 38, rangeLabel },
+    });
   };
 
   if (!score) return <div className="px-8 py-16 text-center"><p>Score not found.</p><Button onClick={() => navigate('/library')} className="mt-4">Back to library</Button></div>;
 
   const fmt = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
   const originalTempo = score.tempo;
+  const ready = input === 'microphone' ? micReady === true : midiReady === true;
 
   // ---- Setup / preflight ----
   if (setup) {
@@ -79,6 +125,7 @@ export default function PracticeSession() {
         <div className="mt-6 space-y-6 rounded-md border border-border bg-card p-6">
           <Field label="Mode">
             <Seg options={[['follow', 'Follow notes'], ['performance', 'Performance']]} value={mode} onChange={setMode} />
+            <p className="mt-1.5 text-xs text-muted-foreground">{mode === 'follow' ? 'Yueora waits for you to play each note before moving on.' : 'Yueora advances automatically — play along in real time.'}</p>
           </Field>
           <Field label="Input">
             <Seg options={[['microphone', 'Microphone'], ['midi', 'MIDI']]} value={input} onChange={setInput} />
@@ -93,6 +140,7 @@ export default function PracticeSession() {
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={() => setMicReady(true)}><Mic className="mr-1.5 h-4 w-4" /> Test microphone</Button>
+                  {micReady === false && <Button variant="outline" size="sm" onClick={() => setMicReady(null)}><RotateCcw className="mr-1.5 h-3.5 w-3.5" /> Reset</Button>}
                 </div>
                 {micReady === false && <p className="flex items-center gap-1.5 text-xs text-destructive"><AlertCircle className="h-3.5 w-3.5" /> Allow microphone access, then test again.</p>}
               </div>
@@ -112,6 +160,15 @@ export default function PracticeSession() {
 
           <Field label="Range">
             <Seg options={[['whole', 'Whole score'], ['selected', 'Selected measures'], ['tricky', 'Recent tricky section']]} value={range} onChange={setRange} />
+            {range === 'selected' && (
+              <div className="mt-2 flex items-center gap-2 text-sm">
+                <span>From</span><Input type="number" min={1} value={rangeFrom} onChange={(e) => setRangeFrom(Number(e.target.value))} className="h-8 w-20" />
+                <span>To</span><Input type="number" min={1} value={rangeTo} onChange={(e) => setRangeTo(Number(e.target.value))} className="h-8 w-20" />
+              </div>
+            )}
+            {range === 'tricky' && (
+              <p className="mt-2 text-sm text-primary">Measures 34–38 — this section felt trickier last time.</p>
+            )}
           </Field>
 
           <Field label={`Playback speed · ${tempoPct}% (original ${originalTempo} BPM)`}>
@@ -122,11 +179,12 @@ export default function PracticeSession() {
             <ToggleRow label="Metronome" checked={metronome} onChange={setMetronome} />
             <ToggleRow label="Count-in" checked={countIn} onChange={setCountIn} />
             <ToggleRow label="Auto-scroll" checked={autoScroll} onChange={setAutoScroll} />
-            <ToggleRow label="Loop range" checked={loop} onChange={setLoop} />
+            <ToggleRow label="Loop range" checked={loop} onChange={setLoop} icon={Repeat} />
           </div>
 
-          <div className="flex justify-end">
-            <Button onClick={() => { setSetup(false); setRunning(true); setIdx(0); setCorrect(0); setElapsed(0); }}><Play className="mr-1.5 h-4 w-4" /> Start practice</Button>
+          <div className="flex items-center justify-between">
+            {!ready && <p className="text-xs text-muted-foreground">{input === 'microphone' ? 'Test your microphone to start.' : 'Detect your MIDI device to start.'}</p>}
+            <Button onClick={() => { setSetup(false); setRunning(true); setIdx(0); setCorrect(0); setElapsed(0); setActiveMeasure(rangeFrom); }} disabled={!ready} className="ml-auto"><Play className="mr-1.5 h-4 w-4" /> Start practice</Button>
           </div>
         </div>
       </div>
@@ -144,12 +202,14 @@ export default function PracticeSession() {
           <span className="flex items-center gap-1"><span className={`h-2 w-2 rounded-full ${running ? 'bg-primary' : 'bg-muted-foreground'}`} /> {running ? 'Live' : 'Paused'}</span>
           <span className="capitalize">{input}</span>
           <span>{Math.round(originalTempo * tempoPct / 100)} BPM</span>
+          <span className="rounded bg-accent px-2 py-0.5 text-xs font-medium">Measure {activeMeasure}</span>
         </div>
       </div>
 
       <div className="flex flex-1 items-center justify-center overflow-auto bg-background p-6">
         <div className="w-full max-w-3xl rounded-md border border-border bg-card p-6 shadow-sm">
           <ScoreCanvas notes={notes} selectedId={null} onSelect={() => {}} zoom={1.1} />
+          {autoScroll && <p className="mt-2 text-center text-xs text-muted-foreground">Auto-scrolling to measure {activeMeasure}</p>}
         </div>
       </div>
 
@@ -174,10 +234,10 @@ export default function PracticeSession() {
           ) : (
             <Button onClick={() => setRunning((r) => !r)} className="px-6">{running ? <><Pause className="mr-1.5 h-4 w-4" /> Pause</> : <><Play className="mr-1.5 h-4 w-4" /> Resume</>}</Button>
           )}
-          <Button variant="outline" onClick={() => { setIdx(0); setCorrect(0); setElapsed(0); }} className="px-4"><RotateCcw className="mr-1.5 h-4 w-4" /> Restart</Button>
+          <Button variant="outline" onClick={() => { setIdx(0); setCorrect(0); setElapsed(0); setActiveMeasure(rangeFrom); }} className="px-4"><RotateCcw className="mr-1.5 h-4 w-4" /> Restart</Button>
           <Button variant="outline" onClick={finish} className="px-4"><Flag className="mr-1.5 h-4 w-4" /> Finish</Button>
         </div>
-        <p className="mt-2 text-center text-xs text-muted-foreground">{fmt(elapsed)} · {correct}/{noteSeq.length} notes</p>
+        <p className="mt-2 text-center text-xs text-muted-foreground">{fmt(elapsed)} · {correct}/{noteSeq.length} notes · {loop ? 'Looping' : 'No loop'}</p>
       </div>
 
       {/* Exit confirmation */}
@@ -208,10 +268,10 @@ function Seg({ options, value, onChange }) {
     </div>
   );
 }
-function ToggleRow({ label, checked, onChange }) {
+function ToggleRow({ label, checked, onChange, icon: Icon }) {
   return (
     <button onClick={() => onChange(!checked)} className="flex items-center justify-between rounded-md border border-border px-3 py-2 text-sm">
-      <span>{label}</span>
+      <span className="flex items-center gap-1.5">{Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground" />} {label}</span>
       <span className={`h-5 w-9 rounded-full p-0.5 transition-colors ${checked ? 'bg-primary' : 'bg-input'}`}>
         <span className={`block h-4 w-4 rounded-full bg-background transition-transform ${checked ? 'translate-x-4' : ''}`} />
       </span>

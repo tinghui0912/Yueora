@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Bell, HelpCircle, ChevronDown, LogOut, Settings, CreditCard, LifeBuoy } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
-import { notifications } from '@/lib/mockData';
+import { usePrototypeStore } from '@/stores/prototypeStore';
 import SearchPalette from './SearchPalette';
 import {
   DropdownMenu,
@@ -18,6 +18,7 @@ export default function Topbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const notifications = usePrototypeStore((s) => s.notifications);
   const initials = (user?.full_name || user?.email || 'You').slice(0, 1).toUpperCase();
 
   return (

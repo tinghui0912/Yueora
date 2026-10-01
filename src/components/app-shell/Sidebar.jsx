@@ -1,11 +1,12 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Plus, Library as LibraryIcon, Music2, Inbox } from 'lucide-react';
-import { imports } from '@/lib/mockData';
+import { usePrototypeStore } from '@/stores/prototypeStore';
 
 const navItem = 'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors';
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const imports = usePrototypeStore((s) => s.imports);
   const activeImports = imports.filter((i) => i.status === 'processing' || i.status === 'needs_review').length;
 
   return (

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { imports as seed } from '@/lib/mockData';
 import { ChevronRight } from 'lucide-react';
+import { usePrototypeStore } from '@/stores/prototypeStore';
 
 const tabs = [
   { key: 'all', label: 'All' },
@@ -31,21 +31,15 @@ const nextAction = {
 };
 
 export default function Imports() {
-  const [items, setItems] = useState(seed);
+  const items = usePrototypeStore((s) => s.imports);
+  const advanceImportProgress = usePrototypeStore((s) => s.advanceImportProgress);
   const [tab, setTab] = useState('all');
   const timer = useRef(null);
 
   useEffect(() => {
-    timer.current = setInterval(() => {
-      setItems((prev) => prev.map((i) => {
-        if (i.status !== 'processing') return i;
-        const next = Math.min(100, i.progress + Math.floor(5 + Math.random() * 9));
-        if (next >= 100) return { ...i, progress: 100, status: 'needs_review' };
-        return { ...i, progress: next };
-      }));
-    }, 1200);
+    timer.current = setInterval(() => advanceImportProgress(), 1200);
     return () => clearInterval(timer.current);
-  }, []);
+  }, [advanceImportProgress]);
 
   const list = tab === 'all' ? items : items.filter((i) => i.status === tab);
 

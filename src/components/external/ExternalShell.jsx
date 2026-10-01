@@ -14,22 +14,29 @@ export default function ExternalShell({ sharedBy, children }) {
         </div>
         {!isAuthenticated ? (
           <div className="flex items-center gap-2">
+            <Link to="/about" className="hidden rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground sm:inline">About</Link>
             <Link to="/pricing" className="hidden rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground sm:inline">Pricing</Link>
             <Link to="/login" className="rounded-md border border-border px-4 py-2 text-sm font-semibold hover:bg-accent">Log in</Link>
           </div>
         ) : (
-          <Link to="/library" className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">Open library</Link>
+          <div className="flex items-center gap-2">
+            <Link to="/about" className="hidden rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground sm:inline">About</Link>
+            <Link to="/library" className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">Open library</Link>
+          </div>
         )}
       </header>
       <main>{children}</main>
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 px-6 py-6 text-sm text-muted-foreground md:flex-row">
           <span>© 2026 Yueora</span>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
+            <Link to="/about" className="hover:text-foreground">About</Link>
+            <Link to="/pricing" className="hover:text-foreground">Pricing</Link>
+            <Link to="/help" className="hover:text-foreground">Help</Link>
             <Link to="/legal/terms" className="hover:text-foreground">Terms</Link>
             <Link to="/legal/privacy" className="hover:text-foreground">Privacy</Link>
+            <Link to="/legal/acceptable-use" className="hover:text-foreground">Acceptable Use</Link>
             <Link to="/legal/copyright" className="hover:text-foreground">Copyright</Link>
-            <Link to="/help" className="hover:text-foreground">Help</Link>
           </div>
         </div>
       </footer>

@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { LayoutGrid, List, Plus, SlidersHorizontal, ArrowUpDown, Play, Star, FolderInput, Trash2, Heart, X, Check } from 'lucide-react';
-import { scores as seedScores, folders as seedFolders, practiceHome } from '@/lib/mockData';
+import { LayoutGrid, List, Plus, SlidersHorizontal, ArrowUpDown, Play, Star, FolderInput, Trash2, Heart, X, Check, LogOut, BookmarkMinus } from 'lucide-react';
+import { usePrototypeStore } from '@/stores/prototypeStore';
+import { practiceHome } from '@/lib/mockData';
 import ScoreCard from '@/components/library/ScoreCard';
 import ScorePreview from '@/components/library/ScorePreview';
 import LibrarySubRail from '@/components/library/LibrarySubRail';
@@ -10,8 +11,16 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 
+const librarySections = [
+  { key: 'all', label: 'All music' },
+  { key: 'mine', label: 'Mine' },
+  { key: 'shared', label: 'Shared with me' },
+  { key: 'saved', label: 'Saved' },
+  { key: 'favorites', label: 'Favorites' },
+];
+
 const ownershipFilter = {
-  all: () => true,
+  all: (s) => s.ownership !== 'trash',
   mine: (s) => s.ownership === 'mine',
   shared: (s) => s.ownership === 'shared',
   saved: (s) => s.ownership === 'saved',
@@ -26,7 +35,7 @@ const sortOptions = [
   { key: 'composer', label: 'Composer' },
 ];
 
-const playedOrder = { yesterday: 0, '2 days ago': 1, '3 days ago': 2, '4 days ago': 3, '5 days ago': 4, 'last week': 5, never: 99, null: 99 };
+const playedOrder = { yesterday: 0, '2 days ago': 1, '3 days ago': 2, '4 days ago': 3, '5 days ago': 4, 'last week': 5, never: 99, null: 99, today: -1 };
 
 export default function Library() {
   const [params, setParams] = useSearchParams();
@@ -36,8 +45,20 @@ export default function Library() {
   const view = params.get('layout') || 'grid';
   const [searchInput, setSearchInput] = useState(search);
 
-  const [scores, setScores] = useState(seedScores);
-  const [folders, setFolders] = useState(seedFolders);
+  const scores = usePrototypeStore((s) => s.scores);
+  const folders = usePrototypeStore((s) => s.folders);
+  const createFolder = usePrototypeStore((s) => s.createFolder);
+  const renameFolder = usePrototypeStore((s) => s.renameFolder);
+  const deleteFolder = usePrototypeStore((s) => s.deleteFolder);
+  const favoriteScores = usePrototypeStore((s) => s.favoriteScores);
+  const moveScoresToFolder = usePrototypeStore((s) => s.moveScoresToFolder);
+  const bulkTrashOwned = usePrototypeStore((s) => s.bulkTrashOwned);
+  const bulkLeaveShared = usePrototypeStore((s) => s.bulkLeaveShared);
+  const bulkRemoveSaved = usePrototypeStore((s) => s.bulkRemoveSaved);
+  const restoreScore = usePrototypeStore((s) => s.restoreScore);
+  const deleteScoreForever = usePrototypeStore((s) => s.deleteScoreForever);
+  const emptyTrash = usePrototypeStore((s) => s.emptyTrash);
+
   const [selected, setSelected] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [showSort, setShowSort] = useState(false);
@@ -45,6 +66,8 @@ export default function Library() {
   const [filterFav, setFilterFav] = useState(false);
   const [filterPlayed, setFilterPlayed] = useState('any');
   const [moveOpen, setMoveOpen] = useState(false);
+  const [folderDelete, setFolderDelete] = useState(null);
+  const [trashConfirm, setTrashConfirm] = useState(null);
 
   const setParam = (key, value) => {
     const next = new URLSearchParams(params);
@@ -79,23 +102,33 @@ export default function Library() {
 
   const liveCount = scores.filter((s) => s.ownership !== 'trash').length;
 
-  // Folder ops
-  const createFolder = (name) => setFolders((f) => [...f, { id: name.toLowerCase().replace(/\s+/g, '-'), name }]);
-  const renameFolder = (id, name) => setFolders((f) => f.map((x) => (x.id === id ? { ...x, name } : x)));
-  const deleteFolder = (id) => { setFolders((f) => f.filter((x) => x.id !== id)); if (activeFolderId === id) setParam('view', 'all'); };
-
   // Selection ops
   const toggleSelect = (id) => setSelected((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
   const clearSelect = () => setSelected([]);
-  const favSelected = () => { setScores((p) => p.map((s) => selected.includes(s.id) ? { ...s, favorite: true } : s)); clearSelect(); };
-  const trashSelected = () => { setScores((p) => p.map((s) => selected.includes(s.id) ? { ...s, ownership: 'trash', deletedAt: new Date().toISOString().slice(0, 10) } : s)); clearSelect(); };
-  const moveSelected = (folderId) => { setScores((p) => p.map((s) => selected.includes(s.id) ? { ...s, folderIds: [...new Set([...s.folderIds, folderId])] } : s)); clearSelect(); setMoveOpen(false); };
+  const favSelected = () => { favoriteScores(selected); clearSelect(); };
 
-  const restoreScore = (id) => setScores((p) => p.map((s) => s.id === id ? { ...s, ownership: 'mine', deletedAt: undefined } : s));
-  const deleteForever = (id) => setScores((p) => p.filter((s) => s.id !== id));
-  const emptyTrash = () => setScores((p) => p.filter((s) => s.ownership !== 'trash'));
+  const selectedScores = scores.filter((s) => selected.includes(s.id));
+  const allMine = selectedScores.length > 0 && selectedScores.every((s) => s.ownership === 'mine');
+  const allShared = selectedScores.length > 0 && selectedScores.every((s) => s.ownership === 'shared');
+  const allSaved = selectedScores.length > 0 && selectedScores.every((s) => s.ownership === 'saved');
+
+  const removeSelected = () => {
+    if (allMine) { bulkTrashOwned(selected); }
+    else if (allShared) { bulkLeaveShared(selected); }
+    else if (allSaved) { bulkRemoveSaved(selected); }
+    else { bulkTrashOwned(selected.filter((id) => scores.find((s) => s.id === id)?.ownership === 'mine')); bulkLeaveShared(selected.filter((id) => scores.find((s) => s.id === id)?.ownership === 'shared')); bulkRemoveSaved(selected.filter((id) => scores.find((s) => s.id === id)?.ownership === 'saved')); }
+    clearSelect();
+  };
+
+  const moveSelected = (folderId) => { moveScoresToFolder(selected, folderId); clearSelect(); setMoveOpen(false); };
+
+  const handleDeleteFolder = (id) => setFolderDelete(id);
+  const confirmDeleteFolder = () => { deleteFolder(folderDelete); if (activeFolderId === folderDelete) setParam('view', 'all'); setFolderDelete(null); };
 
   const isEmpty = filtered.length === 0;
+
+  const removeLabel = allMine ? 'Move to trash' : allShared ? 'Leave shared score' : allSaved ? 'Remove from library' : 'Remove from library';
+  const RemoveIcon = allMine ? Trash2 : allShared ? LogOut : BookmarkMinus;
 
   return (
     <div className="flex">
@@ -105,7 +138,7 @@ export default function Library() {
         folders={folders}
         onCreateFolder={createFolder}
         onRenameFolder={renameFolder}
-        onDeleteFolder={deleteFolder}
+        onDeleteFolder={handleDeleteFolder}
       />
 
       <div className="min-w-0 flex-1">
@@ -125,6 +158,34 @@ export default function Library() {
             </span>
           </Link>
         )}
+
+        {/* Mobile view selector */}
+        <div className="flex gap-1.5 overflow-x-auto border-b border-border px-4 py-2.5 lg:hidden no-scrollbar">
+          {librarySections.map((item) => (
+            <button
+              key={item.key}
+              onClick={() => { setParam('view', item.key); clearSelect(); }}
+              className={`whitespace-nowrap rounded-md px-3 py-1.5 text-sm ${active === item.key ? 'bg-accent font-medium text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
+            >
+              {item.label}
+            </button>
+          ))}
+          {folders.map((f) => (
+            <button
+              key={f.id}
+              onClick={() => { setParam('view', `folder:${f.id}`); clearSelect(); }}
+              className={`whitespace-nowrap rounded-md px-3 py-1.5 text-sm ${active === `folder:${f.id}` ? 'bg-accent font-medium text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
+            >
+              {f.name}
+            </button>
+          ))}
+          <button
+            onClick={() => { setParam('view', 'trash'); clearSelect(); }}
+            className={`flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-1.5 text-sm ${active === 'trash' ? 'bg-accent font-medium text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
+          >
+            <Trash2 className="h-3.5 w-3.5" /> Trash
+          </button>
+        </div>
 
         {/* Header */}
         <div className="border-b border-border px-4 py-4 md:px-8">
@@ -195,7 +256,7 @@ export default function Library() {
               <div className="ml-auto flex flex-wrap items-center gap-1.5">
                 <button onClick={favSelected} className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-accent"><Heart className="h-3.5 w-3.5" /> Favorite</button>
                 <button onClick={() => setMoveOpen(true)} className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-accent"><FolderInput className="h-3.5 w-3.5" /> Move to folder</button>
-                <button onClick={trashSelected} className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-accent"><Trash2 className="h-3.5 w-3.5" /> Move to trash</button>
+                <button onClick={() => setTrashConfirm({ selected: [...selected] })} className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-accent"><RemoveIcon className="h-3.5 w-3.5" /> {removeLabel}</button>
                 <button onClick={clearSelect} className="rounded-md p-1.5 text-muted-foreground hover:bg-accent"><X className="h-4 w-4" /></button>
               </div>
             </div>
@@ -219,7 +280,7 @@ export default function Library() {
                     <p className="truncate text-sm text-muted-foreground">{s.composer} · deleted {s.deletedAt}</p>
                   </div>
                   <button onClick={() => restoreScore(s.id)} className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold hover:bg-accent">Restore</button>
-                  <button onClick={() => deleteForever(s.id)} className="rounded-md px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10">Delete forever</button>
+                  <button onClick={() => deleteScoreForever(s.id)} className="rounded-md px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10">Delete forever</button>
                 </div>
               ))}
             </div>
@@ -267,6 +328,35 @@ export default function Library() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setMoveOpen(false)}>Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Folder delete confirmation */}
+      <Dialog open={!!folderDelete} onOpenChange={(o) => !o && setFolderDelete(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">Scores in this folder won’t be deleted — they’ll stay in your library.</p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setFolderDelete(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={confirmDeleteFolder}>Delete folder</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk remove confirmation */}
+      <Dialog open={!!trashConfirm} onOpenChange={(o) => !o && setTrashConfirm(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>{removeLabel}?</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            {allMine && 'These scores will move to Trash. You can restore them for 30 days.'}
+            {allShared && 'You’ll lose access to these shared scores.'}
+            {allSaved && 'These scores will be removed from your library.'}
+            {!allMine && !allShared && !allSaved && 'Selected items will be removed based on their type.'}
+          </p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTrashConfirm(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={() => { removeSelected(); setTrashConfirm(null); }}>{removeLabel}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -12,6 +12,7 @@ import AppShell from '@/components/app-shell/AppShell';
 
 // Public
 import Landing from '@/pages/Landing';
+import About from '@/pages/About';
 import Pricing from '@/pages/Pricing';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
@@ -75,7 +76,10 @@ const AuthenticatedApp = () => {
     <Routes>
       {/* Public */}
       <Route path="/" element={<Landing />} />
+      <Route path="/about" element={<About />} />
       <Route path="/pricing" element={<Pricing />} />
+      <Route path="/help" element={<Help />} />
+      <Route path="/help/:slug" element={<HelpArticle />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -101,8 +105,6 @@ const AuthenticatedApp = () => {
           <Route path="/practice/history" element={<PracticeHistory />} />
           <Route path="/practice/progress" element={<PracticeProgress />} />
           <Route path="/notifications" element={<Notifications />} />
-          <Route path="/help" element={<Help />} />
-          <Route path="/help/:slug" element={<HelpArticle />} />
           <Route path="/settings" element={<Settings />}>
             <Route index element={<Navigate to="/settings/account" replace />} />
             <Route path="account" element={<AccountSettings />} />
