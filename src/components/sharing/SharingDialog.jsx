@@ -70,7 +70,9 @@ export default function SharingDialog({ score, open, onOpenChange }) {
   };
 
   const copyLink = () => {
-    const url = `${window.location.origin}/s/${score.id}`;
+    // Use the sharing token if available; fall back to score id for demo
+    const token = sharing.link.token || score.id;
+    const url = `${window.location.origin}/s/${token}`;
     navigator.clipboard?.writeText(url).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);

@@ -208,7 +208,7 @@ export default function PracticeSession() {
 
       <div className="flex flex-1 items-center justify-center overflow-auto bg-background p-6">
         <div className="w-full max-w-3xl rounded-md border border-border bg-card p-6 shadow-sm">
-          <ScoreCanvas notes={notes} selectedId={null} onSelect={() => {}} zoom={1.1} />
+          <ScoreCanvas notes={notes} selectedId={null} onSelect={() => {}} zoom={1.1} activeMeasure={activeMeasure} />
           {autoScroll && <p className="mt-2 text-center text-xs text-muted-foreground">Auto-scrolling to measure {activeMeasure}</p>}
         </div>
       </div>

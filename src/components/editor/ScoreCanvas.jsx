@@ -10,10 +10,13 @@ const NOTE_R = 4.6;
 
 const durationFill = { '1': true, '2': true, '4': false, '8': false };
 
-export default function ScoreCanvas({ notes, selectedId, onSelect, onAddNote, onDelete, tool, zoom }) {
+const accidentalSymbols = { sharp: '♯', flat: '♭', natural: '♮' };
+
+export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, onDelete, tool, zoom, activeMeasure, activeIssueMeasure }) {
   const width = STAFF_LEFT + MEASURES * MEASURE_W + 20;
   const height = STAVES[STAVES.length - 1].top + 70;
   const z = zoom || 1;
+  const selSet = selectedIds || (selectedIds !== undefined ? new Set() : null);
 
   const noteY = (staff, step) => STAVES[staff].top + (8 - step) * (LINE_GAP / 2) + LINE_GAP * 2;
 
@@ -30,9 +33,20 @@ export default function ScoreCanvas({ notes, selectedId, onSelect, onAddNote, on
       x = Math.max(10, Math.min(MEASURE_W - 16, x));
       let step = Math.round(8 - (oy - STAVES[staff].top - LINE_GAP * 2) / (LINE_GAP / 2));
       step = Math.max(0, Math.min(8, step));
-      onAddNote({ staff, measure, x, step, duration: '4' });
+      onAddNote({ staff, measure, x, step, duration: '4', type: 'note' });
+    } else if (tool === 'rest' && onAddNote) {
+      const svg = e.currentTarget;
+      const rect = svg.getBoundingClientRect();
+      const ox = (e.clientX - rect.left) * width / rect.width;
+      const oy = (e.clientY - rect.top) * height / rect.height;
+      const staff = oy < (STAVES[0].top + STAVES[1].top) / 2 ? 0 : 1;
+      let measure = Math.floor((ox - STAFF_LEFT) / MEASURE_W);
+      measure = Math.max(0, Math.min(MEASURES - 1, measure));
+      let x = Math.round(ox - STAFF_LEFT - measure * MEASURE_W);
+      x = Math.max(10, Math.min(MEASURE_W - 16, x));
+      onAddNote({ staff, measure, x, step: 4, duration: '4', type: 'rest' });
     } else {
-      onSelect?.(null);
+      onSelect?.(null, e.shiftKey);
     }
   };
 
@@ -42,6 +56,40 @@ export default function ScoreCanvas({ notes, selectedId, onSelect, onAddNote, on
         <svg width={width} height={height} onClick={handleBackgroundClick} className="select-none">
           {STAVES.map((st, si) => (
             <g key={si}>
+              {/* Active measure highlight */}
+              {activeMeasure != null && Array.from({ length: MEASURES }).map((_, mi) => {
+                const measureNum = si * MEASURES + mi + 1;
+                if (measureNum !== activeMeasure && measureNum !== activeIssueMeasure) return null;
+                return (
+                  <rect
+                    key={`hl-${si}-${mi}`}
+                    x={STAFF_LEFT + mi * MEASURE_W}
+                    y={st.top - 4}
+                    width={MEASURE_W}
+                    height={4 * LINE_GAP + 8}
+                    fill="hsl(var(--primary) / 0.08)"
+                    rx={2}
+                  />
+                );
+              })}
+              {/* Issue measure highlight */}
+              {activeIssueMeasure != null && Array.from({ length: MEASURES }).map((_, mi) => {
+                const measureNum = si * MEASURES + mi + 1;
+                if (measureNum !== activeIssueMeasure) return null;
+                return (
+                  <rect
+                    key={`iss-${si}-${mi}`}
+                    x={STAFF_LEFT + mi * MEASURE_W}
+                    y={st.top - 4}
+                    width={MEASURE_W}
+                    height={4 * LINE_GAP + 8}
+                    fill="hsl(var(--gold) / 0.12)"
+                    stroke="hsl(var(--gold) / 0.5)"
+                    strokeWidth={1}
+                    rx={2}
+                  />
+                );
+              })}
               {Array.from({ length: 5 }).map((_, li) => (
                 <line key={li} x1={STAFF_LEFT} x2={STAFF_LEFT + MEASURES * MEASURE_W} y1={st.top + li * LINE_GAP} y2={st.top + li * LINE_GAP} stroke="hsl(var(--border))" strokeWidth={1} />
               ))}
@@ -52,29 +100,77 @@ export default function ScoreCanvas({ notes, selectedId, onSelect, onAddNote, on
             </g>
           ))}
 
+          {/* Ties and slurs between notes */}
+          {notes.filter((n) => n.type !== 'rest').map((n) => {
+            if (n.tieTo) {
+              const target = notes.find((t) => t.id === n.tieTo);
+              if (!target) return null;
+              const x1 = STAFF_LEFT + n.measure * MEASURE_W + n.x;
+              const y1 = noteY(n.staff, n.step);
+              const x2 = STAFF_LEFT + target.measure * MEASURE_W + target.x;
+              const y2 = noteY(target.staff, target.step);
+              const midX = (x1 + x2) / 2;
+              const midY = Math.min(y1, y2) - 12;
+              return <path key={`tie-${n.id}`} d={`M ${x1} ${y1 - 4} Q ${midX} ${midY} ${x2} ${y2 - 4}`} fill="none" stroke="hsl(var(--foreground))" strokeWidth={1.2} />;
+            }
+            return null;
+          })}
+          {notes.filter((n) => n.type !== 'rest').map((n) => {
+            if (n.slurTo) {
+              const target = notes.find((t) => t.id === n.slurTo);
+              if (!target) return null;
+              const x1 = STAFF_LEFT + n.measure * MEASURE_W + n.x;
+              const y1 = noteY(n.staff, n.step);
+              const x2 = STAFF_LEFT + target.measure * MEASURE_W + target.x;
+              const y2 = noteY(target.staff, target.step);
+              const midX = (x1 + x2) / 2;
+              const midY = Math.min(y1, y2) - 18;
+              return <path key={`slur-${n.id}`} d={`M ${x1} ${y1 - 6} Q ${midX} ${midY} ${x2} ${y2 - 6}`} fill="none" stroke="hsl(var(--foreground))" strokeWidth={1} />;
+            }
+            return null;
+          })}
+
           {notes.map((n) => {
             const x = STAFF_LEFT + n.measure * MEASURE_W + n.x;
             const y = noteY(n.staff, n.step);
-            const isSel = n.id === selectedId;
+            const isSel = selSet ? selSet.has(n.id) : false;
+            const isRest = n.type === 'rest';
             const stemUp = n.step >= 4;
-            const fill = durationFill[n.duration] ? 'hsl(var(--foreground))' : 'hsl(var(--card))';
+            const fill = isRest ? 'none' : durationFill[n.duration] ? 'hsl(var(--foreground))' : 'hsl(var(--card))';
             return (
               <g
                 key={n.id}
                 onClick={(e) => {
                   e.stopPropagation();
                   if (tool === 'delete' && onDelete) onDelete(n.id);
-                  else onSelect?.(n.id);
+                  else onSelect?.(n.id, e.shiftKey);
                 }}
                 style={{ cursor: tool === 'delete' ? 'not-allowed' : 'pointer' }}
               >
                 {isSel && (
                   <rect x={x - 9} y={y - 14} width={18} height={28} rx={3} fill="hsl(var(--primary) / 0.12)" stroke="hsl(var(--primary))" strokeWidth={1} />
                 )}
-                <ellipse cx={x} cy={y} rx={NOTE_R + 0.5} ry={NOTE_R} fill={fill} stroke="hsl(var(--foreground))" strokeWidth={1.2} transform={`rotate(-18 ${x} ${y})`} />
-                <line x1={x + (stemUp ? NOTE_R : -NOTE_R)} x2={x + (stemUp ? NOTE_R : -NOTE_R)} y1={y} y2={y + (stemUp ? -26 : 26)} stroke="hsl(var(--foreground))" strokeWidth={1.2} />
-                {n.duration === '8' && (
-                  <path d={`M ${x + (stemUp ? NOTE_R : -NOTE_R)} ${y + (stemUp ? -26 : 26)} q 10 4 6 14`} fill="none" stroke="hsl(var(--foreground))" strokeWidth={1.2} />
+                {/* Accidental symbol */}
+                {n.accidental && !isRest && (
+                  <text x={x - 12} y={y + 4} fontSize="14" fill="hsl(var(--foreground))">{accidentalSymbols[n.accidental] || ''}</text>
+                )}
+                {isRest ? (
+                  <text x={x - 5} y={y + 5} fontSize="16" fill="hsl(var(--foreground))">𝄽</text>
+                ) : (
+                  <>
+                    <ellipse cx={x} cy={y} rx={NOTE_R + 0.5} ry={NOTE_R} fill={fill} stroke="hsl(var(--foreground))" strokeWidth={1.2} transform={`rotate(-18 ${x} ${y})`} />
+                    <line x1={x + (stemUp ? NOTE_R : -NOTE_R)} x2={x + (stemUp ? NOTE_R : -NOTE_R)} y1={y} y2={y + (stemUp ? -26 : 26)} stroke="hsl(var(--foreground))" strokeWidth={1.2} />
+                    {n.duration === '8' && (
+                      <path d={`M ${x + (stemUp ? NOTE_R : -NOTE_R)} ${y + (stemUp ? -26 : 26)} q 10 4 6 14`} fill="none" stroke="hsl(var(--foreground))" strokeWidth={1.2} />
+                    )}
+                    {n.dotted && (
+                      <circle cx={x + (stemUp ? -8 : 8)} cy={y} r={1.5} fill="hsl(var(--foreground))" />
+                    )}
+                    {/* Fingering */}
+                    {n.finger && n.finger !== '—' && (
+                      <text x={x - 3} y={y + (stemUp ? 16 : -10)} fontSize="9" fill="hsl(var(--muted-foreground))">{n.finger}</text>
+                    )}
+                  </>
                 )}
               </g>
             );

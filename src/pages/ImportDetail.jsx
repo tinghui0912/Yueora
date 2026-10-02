@@ -20,6 +20,7 @@ export default function ImportDetail() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const imp = usePrototypeStore((s) => s.imports.find((i) => i.id === importId));
+  const issueCount = usePrototypeStore((s) => (s.recognitionIssues[importId] || []).length);
   const retryImport = usePrototypeStore((s) => s.retryImport);
   const replaceImportSource = usePrototypeStore((s) => s.replaceImportSource);
   const removeImport = usePrototypeStore((s) => s.removeImport);
@@ -68,7 +69,7 @@ export default function ImportDetail() {
         {imp.status === 'needs_review' && (
           <div className="flex items-center gap-3">
             <AlertTriangle className="h-5 w-5 text-gold" />
-            <p className="text-sm text-muted-foreground">Recognition finished with {imp.issues} {imp.issues === 1 ? 'spot' : 'spots'} to review.</p>
+            <p className="text-sm text-muted-foreground">Recognition finished with {issueCount} {issueCount === 1 ? 'spot' : 'spots'} to review.</p>
           </div>
         )}
         {imp.status === 'failed' && (

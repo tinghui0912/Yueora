@@ -1,5 +1,5 @@
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Play, Download, Bookmark, ChevronLeft, ChevronRight, Flag, Clock, Ban, FileX, ShieldOff, Check } from 'lucide-react';
+import { Play, Pause, Download, Bookmark, ChevronLeft, ChevronRight, Flag, Clock, Ban, FileX, ShieldOff, Check, Lock, Pencil } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { useAuth } from '@/lib/AuthContext';
 import ExternalShell from '@/components/external/ExternalShell';
@@ -19,15 +19,35 @@ export default function SharedScore() {
   const { toast } = useToast();
   const scores = usePrototypeStore((s) => s.scores);
   const saveSharedScoreToLibrary = usePrototypeStore((s) => s.saveSharedScoreToLibrary);
+  const getShareByToken = usePrototypeStore((s) => s.getShareByToken);
 
-  // Determine status from token
+  // Try to find sharing by token from store
+  const shareResult = getShareByToken(shareToken);
   let status = 'valid';
   if (shareToken?.includes('expired')) status = 'expired';
   else if (shareToken?.includes('revoked')) status = 'revoked';
   else if (shareToken?.includes('invalid')) status = 'invalid';
   else if (shareToken?.includes('removed')) status = 'removed';
 
-  const score = scores.find((s) => s.id === shareToken) || scores.find((s) => s.ownership === 'mine') || scores[0];
+  let score = null;
+  let sharing = null;
+  if (shareResult) {
+    score = shareResult.score;
+    sharing = shareResult.sharing;
+    if (!sharing.link.enabled) status = 'revoked';
+    if (sharing.link.expiresAt && new Date(sharing.link.expiresAt) < new Date()) status = 'expired';
+  } else if (status === 'valid') {
+    score = scores.find((s) => s.id === shareToken);
+    if (score) {
+      sharing = { link: { access: 'Can view', download: true, practice: true, enabled: true } };
+    } else {
+      status = 'invalid';
+      score = scores.find((s) => s.ownership === 'mine') || scores[0];
+    }
+  } else {
+    score = scores.find((s) => s.id === shareToken) || scores.find((s) => s.ownership === 'mine') || scores[0];
+  }
+
   const [reportOpen, setReportOpen] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [reportDetails, setReportDetails] = useState('');
@@ -40,7 +60,7 @@ export default function SharedScore() {
     const states = {
       expired: { icon: Clock, title: 'This link has expired', body: 'The owner set an expiration on this link. Ask them to share it again.' },
       revoked: { icon: Ban, title: 'This link was revoked', body: 'The owner turned off sharing for this score.' },
-      invalid: { icon: FileX, title: 'This link isn’t valid', body: 'Check that you have the right link, or ask the owner to send it again.' },
+      invalid: { icon: FileX, title: 'This link is not valid', body: 'Check that you have the right link, or ask the owner to send it again.' },
       removed: { icon: ShieldOff, title: 'This score is no longer available', body: 'The owner removed this score from Yueora.' },
     };
     const s = states[status] || states.invalid;
@@ -54,6 +74,10 @@ export default function SharedScore() {
       </ExternalShell>
     );
   }
+
+  const canPractice = sharing?.link?.practice ?? true;
+  const canDownload = sharing?.link?.download ?? true;
+  const canEdit = sharing?.link?.access === 'Can edit';
 
   const handleSave = () => {
     saveSharedScoreToLibrary(score.id);
@@ -90,14 +114,24 @@ export default function SharedScore() {
         </div>
 
         <div className="mt-6 flex flex-wrap gap-2">
-          {isAuthenticated ? (
-            <Button onClick={() => navigate(`/score/${score.id}/practice`)} className="bg-primary text-primary-foreground"><Play className="mr-1.5 h-4 w-4" /> Practice</Button>
+          {canPractice ? (
+            isAuthenticated ? (
+              <Button onClick={() => navigate(`/score/${score.id}/practice`)} className="bg-primary text-primary-foreground"><Play className="mr-1.5 h-4 w-4" /> Practice</Button>
+            ) : (
+              <Button onClick={() => navigate(`/login?returnTo=/s/${shareToken}`)} className="bg-primary text-primary-foreground"><Play className="mr-1.5 h-4 w-4" /> Sign in to practice</Button>
+            )
           ) : (
-            <Button onClick={() => navigate(`/login?returnTo=/s/${shareToken}`)} className="bg-primary text-primary-foreground"><Play className="mr-1.5 h-4 w-4" /> Sign in to practice</Button>
+            <Button disabled className="bg-muted text-muted-foreground"><Lock className="mr-1.5 h-4 w-4" /> Practice unavailable</Button>
           )}
-          <Button variant="outline" onClick={() => toast({ title: 'Download started', description: `${score.title}.pdf` })}><Download className="mr-1.5 h-4 w-4" /> Download</Button>
+          {canDownload ? (
+            <Button variant="outline" onClick={() => toast({ title: 'Download started', description: `${score.title}.pdf` })}><Download className="mr-1.5 h-4 w-4" /> Download</Button>
+          ) : (
+            <Button variant="outline" disabled><Lock className="mr-1.5 h-4 w-4" /> Download unavailable</Button>
+          )}
           {isAuthenticated ? (
-            saved ? (
+            score.ownership === 'mine' ? (
+              <Button variant="outline" disabled><Check className="mr-1.5 h-4 w-4" /> In your library</Button>
+            ) : saved || score.ownership === 'saved' ? (
               <Button variant="outline" disabled><Check className="mr-1.5 h-4 w-4" /> Saved to library</Button>
             ) : (
               <Button variant="outline" onClick={handleSave}><Bookmark className="mr-1.5 h-4 w-4" /> Save to library</Button>
@@ -105,10 +139,12 @@ export default function SharedScore() {
           ) : (
             <p className="self-center text-sm text-muted-foreground"><Link to={`/login?returnTo=/s/${shareToken}`} className="font-medium text-primary hover:underline">Log in</Link> to save this to your library.</p>
           )}
+          {canEdit && isAuthenticated && (
+            <Button variant="outline" onClick={() => navigate(`/score/${score.id}/edit`)}><Pencil className="mr-1.5 h-4 w-4" /> Edit</Button>
+          )}
         </div>
       </div>
 
-      {/* Report dialog */}
       <Dialog open={reportOpen} onOpenChange={setReportOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Report this score</DialogTitle></DialogHeader>
@@ -116,7 +152,7 @@ export default function SharedScore() {
             <div className="flex flex-col items-center gap-2 py-4 text-center">
               <Check className="h-8 w-8 text-primary" />
               <p className="font-medium">Report received</p>
-              <p className="text-sm text-muted-foreground">Thank you. We’ll review this and take action if needed.</p>
+              <p className="text-sm text-muted-foreground">Thank you. We will review this and take action if needed.</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -143,11 +179,5 @@ export default function SharedScore() {
         </DialogContent>
       </Dialog>
     </ExternalShell>
-  );
-}
-
-function Pause({ className }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" /></svg>
   );
 }

@@ -26,6 +26,7 @@ export default function ScoreDetail() {
   const duplicate = usePrototypeStore((s) => s.duplicateScore);
   const moveToFolder = usePrototypeStore((s) => s.moveScoreToFolder);
   const folders = usePrototypeStore((s) => s.folders);
+  const restoreVersion = usePrototypeStore((s) => s.restoreVersion);
 
   const [shareOpen, setShareOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -229,7 +230,7 @@ export default function ScoreDetail() {
             ].map((v) => (
               <div key={v.label} className="flex items-center justify-between rounded-md border border-border px-3 py-2">
                 <div><p className="text-sm font-medium">{v.label}</p><p className="text-xs text-muted-foreground">{v.date}</p></div>
-                <Button variant="outline" size="sm" onClick={() => { toast({ title: 'Version restored', description: `Restored to ${v.label}.` }); setVersionsOpen(false); }}>Restore</Button>
+                <Button variant="outline" size="sm" onClick={() => { restoreVersion(score.id, v.label); toast({ title: 'Version restored', description: `Restored to ${v.label}.` }); setVersionsOpen(false); }}>Restore</Button>
               </div>
             ))}
           </div>

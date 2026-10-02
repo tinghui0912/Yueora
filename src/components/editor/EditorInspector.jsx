@@ -1,5 +1,6 @@
 import { Music2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
@@ -9,11 +10,18 @@ import {
 } from '@/components/ui/select';
 
 const pitches = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+const octaves = ['3', '4', '5', '6'];
 const durations = [
   { v: '1', label: 'Whole' },
   { v: '2', label: 'Half' },
   { v: '4', label: 'Quarter' },
   { v: '8', label: 'Eighth' },
+];
+const accidentals = [
+  { v: 'none', label: '—' },
+  { v: 'sharp', label: '♯ Sharp' },
+  { v: 'flat', label: '♭ Flat' },
+  { v: 'natural', label: '♮ Natural' },
 ];
 const stems = [
   { v: 'auto', label: 'Auto' },
@@ -36,29 +44,50 @@ export default function EditorInspector({ note, onChange }) {
     );
   }
 
+  const isRest = note.type === 'rest';
   const pitch = pitches[note.step % 7];
 
   return (
     <div>
       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Inspector</p>
       <div className="mt-3 rounded-md border border-border bg-accent/40 px-3 py-2">
-        <p className="text-sm font-medium">{pitch} · {durations.find((d) => d.v === note.duration)?.label}</p>
+        <p className="text-sm font-medium">{isRest ? 'Rest' : pitch} · {durations.find((d) => d.v === note.duration)?.label}{note.dotted ? ' (dotted)' : ''}</p>
         <p className="text-xs text-muted-foreground">Staff {note.staff + 1} · Measure {note.measure + 1}</p>
       </div>
 
       <div className="mt-4 space-y-3">
-        <Field label="Pitch">
-          <Select value={pitch} onValueChange={(v) => onChange({ ...note, step: pitches.indexOf(v) + (note.step >= 7 ? 7 : 0) })}>
-            <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
-            <SelectContent>{pitches.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
-          </Select>
-        </Field>
+        {!isRest && (
+          <>
+            <Field label="Pitch">
+              <Select value={pitch} onValueChange={(v) => onChange({ ...note, step: pitches.indexOf(v) + (note.step >= 7 ? 7 : 0) })}>
+                <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+                <SelectContent>{pitches.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
+              </Select>
+            </Field>
+            <Field label="Octave">
+              <Select value={String(note.octave ?? 4)} onValueChange={(v) => onChange({ ...note, octave: Number(v) })}>
+                <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+                <SelectContent>{octaves.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
+              </Select>
+            </Field>
+            <Field label="Accidental">
+              <Select value={note.accidental || 'none'} onValueChange={(v) => onChange({ ...note, accidental: v === 'none' ? undefined : v })}>
+                <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+                <SelectContent>{accidentals.map((a) => <SelectItem key={a.v} value={a.v}>{a.label}</SelectItem>)}</SelectContent>
+              </Select>
+            </Field>
+          </>
+        )}
         <Field label="Duration">
           <Select value={note.duration} onValueChange={(v) => onChange({ ...note, duration: v })}>
             <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
             <SelectContent>{durations.map((d) => <SelectItem key={d.v} value={d.v}>{d.label}</SelectItem>)}</SelectContent>
           </Select>
         </Field>
+        <div className="flex items-center justify-between rounded-md border border-border px-3 py-2">
+          <Label className="text-sm">Dotted</Label>
+          <Switch checked={!!note.dotted} onCheckedChange={(v) => onChange({ ...note, dotted: v || undefined })} />
+        </div>
         <Field label="Voice">
           <Select value={String(note.voice ?? 1)} onValueChange={(v) => onChange({ ...note, voice: Number(v) })}>
             <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
@@ -71,12 +100,26 @@ export default function EditorInspector({ note, onChange }) {
             <SelectContent>{stems.map((s) => <SelectItem key={s.v} value={s.v}>{s.label}</SelectItem>)}</SelectContent>
           </Select>
         </Field>
-        <Field label="Fingering">
-          <Select value={note.finger ?? '—'} onValueChange={(v) => onChange({ ...note, finger: v })}>
-            <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
-            <SelectContent>{fingers.map((f) => <SelectItem key={f} value={f}>{f}</SelectItem>)}</SelectContent>
-          </Select>
-        </Field>
+        {!isRest && (
+          <Field label="Fingering">
+            <Select value={note.finger ?? '—'} onValueChange={(v) => onChange({ ...note, finger: v })}>
+              <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+              <SelectContent>{fingers.map((f) => <SelectItem key={f} value={f}>{f}</SelectItem>)}</SelectContent>
+            </Select>
+          </Field>
+        )}
+        {!isRest && (
+          <div className="flex items-center justify-between rounded-md border border-border px-3 py-2">
+            <Label className="text-sm">Tie to next</Label>
+            <Switch checked={!!note.tieTo} onCheckedChange={(v) => onChange({ ...note, tieTo: v ? note.tieTo || 'pending' : undefined })} />
+          </div>
+        )}
+        {!isRest && (
+          <div className="flex items-center justify-between rounded-md border border-border px-3 py-2">
+            <Label className="text-sm">Slur to next</Label>
+            <Switch checked={!!note.slurTo} onCheckedChange={(v) => onChange({ ...note, slurTo: v ? note.slurTo || 'pending' : undefined })} />
+          </div>
+        )}
       </div>
     </div>
   );

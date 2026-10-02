@@ -131,7 +131,7 @@ export const notifications = [
   { id: 'n3', category: 'imports', title: 'Recognition finished', body: 'Prelude in C is ready to practice', time: '5h', unread: false, href: '/imports/imp-prelude' },
   { id: 'n4', category: 'sharing', title: 'Ben invited you to view', body: 'Clair de Lune — Can view', time: '1d', unread: false, href: '/invite/clair' },
   { id: 'n5', category: 'security', title: 'New sign-in on Chrome', body: 'If this was you, no action is needed.', time: '1d', unread: false, href: '/settings/security' },
-  { id: 'n6', category: 'billing', title: 'Pro renewal in 7 days', body: 'Your plan renews on Sep 15.', time: '2d', unread: false, href: '/settings/plan' },
+  { id: 'n6', category: 'billing', title: 'Pro renewal in 7 days', body: 'Your plan renews on Nov 15.', time: '2d', unread: false, href: '/settings/plan' },
   { id: 'n7', category: 'practice', title: 'Feel like playing something today?', body: 'It’s been a few days since Moonlight Sonata.', time: '3d', unread: false, href: '/practice' },
 ];
 
@@ -214,7 +214,7 @@ export const plans = {
 };
 
 export const currentPlan = {
-  plan: 'pro', renewal: 'Sep 15, 2026', payment: 'Visa ending 4242',
+  plan: 'pro', renewal: 'Nov 15, 2026', payment: 'Visa ending 4242',
   usage: { scores: 8, scoreLimit: 'Unlimited', imports: 14, importLimit: 'Unlimited', storage: '1.2 GB', storageLimit: '10 GB' },
 };
 

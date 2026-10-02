@@ -5,10 +5,8 @@ import {
   folders as seedFolders,
   imports as seedImports,
   practiceHistory as seedPracticeHistory,
-  practiceProgress as seedPracticeProgress,
   notifications as seedNotifications,
   plans as seedPlans,
-  currentPlan as seedCurrentPlan,
   billingHistory as seedBillingHistory,
 } from '@/lib/mockData';
 
@@ -26,15 +24,15 @@ const recognitionIssuesSeed = {
 // ---- Sharing seed (per score) ----
 function defaultSharing(score) {
   const people = [{ id: 'you', name: 'You', email: 'you@example.com', role: 'Owner' }];
-  if (score.ownership !== 'shared') {
+  if (score && score.ownership !== 'shared') {
     people.push({ id: 'alice', name: 'Alice', email: 'alice@example.com', role: 'Can edit' });
     people.push({ id: 'bob', name: 'Bob', email: 'bob@example.com', role: 'Can view' });
   }
   return {
-    scoreId: score.id,
-    title: score.title,
+    scoreId: score ? score.id : null,
+    title: score ? score.title : 'Score',
     people,
-    link: { access: 'Off', download: false, practice: false, expiration: 'Never', enabled: false },
+    link: { access: 'Off', download: false, practice: false, expiration: 'Never', enabled: false, token: null, createdAt: null, expiresAt: null },
   };
 }
 
@@ -52,7 +50,7 @@ const accountSeed = {
 const subscriptionSeed = {
   plan: 'pro',
   status: 'active',
-  renewal: 'Sep 15, 2026',
+  renewal: 'Nov 15, 2026',
   cancelAt: null,
   pendingPlan: null,
   payment: { method: 'Visa', last4: '4242' },
@@ -94,6 +92,31 @@ export function getPermissions(score) {
   return {};
 }
 
+// ---- Token generator ----
+function genToken() {
+  return `tok-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+}
+
+// ---- Expiration calculator ----
+function computeExpiresAt(expiration) {
+  if (expiration === 'Never' || !expiration) return null;
+  const now = new Date();
+  if (expiration === '24 hours') return new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
+  if (expiration === '7 days') return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  if (expiration === '30 days') return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+  return null;
+}
+
+// ---- Generate mock recognition issues for a new import ----
+function generateRecognitionIssues(importId) {
+  const templates = [
+    { measure: 7, type: 'Missing accidental', detail: 'A sharp not detected on the second beat.', confidence: 'low' },
+    { measure: 14, type: 'Wrong rhythm', detail: 'Recognized as a quarter note, looks like an eighth.', confidence: 'medium' },
+    { measure: 22, type: 'Extra note', detail: 'An extra note detected between the chord.', confidence: 'low' },
+  ];
+  return templates.map((t, i) => ({ id: `iss-${importId}-${i}`, ...t, resolved: false }));
+}
+
 // ---- Store ----
 export const usePrototypeStore = create(
   persist(
@@ -104,8 +127,8 @@ export const usePrototypeStore = create(
       imports: clone(seedImports),
       recognitionIssues: clone(recognitionIssuesSeed),
       practiceSessions: clone(seedPracticeHistory),
-      practiceProgress: clone(seedPracticeProgress),
       sharing: {},
+      invitations: [],
       notifications: clone(seedNotifications),
       subscription: clone(subscriptionSeed),
       billingHistory: clone(seedBillingHistory),
@@ -124,7 +147,22 @@ export const usePrototypeStore = create(
         return st.sharing[scoreId] || defaultSharing(score);
       },
       getRecognitionIssues: (importId) => get().recognitionIssues[importId] || [],
+      getUnresolvedIssueCount: (importId) => {
+        const issues = get().recognitionIssues[importId] || [];
+        return issues.filter((i) => !i.resolved).length;
+      },
       liveScores: () => get().scores.filter((s) => s.ownership !== 'trash'),
+      getShareByToken: (token) => {
+        const st = get();
+        for (const [scoreId, sharing] of Object.entries(st.sharing)) {
+          if (sharing.link && sharing.link.token === token) {
+            const score = st.scores.find((s) => s.id === scoreId);
+            return { score, sharing };
+          }
+        }
+        return null;
+      },
+      getInvitation: (token) => get().invitations.find((i) => i.token === token),
 
       // ---- Score actions ----
       toggleScoreFavorite: (id) =>
@@ -209,15 +247,31 @@ export const usePrototypeStore = create(
         set((st) => ({ scores: st.scores.filter((s) => !scoreIds.includes(s.id) || s.ownership !== 'saved') })),
 
       saveSharedScoreToLibrary: (scoreId) =>
-        set((st) => ({
-          scores: st.scores.map((s) =>
-            s.id === scoreId ? { ...s, ownership: 'saved', favorite: false, folderIds: [], created: new Date().toISOString().slice(0, 10) } : s
-          ),
-        })),
+        set((st) => {
+          const score = st.scores.find((s) => s.id === scoreId);
+          if (!score) return {};
+          // Don't change ownership if already mine
+          if (score.ownership === 'mine') return {};
+          // If already saved, no-op
+          if (score.ownership === 'saved') return {};
+          return {
+            scores: st.scores.map((s) =>
+              s.id === scoreId ? { ...s, ownership: 'saved', favorite: false, folderIds: [], created: new Date().toISOString().slice(0, 10) } : s
+            ),
+          };
+        }),
 
       updateScoreLastPlayed: (scoreId, measure) =>
         set((st) => ({
           scores: st.scores.map((s) => (s.id === scoreId ? { ...s, lastPlayed: 'today', lastMeasure: measure || s.lastMeasure } : s)),
+        })),
+
+      // ---- Version restore ----
+      restoreVersion: (scoreId, versionLabel) =>
+        set((st) => ({
+          scores: st.scores.map((s) =>
+            s.id === scoreId ? { ...s, currentVersion: versionLabel, versionRestoredAt: new Date().toISOString().slice(0, 10) } : s
+          ),
         })),
 
       // ---- Folder actions ----
@@ -238,56 +292,54 @@ export const usePrototypeStore = create(
         })),
 
       // ---- Import actions ----
+      // Creates an import with pendingScore — does NOT create a score yet.
       createImport: ({ title, composer, instrument, pages, source, folder }) =>
         set((st) => {
           const importId = `imp-${Date.now()}`;
-          const scoreId = `score-${Date.now()}`;
           const folderIds = folder ? [folder] : [];
-          const newScore = {
-            id: scoreId,
+          const pendingScore = {
             title: title || 'Untitled',
             composer: composer || 'Unknown',
             instrument: instrument || 'Piano',
             tags: [],
-            ownership: 'mine',
-            favorite: false,
             folderIds,
-            lastPlayed: 'never',
-            lastMeasure: 1,
-            tempo: 80,
             pages: pages || 1,
-            measures: 32,
-            difficultSections: [],
-            created: new Date().toISOString().slice(0, 10),
             source: source || 'PDF',
           };
           const newImport = {
             id: importId,
-            scoreId,
+            scoreId: null, // will be set when completeImport runs
+            pendingScore,
             title: title || 'Untitled',
             status: 'processing',
             progress: 0,
             started: 'just now',
             pages: pages || 1,
             source: source || 'PDF',
-            issues: 0,
           };
           return {
-            scores: [newScore, ...st.scores],
             imports: [newImport, ...st.imports],
-            sharing: { ...st.sharing, [scoreId]: defaultSharing(newScore) },
           };
         }),
 
+      // Advances processing imports; when reaching 100, generates recognition issues and sets needs_review.
       advanceImportProgress: () =>
-        set((st) => ({
-          imports: st.imports.map((i) => {
+        set((st) => {
+          let newRecognitionIssues = { ...st.recognitionIssues };
+          const imports = st.imports.map((i) => {
             if (i.status !== 'processing') return i;
             const next = Math.min(100, i.progress + Math.floor(5 + Math.random() * 9));
-            if (next >= 100) return { ...i, progress: 100, status: 'needs_review', issues: 3 };
+            if (next >= 100) {
+              // Generate recognition issues for this import
+              const isMusicXML = i.source === 'Import MusicXML' || i.source === 'MusicXML';
+              const issues = isMusicXML ? [] : generateRecognitionIssues(i.id);
+              if (issues.length > 0) newRecognitionIssues[i.id] = issues;
+              return { ...i, progress: 100, status: 'needs_review' };
+            }
             return { ...i, progress: next };
-          }),
-        })),
+          });
+          return { imports, recognitionIssues: newRecognitionIssues };
+        }),
 
       retryImport: (id) =>
         set((st) => ({
@@ -300,12 +352,54 @@ export const usePrototypeStore = create(
         })),
 
       removeImport: (id) =>
-        set((st) => ({ imports: st.imports.filter((i) => i.id !== id) })),
-
-      completeImport: (id) =>
         set((st) => ({
-          imports: st.imports.map((i) => (i.id === id ? { ...i, status: 'completed', issues: 0 } : i)),
+          imports: st.imports.filter((i) => i.id !== id),
+          recognitionIssues: Object.fromEntries(Object.entries(st.recognitionIssues).filter(([k]) => k !== id)),
         })),
+
+      // Completes the import: creates the real score from pendingScore, writes scoreId to import.
+      completeImport: (id) =>
+        set((st) => {
+          const imp = st.imports.find((i) => i.id === id);
+          if (!imp) return {};
+          // Already completed? Don't duplicate.
+          if (imp.status === 'completed' && imp.scoreId) return {};
+          const ps = imp.pendingScore || {};
+          const scoreId = `score-${Date.now()}`;
+          const newScore = {
+            id: scoreId,
+            title: ps.title || imp.title || 'Untitled',
+            composer: ps.composer || 'Unknown',
+            instrument: ps.instrument || 'Piano',
+            tags: ps.tags || [],
+            ownership: 'mine',
+            favorite: false,
+            folderIds: ps.folderIds || [],
+            lastPlayed: 'never',
+            lastMeasure: 1,
+            tempo: 80,
+            pages: ps.pages || imp.pages || 1,
+            measures: 32,
+            difficultSections: [],
+            created: new Date().toISOString().slice(0, 10),
+            source: ps.source || imp.source || 'PDF',
+            currentVersion: 'Current version',
+            versionRestoredAt: null,
+          };
+          // Mark all recognition issues as resolved/archived
+          const issues = st.recognitionIssues[id] || [];
+          const archivedIssues = issues.map((i) => ({ ...i, resolved: true }));
+          return {
+            scores: [newScore, ...st.scores],
+            imports: st.imports.map((i) => (i.id === id ? { ...i, status: 'completed', scoreId } : i)),
+            sharing: { ...st.sharing, [scoreId]: defaultSharing(newScore) },
+            recognitionIssues: { ...st.recognitionIssues, [id]: archivedIssues },
+            notifications: [
+              { id: `n-${Date.now()}`, category: 'imports', title: 'Import complete', body: `${newScore.title} is ready in your library.`, time: 'just now', unread: true, href: `/score/${scoreId}` },
+              ...st.notifications,
+            ],
+          };
+        }),
 
       // ---- Recognition issue actions ----
       resolveRecognitionIssue: (importId, issueId) =>
@@ -343,11 +437,29 @@ export const usePrototypeStore = create(
       // ---- Sharing actions ----
       invitePerson: (scoreId, email, role) =>
         set((st) => {
-          const sharing = st.sharing[scoreId] || defaultSharing(st.scores.find((s) => s.id === scoreId) || {});
+          const score = st.scores.find((s) => s.id === scoreId);
+          const sharing = st.sharing[scoreId] || (score ? defaultSharing(score) : null);
           if (!sharing) return {};
-          const person = { id: `pending-${Date.now()}`, name: email, email, role: 'Invitation pending', pendingRole: role || 'Can view' };
+          const personId = `pending-${Date.now()}`;
+          const person = { id: personId, name: email, email, role: 'Invitation pending', pendingRole: role || 'Can view' };
+          // Also create an invitation record
+          const invitation = {
+            token: `inv-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
+            scoreId,
+            invitedBy: 'You',
+            invitedEmail: email,
+            permission: role || 'Can view',
+            status: 'pending',
+            personId,
+            createdAt: new Date().toISOString().slice(0, 10),
+          };
           return {
             sharing: { ...st.sharing, [scoreId]: { ...sharing, people: [...sharing.people, person] } },
+            invitations: [...st.invitations, invitation],
+            notifications: [
+              { id: `n-${Date.now()}`, category: 'sharing', title: 'Invitation sent', body: `${email} has been invited to ${score?.title || 'this score'}.`, time: 'just now', unread: true, href: `/score/${scoreId}` },
+              ...st.notifications,
+            ],
           };
         }),
 
@@ -391,20 +503,40 @@ export const usePrototypeStore = create(
         set((st) => {
           const sharing = st.sharing[scoreId];
           if (!sharing) return {};
+          // Also update invitation status
+          const person = sharing.people.find((p) => p.id === personId);
+          const invitations = person
+            ? st.invitations.map((inv) => (inv.scoreId === scoreId && inv.invitedEmail === person.email ? { ...inv, status: 'revoked' } : inv))
+            : st.invitations;
           return {
             sharing: { ...st.sharing, [scoreId]: { ...sharing, people: sharing.people.filter((p) => p.id !== personId) } },
+            invitations,
           };
         }),
 
       setLinkAccess: (scoreId, access) =>
         set((st) => {
-          const sharing = st.sharing[scoreId] || defaultSharing(st.scores.find((s) => s.id === scoreId) || {});
+          const score = st.scores.find((s) => s.id === scoreId);
+          const sharing = st.sharing[scoreId] || (score ? defaultSharing(score) : null);
           if (!sharing) return {};
           const enabled = access !== 'Off';
+          const now = new Date().toISOString();
+          // Generate token when enabling for the first time
+          const token = enabled && !sharing.link.token ? genToken() : sharing.link.token;
           return {
             sharing: {
               ...st.sharing,
-              [scoreId]: { ...sharing, link: { ...sharing.link, access, enabled, edit: access === 'Can edit' } },
+              [scoreId]: {
+                ...sharing,
+                link: {
+                  ...sharing.link,
+                  access,
+                  enabled,
+                  edit: access === 'Can edit',
+                  token: enabled ? token : sharing.link.token,
+                  createdAt: enabled && !sharing.link.createdAt ? now : sharing.link.createdAt,
+                },
+              },
             },
           };
         }),
@@ -427,7 +559,7 @@ export const usePrototypeStore = create(
         set((st) => {
           const sharing = st.sharing[scoreId];
           if (!sharing) return {};
-          return { sharing: { ...st.sharing, [scoreId]: { ...sharing, link: { ...sharing.link, expiration } } } };
+          return { sharing: { ...st.sharing, [scoreId]: { ...sharing, link: { ...sharing.link, expiration, expiresAt: computeExpiresAt(expiration) } } } };
         }),
 
       disableLink: (scoreId) =>
@@ -441,8 +573,61 @@ export const usePrototypeStore = create(
         set((st) => {
           const sharing = st.sharing[scoreId];
           if (!sharing) return {};
-          return { sharing: { ...st.sharing, [scoreId]: { ...sharing, link: { ...sharing.link, token: `tok-${Date.now()}` } } } };
+          return {
+            sharing: {
+              ...st.sharing,
+              [scoreId]: { ...sharing, link: { ...sharing.link, token: genToken(), createdAt: new Date().toISOString() } },
+            },
+          };
         }),
+
+      // ---- Invitation actions ----
+      acceptInvitation: (token) =>
+        set((st) => {
+          const invitation = st.invitations.find((i) => i.token === token);
+          if (!invitation || invitation.status !== 'pending') return {};
+          // Create a shared score relationship
+          const score = st.scores.find((s) => s.id === invitation.scoreId);
+          let scores = st.scores;
+          let sharing = st.sharing;
+          if (score) {
+            // If user doesn't already have this score, add it as shared
+            scores = st.scores.map((s) =>
+              s.id === invitation.scoreId
+                ? { ...s, ownership: 'shared', sharedBy: invitation.invitedBy, permission: invitation.permission }
+                : s
+            );
+            // Convert pending person to actual member in sharing
+            const scoreSharing = st.sharing[invitation.scoreId];
+            if (scoreSharing) {
+              sharing = {
+                ...st.sharing,
+                [invitation.scoreId]: {
+                  ...scoreSharing,
+                  people: scoreSharing.people.map((p) =>
+                    p.id === invitation.personId
+                      ? { ...p, role: invitation.permission, pendingRole: undefined }
+                      : p
+                  ),
+                },
+              };
+            }
+          }
+          return {
+            scores,
+            sharing,
+            invitations: st.invitations.map((i) => (i.token === token ? { ...i, status: 'accepted' } : i)),
+            notifications: [
+              { id: `n-${Date.now()}`, category: 'sharing', title: 'Invitation accepted', body: `${score?.title || 'Score'} — ${invitation.permission}`, time: 'just now', unread: true, href: `/score/${invitation.scoreId}` },
+              ...st.notifications,
+            ],
+          };
+        }),
+
+      declineInvitation: (token) =>
+        set((st) => ({
+          invitations: st.invitations.map((i) => (i.token === token ? { ...i, status: 'declined' } : i)),
+        })),
 
       // ---- Notification actions ----
       markNotificationRead: (id) =>
@@ -508,8 +693,8 @@ export const usePrototypeStore = create(
           imports: clone(seedImports),
           recognitionIssues: clone(recognitionIssuesSeed),
           practiceSessions: clone(seedPracticeHistory),
-          practiceProgress: clone(seedPracticeProgress),
           sharing: {},
+          invitations: [],
           notifications: clone(seedNotifications),
           subscription: clone(subscriptionSeed),
           billingHistory: clone(seedBillingHistory),
@@ -519,6 +704,29 @@ export const usePrototypeStore = create(
           plans: seedPlans,
         })),
     }),
-    { name: 'yueora-prototype' }
+    {
+      name: 'yueora-prototype',
+      version: 2,
+      migrate: (persistedState, version) => {
+        // Merge any missing keys from defaults
+        const merged = { ...persistedState };
+        if (!merged.invitations) merged.invitations = [];
+        if (!merged.sharing) merged.sharing = {};
+        if (merged.subscription && merged.subscription.renewal === 'Sep 15, 2026') {
+          merged.subscription.renewal = 'Nov 15, 2026';
+        }
+        // Ensure sharing links have token field
+        if (merged.sharing) {
+          for (const [sid, sh] of Object.entries(merged.sharing)) {
+            if (sh.link && !sh.link.token) {
+              sh.link.token = null;
+              sh.link.createdAt = null;
+              sh.link.expiresAt = null;
+            }
+          }
+        }
+        return merged;
+      },
+    }
   )
 );

@@ -112,7 +112,7 @@ export default function RecognitionReview() {
 
         {/* Issues panel — desktop */}
         <div className="hidden w-72 shrink-0 overflow-y-auto border-l border-border p-4 md:block">
-          <IssuesPanel issues={issues} activeIssue={activeIssue} setActiveIssue={setActiveIssue} active={active} onMarkFixed={handleMarkFixed} onFixInEditor={() => navigate(`/score/${imp.scoreId}/edit`)} />
+          <IssuesPanel issues={issues} activeIssue={activeIssue} setActiveIssue={setActiveIssue} active={active} onMarkFixed={handleMarkFixed} onFixInEditor={() => navigate(`/score/${imp.scoreId}/edit`, { state: { focusMeasure: active?.measure, issueType: active?.type } })} />
         </div>
       </div>
 
@@ -145,7 +145,7 @@ export default function RecognitionReview() {
             {active && (
               <div className="mt-3 border-t border-border pt-3">
                 <Button variant="outline" size="sm" className="w-full" onClick={handleMarkFixed}>{active.resolved ? 'Mark as unresolved' : 'Mark as fixed'}</Button>
-                <Button variant="outline" size="sm" className="mt-2 w-full" onClick={() => navigate(`/score/${imp.scoreId}/edit`)}><Pencil className="mr-1.5 h-3.5 w-3.5" /> Fix in editor</Button>
+                <Button variant="outline" size="sm" className="mt-2 w-full" onClick={() => navigate(`/score/${imp.scoreId}/edit`, { state: { focusMeasure: active?.measure, issueType: active?.type } })}><Pencil className="mr-1.5 h-3.5 w-3.5" /> Fix in editor</Button>
               </div>
             )}
           </div>
@@ -156,7 +156,7 @@ export default function RecognitionReview() {
       <div className="hidden items-center justify-between border-t border-border px-4 py-3 md:flex">
         <span className="text-sm text-muted-foreground">{reviewed} of {issues.length} reviewed</span>
         <div className="flex gap-2">
-          <Link to={`/score/${imp.scoreId}/edit`}>
+          <Link to={`/score/${imp.scoreId}/edit`} state={{ focusMeasure: active?.measure, issueType: active?.type }}>
             <Button variant="outline"><Pencil className="mr-1.5 h-4 w-4" /> Fix in editor</Button>
           </Link>
           <Button onClick={handleLooksGood}><Check className="mr-1.5 h-4 w-4" /> Looks good</Button>
@@ -167,7 +167,7 @@ export default function RecognitionReview() {
       <div className="flex items-center justify-between border-t border-border px-4 py-3 md:hidden">
         <span className="text-sm text-muted-foreground">{reviewed}/{issues.length}</span>
         <div className="flex gap-2">
-          <Link to={`/score/${imp.scoreId}/edit`}><Button variant="outline" size="sm"><Pencil className="mr-1 h-3.5 w-3.5" /> Editor</Button></Link>
+          <Link to={`/score/${imp.scoreId}/edit`} state={{ focusMeasure: active?.measure, issueType: active?.type }}><Button variant="outline" size="sm"><Pencil className="mr-1 h-3.5 w-3.5" /> Editor</Button></Link>
           <Button size="sm" onClick={handleLooksGood}><Check className="mr-1 h-3.5 w-3.5" /> Looks good</Button>
         </div>
       </div>

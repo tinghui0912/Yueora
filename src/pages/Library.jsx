@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { LayoutGrid, List, Plus, SlidersHorizontal, ArrowUpDown, Play, Star, FolderInput, Trash2, Heart, X, Check, LogOut, BookmarkMinus } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
-import { practiceHome } from '@/lib/mockData';
 import ScoreCard from '@/components/library/ScoreCard';
 import ScorePreview from '@/components/library/ScorePreview';
 import LibrarySubRail from '@/components/library/LibrarySubRail';
@@ -47,6 +46,7 @@ export default function Library() {
 
   const scores = usePrototypeStore((s) => s.scores);
   const folders = usePrototypeStore((s) => s.folders);
+  const practiceSessions = usePrototypeStore((s) => s.practiceSessions);
   const createFolder = usePrototypeStore((s) => s.createFolder);
   const renameFolder = usePrototypeStore((s) => s.renameFolder);
   const deleteFolder = usePrototypeStore((s) => s.deleteFolder);
@@ -102,6 +102,15 @@ export default function Library() {
 
   const liveCount = scores.filter((s) => s.ownership !== 'trash').length;
 
+  // Derive "continue practicing" from store
+  const playedScores = scores.filter((s) => s.ownership !== 'trash' && s.lastPlayed && s.lastPlayed !== 'never');
+  const continueScore = playedScores.length > 0
+    ? playedScores.sort((a, b) => {
+        const order = { today: -1, yesterday: 0, '2 days ago': 1, '3 days ago': 2, '4 days ago': 3, '5 days ago': 4, 'last week': 5 };
+        return (order[a.lastPlayed] ?? 50) - (order[b.lastPlayed] ?? 50);
+      })[0]
+    : null;
+
   // Selection ops
   const toggleSelect = (id) => setSelected((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
   const clearSelect = () => setSelected([]);
@@ -143,15 +152,15 @@ export default function Library() {
 
       <div className="min-w-0 flex-1">
         {/* Continue practicing shortcut (hidden in trash) */}
-        {!isTrash && (
+        {!isTrash && continueScore && (
           <Link
-            to={`/score/${practiceHome.continuePractice.scoreId}/practice`}
+            to={`/score/${continueScore.id}/practice`}
             className="mx-4 mt-4 flex items-center justify-between gap-3 rounded-md border border-border bg-accent px-4 py-3 md:mx-8"
           >
             <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-wider text-accent-foreground/70">Pick up where you left off</p>
-              <p className="truncate font-display text-lg font-medium">{practiceHome.continuePractice.title} — {practiceHome.continuePractice.composer}</p>
-              <p className="text-sm text-muted-foreground">Continue from measure {practiceHome.continuePractice.measure} · last played {practiceHome.continuePractice.lastPlayed}</p>
+              <p className="truncate font-display text-lg font-medium">{continueScore.title} — {continueScore.composer}</p>
+              <p className="text-sm text-muted-foreground">Continue from measure {continueScore.lastMeasure} · last played {continueScore.lastPlayed}</p>
             </div>
             <span className="flex shrink-0 items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">
               <Play className="h-4 w-4" /> Continue

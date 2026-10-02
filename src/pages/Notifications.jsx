@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCheck, Bell, Users, Music, Sparkles, Shield, CreditCard, Inbox } from 'lucide-react';
-import { notifications as seed } from '@/lib/mockData';
+import { usePrototypeStore } from '@/stores/prototypeStore';
 import { Button } from '@/components/ui/button';
 
 const categoryIcon = {
@@ -23,7 +23,9 @@ const filters = [
 
 export default function Notifications() {
   const navigate = useNavigate();
-  const [items, setItems] = useState(seed);
+  const items = usePrototypeStore((s) => s.notifications);
+  const markRead = usePrototypeStore((s) => s.markNotificationRead);
+  const markAllRead = usePrototypeStore((s) => s.markAllNotificationsRead);
   const [filter, setFilter] = useState('all');
 
   const filtered = useMemo(() => {
@@ -33,12 +35,10 @@ export default function Notifications() {
   }, [items, filter]);
 
   const unreadCount = items.filter((n) => n.unread).length;
-  const markRead = (id) => setItems((prev) => prev.map((n) => (n.id === id ? { ...n, unread: false } : n)));
-  const markAllRead = () => setItems((prev) => prev.map((n) => ({ ...n, unread: false })));
 
   const groups = useMemo(() => {
-    const today = filtered.filter((n) => ['2m', '1h', '5h'].includes(n.time));
-    const earlier = filtered.filter((n) => !['2m', '1h', '5h'].includes(n.time));
+    const today = filtered.filter((n) => ['just now', '2m', '1h', '5h'].includes(n.time));
+    const earlier = filtered.filter((n) => !['just now', '2m', '1h', '5h'].includes(n.time));
     return { today, earlier };
   }, [filtered]);
 
@@ -61,13 +61,13 @@ export default function Notifications() {
       {filtered.length === 0 ? (
         <div className="mt-12 flex flex-col items-center gap-3 text-center">
           <Bell className="h-8 w-8 text-muted-foreground" />
-          <p className="font-medium">You’re all caught up</p>
-          <p className="max-w-sm text-sm text-muted-foreground">When something happens — a score is ready, an invitation is accepted — it’ll show up here.</p>
+          <p className="font-medium">You're all caught up</p>
+          <p className="max-w-sm text-sm text-muted-foreground">When something happens — a score is ready, an invitation is accepted — it'll show up here.</p>
         </div>
       ) : (
         <div className="mt-5 space-y-6">
-          {groups.today.length > 0 && <Group label="Today" items={groups.today} onOpen={markRead} navigate={navigate} />}
-          {groups.earlier.length > 0 && <Group label="Earlier" items={groups.earlier} onOpen={markRead} navigate={navigate} />}
+          {groups.today.length > 0 && <Group label="Today" items={groups.today} onOpen={(id) => { markRead(id); }} navigate={navigate} />}
+          {groups.earlier.length > 0 && <Group label="Earlier" items={groups.earlier} onOpen={(id) => { markRead(id); }} navigate={navigate} />}
         </div>
       )}
     </div>
