@@ -17,35 +17,26 @@ export default function SharedScore() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const scores = usePrototypeStore((s) => s.scores);
   const saveSharedScoreToLibrary = usePrototypeStore((s) => s.saveSharedScoreToLibrary);
   const getShareByToken = usePrototypeStore((s) => s.getShareByToken);
 
-  // Try to find sharing by token from store
+  // Resolve sharing by token only — no scoreId fallback
   const shareResult = getShareByToken(shareToken);
   let status = 'valid';
-  if (shareToken?.includes('expired')) status = 'expired';
-  else if (shareToken?.includes('revoked')) status = 'revoked';
-  else if (shareToken?.includes('invalid')) status = 'invalid';
-  else if (shareToken?.includes('removed')) status = 'removed';
-
   let score = null;
   let sharing = null;
   if (shareResult) {
-    score = shareResult.score;
-    sharing = shareResult.sharing;
-    if (!sharing.link.enabled) status = 'revoked';
-    if (sharing.link.expiresAt && new Date(sharing.link.expiresAt) < new Date()) status = 'expired';
-  } else if (status === 'valid') {
-    score = scores.find((s) => s.id === shareToken);
-    if (score) {
-      sharing = { link: { access: 'Can view', download: true, practice: true, enabled: true } };
+    if (shareResult.revoked) {
+      status = 'revoked';
     } else {
-      status = 'invalid';
-      score = scores.find((s) => s.ownership === 'mine') || scores[0];
+      score = shareResult.score;
+      sharing = shareResult.sharing;
+      if (!sharing.link.enabled) status = 'revoked';
+      else if (sharing.link.expiresAt && new Date(sharing.link.expiresAt) < new Date()) status = 'expired';
+      else if (!score) status = 'removed';
     }
   } else {
-    score = scores.find((s) => s.id === shareToken) || scores.find((s) => s.ownership === 'mine') || scores[0];
+    status = 'invalid';
   }
 
   const [reportOpen, setReportOpen] = useState(false);
@@ -75,8 +66,8 @@ export default function SharedScore() {
     );
   }
 
-  const canPractice = sharing?.link?.practice ?? true;
-  const canDownload = sharing?.link?.download ?? true;
+  const canPractice = sharing?.link?.practice ?? false;
+  const canDownload = sharing?.link?.download ?? false;
   const canEdit = sharing?.link?.access === 'Can edit';
 
   const handleSave = () => {

@@ -19,6 +19,7 @@ export default function Topbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const notifications = usePrototypeStore((s) => s.notifications);
+  const markNotificationRead = usePrototypeStore((s) => s.markNotificationRead);
   const initials = (user?.full_name || user?.email || 'You').slice(0, 1).toUpperCase();
 
   return (
@@ -48,7 +49,7 @@ export default function Topbar() {
             {notifications.slice(0, 4).map((n) => (
               <DropdownMenuItem
                 key={n.id}
-                onClick={() => navigate(n.href)}
+                onClick={() => { markNotificationRead(n.id); navigate(n.href); }}
                 className="flex flex-col items-start gap-0.5 py-2"
               >
                 <div className="flex w-full items-center justify-between">

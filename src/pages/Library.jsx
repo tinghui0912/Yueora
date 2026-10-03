@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { LayoutGrid, List, Plus, SlidersHorizontal, ArrowUpDown, Play, Star, FolderInput, Trash2, Heart, X, Check, LogOut, BookmarkMinus } from 'lucide-react';
+import { LayoutGrid, List, Plus, SlidersHorizontal, ArrowUpDown, Play, Star, FolderInput, Trash2, Heart, X, Check, LogOut, BookmarkMinus, Settings, Folder, Pencil } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import ScoreCard from '@/components/library/ScoreCard';
 import ScorePreview from '@/components/library/ScorePreview';
@@ -68,6 +68,11 @@ export default function Library() {
   const [moveOpen, setMoveOpen] = useState(false);
   const [folderDelete, setFolderDelete] = useState(null);
   const [trashConfirm, setTrashConfirm] = useState(null);
+  const [manageFoldersOpen, setManageFoldersOpen] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+  const [editingFolderId, setEditingFolderId] = useState(null);
+  const [editFolderName, setEditFolderName] = useState('');
+  const [folderToDelete, setFolderToDelete] = useState(null);
 
   const setParam = (key, value) => {
     const next = new URLSearchParams(params);
@@ -188,6 +193,12 @@ export default function Library() {
               {f.name}
             </button>
           ))}
+          <button
+            onClick={() => setManageFoldersOpen(true)}
+            className="flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-accent/50"
+          >
+            <Settings className="h-3.5 w-3.5" /> Manage
+          </button>
           <button
             onClick={() => { setParam('view', 'trash'); clearSelect(); }}
             className={`flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-1.5 text-sm ${active === 'trash' ? 'bg-accent font-medium text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
@@ -366,6 +377,65 @@ export default function Library() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setTrashConfirm(null)}>Cancel</Button>
             <Button variant="destructive" onClick={() => { removeSelected(); setTrashConfirm(null); }}>{removeLabel}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Manage folders dialog (mobile) */}
+      <Dialog open={manageFoldersOpen} onOpenChange={setManageFoldersOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Manage folders</DialogTitle></DialogHeader>
+          <div className="space-y-2">
+            {folders.length === 0 && <p className="py-4 text-center text-sm text-muted-foreground">No folders yet.</p>}
+            {folders.map((f) => (
+              <div key={f.id} className="flex items-center gap-2 rounded-md border border-border px-3 py-2">
+                {editingFolderId === f.id ? (
+                  <>
+                    <input
+                      autoFocus
+                      value={editFolderName}
+                      onChange={(e) => setEditFolderName(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); } }}
+                      className="h-8 flex-1 rounded-md border border-border bg-card px-2 text-sm outline-none focus:border-primary"
+                    />
+                    <button onClick={() => { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); }} className="rounded p-1 text-primary hover:bg-accent"><Check className="h-4 w-4" /></button>
+                    <button onClick={() => setEditingFolderId(null)} className="rounded p-1 text-muted-foreground hover:bg-accent"><X className="h-4 w-4" /></button>
+                  </>
+                ) : (
+                  <>
+                    <Folder className="h-4 w-4 text-muted-foreground" />
+                    <span className="flex-1 text-sm font-medium">{f.name}</span>
+                    <button onClick={() => { setEditingFolderId(f.id); setEditFolderName(f.name); }} className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground" aria-label="Rename"><Pencil className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => setFolderToDelete(f.id)} className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground" aria-label="Delete"><Trash2 className="h-3.5 w-3.5" /></button>
+                  </>
+                )}
+              </div>
+            ))}
+            <div className="flex items-center gap-2 pt-2">
+              <input
+                value={newFolderName}
+                onChange={(e) => setNewFolderName(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}
+                placeholder="New folder name"
+                className="h-8 flex-1 rounded-md border border-border bg-card px-2 text-sm outline-none focus:border-primary"
+              />
+              <Button size="sm" onClick={() => { if (newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}><Plus className="h-4 w-4" /></Button>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setManageFoldersOpen(false)}>Done</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Folder delete confirmation (mobile manage) */}
+      <Dialog open={!!folderToDelete} onOpenChange={(o) => !o && setFolderToDelete(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
+          <p className="text-sm text-muted-foreground">Scores in this folder won’t be deleted — they’ll stay in your library.</p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setFolderToDelete(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={() => { deleteFolder(folderToDelete); if (activeFolderId === folderToDelete) setParam('view', 'all'); setFolderToDelete(null); }}>Delete folder</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

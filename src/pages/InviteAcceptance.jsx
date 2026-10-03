@@ -42,8 +42,15 @@ export default function InviteAcceptance() {
     if (invitation) {
       acceptInvitation(inviteToken);
     }
+    // Read the updated invitation to get the shared score id
+    const updated = usePrototypeStore.getState().invitations.find((i) => i.token === inviteToken);
+    const targetId = updated?.sharedScoreId || score?.id;
     toast({ title: 'Invitation accepted', description: `${score?.title || 'Score'} is now in Shared with me.` });
-    navigate(`/score/${score?.id || '/library'}`);
+    if (targetId) {
+      navigate(`/score/${targetId}`);
+    } else {
+      navigate('/library');
+    }
   };
 
   const decline = () => {

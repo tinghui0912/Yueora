@@ -20,7 +20,7 @@ export default function ImportDetail() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const imp = usePrototypeStore((s) => s.imports.find((i) => i.id === importId));
-  const issueCount = usePrototypeStore((s) => (s.recognitionIssues[importId] || []).length);
+  const issueCount = usePrototypeStore((s) => s.getUnresolvedIssueCount(importId));
   const retryImport = usePrototypeStore((s) => s.retryImport);
   const replaceImportSource = usePrototypeStore((s) => s.replaceImportSource);
   const removeImport = usePrototypeStore((s) => s.removeImport);

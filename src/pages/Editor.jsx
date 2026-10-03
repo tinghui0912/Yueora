@@ -26,7 +26,25 @@ export default function Editor() {
   const { scoreId } = useParams();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const score = usePrototypeStore((s) => s.scores.find((sc) => sc.id === scoreId));
+  const scores = usePrototypeStore((s) => s.scores);
+  const imports = usePrototypeStore((s) => s.imports);
+  const score = useMemo(() => {
+    const sc = scores.find((sc) => sc.id === scoreId);
+    if (sc) return sc;
+    const imp = imports.find((i) => i.scoreId === scoreId);
+    if (imp && imp.pendingScore) {
+      const ps = imp.pendingScore;
+      return {
+        id: imp.scoreId, title: ps.title || imp.title || 'Untitled', composer: ps.composer || 'Unknown',
+        instrument: ps.instrument || 'Piano', tags: ps.tags || [], ownership: 'mine', favorite: false,
+        folderIds: ps.folderIds || [], lastPlayed: 'never', lastMeasure: 1, tempo: 80,
+        pages: ps.pages || imp.pages || 1, measures: 32, difficultSections: [],
+        created: new Date().toISOString().slice(0, 10), source: ps.source || imp.source || 'PDF',
+        currentVersion: 'Current version', versionRestoredAt: null, _pending: true,
+      };
+    }
+    return null;
+  }, [scores, imports, scoreId]);
 
   // Recognition issue context
   const importId = searchParams.get('import') || location.state?.importId;
@@ -49,6 +67,7 @@ export default function Editor() {
   const [clipboard, setClipboard] = useState([]);
   const [tiePending, setTiePending] = useState(null);
   const [slurPending, setSlurPending] = useState(null);
+  const [recovered, setRecovered] = useState(!!(location.state?.importId));
   const saveTimer = useRef(null);
   const noteCounter = useRef(0);
 
@@ -150,7 +169,7 @@ export default function Editor() {
       {/* Top bar */}
       <div className="flex items-center justify-between border-b border-border px-3 py-2">
         <div className="flex items-center gap-3">
-          <Link to={`/score/${scoreId}`} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+          <Link to={score._pending && importId ? `/imports/${importId}` : `/score/${scoreId}`} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">{score.title}</span>
           </Link>
           {activeIssue && (
@@ -160,14 +179,22 @@ export default function Editor() {
           )}
         </div>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <SaveIndicator state={saveState} onRetry={() => setSaveState('saving')} onFail={() => setSaveState('failed')} />
+          <SaveIndicator state={saveState} onRetry={() => { setSaveState('saving'); clearTimeout(saveTimer.current); saveTimer.current = setTimeout(() => setSaveState('saved'), 900); }} onFail={() => setSaveState('failed')} />
           <button onClick={undo} disabled={past.length === 0} className="rounded p-1.5 hover:bg-accent disabled:opacity-40" aria-label="Undo"><Undo2 className="h-4 w-4" /></button>
           <button onClick={redo} disabled={future.length === 0} className="rounded p-1.5 hover:bg-accent disabled:opacity-40" aria-label="Redo"><Redo2 className="h-4 w-4" /></button>
           <button onClick={copySelected} disabled={selectedIds.size === 0} className="rounded p-1.5 hover:bg-accent disabled:opacity-40" aria-label="Copy"><Copy className="h-4 w-4" /></button>
           <button onClick={paste} disabled={clipboard.length === 0} className="rounded p-1.5 hover:bg-accent disabled:opacity-40" aria-label="Paste"><Clipboard className="h-4 w-4" /></button>
-          <button onClick={() => setSharingOpen(true)} className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 hover:bg-accent"><Share2 className="h-4 w-4" /> Share</button>
+          {!score._pending && <button onClick={() => setSharingOpen(true)} className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 hover:bg-accent"><Share2 className="h-4 w-4" /> Share</button>}
         </div>
       </div>
+
+      {/* Recovered unsaved changes banner */}
+      {recovered && (
+        <div className="flex items-center justify-between border-b border-gold/30 bg-gold/5 px-4 py-2 text-sm">
+          <span className="flex items-center gap-2 text-gold"><Check className="h-4 w-4" /> Recovered unsaved changes from your recognition review.</span>
+          <button onClick={() => setRecovered(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+        </div>
+      )}
 
       {/* Recognition issue nav bar */}
       {activeIssue && (

@@ -18,7 +18,6 @@ export default function RecognitionReview() {
 
   const [activeIssue, setActiveIssue] = useState(issues[0]?.id ?? null);
   const [notes] = useState(() => generateNotes(imp?.scoreId || importId));
-  const [selectedId, setSelectedId] = useState(null);
   const [mobileView, setMobileView] = useState('recognized'); // 'original' | 'recognized'
   const [mobileIssuesOpen, setMobileIssuesOpen] = useState(false);
 
@@ -99,7 +98,7 @@ export default function RecognitionReview() {
           <div className={`min-w-0 flex-1 overflow-auto bg-background p-6 ${mobileView === 'original' ? 'hidden md:block' : ''}`}>
             <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recognized score</p>
             <div className="mx-auto max-w-3xl rounded-md border border-border bg-card p-6 shadow-sm">
-              <ScoreCanvas notes={notes} selectedId={selectedId} onSelect={setSelectedId} zoom={1} />
+              <ScoreCanvas notes={notes} selectedIds={new Set()} onSelect={() => {}} zoom={1} activeIssueMeasure={active?.measure} />
               {active && (
                 <div className="mt-3 rounded-md border border-gold/40 bg-gold/10 px-3 py-2">
                   <p className="text-sm font-medium text-gold">Measure {active.measure}: {active.type}</p>
@@ -112,7 +111,7 @@ export default function RecognitionReview() {
 
         {/* Issues panel — desktop */}
         <div className="hidden w-72 shrink-0 overflow-y-auto border-l border-border p-4 md:block">
-          <IssuesPanel issues={issues} activeIssue={activeIssue} setActiveIssue={setActiveIssue} active={active} onMarkFixed={handleMarkFixed} onFixInEditor={() => navigate(`/score/${imp.scoreId}/edit`, { state: { focusMeasure: active?.measure, issueType: active?.type } })} />
+          <IssuesPanel issues={issues} activeIssue={activeIssue} setActiveIssue={setActiveIssue} active={active} onMarkFixed={handleMarkFixed} onFixInEditor={() => navigate(`/score/${imp.scoreId}/edit`, { state: { importId, activeIssueId: active?.id } })} />
         </div>
       </div>
 
@@ -145,7 +144,7 @@ export default function RecognitionReview() {
             {active && (
               <div className="mt-3 border-t border-border pt-3">
                 <Button variant="outline" size="sm" className="w-full" onClick={handleMarkFixed}>{active.resolved ? 'Mark as unresolved' : 'Mark as fixed'}</Button>
-                <Button variant="outline" size="sm" className="mt-2 w-full" onClick={() => navigate(`/score/${imp.scoreId}/edit`, { state: { focusMeasure: active?.measure, issueType: active?.type } })}><Pencil className="mr-1.5 h-3.5 w-3.5" /> Fix in editor</Button>
+                <Button variant="outline" size="sm" className="mt-2 w-full" onClick={() => navigate(`/score/${imp.scoreId}/edit`, { state: { importId, activeIssueId: active?.id } })}><Pencil className="mr-1.5 h-3.5 w-3.5" /> Fix in editor</Button>
               </div>
             )}
           </div>
@@ -156,7 +155,7 @@ export default function RecognitionReview() {
       <div className="hidden items-center justify-between border-t border-border px-4 py-3 md:flex">
         <span className="text-sm text-muted-foreground">{reviewed} of {issues.length} reviewed</span>
         <div className="flex gap-2">
-          <Link to={`/score/${imp.scoreId}/edit`} state={{ focusMeasure: active?.measure, issueType: active?.type }}>
+          <Link to={`/score/${imp.scoreId}/edit`} state={{ importId, activeIssueId: active?.id }}>
             <Button variant="outline"><Pencil className="mr-1.5 h-4 w-4" /> Fix in editor</Button>
           </Link>
           <Button onClick={handleLooksGood}><Check className="mr-1.5 h-4 w-4" /> Looks good</Button>
@@ -167,7 +166,7 @@ export default function RecognitionReview() {
       <div className="flex items-center justify-between border-t border-border px-4 py-3 md:hidden">
         <span className="text-sm text-muted-foreground">{reviewed}/{issues.length}</span>
         <div className="flex gap-2">
-          <Link to={`/score/${imp.scoreId}/edit`} state={{ focusMeasure: active?.measure, issueType: active?.type }}><Button variant="outline" size="sm"><Pencil className="mr-1 h-3.5 w-3.5" /> Editor</Button></Link>
+          <Link to={`/score/${imp.scoreId}/edit`} state={{ importId, activeIssueId: active?.id }}><Button variant="outline" size="sm"><Pencil className="mr-1 h-3.5 w-3.5" /> Editor</Button></Link>
           <Button size="sm" onClick={handleLooksGood}><Check className="mr-1 h-3.5 w-3.5" /> Looks good</Button>
         </div>
       </div>

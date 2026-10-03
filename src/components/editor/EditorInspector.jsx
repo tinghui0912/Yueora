@@ -109,15 +109,21 @@ export default function EditorInspector({ note, onChange }) {
           </Field>
         )}
         {!isRest && (
-          <div className="flex items-center justify-between rounded-md border border-border px-3 py-2">
-            <Label className="text-sm">Tie to next</Label>
-            <Switch checked={!!note.tieTo} onCheckedChange={(v) => onChange({ ...note, tieTo: v ? note.tieTo || 'pending' : undefined })} />
+          <div className="rounded-md border border-border px-3 py-2">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm">Tie</Label>
+              <span className={`text-xs ${note.tieTo ? 'text-primary' : 'text-muted-foreground'}`}>{note.tieTo ? 'Connected' : 'Not set'}</span>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">Select the Tie tool, then click this note and the next note.</p>
           </div>
         )}
         {!isRest && (
-          <div className="flex items-center justify-between rounded-md border border-border px-3 py-2">
-            <Label className="text-sm">Slur to next</Label>
-            <Switch checked={!!note.slurTo} onCheckedChange={(v) => onChange({ ...note, slurTo: v ? note.slurTo || 'pending' : undefined })} />
+          <div className="rounded-md border border-border px-3 py-2">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm">Slur</Label>
+              <span className={`text-xs ${note.slurTo ? 'text-primary' : 'text-muted-foreground'}`}>{note.slurTo ? 'Connected' : 'Not set'}</span>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">Select the Slur tool, then click this note and the next note.</p>
           </div>
         )}
       </div>

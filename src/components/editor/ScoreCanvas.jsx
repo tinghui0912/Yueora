@@ -8,15 +8,20 @@ const MEASURES = 4;
 const LINE_GAP = 9;
 const NOTE_R = 4.6;
 
-const durationFill = { '1': true, '2': true, '4': false, '8': false };
+// Standard notation: whole & half = hollow, quarter & eighth = filled
+const durationFill = { '1': false, '2': false, '4': true, '8': true };
 
 const accidentalSymbols = { sharp: '♯', flat: '♭', natural: '♮' };
 
-export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, onDelete, tool, zoom, activeMeasure, activeIssueMeasure }) {
+export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, onDelete, tool, zoom, activeMeasure, activeIssueMeasure, measureStart: measureStartProp }) {
+  // Auto-select window: center the focus measure in the visible 8-measure range
+  const focusMeasure = activeIssueMeasure ?? activeMeasure;
+  const measureStart = measureStartProp ?? (focusMeasure ? Math.max(1, Math.floor((focusMeasure - 1) / 8) * 8 + 1) : 1);
+
   const width = STAFF_LEFT + MEASURES * MEASURE_W + 20;
   const height = STAVES[STAVES.length - 1].top + 70;
   const z = zoom || 1;
-  const selSet = selectedIds || (selectedIds !== undefined ? new Set() : null);
+  const selSet = selectedIds instanceof Set ? selectedIds : (selectedIds != null ? new Set([selectedIds]) : null);
 
   const noteY = (staff, step) => STAVES[staff].top + (8 - step) * (LINE_GAP / 2) + LINE_GAP * 2;
 
@@ -58,8 +63,8 @@ export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, o
             <g key={si}>
               {/* Active measure highlight */}
               {activeMeasure != null && Array.from({ length: MEASURES }).map((_, mi) => {
-                const measureNum = si * MEASURES + mi + 1;
-                if (measureNum !== activeMeasure && measureNum !== activeIssueMeasure) return null;
+                const measureNum = measureStart + si * MEASURES + mi;
+                if (measureNum !== activeMeasure) return null;
                 return (
                   <rect
                     key={`hl-${si}-${mi}`}
@@ -74,7 +79,7 @@ export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, o
               })}
               {/* Issue measure highlight */}
               {activeIssueMeasure != null && Array.from({ length: MEASURES }).map((_, mi) => {
-                const measureNum = si * MEASURES + mi + 1;
+                const measureNum = measureStart + si * MEASURES + mi;
                 if (measureNum !== activeIssueMeasure) return null;
                 return (
                   <rect
@@ -96,6 +101,14 @@ export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, o
               {Array.from({ length: MEASURES + 1 }).map((_, mi) => (
                 <line key={mi} x1={STAFF_LEFT + mi * MEASURE_W} x2={STAFF_LEFT + mi * MEASURE_W} y1={st.top} y2={st.top + 4 * LINE_GAP} stroke="hsl(var(--foreground))" strokeWidth={mi === 0 || mi === MEASURES ? 1.5 : 0.75} />
               ))}
+              {/* Measure number labels */}
+              {Array.from({ length: MEASURES }).map((_, mi) => {
+                const measureNum = measureStart + si * MEASURES + mi;
+                if (mi === 0 || measureNum % 4 === 1) {
+                  return <text key={`mn-${si}-${mi}`} x={STAFF_LEFT + mi * MEASURE_W + 2} y={st.top - 6} fontSize="9" fill="hsl(var(--muted-foreground))">{measureNum}</text>;
+                }
+                return null;
+              })}
               <text x={STAFF_LEFT - 26} y={st.top + 30} fontSize="20" fill="hsl(var(--muted-foreground))">{si === 0 ? '𝄞' : '𝄢'}</text>
             </g>
           ))}
@@ -136,6 +149,7 @@ export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, o
             const isSel = selSet ? selSet.has(n.id) : false;
             const isRest = n.type === 'rest';
             const stemUp = n.step >= 4;
+            const isWhole = n.duration === '1';
             const fill = isRest ? 'none' : durationFill[n.duration] ? 'hsl(var(--foreground))' : 'hsl(var(--card))';
             return (
               <g
@@ -159,8 +173,11 @@ export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, o
                 ) : (
                   <>
                     <ellipse cx={x} cy={y} rx={NOTE_R + 0.5} ry={NOTE_R} fill={fill} stroke="hsl(var(--foreground))" strokeWidth={1.2} transform={`rotate(-18 ${x} ${y})`} />
-                    <line x1={x + (stemUp ? NOTE_R : -NOTE_R)} x2={x + (stemUp ? NOTE_R : -NOTE_R)} y1={y} y2={y + (stemUp ? -26 : 26)} stroke="hsl(var(--foreground))" strokeWidth={1.2} />
-                    {n.duration === '8' && (
+                    {/* Stem only for half, quarter, eighth — not whole */}
+                    {!isWhole && (
+                      <line x1={x + (stemUp ? NOTE_R : -NOTE_R)} x2={x + (stemUp ? NOTE_R : -NOTE_R)} y1={y} y2={y + (stemUp ? -26 : 26)} stroke="hsl(var(--foreground))" strokeWidth={1.2} />
+                    )}
+                    {n.duration === '8' && !isWhole && (
                       <path d={`M ${x + (stemUp ? NOTE_R : -NOTE_R)} ${y + (stemUp ? -26 : 26)} q 10 4 6 14`} fill="none" stroke="hsl(var(--foreground))" strokeWidth={1.2} />
                     )}
                     {n.dotted && (

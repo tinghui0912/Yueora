@@ -89,6 +89,20 @@ export default function PracticeSession() {
     const duration = `${mins}:${secs.toString().padStart(2, '0')}`;
     const rangeLabel = range === 'whole' ? 'Whole score' : range === 'tricky' ? `Measures ${rangeFrom}–${rangeTo}` : `Measures ${rangeFrom}–${rangeTo}`;
     const sessionId = `s-${Date.now()}`;
+    // Derive tricky section from user range, score data, or a valid fallback
+    let trickyFrom, trickyTo;
+    if (range === 'tricky' || range === 'selected') {
+      trickyFrom = rangeFrom;
+      trickyTo = rangeTo;
+    } else if (score?.difficultSections?.length > 0) {
+      const ds = score.difficultSections[0];
+      trickyFrom = ds.from || ds.measure;
+      trickyTo = ds.to || ds.from || ds.measure;
+    } else {
+      const maxM = score?.measures || 32;
+      trickyFrom = Math.max(1, Math.min(maxM - 4, Math.floor(maxM * 0.6)));
+      trickyTo = Math.min(maxM, trickyFrom + 4);
+    }
     addPracticeSession({
       id: sessionId,
       scoreId,
@@ -98,12 +112,12 @@ export default function PracticeSession() {
       range: rangeLabel,
       insight: 'Nice session.',
       accuracy,
-      trickyFrom: 34,
-      trickyTo: 38,
+      trickyFrom,
+      trickyTo,
     });
     updateScoreLastPlayed(scoreId, activeMeasure);
     navigate(`/practice/${sessionId}/summary`, {
-      state: { scoreId, accuracy, duration, mode, input, tempo: tempoPct, trickyFrom: 34, trickyTo: 38, rangeLabel },
+      state: { scoreId, accuracy, duration, mode, input, tempo: tempoPct, trickyFrom, trickyTo, rangeLabel },
     });
   };
 
@@ -112,6 +126,15 @@ export default function PracticeSession() {
   const fmt = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
   const originalTempo = score.tempo;
   const ready = input === 'microphone' ? micReady === true : midiReady === true;
+
+  // Tricky section: from score data or a valid fallback within score measures
+  const maxM = score?.measures || 32;
+  const trickyFromDisplay = score?.difficultSections?.length > 0
+    ? (score.difficultSections[0].from || score.difficultSections[0].measure)
+    : Math.max(1, Math.min(maxM - 4, Math.floor(maxM * 0.6)));
+  const trickyToDisplay = score?.difficultSections?.length > 0
+    ? (score.difficultSections[0].to || score.difficultSections[0].from || score.difficultSections[0].measure)
+    : Math.min(maxM, trickyFromDisplay + 4);
 
   // ---- Setup / preflight ----
   if (setup) {
@@ -159,7 +182,7 @@ export default function PracticeSession() {
           )}
 
           <Field label="Range">
-            <Seg options={[['whole', 'Whole score'], ['selected', 'Selected measures'], ['tricky', 'Recent tricky section']]} value={range} onChange={setRange} />
+            <Seg options={[['whole', 'Whole score'], ['selected', 'Selected measures'], ['tricky', 'Recent tricky section']]} value={range} onChange={(v) => { setRange(v); if (v === 'tricky') { setRangeFrom(trickyFromDisplay); setRangeTo(trickyToDisplay); } }} />
             {range === 'selected' && (
               <div className="mt-2 flex items-center gap-2 text-sm">
                 <span>From</span><Input type="number" min={1} value={rangeFrom} onChange={(e) => setRangeFrom(Number(e.target.value))} className="h-8 w-20" />
@@ -167,7 +190,7 @@ export default function PracticeSession() {
               </div>
             )}
             {range === 'tricky' && (
-              <p className="mt-2 text-sm text-primary">Measures 34–38 — this section felt trickier last time.</p>
+              <p className="mt-2 text-sm text-primary">Measures {trickyFromDisplay}–{trickyToDisplay} — this section felt trickier last time.</p>
             )}
           </Field>
 
@@ -208,7 +231,7 @@ export default function PracticeSession() {
 
       <div className="flex flex-1 items-center justify-center overflow-auto bg-background p-6">
         <div className="w-full max-w-3xl rounded-md border border-border bg-card p-6 shadow-sm">
-          <ScoreCanvas notes={notes} selectedId={null} onSelect={() => {}} zoom={1.1} activeMeasure={activeMeasure} />
+          <ScoreCanvas notes={notes} selectedIds={null} onSelect={() => {}} zoom={1.1} activeMeasure={activeMeasure} />
           {autoScroll && <p className="mt-2 text-center text-xs text-muted-foreground">Auto-scrolling to measure {activeMeasure}</p>}
         </div>
       </div>

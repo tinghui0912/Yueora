@@ -14,8 +14,8 @@ export default function PracticeSummary() {
   const session = usePrototypeStore((s) => s.practiceSessions.find((p) => p.id === sessionId));
   const summary = { ...base, accuracy: state.accuracy ?? session?.accuracy ?? base.accuracy, duration: state.duration ?? session?.duration ?? base.duration };
 
-  const trickyFrom = state.trickyFrom || 34;
-  const trickyTo = state.trickyTo || 38;
+  const trickyFrom = state.trickyFrom ?? session?.trickyFrom ?? 1;
+  const trickyTo = state.trickyTo ?? session?.trickyTo ?? Math.min(score?.measures || 32, 5);
 
   // Replay mock
   const [replaying, setReplaying] = useState(false);

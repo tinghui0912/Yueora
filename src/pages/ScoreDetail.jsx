@@ -220,19 +220,31 @@ export default function ScoreDetail() {
         <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>Version history</DialogTitle></DialogHeader>
           <div className="space-y-2">
-            <div className="flex items-center justify-between rounded-md border border-primary/40 bg-accent/40 px-3 py-2">
-              <div><p className="text-sm font-medium">Current version</p><p className="text-xs text-muted-foreground">Sep 8, 2026</p></div>
-              <span className="text-xs font-medium text-primary">Current</span>
-            </div>
-            {[
-              { label: 'After recognition review', date: 'Aug 12, 2026' },
-              { label: 'First import', date: 'Aug 12, 2026' },
-            ].map((v) => (
-              <div key={v.label} className="flex items-center justify-between rounded-md border border-border px-3 py-2">
-                <div><p className="text-sm font-medium">{v.label}</p><p className="text-xs text-muted-foreground">{v.date}</p></div>
-                <Button variant="outline" size="sm" onClick={() => { restoreVersion(score.id, v.label); toast({ title: 'Version restored', description: `Restored to ${v.label}.` }); setVersionsOpen(false); }}>Restore</Button>
-              </div>
-            ))}
+            {(() => {
+              const versions = [
+                { label: 'Current version', date: 'Sep 8, 2026', isCurrent: true },
+                { label: 'After recognition review', date: 'Aug 12, 2026' },
+                { label: 'First import', date: 'Aug 12, 2026' },
+              ];
+              const restoredLabel = score.versionRestoredAt ? score.currentVersion : null;
+              return versions.map((v) => {
+                const isCurrent = v.isCurrent && !restoredLabel;
+                const isRestored = restoredLabel === v.label;
+                return (
+                  <div key={v.label} className={`flex items-center justify-between rounded-md border px-3 py-2 ${isCurrent || isRestored ? 'border-primary/40 bg-accent/40' : 'border-border'}`}>
+                    <div>
+                      <p className="text-sm font-medium">{v.label}{isRestored ? ' · Restored' : ''}</p>
+                      <p className="text-xs text-muted-foreground">{isRestored ? `Restored ${score.versionRestoredAt}` : v.date}</p>
+                    </div>
+                    {isCurrent || isRestored ? (
+                      <span className="text-xs font-medium text-primary">{isRestored ? 'Restored' : 'Current'}</span>
+                    ) : (
+                      <Button variant="outline" size="sm" onClick={() => { restoreVersion(score.id, v.label); toast({ title: 'Version restored', description: `Restored to ${v.label}.` }); setVersionsOpen(false); }}>Restore</Button>
+                    )}
+                  </div>
+                );
+              });
+            })()}
           </div>
           <DialogFooter><Button variant="outline" onClick={() => setVersionsOpen(false)}>Close</Button></DialogFooter>
         </DialogContent>

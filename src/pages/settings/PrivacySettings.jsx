@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -18,7 +19,7 @@ export default function PrivacySettings() {
   const [exported, setExported] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [confirmText, setConfirmText] = useState('');
-  const [deleted, setDeleted] = useState(false);
+  const [deleteState, setDeleteState] = useState('confirm'); // 'confirm' | 'processing' | 'scheduled'
 
   const exportData = () => {
     setExporting(true);
@@ -26,14 +27,17 @@ export default function PrivacySettings() {
   };
 
   const doDelete = () => {
-    if (confirmText === 'DELETE') {
-      setDeleted(true);
-      setDeleteOpen(false);
-      setTimeout(() => {
-        resetPrototype();
-        logout?.('/');
-      }, 2500);
-    }
+    if (confirmText !== 'DELETE') return;
+    setDeleteState('processing');
+    setTimeout(() => {
+      setDeleteState('scheduled');
+      resetPrototype();
+    }, 1500);
+  };
+
+  const signOutAfterDelete = () => {
+    setDeleteOpen(false);
+    logout?.('/');
   };
 
   return (
@@ -64,21 +68,27 @@ export default function PrivacySettings() {
         <Button variant="outline" className="mt-3 text-destructive hover:text-destructive" onClick={() => setDeleteOpen(true)}>Delete account</Button>
       </Section>
 
-      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+      <Dialog open={deleteOpen} onOpenChange={(o) => { if (!o && deleteState !== 'scheduled') setDeleteOpen(false); }}>
         <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Delete account?</DialogTitle></DialogHeader>
-          {deleted ? (
+          {deleteState === 'scheduled' ? (
             <div className="py-4 text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                <CheckCircle2 className="h-6 w-6 text-primary" />
+              </div>
               <p className="font-medium">Account scheduled for deletion</p>
-              <p className="mt-1 text-sm text-muted-foreground">You'll be signed out shortly. We're sorry to see you go.</p>
+              <p className="mt-1 text-sm text-muted-foreground">Your account will be removed shortly. We're sorry to see you go.</p>
+              <Button onClick={signOutAfterDelete} className="mt-5 w-full">Sign out</Button>
             </div>
           ) : (
             <>
+              <DialogHeader><DialogTitle>Delete account?</DialogTitle></DialogHeader>
               <p className="text-sm text-muted-foreground">This permanently deletes your scores, practice history, and account. To confirm, type <strong>DELETE</strong> below.</p>
-              <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} placeholder="DELETE" className="mt-3" />
+              <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} placeholder="DELETE" className="mt-3" disabled={deleteState === 'processing'} />
               <DialogFooter>
-                <Button variant="outline" onClick={() => setDeleteOpen(false)}>Cancel</Button>
-                <Button variant="destructive" onClick={doDelete} disabled={confirmText !== 'DELETE'}>Delete account</Button>
+                <Button variant="outline" onClick={() => setDeleteOpen(false)} disabled={deleteState === 'processing'}>Cancel</Button>
+                <Button variant="destructive" onClick={doDelete} disabled={confirmText !== 'DELETE' || deleteState === 'processing'}>
+                  {deleteState === 'processing' ? <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Processing…</> : 'Delete account'}
+                </Button>
               </DialogFooter>
             </>
           )}

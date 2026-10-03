@@ -53,6 +53,7 @@ export default function SharingDialog({ score, open, onOpenChange }) {
   const setLinkExpiration = usePrototypeStore((s) => s.setLinkExpiration);
   const disableLink = usePrototypeStore((s) => s.disableLink);
   const regenerateLink = usePrototypeStore((s) => s.regenerateLink);
+  const invitations = usePrototypeStore((s) => s.invitations);
 
   const [email, setEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('Can view');
@@ -70,9 +71,8 @@ export default function SharingDialog({ score, open, onOpenChange }) {
   };
 
   const copyLink = () => {
-    // Use the sharing token if available; fall back to score id for demo
-    const token = sharing.link.token || score.id;
-    const url = `${window.location.origin}/s/${token}`;
+    if (!sharing.link.token) return;
+    const url = `${window.location.origin}/s/${sharing.link.token}`;
     navigator.clipboard?.writeText(url).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
@@ -128,6 +128,18 @@ export default function SharingDialog({ score, open, onOpenChange }) {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-44">
                             <DropdownMenuItem onClick={() => { resendInvitation(score.id, person.id); toast({ title: 'Invitation resent', description: person.email }); }}>Resend invitation</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {
+                              const inv = invitations.find((i) => i.personId === person.id);
+                              if (inv) {
+                                const url = `${window.location.origin}/invite/${inv.token}`;
+                                navigator.clipboard?.writeText(url).catch(() => {});
+                                toast({ title: 'Invitation link copied', description: url });
+                              }
+                            }}><Link2 className="mr-2 h-3.5 w-3.5" /> Copy invitation link</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {
+                              const inv = invitations.find((i) => i.personId === person.id);
+                              if (inv) window.open(`/invite/${inv.token}`, '_blank');
+                            }}>Preview invitation</DropdownMenuItem>
                             <DropdownMenuItem onClick={() => { changeMemberRole(score.id, person.id, person.pendingRole === 'Can view' ? 'Can edit' : 'Can view'); toast({ title: 'Role changed' }); }}>Change to {person.pendingRole === 'Can view' ? 'Can edit' : 'Can view'}</DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-destructive" onClick={() => { revokeInvitation(score.id, person.id); toast({ title: 'Invitation revoked', description: person.email }); }}>Revoke invitation</DropdownMenuItem>
@@ -196,10 +208,14 @@ export default function SharingDialog({ score, open, onOpenChange }) {
             </div>
 
             <div className="mt-4 flex items-center gap-2">
-              <Button variant="outline" onClick={copyLink} className="flex-1">
-                {copied ? <Check className="mr-1.5 h-4 w-4 text-primary" /> : <Copy className="mr-1.5 h-4 w-4" />}
-                {copied ? 'Link copied' : 'Copy link'}
-              </Button>
+              {sharing.link.access !== 'Off' && sharing.link.token ? (
+                <Button variant="outline" onClick={copyLink} className="flex-1">
+                  {copied ? <Check className="mr-1.5 h-4 w-4 text-primary" /> : <Copy className="mr-1.5 h-4 w-4" />}
+                  {copied ? 'Link copied' : 'Copy link'}
+                </Button>
+              ) : (
+                <p className="flex-1 text-sm text-muted-foreground">Turn on link sharing to copy a link.</p>
+              )}
               <Button variant="outline" onClick={() => setLinkSettingsOpen(true)}>Link settings</Button>
             </div>
           </div>

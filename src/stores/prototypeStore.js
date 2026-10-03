@@ -129,6 +129,7 @@ export const usePrototypeStore = create(
       practiceSessions: clone(seedPracticeHistory),
       sharing: {},
       invitations: [],
+      revokedShareTokens: [],
       notifications: clone(seedNotifications),
       subscription: clone(subscriptionSeed),
       billingHistory: clone(seedBillingHistory),
@@ -154,6 +155,10 @@ export const usePrototypeStore = create(
       liveScores: () => get().scores.filter((s) => s.ownership !== 'trash'),
       getShareByToken: (token) => {
         const st = get();
+        if (!token) return null;
+        if ((st.revokedShareTokens || []).includes(token)) {
+          return { revoked: true, score: null, sharing: null };
+        }
         for (const [scoreId, sharing] of Object.entries(st.sharing)) {
           if (sharing.link && sharing.link.token === token) {
             const score = st.scores.find((s) => s.id === scoreId);
@@ -163,6 +168,37 @@ export const usePrototypeStore = create(
         return null;
       },
       getInvitation: (token) => get().invitations.find((i) => i.token === token),
+      getScoreOrDraft: (id) => {
+        const st = get();
+        const score = st.scores.find((s) => s.id === id);
+        if (score) return score;
+        const imp = st.imports.find((i) => i.scoreId === id);
+        if (imp && imp.pendingScore) {
+          const ps = imp.pendingScore;
+          return {
+            id: imp.scoreId,
+            title: ps.title || imp.title || 'Untitled',
+            composer: ps.composer || 'Unknown',
+            instrument: ps.instrument || 'Piano',
+            tags: ps.tags || [],
+            ownership: 'mine',
+            favorite: false,
+            folderIds: ps.folderIds || [],
+            lastPlayed: 'never',
+            lastMeasure: 1,
+            tempo: 80,
+            pages: ps.pages || imp.pages || 1,
+            measures: 32,
+            difficultSections: [],
+            created: new Date().toISOString().slice(0, 10),
+            source: ps.source || imp.source || 'PDF',
+            currentVersion: 'Current version',
+            versionRestoredAt: null,
+            _pending: true,
+          };
+        }
+        return null;
+      },
 
       // ---- Score actions ----
       toggleScoreFavorite: (id) =>
@@ -296,6 +332,7 @@ export const usePrototypeStore = create(
       createImport: ({ title, composer, instrument, pages, source, folder }) =>
         set((st) => {
           const importId = `imp-${Date.now()}`;
+          const scoreId = `score-${Date.now()}`;
           const folderIds = folder ? [folder] : [];
           const pendingScore = {
             title: title || 'Untitled',
@@ -308,7 +345,7 @@ export const usePrototypeStore = create(
           };
           const newImport = {
             id: importId,
-            scoreId: null, // will be set when completeImport runs
+            scoreId, // stable from creation — used by Editor and completeImport
             pendingScore,
             title: title || 'Untitled',
             status: 'processing',
@@ -365,7 +402,7 @@ export const usePrototypeStore = create(
           // Already completed? Don't duplicate.
           if (imp.status === 'completed' && imp.scoreId) return {};
           const ps = imp.pendingScore || {};
-          const scoreId = `score-${Date.now()}`;
+          const scoreId = imp.scoreId;
           const newScore = {
             id: scoreId,
             title: ps.title || imp.title || 'Untitled',
@@ -566,14 +603,20 @@ export const usePrototypeStore = create(
         set((st) => {
           const sharing = st.sharing[scoreId];
           if (!sharing) return {};
-          return { sharing: { ...st.sharing, [scoreId]: { ...sharing, link: { ...sharing.link, access: 'Off', enabled: false } } } };
+          const oldToken = sharing.link.token;
+          return {
+            revokedShareTokens: oldToken ? [...(st.revokedShareTokens || []), oldToken] : (st.revokedShareTokens || []),
+            sharing: { ...st.sharing, [scoreId]: { ...sharing, link: { ...sharing.link, access: 'Off', enabled: false, token: null } } },
+          };
         }),
 
       regenerateLink: (scoreId) =>
         set((st) => {
           const sharing = st.sharing[scoreId];
           if (!sharing) return {};
+          const oldToken = sharing.link.token;
           return {
+            revokedShareTokens: oldToken ? [...(st.revokedShareTokens || []), oldToken] : (st.revokedShareTokens || []),
             sharing: {
               ...st.sharing,
               [scoreId]: { ...sharing, link: { ...sharing.link, token: genToken(), createdAt: new Date().toISOString() } },
@@ -586,17 +629,27 @@ export const usePrototypeStore = create(
         set((st) => {
           const invitation = st.invitations.find((i) => i.token === token);
           if (!invitation || invitation.status !== 'pending') return {};
-          // Create a shared score relationship
           const score = st.scores.find((s) => s.id === invitation.scoreId);
           let scores = st.scores;
           let sharing = st.sharing;
+          let sharedScoreId = invitation.scoreId;
           if (score) {
-            // If user doesn't already have this score, add it as shared
-            scores = st.scores.map((s) =>
-              s.id === invitation.scoreId
-                ? { ...s, ownership: 'shared', sharedBy: invitation.invitedBy, permission: invitation.permission }
-                : s
-            );
+            // Create a separate shared copy — don't modify the owner's original
+            sharedScoreId = `${score.id}-shared-${invitation.personId}`;
+            if (!st.scores.some((s) => s.id === sharedScoreId)) {
+              const sharedScore = {
+                ...clone(score),
+                id: sharedScoreId,
+                sourceScoreId: score.id,
+                ownership: 'shared',
+                sharedBy: invitation.invitedBy,
+                permission: invitation.permission,
+                favorite: false,
+                folderIds: [],
+                created: new Date().toISOString().slice(0, 10),
+              };
+              scores = [sharedScore, ...st.scores];
+            }
             // Convert pending person to actual member in sharing
             const scoreSharing = st.sharing[invitation.scoreId];
             if (scoreSharing) {
@@ -616,9 +669,9 @@ export const usePrototypeStore = create(
           return {
             scores,
             sharing,
-            invitations: st.invitations.map((i) => (i.token === token ? { ...i, status: 'accepted' } : i)),
+            invitations: st.invitations.map((i) => (i.token === token ? { ...i, status: 'accepted', sharedScoreId } : i)),
             notifications: [
-              { id: `n-${Date.now()}`, category: 'sharing', title: 'Invitation accepted', body: `${score?.title || 'Score'} — ${invitation.permission}`, time: 'just now', unread: true, href: `/score/${invitation.scoreId}` },
+              { id: `n-${Date.now()}`, category: 'sharing', title: 'Invitation accepted', body: `${score?.title || 'Score'} — ${invitation.permission}`, time: 'just now', unread: true, href: `/score/${sharedScoreId}` },
               ...st.notifications,
             ],
           };
@@ -695,6 +748,7 @@ export const usePrototypeStore = create(
           practiceSessions: clone(seedPracticeHistory),
           sharing: {},
           invitations: [],
+          revokedShareTokens: [],
           notifications: clone(seedNotifications),
           subscription: clone(subscriptionSeed),
           billingHistory: clone(seedBillingHistory),
@@ -706,11 +760,12 @@ export const usePrototypeStore = create(
     }),
     {
       name: 'yueora-prototype',
-      version: 2,
+      version: 3,
       migrate: (persistedState, version) => {
         // Merge any missing keys from defaults
         const merged = { ...persistedState };
         if (!merged.invitations) merged.invitations = [];
+        if (!merged.revokedShareTokens) merged.revokedShareTokens = [];
         if (!merged.sharing) merged.sharing = {};
         if (merged.subscription && merged.subscription.renewal === 'Sep 15, 2026') {
           merged.subscription.renewal = 'Nov 15, 2026';
