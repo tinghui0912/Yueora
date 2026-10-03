@@ -3,6 +3,8 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { ArrowLeft, Play, Pause, RotateCcw, BarChart3, History } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { buildSummary } from '@/lib/mockData';
+import SectionHeader from '@/components/patterns/SectionHeader';
+import Metric from '@/components/patterns/Metric';
 
 export default function PracticeSummary() {
   const { sessionId } = useParams();
@@ -17,7 +19,6 @@ export default function PracticeSummary() {
   const trickyFrom = state.trickyFrom ?? session?.trickyFrom ?? 1;
   const trickyTo = state.trickyTo ?? session?.trickyTo ?? Math.min(score?.measures || 32, 5);
 
-  // Replay mock
   const [replaying, setReplaying] = useState(false);
   const [replayPos, setReplayPos] = useState(0);
   const totalMeasures = score?.measures || 32;
@@ -27,7 +28,6 @@ export default function PracticeSummary() {
     setReplaying((r) => !r);
   };
 
-  // Simple replay timer
   useEffect(() => {
     if (!replaying) return;
     const t = setInterval(() => {
@@ -41,53 +41,53 @@ export default function PracticeSummary() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 md:px-8">
-      <Link to={score ? `/score/${scoreId}` : '/practice'} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+      <Link to={score ? `/score/${scoreId}` : '/practice'} className="flex items-center gap-1.5 type-body-small text-ink-secondary hover:text-ink-primary">
         <ArrowLeft className="h-4 w-4" /> {score?.title || 'Back'}
       </Link>
 
       {/* Hero — human first */}
-      <h1 className="mt-6 font-display text-[clamp(1.75rem,4vw,2.75rem)] font-medium leading-tight">{summary.hero}</h1>
-      <p className="mt-2 text-muted-foreground">{summary.title} · {summary.composer}</p>
+      <h1 className="mt-6 type-display text-[clamp(1.75rem,4vw,2.75rem)] text-ink-primary">{summary.hero}</h1>
+      <p className="mt-2 type-body text-ink-secondary">{summary.title} · {summary.composer}</p>
 
-      {/* First insight */}
-      <div className="mt-6 rounded-md border border-border bg-card p-5">
-        <p className="text-sm text-muted-foreground">{summary.insight}</p>
-        <Link to={`/score/${scoreId}/practice`} state={{ range: 'selected', rangeFrom: trickyFrom, rangeTo: trickyTo }} className="mt-3 inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
+      {/* Insight — one kept surface */}
+      <div className="mt-6 rounded-container border border-line-subtle bg-surface-panel p-5">
+        <p className="type-body-small text-ink-secondary">{summary.insight}</p>
+        <Link to={`/score/${scoreId}/practice`} state={{ range: 'selected', rangeFrom: trickyFrom, rangeTo: trickyTo }} className="mt-3 inline-flex items-center gap-2 rounded-control bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
           <Play className="h-4 w-4" /> Try that section again
         </Link>
-        <p className="mt-2 text-xs text-muted-foreground">Measures {trickyFrom}–{trickyTo} will be pre-selected.</p>
+        <p className="mt-2 type-metadata text-ink-tertiary">Measures {trickyFrom}–{trickyTo} will be pre-selected.</p>
       </div>
 
-      {/* Secondary metrics — information, not grades */}
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Metric label="Accuracy" value={`${summary.accuracy}%`} />
-        <Metric label="Timing" value={summary.timing} />
-        <Metric label="Duration" value={summary.duration} />
-        <Metric label="Tempo" value={summary.tempo} />
-      </div>
+      {/* Metrics — flat band with separators, not KPI cards */}
+      <dl className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-0 sm:divide-x sm:divide-line-subtle">
+        <div className="sm:px-4 sm:first:pl-0"><Metric label="Accuracy" value={`${summary.accuracy}%`} /></div>
+        <div className="sm:px-4"><Metric label="Timing" value={summary.timing} /></div>
+        <div className="sm:px-4"><Metric label="Duration" value={summary.duration} /></div>
+        <div className="sm:px-4"><Metric label="Tempo" value={summary.tempo} /></div>
+      </dl>
 
-      {/* Compare with last time */}
-      <div className="mt-6 rounded-md border border-border bg-card p-5">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Compared with last time</p>
-        <dl className="mt-3 space-y-2 text-sm">
-          <div className="flex justify-between"><dt className="text-muted-foreground">Accuracy</dt><dd className="text-primary">{summary.compared.accuracy}</dd></div>
-          <div className="flex justify-between"><dt className="text-muted-foreground">Missed notes</dt><dd className="text-primary">{summary.compared.errors}</dd></div>
-          <div className="flex justify-between"><dt className="text-muted-foreground">Tempo</dt><dd className="text-primary">{summary.compared.tempo}</dd></div>
+      {/* Compared with last time — plain section */}
+      <section className="mt-8">
+        <SectionHeader title="Compared with last time" />
+        <dl className="mt-3 space-y-2 type-body-small">
+          <div className="flex justify-between"><dt className="text-ink-secondary">Accuracy</dt><dd className="text-brand">{summary.compared.accuracy}</dd></div>
+          <div className="flex justify-between"><dt className="text-ink-secondary">Missed notes</dt><dd className="text-brand">{summary.compared.errors}</dd></div>
+          <div className="flex justify-between"><dt className="text-ink-secondary">Tempo</dt><dd className="text-brand">{summary.compared.tempo}</dd></div>
         </dl>
-      </div>
+      </section>
 
-      {/* Performance details */}
-      <div className="mt-4 rounded-md border border-border bg-card p-5">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Details</p>
-        <dl className="mt-3 space-y-2 text-sm">
-          <div className="flex justify-between"><dt className="text-muted-foreground">Missing notes</dt><dd>{summary.missing}</dd></div>
-          <div className="flex justify-between"><dt className="text-muted-foreground">Unexpected notes</dt><dd>{summary.unexpected}</dd></div>
+      {/* Details — plain definition list */}
+      <section className="mt-6">
+        <SectionHeader title="Details" />
+        <dl className="mt-3 space-y-2 type-body-small">
+          <div className="flex justify-between"><dt className="text-ink-secondary">Missing notes</dt><dd className="text-ink-primary">{summary.missing}</dd></div>
+          <div className="flex justify-between"><dt className="text-ink-secondary">Unexpected notes</dt><dd className="text-ink-primary">{summary.unexpected}</dd></div>
         </dl>
-      </div>
+      </section>
 
-      {/* Replay performance */}
-      <div className="mt-4 rounded-md border border-border bg-card p-5">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Replay performance</p>
+      {/* Replay — compact player row */}
+      <section className="mt-6">
+        <SectionHeader title="Replay performance" />
         <div className="mt-3 flex items-center gap-3">
           <button onClick={toggleReplay} className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90">
             {replaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
@@ -96,37 +96,28 @@ export default function PracticeSummary() {
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
               <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${(replayPos / totalMeasures) * 100}%` }} />
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">Measure {replayPos} of {totalMeasures}</p>
+            <p className="mt-1 type-metadata text-ink-tertiary">Measure {replayPos} of {totalMeasures}</p>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Actions */}
-      <div className="mt-6 flex flex-wrap gap-2">
-        <Link to={`/score/${scoreId}/practice`} className="flex items-center gap-2 rounded-md border border-border px-4 py-2.5 text-sm font-semibold hover:bg-accent">
+      <div className="mt-8 flex flex-wrap gap-2">
+        <Link to={`/score/${scoreId}/practice`} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
           <RotateCcw className="h-4 w-4" /> Play full score again
         </Link>
-        <Link to={`/score/${scoreId}`} className="flex items-center gap-2 rounded-md border border-border px-4 py-2.5 text-sm font-semibold hover:bg-accent">
+        <Link to={`/score/${scoreId}`} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
           Back to score
         </Link>
-        <Link to="/practice" className="flex items-center gap-2 rounded-md border border-border px-4 py-2.5 text-sm font-semibold hover:bg-accent">
+        <Link to="/practice" className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
           Back to Practice
         </Link>
       </div>
 
       <div className="mt-6 flex gap-3">
-        <Link to="/practice/history" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"><History className="h-4 w-4" /> Practice history</Link>
-        <Link to="/practice/progress" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"><BarChart3 className="h-4 w-4" /> Progress</Link>
+        <Link to="/practice/history" className="flex items-center gap-1.5 type-body-small text-ink-secondary hover:text-ink-primary"><History className="h-4 w-4" /> Practice history</Link>
+        <Link to="/practice/progress" className="flex items-center gap-1.5 type-body-small text-ink-secondary hover:text-ink-primary"><BarChart3 className="h-4 w-4" /> Progress</Link>
       </div>
-    </div>
-  );
-}
-
-function Metric({ label, value }) {
-  return (
-    <div className="rounded-md border border-border bg-card p-4 text-center">
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
-      <p className="mt-1 font-display text-xl font-medium">{value}</p>
     </div>
   );
 }

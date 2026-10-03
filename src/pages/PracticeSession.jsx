@@ -158,21 +158,21 @@ export default function PracticeSession() {
             <Field label="Microphone readiness">
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <span className={`h-2 w-2 rounded-full ${micReady === true ? 'bg-primary' : micReady === false ? 'bg-destructive' : 'bg-muted-foreground'}`} />
+                  <span className={`h-2 w-2 rounded-full ${micReady === true ? 'bg-practice-correct' : micReady === false ? 'bg-practice-error' : 'bg-ink-tertiary'}`} />
                   {micReady === true ? 'Microphone ready' : micReady === false ? 'Permission denied — allow access in your browser' : 'Not tested yet'}
                 </div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={() => setMicReady(true)}><Mic className="mr-1.5 h-4 w-4" /> Test microphone</Button>
                   {micReady === false && <Button variant="outline" size="sm" onClick={() => setMicReady(null)}><RotateCcw className="mr-1.5 h-3.5 w-3.5" /> Reset</Button>}
                 </div>
-                {micReady === false && <p className="flex items-center gap-1.5 text-xs text-destructive"><AlertCircle className="h-3.5 w-3.5" /> Allow microphone access, then test again.</p>}
+                {micReady === false && <p className="flex items-center gap-1.5 text-xs text-practice-error"><AlertCircle className="h-3.5 w-3.5" /> Allow microphone access, then test again.</p>}
               </div>
             </Field>
           ) : (
             <Field label="MIDI device">
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <span className={`h-2 w-2 rounded-full ${midiReady === true ? 'bg-primary' : 'bg-muted-foreground'}`} />
+                  <span className={`h-2 w-2 rounded-full ${midiReady === true ? 'bg-practice-correct' : 'bg-ink-tertiary'}`} />
                   {midiReady === true ? 'MIDI keyboard connected' : 'No device detected'}
                 </div>
                 <Button variant="outline" size="sm" onClick={() => setMidiReady(true)}><Piano className="mr-1.5 h-4 w-4" /> Detect devices</Button>
@@ -190,7 +190,7 @@ export default function PracticeSession() {
               </div>
             )}
             {range === 'tricky' && (
-              <p className="mt-2 text-sm text-primary">Measures {trickyFromDisplay}–{trickyToDisplay} — this section felt trickier last time.</p>
+              <p className="mt-2 text-sm text-practice-current">Measures {trickyFromDisplay}–{trickyToDisplay} — this section felt trickier last time.</p>
             )}
           </Field>
 
@@ -222,10 +222,10 @@ export default function PracticeSession() {
           <ArrowLeft className="h-4 w-4" /> {score.title}
         </button>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1"><span className={`h-2 w-2 rounded-full ${running ? 'bg-primary' : 'bg-muted-foreground'}`} /> {running ? 'Live' : 'Paused'}</span>
+          <span className="flex items-center gap-1"><span className={`h-2 w-2 rounded-full ${running ? 'bg-practice-current animate-pulse' : 'bg-ink-tertiary'}`} /> {running ? 'Live' : 'Paused'}</span>
           <span className="capitalize">{input}</span>
           <span>{Math.round(originalTempo * tempoPct / 100)} BPM</span>
-          <span className="rounded bg-accent px-2 py-0.5 text-xs font-medium">Measure {activeMeasure}</span>
+          <span className="rounded-control bg-practice-current/15 px-2 py-0.5 text-xs font-medium text-practice-current">Measure {activeMeasure}</span>
         </div>
       </div>
 
@@ -238,18 +238,18 @@ export default function PracticeSession() {
 
       {/* Live feedback */}
       <div className="border-t border-border bg-card px-4 py-3 text-center">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Current note</p>
-        <p className="mt-0.5 font-display text-4xl font-medium">{noteSeq[idx]}</p>
+        <p className="type-caption text-ink-tertiary">Current note</p>
+        <p className="mt-0.5 type-display text-4xl text-ink-primary">{noteSeq[idx]}</p>
         <div className="mt-1 flex items-center justify-center gap-3 text-sm">
-          <span className="flex items-center gap-1 text-primary"><Check className="h-4 w-4" /> matched</span>
-          <span className="text-muted-foreground">next: {noteSeq[(idx + 1) % noteSeq.length]}</span>
+          <span className="flex items-center gap-1 text-practice-correct"><Check className="h-4 w-4" /> matched</span>
+          <span className="text-ink-tertiary">next: {noteSeq[(idx + 1) % noteSeq.length]}</span>
         </div>
       </div>
 
       {/* Controls */}
       <div className="border-t border-border px-4 py-4">
         <div className="mx-auto flex max-w-2xl flex-wrap items-center justify-between gap-3">
-          <button onClick={() => setMetronome((m) => !m)} className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm ${metronome ? 'border-primary text-primary' : 'border-border text-muted-foreground'}`}>
+          <button onClick={() => setMetronome((m) => !m)} className={`flex items-center gap-2 rounded-control border px-3 py-2 text-sm ${metronome ? 'border-practice-current text-practice-current' : 'border-line-subtle text-ink-secondary'}`}>
             <Timer className="h-4 w-4" /> Metronome
           </button>
           {mode === 'follow' ? (

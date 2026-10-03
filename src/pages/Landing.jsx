@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { ArrowRight, Upload, ScanSearch, Music2, Library as LibraryIcon, Play, Share2, BarChart3, Check } from 'lucide-react';
 import ScorePreview from '@/components/library/ScorePreview';
+import PublicMobileMenu from '@/components/external/PublicMobileMenu';
 
 const flow = [
   { icon: Upload, title: 'Bring in music', body: 'Upload a PDF, photos, or MusicXML — the music you actually want to play.' },
@@ -30,8 +31,9 @@ export default function Landing() {
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <span className="font-display text-2xl tracking-tight">Yueora</span>
         <nav className="flex items-center gap-2 text-sm">
-          <Link to="/about" className="hidden rounded-md px-3 py-2 text-muted-foreground hover:text-foreground sm:inline">About</Link>
-          <Link to="/pricing" className="hidden rounded-md px-3 py-2 text-muted-foreground hover:text-foreground sm:inline">Pricing</Link>
+          <Link to="/about" className="hidden rounded-control px-3 py-2 text-ink-secondary hover:text-ink-primary sm:inline">About</Link>
+          <Link to="/pricing" className="hidden rounded-control px-3 py-2 text-ink-secondary hover:text-ink-primary sm:inline">Pricing</Link>
+          <PublicMobileMenu />
           {isAuthenticated ? (
             <Link to="/library" className="rounded-md bg-primary px-4 py-2 font-semibold text-primary-foreground">Open library</Link>
           ) : (

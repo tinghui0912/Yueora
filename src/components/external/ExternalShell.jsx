@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
+import PublicMobileMenu from '@/components/external/PublicMobileMenu';
 
 export default function ExternalShell({ sharedBy, children }) {
   const { isAuthenticated } = useAuth();
@@ -14,14 +15,16 @@ export default function ExternalShell({ sharedBy, children }) {
         </div>
         {!isAuthenticated ? (
           <div className="flex items-center gap-2">
-            <Link to="/about" className="hidden rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground sm:inline">About</Link>
-            <Link to="/pricing" className="hidden rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground sm:inline">Pricing</Link>
-            <Link to="/login" className="rounded-md border border-border px-4 py-2 text-sm font-semibold hover:bg-accent">Log in</Link>
+            <Link to="/about" className="hidden rounded-control px-3 py-2 text-sm text-ink-secondary hover:text-ink-primary sm:inline">About</Link>
+            <Link to="/pricing" className="hidden rounded-control px-3 py-2 text-sm text-ink-secondary hover:text-ink-primary sm:inline">Pricing</Link>
+            <Link to="/login" className="rounded-control border border-line-subtle px-4 py-2 text-sm font-semibold hover:bg-accent">Log in</Link>
+            <PublicMobileMenu />
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <Link to="/about" className="hidden rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground sm:inline">About</Link>
-            <Link to="/library" className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">Open library</Link>
+            <Link to="/about" className="hidden rounded-control px-3 py-2 text-sm text-ink-secondary hover:text-ink-primary sm:inline">About</Link>
+            <Link to="/library" className="rounded-control bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">Open library</Link>
+            <PublicMobileMenu />
           </div>
         )}
       </header>

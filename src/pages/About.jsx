@@ -63,7 +63,7 @@ export default function About() {
         {/* Four Principles */}
         <section className="mt-20">
           <h2 className="font-display text-2xl font-medium">Four principles</h2>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="mt-8 grid gap-x-8 gap-y-6 sm:grid-cols-2">
             <Principle icon={Music2} title="Choice over curriculum" body="You decide what to play." />
             <Principle icon={Heart} title="Joy over obligation" body="Liking a piece is reason enough." />
             <Principle icon={Eye} title="Feedback without judgment" body="Information should help you listen, not tell you your worth." />
@@ -116,10 +116,12 @@ export default function About() {
 
 function Principle({ icon: Icon, title, body }) {
   return (
-    <div className="rounded-md border border-border bg-card p-5">
-      <Icon className="h-5 w-5 text-primary" />
-      <h3 className="mt-3 font-display text-lg font-medium">{title}</h3>
-      <p className="mt-1 text-sm text-muted-foreground">{body}</p>
+    <div className="flex gap-4">
+      <Icon className="h-5 w-5 shrink-0 text-brand mt-0.5" />
+      <div>
+        <h3 className="type-subsection text-base text-ink-primary">{title}</h3>
+        <p className="mt-1 type-body-small text-ink-secondary">{body}</p>
+      </div>
     </div>
   );
 }

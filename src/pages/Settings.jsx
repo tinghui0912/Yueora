@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import PageHeader from '@/components/patterns/PageHeader';
 
 const items = [
   { to: '/settings/account', label: 'Account' },
@@ -12,7 +13,7 @@ const items = [
 export default function Settings() {
   return (
     <div className="mx-auto max-w-4xl px-5 py-8 md:px-8">
-      <h1 className="font-display text-2xl font-medium">Settings</h1>
+      <PageHeader title="Settings" />
       <div className="mt-6 flex flex-col gap-6 md:flex-row">
         <nav className="shrink-0 md:w-48">
           <ul className="flex gap-1 overflow-x-auto pb-1 md:flex-col md:gap-0.5 md:overflow-visible">

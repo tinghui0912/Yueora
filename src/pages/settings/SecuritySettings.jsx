@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { usePrototypeStore } from '@/stores/prototypeStore';
+import SettingsSection from '@/components/patterns/SettingsSection';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -47,16 +48,16 @@ export default function SecuritySettings() {
   };
 
   return (
-    <div className="space-y-6">
-      <Section title="Password" desc="Choose a strong password you don't use elsewhere.">
+    <div className="divide-y divide-line-subtle">
+      <SettingsSection title="Password" desc="Choose a strong password you don't use elsewhere.">
         <form onSubmit={changePw} className="max-w-sm space-y-4">
           <div className="space-y-1.5"><Label htmlFor="cur">Current password</Label><Input id="cur" type="password" placeholder="••••••••" /></div>
           <div className="space-y-1.5"><Label htmlFor="new">New password</Label><Input id="new" type="password" /></div>
           <div className="flex items-center gap-3"><Button type="submit">Update password</Button>{pwSaved && <span className="text-sm text-primary">Updated</span>}</div>
         </form>
-      </Section>
+      </SettingsSection>
 
-      <Section title="Two-factor authentication" desc="Add an extra layer of security to your account.">
+      <SettingsSection title="Two-factor authentication" desc="Add an extra layer of security to your account.">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShieldCheck className={`h-5 w-5 ${twoFactor ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -68,9 +69,9 @@ export default function SecuritySettings() {
             <Button size="sm" onClick={startEnable}>Enable 2FA</Button>
           )}
         </div>
-      </Section>
+      </SettingsSection>
 
-      <Section title="Passkeys" desc="Sign in faster with a passkey.">
+      <SettingsSection title="Passkeys" desc="Sign in faster with a passkey.">
         {account.passkeys.length === 0 ? (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2"><KeyRound className="h-5 w-5 text-muted-foreground" /><span className="text-sm">No passkeys yet</span></div>
@@ -92,9 +93,9 @@ export default function SecuritySettings() {
             <Button variant="outline" size="sm" className="mt-3" onClick={() => setPasskeyOpen(true)}><Plus className="mr-1.5 h-4 w-4" /> Add another</Button>
           </>
         )}
-      </Section>
+      </SettingsSection>
 
-      <Section title="Active sessions" desc="Devices currently signed in to your account.">
+      <SettingsSection title="Active sessions" desc="Devices currently signed in to your account.">
         <ul className="divide-y divide-border">
           {account.sessions.map((s) => (
             <li key={s.id} className="flex items-center justify-between py-3">
@@ -109,14 +110,14 @@ export default function SecuritySettings() {
         {account.sessions.filter((s) => !s.current).length > 0 && (
           <Button variant="outline" className="mt-3" onClick={signOutAllOther}>Sign out all other sessions</Button>
         )}
-      </Section>
+      </SettingsSection>
 
-      <Section title="Security activity" desc="Recent sign-ins and account changes.">
+      <SettingsSection title="Security activity" desc="Recent sign-ins and account changes.">
         <ul className="space-y-2 text-sm">
           <li className="flex justify-between"><span>New sign-in on Chrome</span><span className="text-muted-foreground">1 day ago</span></li>
           <li className="flex justify-between"><span>Password updated</span><span className="text-muted-foreground">2 weeks ago</span></li>
         </ul>
-      </Section>
+      </SettingsSection>
 
       {/* 2FA setup dialog */}
       <Dialog open={setupStep > 0} onOpenChange={(o) => !o && cancelSetup()}>
@@ -169,16 +170,6 @@ export default function SecuritySettings() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
-  );
-}
-
-function Section({ title, desc, children }) {
-  return (
-    <div className="rounded-md border border-border bg-card p-5">
-      <h2 className="font-display text-lg font-medium">{title}</h2>
-      <p className="mt-0.5 text-sm text-muted-foreground">{desc}</p>
-      <div className="mt-4">{children}</div>
     </div>
   );
 }

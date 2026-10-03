@@ -5,6 +5,7 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePrototypeStore } from '@/stores/prototypeStore';
+import SettingsSection from '@/components/patterns/SettingsSection';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -45,8 +46,8 @@ export default function PlanSettings() {
   };
 
   return (
-    <div className="space-y-6">
-      <Section title="Current plan" desc={isPro ? (isCancelling ? `Pro until ${subscription.cancelAt}, then Free.` : "You're on Pro. Thanks for being on Yueora.") : "You're on the Free plan."}>
+    <div className="divide-y divide-line-subtle">
+      <SettingsSection title="Current plan" desc={isPro ? (isCancelling ? `Pro until ${subscription.cancelAt}, then Free.` : "You're on Pro. Thanks for being on Yueora.") : "You're on the Free plan."}>
         <div className="flex items-center justify-between rounded-md border border-border p-4">
           <div>
             <p className="flex items-center gap-1.5 font-display text-lg font-medium">{isPro && <Sparkles className="h-4 w-4 text-gold" />} {plans[subscription.plan]?.name || 'Pro'}</p>
@@ -71,19 +72,19 @@ export default function PlanSettings() {
           </div>
         )}
         {done && <p className="mt-2 text-sm text-primary">{done === 'upgrade' ? 'Welcome to Pro!' : done === 'resume' ? 'Subscription resumed — welcome back.' : done === 'downgrade' ? `You'll keep Pro until ${subscription.cancelAt}, then move to Free.` : 'Subscription cancelled.'}</p>}
-      </Section>
+      </SettingsSection>
 
       {isPro && (
-        <Section title="Usage" desc="How much of your plan you're using.">
+        <SettingsSection title="Usage" desc="How much of your plan you're using.">
           <div className="space-y-3">
             <UsageBar label="Scores" value={subscription.usage.scores} limit={plans.pro.scores} />
             <UsageBar label="Imports this month" value={subscription.usage.imports} limit="Unlimited" />
             <UsageBar label="Storage" value={subscription.usage.storage} limit="10 GB" />
           </div>
-        </Section>
+        </SettingsSection>
       )}
 
-      <Section title="Pro plan" desc="Unlimited scores, analytics, and export.">
+      <SettingsSection title="Pro plan" desc="Unlimited scores, analytics, and export.">
         <div className="rounded-md border border-border p-5">
           <div className="flex items-center justify-between">
             <div>
@@ -99,16 +100,16 @@ export default function PlanSettings() {
           </ul>
           {isPro ? <Button variant="outline" className="mt-5" disabled>Current plan</Button> : <Button className="mt-5" onClick={() => setDialog('upgrade')}>Upgrade to Pro</Button>}
         </div>
-      </Section>
+      </SettingsSection>
 
-      <Section title="Payment method" desc="How you pay for Pro.">
+      <SettingsSection title="Payment method" desc="How you pay for Pro.">
         <div className="flex items-center justify-between">
           <span className="text-sm">{isPro ? `${subscription.payment.method} •${subscription.payment.last4}` : 'No card on file'}</span>
           <Button variant="outline" size="sm" onClick={() => setPayOpen(true)}>{isPro ? 'Update' : 'Add card'}</Button>
         </div>
-      </Section>
+      </SettingsSection>
 
-      <Section title="Billing history" desc="Past invoices and receipts.">
+      <SettingsSection title="Billing history" desc="Past invoices and receipts.">
         {billingHistory.length === 0 ? (
           <p className="text-sm text-muted-foreground">No charges yet.</p>
         ) : (
@@ -123,7 +124,7 @@ export default function PlanSettings() {
             ))}
           </ul>
         )}
-      </Section>
+      </SettingsSection>
 
       <Dialog open={dialog !== null} onOpenChange={(o) => !o && setDialog(null)}>
         <DialogContent className="max-w-sm">
@@ -183,16 +184,6 @@ function UsageBar({ label, value, limit }) {
     <div>
       <div className="flex justify-between text-sm"><span className="text-muted-foreground">{label}</span><span>{value} / {limit}</span></div>
       <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} /></div>
-    </div>
-  );
-}
-
-function Section({ title, desc, children }) {
-  return (
-    <div className="rounded-md border border-border bg-card p-5">
-      <h2 className="font-display text-lg font-medium">{title}</h2>
-      <p className="mt-0.5 text-sm text-muted-foreground">{desc}</p>
-      <div className="mt-4">{children}</div>
     </div>
   );
 }

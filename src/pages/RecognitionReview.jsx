@@ -5,6 +5,8 @@ import { usePrototypeStore } from '@/stores/prototypeStore';
 import { generateNotes } from '@/lib/mockData';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import StateMessage from '@/components/patterns/StateMessage';
 import { useToast } from '@/components/ui/use-toast';
 
 export default function RecognitionReview() {
@@ -23,11 +25,13 @@ export default function RecognitionReview() {
 
   if (!imp) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <p>Import not found.</p>
-          <Link to="/imports" className="text-primary underline">Back to imports</Link>
-        </div>
+      <div className="flex h-screen items-center justify-center bg-surface-canvas">
+        <StateMessage
+          tone="neutral"
+          title="Import not found"
+          description="This import may have been removed, or the link may be incorrect."
+          primaryAction={<Button onClick={() => navigate('/imports')}>Back to imports</Button>}
+        />
       </div>
     );
   }
@@ -65,19 +69,19 @@ export default function RecognitionReview() {
 
       {/* Mobile view toggle */}
       <div className="flex border-b border-border md:hidden">
-        <button onClick={() => setMobileView('original')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 text-sm font-medium ${mobileView === 'original' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}><ScanLine className="h-4 w-4" /> Original</button>
-        <button onClick={() => setMobileView('recognized')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 text-sm font-medium ${mobileView === 'recognized' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}><Pencil className="h-4 w-4" /> Recognized</button>
+        <button onClick={() => setMobileView('original')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 text-sm font-medium ${mobileView === 'original' ? 'border-b-2 border-brand text-brand' : 'text-muted-foreground'}`}><ScanLine className="h-4 w-4" /> Original</button>
+        <button onClick={() => setMobileView('recognized')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 text-sm font-medium ${mobileView === 'recognized' ? 'border-b-2 border-brand text-brand' : 'text-muted-foreground'}`}><Pencil className="h-4 w-4" /> Recognized</button>
       </div>
 
       <div className="flex min-h-0 flex-1">
         {/* Original scan — desktop */}
         <div className="hidden w-1/3 shrink-0 flex-col border-r border-border md:flex">
-          <p className="border-b border-border px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Original scan</p>
+          <p className="border-b border-border px-4 py-2 type-caption text-ink-tertiary">Original scan</p>
           <div className="flex-1 overflow-auto bg-background p-4">
             <div className="mx-auto max-w-sm rounded-md border border-border bg-card p-4">
               <div className="staff-bg aspect-[3/4] w-full rounded border border-border opacity-60" />
               <p className="mt-2 text-center text-xs text-muted-foreground">Page 1 (scan)</p>
-              {active && <p className="mt-1 text-center text-xs text-primary">Highlight near measure {active.measure}</p>}
+              {active && <p className="mt-1 text-center text-xs text-warning">Highlight near measure {active.measure}</p>}
             </div>
           </div>
         </div>
@@ -88,7 +92,7 @@ export default function RecognitionReview() {
             <div className="mx-auto max-w-sm rounded-md border border-border bg-card p-4">
               <div className="staff-bg aspect-[3/4] w-full rounded border border-border opacity-60" />
               <p className="mt-2 text-center text-xs text-muted-foreground">Page 1 (scan)</p>
-              {active && <p className="mt-1 text-center text-xs text-primary">Highlight near measure {active.measure}</p>}
+              {active && <p className="mt-1 text-center text-xs text-warning">Highlight near measure {active.measure}</p>}
             </div>
           </div>
         )}
@@ -96,12 +100,12 @@ export default function RecognitionReview() {
         {/* Recognized score */}
         {(mobileView === 'recognized' || typeof window !== 'undefined') && (
           <div className={`min-w-0 flex-1 overflow-auto bg-background p-6 ${mobileView === 'original' ? 'hidden md:block' : ''}`}>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recognized score</p>
+            <p className="mb-3 type-caption text-ink-tertiary">Recognized score</p>
             <div className="mx-auto max-w-3xl rounded-md border border-border bg-card p-6 shadow-sm">
               <ScoreCanvas notes={notes} selectedIds={new Set()} onSelect={() => {}} zoom={1} activeIssueMeasure={active?.measure} />
               {active && (
-                <div className="mt-3 rounded-md border border-gold/40 bg-gold/10 px-3 py-2">
-                  <p className="text-sm font-medium text-gold">Measure {active.measure}: {active.type}</p>
+                <div className="mt-3 rounded-md border border-warning/40 bg-warning/10 px-3 py-2">
+                  <p className="text-sm font-medium text-warning">Measure {active.measure}: {active.type}</p>
                   <p className="text-xs text-muted-foreground">{active.detail}</p>
                 </div>
               )}
@@ -121,35 +125,29 @@ export default function RecognitionReview() {
         <ChevronUp className="h-4 w-4 text-muted-foreground" />
       </button>
 
-      {/* Mobile issues bottom sheet */}
-      {mobileIssuesOpen && (
-        <div className="fixed inset-0 z-50 md:hidden" onClick={() => setMobileIssuesOpen(false)}>
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="absolute inset-x-0 bottom-0 max-h-[70vh] overflow-y-auto rounded-t-lg border-t border-border bg-card p-4" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold">Issues to review</p>
-              <button onClick={() => setMobileIssuesOpen(false)} className="text-sm text-muted-foreground">Close</button>
-            </div>
-            <div className="mt-3 space-y-2">
-              {issues.map((iss) => (
-                <button key={iss.id} onClick={() => { setActiveIssue(iss.id); setMobileIssuesOpen(false); }} className={`w-full rounded-md border p-3 text-left ${activeIssue === iss.id ? 'border-primary bg-accent/40' : 'border-border'} ${iss.resolved ? 'opacity-50' : ''}`}>
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 text-sm font-medium"><AlertTriangle className="h-3.5 w-3.5 text-gold" /> Measure {iss.measure}</span>
-                    {iss.resolved && <Check className="h-3.5 w-3.5 text-primary" />}
-                  </div>
-                  <p className="mt-0.5 text-xs text-muted-foreground">{iss.type}</p>
-                </button>
-              ))}
-            </div>
-            {active && (
-              <div className="mt-3 border-t border-border pt-3">
-                <Button variant="outline" size="sm" className="w-full" onClick={handleMarkFixed}>{active.resolved ? 'Mark as unresolved' : 'Mark as fixed'}</Button>
-                <Button variant="outline" size="sm" className="mt-2 w-full" onClick={() => navigate(`/score/${imp.scoreId}/edit`, { state: { importId, activeIssueId: active?.id } })}><Pencil className="mr-1.5 h-3.5 w-3.5" /> Fix in editor</Button>
-              </div>
-            )}
+      {/* Mobile issues sheet */}
+      <Sheet open={mobileIssuesOpen} onOpenChange={setMobileIssuesOpen}>
+        <SheetContent side="bottom" className="max-h-[70vh] overflow-y-auto">
+          <SheetHeader><SheetTitle>Issues to review</SheetTitle></SheetHeader>
+          <div className="mt-3 space-y-2">
+            {issues.map((iss) => (
+              <button key={iss.id} onClick={() => { setActiveIssue(iss.id); setMobileIssuesOpen(false); }} className={`w-full rounded-control border p-3 text-left ${activeIssue === iss.id ? 'border-brand bg-accent/40' : 'border-line-subtle'} ${iss.resolved ? 'opacity-50' : ''}`}>
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-sm font-medium"><AlertTriangle className="h-3.5 w-3.5 text-warning" /> Measure {iss.measure}</span>
+                  {iss.resolved && <Check className="h-3.5 w-3.5 text-success" />}
+                </div>
+                <p className="mt-0.5 type-metadata text-ink-tertiary">{iss.type}</p>
+              </button>
+            ))}
           </div>
-        </div>
-      )}
+          {active && (
+            <div className="mt-3 border-t border-line-subtle pt-3">
+              <Button variant="outline" size="sm" className="w-full" onClick={handleMarkFixed}>{active.resolved ? 'Mark as unresolved' : 'Mark as fixed'}</Button>
+              <Button variant="outline" size="sm" className="mt-2 w-full" onClick={() => navigate(`/score/${imp.scoreId}/edit`, { state: { importId, activeIssueId: active?.id } })}><Pencil className="mr-1.5 h-3.5 w-3.5" /> Fix in editor</Button>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
 
       {/* Bottom actions — desktop */}
       <div className="hidden items-center justify-between border-t border-border px-4 py-3 md:flex">
@@ -177,18 +175,18 @@ export default function RecognitionReview() {
 function IssuesPanel({ issues, activeIssue, setActiveIssue, active, onMarkFixed, onFixInEditor }) {
   return (
     <>
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Issues to review</p>
+      <p className="type-caption text-ink-tertiary">Issues to review</p>
       <div className="mt-3 space-y-2">
         {issues.length === 0 && <p className="text-sm text-muted-foreground">No issues detected.</p>}
         {issues.map((iss) => (
           <button
             key={iss.id}
             onClick={() => setActiveIssue(iss.id)}
-            className={`w-full rounded-md border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-primary bg-accent/40' : 'border-border hover:bg-accent/40'} ${iss.resolved ? 'opacity-50' : ''}`}
+            className={`w-full rounded-md border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-accent/40' : 'border-line-subtle hover:bg-accent/40'} ${iss.resolved ? 'opacity-50' : ''}`}
           >
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-sm font-medium"><AlertTriangle className="h-3.5 w-3.5 text-gold" /> Measure {iss.measure}</span>
-              {iss.resolved && <Check className="h-3.5 w-3.5 text-primary" />}
+              <span className="flex items-center gap-1.5 text-sm font-medium"><AlertTriangle className="h-3.5 w-3.5 text-warning" /> Measure {iss.measure}</span>
+              {iss.resolved && <Check className="h-3.5 w-3.5 text-success" />}
             </div>
             <p className="mt-0.5 text-xs text-muted-foreground">{iss.type}</p>
             <p className="mt-0.5 text-xs text-muted-foreground">{iss.detail}</p>
