@@ -4,6 +4,7 @@ import { ArrowLeft, Check, Pencil, AlertTriangle, ChevronUp, ChevronDown, ScanLi
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { generateNotes } from '@/lib/mockData';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
+import MockScanPage from '@/components/visuals/MockScanPage';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import StateMessage from '@/components/patterns/StateMessage';
@@ -25,7 +26,7 @@ export default function RecognitionReview() {
 
   if (!imp) {
     return (
-      <div className="flex h-screen items-center justify-center bg-surface-canvas">
+      <div className="flex h-dvh items-center justify-center bg-surface-canvas">
         <StateMessage
           tone="neutral"
           title="Import not found"
@@ -50,9 +51,9 @@ export default function RecognitionReview() {
   };
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-dvh flex-col">
       {/* Top bar */}
-      <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+      <div className="flex items-center justify-between border-b border-line-subtle px-4 py-2.5">
         <Link to={`/imports/${importId}`} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> {imp.title}
         </Link>
@@ -68,19 +69,19 @@ export default function RecognitionReview() {
       </div>
 
       {/* Mobile view toggle */}
-      <div className="flex border-b border-border md:hidden">
+      <div className="flex border-b border-line-subtle md:hidden">
         <button onClick={() => setMobileView('original')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 text-sm font-medium ${mobileView === 'original' ? 'border-b-2 border-brand text-brand' : 'text-muted-foreground'}`}><ScanLine className="h-4 w-4" /> Original</button>
         <button onClick={() => setMobileView('recognized')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 text-sm font-medium ${mobileView === 'recognized' ? 'border-b-2 border-brand text-brand' : 'text-muted-foreground'}`}><Pencil className="h-4 w-4" /> Recognized</button>
       </div>
 
       <div className="flex min-h-0 flex-1">
         {/* Original scan — desktop */}
-        <div className="hidden w-1/3 shrink-0 flex-col border-r border-border md:flex">
-          <p className="border-b border-border px-4 py-2 type-caption text-ink-tertiary">Original scan</p>
-          <div className="flex-1 overflow-auto bg-background p-4">
-            <div className="mx-auto max-w-sm rounded-md border border-border bg-card p-4">
-              <div className="staff-bg aspect-[3/4] w-full rounded border border-border opacity-60" />
-              <p className="mt-2 text-center text-xs text-muted-foreground">Page 1 (scan)</p>
+        <div className="hidden w-1/3 shrink-0 flex-col border-r border-line-subtle md:flex">
+          <p className="border-b border-line-subtle px-4 py-2 type-caption text-ink-tertiary">Original scan</p>
+          <div className="flex-1 overflow-auto bg-surface-canvas p-4">
+            <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-3 shadow-sm">
+              <MockScanPage seed={importId + '-scan'} className="aspect-[3/4] w-full" showHighlight={!!active} highlightMeasure={active?.measure} />
+              <p className="mt-2 text-center text-xs text-ink-tertiary">Page 1 (scan)</p>
               {active && <p className="mt-1 text-center text-xs text-warning">Highlight near measure {active.measure}</p>}
             </div>
           </div>
@@ -88,10 +89,10 @@ export default function RecognitionReview() {
 
         {/* Original scan — mobile */}
         {mobileView === 'original' && (
-          <div className="flex-1 overflow-auto bg-background p-4 md:hidden">
-            <div className="mx-auto max-w-sm rounded-md border border-border bg-card p-4">
-              <div className="staff-bg aspect-[3/4] w-full rounded border border-border opacity-60" />
-              <p className="mt-2 text-center text-xs text-muted-foreground">Page 1 (scan)</p>
+          <div className="flex-1 overflow-auto bg-surface-canvas p-4 md:hidden">
+            <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-3 shadow-sm">
+              <MockScanPage seed={importId + '-scan'} className="aspect-[3/4] w-full" showHighlight={!!active} highlightMeasure={active?.measure} />
+              <p className="mt-2 text-center text-xs text-ink-tertiary">Page 1 (scan)</p>
               {active && <p className="mt-1 text-center text-xs text-warning">Highlight near measure {active.measure}</p>}
             </div>
           </div>
@@ -99,9 +100,9 @@ export default function RecognitionReview() {
 
         {/* Recognized score */}
         {(mobileView === 'recognized' || typeof window !== 'undefined') && (
-          <div className={`min-w-0 flex-1 overflow-auto bg-background p-6 ${mobileView === 'original' ? 'hidden md:block' : ''}`}>
+          <div className={`min-w-0 flex-1 overflow-auto bg-surface-canvas p-6 ${mobileView === 'original' ? 'hidden md:block' : ''}`}>
             <p className="mb-3 type-caption text-ink-tertiary">Recognized score</p>
-            <div className="mx-auto max-w-3xl rounded-md border border-border bg-card p-6 shadow-sm">
+            <div className="mx-auto max-w-3xl rounded-md border border-line-subtle bg-surface-panel p-6 shadow-sm">
               <ScoreCanvas notes={notes} selectedIds={new Set()} onSelect={() => {}} zoom={1} activeIssueMeasure={active?.measure} />
               {active && (
                 <div className="mt-3 rounded-md border border-warning/40 bg-warning/10 px-3 py-2">
@@ -114,13 +115,13 @@ export default function RecognitionReview() {
         )}
 
         {/* Issues panel — desktop */}
-        <div className="hidden w-72 shrink-0 overflow-y-auto border-l border-border p-4 md:block">
+        <div className="hidden w-72 shrink-0 overflow-y-auto border-l border-line-subtle p-4 md:block">
           <IssuesPanel issues={issues} activeIssue={activeIssue} setActiveIssue={setActiveIssue} active={active} onMarkFixed={handleMarkFixed} onFixInEditor={() => navigate(`/score/${imp.scoreId}/edit`, { state: { importId, activeIssueId: active?.id } })} />
         </div>
       </div>
 
       {/* Mobile issues button */}
-      <button onClick={() => setMobileIssuesOpen(true)} className="flex items-center justify-between border-t border-border px-4 py-3 md:hidden">
+      <button onClick={() => setMobileIssuesOpen(true)} className="flex items-center justify-between border-t border-line-subtle px-4 py-3 md:hidden">
         <span className="text-sm font-medium">{issues.length} issues · {reviewed} reviewed</span>
         <ChevronUp className="h-4 w-4 text-muted-foreground" />
       </button>
@@ -150,7 +151,7 @@ export default function RecognitionReview() {
       </Sheet>
 
       {/* Bottom actions — desktop */}
-      <div className="hidden items-center justify-between border-t border-border px-4 py-3 md:flex">
+      <div className="hidden items-center justify-between border-t border-line-subtle px-4 py-3 md:flex">
         <span className="text-sm text-muted-foreground">{reviewed} of {issues.length} reviewed</span>
         <div className="flex gap-2">
           <Link to={`/score/${imp.scoreId}/edit`} state={{ importId, activeIssueId: active?.id }}>
@@ -161,7 +162,7 @@ export default function RecognitionReview() {
       </div>
 
       {/* Mobile bottom actions */}
-      <div className="flex items-center justify-between border-t border-border px-4 py-3 md:hidden">
+      <div className="flex items-center justify-between border-t border-line-subtle px-4 py-3 md:hidden" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
         <span className="text-sm text-muted-foreground">{reviewed}/{issues.length}</span>
         <div className="flex gap-2">
           <Link to={`/score/${imp.scoreId}/edit`} state={{ importId, activeIssueId: active?.id }}><Button variant="outline" size="sm"><Pencil className="mr-1 h-3.5 w-3.5" /> Editor</Button></Link>
@@ -195,7 +196,7 @@ function IssuesPanel({ issues, activeIssue, setActiveIssue, active, onMarkFixed,
         ))}
       </div>
       {active && (
-        <div className="mt-4 border-t border-border pt-3">
+        <div className="mt-4 border-t border-line-subtle pt-3">
           <Button variant="outline" size="sm" className="w-full" onClick={onMarkFixed}>{active.resolved ? 'Mark as unresolved' : 'Mark as fixed'}</Button>
           <Button variant="outline" size="sm" className="mt-2 w-full" onClick={onFixInEditor}><Pencil className="mr-1.5 h-3.5 w-3.5" /> Fix in editor</Button>
         </div>

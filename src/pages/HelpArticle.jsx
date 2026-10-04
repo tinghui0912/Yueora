@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ChevronRight, ThumbsUp, ThumbsDown, LifeBuoy, Flag } from 'lucide-react';
-import { getHelpArticle, helpArticles } from '@/lib/mockData';
+import { getHelpArticle } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
@@ -9,10 +9,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import PublicShell from '@/components/public/PublicShell';
 
 export default function HelpArticle() {
   const { slug } = useParams();
-  const navigate = useNavigate();
   const article = getHelpArticle(slug);
   const [feedback, setFeedback] = useState(null);
   const [supportOpen, setSupportOpen] = useState(false);
@@ -20,64 +20,65 @@ export default function HelpArticle() {
 
   if (!article) {
     return (
-      <div className="mx-auto max-w-2xl px-5 py-16 text-center">
-        <h1 className="font-display text-2xl">Article not found</h1>
-        <Link to="/help" className="mt-4 inline-block text-primary underline">Back to help center</Link>
-      </div>
+      <PublicShell>
+        <div className="mx-auto max-w-2xl px-5 py-16 text-center">
+          <h1 className="font-display text-2xl text-ink-primary">Article not found</h1>
+          <Link to="/help" className="mt-4 inline-block text-primary underline">Back to help center</Link>
+        </div>
+      </PublicShell>
     );
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-5 py-8 md:px-8">
-      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
-        <Link to="/help" className="hover:text-foreground">Help</Link>
-        <ChevronRight className="h-3.5 w-3.5" />
-        <span>{article.category}</span>
-      </nav>
+    <PublicShell>
+      <div className="mx-auto max-w-2xl px-5 py-12 md:px-8">
+        <nav className="flex items-center gap-1.5 text-sm text-ink-tertiary">
+          <Link to="/help" className="hover:text-ink-primary">Help</Link>
+          <ChevronRight className="h-3.5 w-3.5" />
+          <span className="text-ink-secondary">{article.category}</span>
+        </nav>
 
-      <h1 className="mt-4 font-display text-3xl font-medium">{article.title}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Updated {article.updated}</p>
+        <h1 className="mt-4 font-display text-3xl font-medium text-ink-primary">{article.title}</h1>
+        <p className="mt-2 text-sm text-ink-tertiary">Updated {article.updated}</p>
 
-      <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-foreground">
-        {article.body.map((p, i) => <p key={i}>{p}</p>)}
+        <div className="mt-8 space-y-4 text-[15px] leading-[1.8] text-ink-secondary">
+          {article.body.map((p, i) => <p key={i}>{p}</p>)}
+        </div>
+
+        {article.related.length > 0 && (
+          <div className="mt-10 border-t border-line-subtle pt-6">
+            <p className="type-caption text-ink-tertiary">Related articles</p>
+            <ul className="mt-3 divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
+              {article.related.map((r) => {
+                const a = getHelpArticle(r);
+                if (!a) return null;
+                return (
+                  <li key={r}>
+                    <Link to={`/help/${r}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent/40">
+                      <span className="text-sm font-medium text-ink-primary">{a.title}</span>
+                      <ChevronRight className="h-4 w-4 text-ink-tertiary" />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+
+        <div className="mt-8 rounded-container border border-line-subtle bg-surface-panel p-5">
+          <p className="text-sm font-medium text-ink-primary">Was this helpful?</p>
+          <div className="mt-3 flex items-center gap-2">
+            <Button variant={feedback === 'up' ? 'default' : 'outline'} size="sm" onClick={() => setFeedback('up')}><ThumbsUp className="mr-1.5 h-4 w-4" /> Yes</Button>
+            <Button variant={feedback === 'down' ? 'default' : 'outline'} size="sm" onClick={() => setFeedback('down')}><ThumbsDown className="mr-1.5 h-4 w-4" /> No</Button>
+            {feedback && <span className="text-sm text-ink-tertiary">Thanks for the feedback.</span>}
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={() => setSupportOpen(true)}><LifeBuoy className="mr-1.5 h-4 w-4" /> Contact support</Button>
+            <Button variant="ghost" size="sm" onClick={() => setSupportOpen(true)}><Flag className="mr-1.5 h-4 w-4" /> Report a problem</Button>
+          </div>
+        </div>
       </div>
 
-      {/* Related */}
-      {article.related.length > 0 && (
-        <div className="mt-8 border-t border-border pt-6">
-          <p className="type-caption text-ink-tertiary">Related articles</p>
-          <ul className="mt-3 divide-y divide-border rounded-md border border-border bg-card">
-            {article.related.map((r) => {
-              const a = getHelpArticle(r);
-              if (!a) return null;
-              return (
-                <li key={r}>
-                  <Link to={`/help/${r}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent/40">
-                    <span className="text-sm font-medium">{a.title}</span>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
-
-      {/* Feedback */}
-      <div className="mt-8 rounded-md border border-border bg-card p-5">
-        <p className="text-sm font-medium">Was this helpful?</p>
-        <div className="mt-3 flex items-center gap-2">
-          <Button variant={feedback === 'up' ? 'default' : 'outline'} size="sm" onClick={() => setFeedback('up')}><ThumbsUp className="mr-1.5 h-4 w-4" /> Yes</Button>
-          <Button variant={feedback === 'down' ? 'default' : 'outline'} size="sm" onClick={() => setFeedback('down')}><ThumbsDown className="mr-1.5 h-4 w-4" /> No</Button>
-          {feedback && <span className="text-sm text-muted-foreground">Thanks for the feedback.</span>}
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={() => setSupportOpen(true)}><LifeBuoy className="mr-1.5 h-4 w-4" /> Contact support</Button>
-          <Button variant="ghost" size="sm" onClick={() => setSupportOpen(true)}><Flag className="mr-1.5 h-4 w-4" /> Report a problem</Button>
-        </div>
-      </div>
-
-      {/* Support dialog */}
       <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>Contact support</DialogTitle></DialogHeader>
@@ -106,6 +107,6 @@ export default function HelpArticle() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </PublicShell>
   );
 }

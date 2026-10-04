@@ -7,6 +7,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
+import FileThumbnail from '@/components/visuals/FileThumbnail';
 
 const statusMeta = {
   processing: { label: 'Processing your score…', color: 'text-brand' },
@@ -94,8 +95,8 @@ export default function ImportDetail() {
         <h2 className="type-caption text-ink-tertiary">Source files</h2>
         <div className="mt-2 space-y-2">
           {Array.from({ length: imp.pages }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3 rounded-md border border-border bg-card p-3">
-              <FileMusic className="h-5 w-5 text-muted-foreground" />
+            <div key={i} className="flex items-center gap-3 rounded-container border border-line-subtle bg-surface-panel p-3">
+              <FileThumbnail seed={importId + '-page-' + (i + 1)} className="h-14 w-12" />
               <span className="flex-1 text-sm">Page {i + 1}.pdf</span>
               <button onClick={() => setReplaceOpen(true)} className="rounded p-1.5 text-muted-foreground hover:bg-accent" aria-label="Replace"><RefreshCw className="h-4 w-4" /></button>
             </div>

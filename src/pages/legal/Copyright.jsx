@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import LegalLayout from '@/components/legal/LegalLayout';
+import PublicShell from '@/components/public/PublicShell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,7 +14,7 @@ export default function Copyright() {
   const [sent, setSent] = useState(false);
 
   return (
-    <>
+    <PublicShell>
       <LegalLayout
         title="Copyright & Takedown"
         updated="Sep 1, 2026"
@@ -25,10 +26,12 @@ export default function Copyright() {
           { heading: 'Counter-notice', paragraphs: ['If your content was removed and you believe it was in error, you can submit a counter-notice through support. We’ll review both sides before acting.'] },
           { heading: 'Repeat infringers', paragraphs: ['We may terminate the accounts of users who repeatedly upload infringing content.'] },
         ]}
-      />
-      <div className="mx-auto max-w-3xl px-5 pb-12 md:px-8">
-        <Button onClick={() => { setOpen(true); setSent(false); }}>Submit a takedown request</Button>
-      </div>
+      >
+        <div className="border-t border-line-subtle pt-6">
+          <p className="text-sm text-ink-secondary">Need to report copyrighted material?</p>
+          <Button className="mt-3" onClick={() => { setOpen(true); setSent(false); }}>Submit a takedown request</Button>
+        </div>
+      </LegalLayout>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-md">
@@ -56,6 +59,6 @@ export default function Copyright() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </PublicShell>
   );
 }

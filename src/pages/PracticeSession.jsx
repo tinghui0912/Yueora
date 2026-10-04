@@ -145,7 +145,7 @@ export default function PracticeSession() {
         </button>
         <h1 className="mt-4 font-display text-2xl font-medium">Practice setup</h1>
 
-        <div className="mt-6 space-y-6 rounded-md border border-border bg-card p-6">
+        <div className="mt-6 space-y-6 rounded-md border border-line-subtle bg-surface-panel p-6">
           <Field label="Mode">
             <Seg options={[['follow', 'Follow notes'], ['performance', 'Performance']]} value={mode} onChange={setMode} />
             <p className="mt-1.5 text-xs text-muted-foreground">{mode === 'follow' ? 'Yueora waits for you to play each note before moving on.' : 'Yueora advances automatically — play along in real time.'}</p>
@@ -229,8 +229,8 @@ export default function PracticeSession() {
 
   // ---- Practice workspace (immersive) ----
   return (
-    <div className="flex h-screen flex-col">
-      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+    <div className="flex h-dvh flex-col">
+      <div className="flex items-center justify-between border-b border-line-subtle px-4 py-3">
         <button onClick={() => setExitOpen(true)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> {score.title}
         </button>
@@ -242,15 +242,15 @@ export default function PracticeSession() {
         </div>
       </div>
 
-      <div className="flex flex-1 items-center justify-center overflow-auto bg-background p-6">
-        <div className="w-full max-w-3xl rounded-md border border-border bg-card p-6 shadow-sm">
+      <div className="flex flex-1 items-center justify-center overflow-auto bg-surface-canvas p-6">
+        <div className="w-full max-w-3xl rounded-md border border-line-subtle bg-surface-panel p-6 shadow-sm">
           <ScoreCanvas notes={notes} selectedIds={null} onSelect={() => {}} zoom={1.1} activeMeasure={activeMeasure} />
           {autoScroll && <p className="mt-2 text-center text-xs text-muted-foreground">Auto-scrolling to measure {activeMeasure}</p>}
         </div>
       </div>
 
       {/* Live feedback */}
-      <div className="border-t border-border bg-card px-4 py-3 text-center">
+      <div className="border-t border-line-subtle bg-surface-panel px-4 py-3 text-center">
         <p className="type-caption text-ink-tertiary">Current note</p>
         <p className="mt-0.5 type-display text-4xl text-ink-primary">{noteSeq[idx]}</p>
         <div className="mt-1 flex items-center justify-center gap-3 text-sm">
@@ -260,7 +260,7 @@ export default function PracticeSession() {
       </div>
 
       {/* Controls */}
-      <div className="border-t border-border px-4 py-4">
+      <div className="border-t border-line-subtle px-4 py-4" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
         <div className="mx-auto flex max-w-2xl flex-wrap items-center justify-between gap-3">
           <button onClick={() => setMetronome((m) => !m)} className={`flex items-center gap-2 rounded-control border px-3 py-2 text-sm ${metronome ? 'border-practice-current text-practice-current' : 'border-line-subtle text-ink-secondary'}`}>
             <Timer className="h-4 w-4" /> Metronome
@@ -278,12 +278,12 @@ export default function PracticeSession() {
 
       {/* Exit confirmation */}
       <Dialog open={exitOpen} onOpenChange={setExitOpen}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>Leave practice?</DialogTitle></DialogHeader>
           <p className="text-sm text-muted-foreground">Your session is still going. You can save what you have so far, or discard it.</p>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setExitOpen(false)}>Keep playing</Button>
-            <Button variant="outline" onClick={finish}>Save partial session</Button>
+            <Button variant="outline" onClick={finish}>Save &amp; leave</Button>
             <Button variant="destructive" onClick={() => navigate(`/score/${scoreId}`)}>Discard</Button>
           </DialogFooter>
         </DialogContent>
@@ -297,7 +297,7 @@ function Field({ label, children }) {
 }
 function Seg({ options, value, onChange }) {
   return (
-    <div className="inline-flex flex-wrap rounded-md border border-border p-0.5">
+    <div className="inline-flex flex-wrap rounded-md border border-line-subtle p-0.5">
       {options.map(([v, label]) => (
         <button key={v} onClick={() => onChange(v)} className={`rounded px-3 py-1.5 text-sm ${value === v ? 'bg-accent font-medium text-accent-foreground' : 'text-muted-foreground'}`}>{label}</button>
       ))}
@@ -306,10 +306,10 @@ function Seg({ options, value, onChange }) {
 }
 function ToggleRow({ label, checked, onChange, icon: Icon }) {
   return (
-    <button onClick={() => onChange(!checked)} className="flex items-center justify-between rounded-md border border-border px-3 py-2 text-sm">
+    <button onClick={() => onChange(!checked)} className="flex items-center justify-between rounded-md border border-line-subtle px-3 py-2 text-sm">
       <span className="flex items-center gap-1.5">{Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground" />} {label}</span>
       <span className={`h-5 w-9 rounded-full p-0.5 transition-colors ${checked ? 'bg-primary' : 'bg-input'}`}>
-        <span className={`block h-4 w-4 rounded-full bg-background transition-transform ${checked ? 'translate-x-4' : ''}`} />
+        <span className={`block h-4 w-4 rounded-full bg-surface-canvas transition-transform ${checked ? 'translate-x-4' : ''}`} />
       </span>
     </button>
   );

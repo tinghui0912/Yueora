@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, ArrowRight } from 'lucide-react';
-import ExternalShell from '@/components/external/ExternalShell';
+import PublicShell from '@/components/public/PublicShell';
 import { plans } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 
@@ -19,7 +19,7 @@ export default function Pricing() {
   const [yearly, setYearly] = useState(false);
 
   return (
-    <ExternalShell>
+    <PublicShell>
       <div className="mx-auto max-w-4xl px-5 py-12 md:px-8">
         <div className="text-center">
           <h1 className="font-display text-[clamp(2rem,4vw,3rem)] font-medium">Play more, for less</h1>
@@ -74,7 +74,7 @@ export default function Pricing() {
           Already have an account? <Link to="/login" className="font-medium text-primary hover:underline">Log in</Link>
         </p>
       </div>
-    </ExternalShell>
+    </PublicShell>
   );
 }
 

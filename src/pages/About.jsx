@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import ExternalShell from '@/components/external/ExternalShell';
+import PublicShell from '@/components/public/PublicShell';
 import { Music2, Heart, Eye, TrendingUp, Hand } from 'lucide-react';
 
 export default function About() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <ExternalShell>
+    <PublicShell>
       <div className="mx-auto max-w-3xl px-5 py-12 md:px-8 md:py-20">
         {/* Hero */}
         <div className="text-center">
@@ -110,7 +110,7 @@ export default function About() {
           </div>
         </section>
       </div>
-    </ExternalShell>
+    </PublicShell>
   );
 }
 

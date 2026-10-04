@@ -165,9 +165,9 @@ export default function Editor() {
   }
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-dvh flex-col">
       {/* Top bar */}
-      <div className="flex items-center justify-between border-b border-border px-3 py-2">
+      <div className="flex items-center justify-between border-b border-line-subtle px-3 py-2">
         <div className="flex items-center gap-3">
           <Link to={score._pending && importId ? `/imports/${importId}` : `/score/${scoreId}`} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">{score.title}</span>
@@ -184,7 +184,7 @@ export default function Editor() {
           <button onClick={redo} disabled={future.length === 0} className="rounded p-1.5 hover:bg-accent disabled:opacity-40" aria-label="Redo"><Redo2 className="h-4 w-4" /></button>
           <button onClick={copySelected} disabled={selectedIds.size === 0} className="rounded p-1.5 hover:bg-accent disabled:opacity-40" aria-label="Copy"><Copy className="h-4 w-4" /></button>
           <button onClick={paste} disabled={clipboard.length === 0} className="rounded p-1.5 hover:bg-accent disabled:opacity-40" aria-label="Paste"><Clipboard className="h-4 w-4" /></button>
-          {!score._pending && <button onClick={() => setSharingOpen(true)} className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 hover:bg-accent"><Share2 className="h-4 w-4" /> Share</button>}
+          {!score._pending && <button onClick={() => setSharingOpen(true)} className="flex items-center gap-1.5 rounded-md border border-line-subtle px-2.5 py-1.5 hover:bg-accent"><Share2 className="h-4 w-4" /> Share</button>}
         </div>
       </div>
 
@@ -198,21 +198,21 @@ export default function Editor() {
 
       {/* Recognition issue nav bar */}
       {activeIssue && (
-        <div className="flex items-center justify-between border-b border-border bg-gold/5 px-4 py-2">
+        <div className="flex items-center justify-between border-b border-line-subtle bg-gold/5 px-4 py-2">
           <div className="flex items-center gap-2 text-sm">
             <span className="font-medium text-gold">Recognition issue {issueIdx + 1} of {issues.length}</span>
             <span className="text-muted-foreground">· Measure {activeIssue.measure} · {activeIssue.type}</span>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={goPrevIssue} disabled={issueIdx === 0} className="rounded border border-border p-1.5 hover:bg-accent disabled:opacity-30" aria-label="Previous issue"><ChevronLeft className="h-3.5 w-3.5" /></button>
-            <button onClick={goNextIssue} disabled={issueIdx >= issues.length - 1} className="rounded border border-border p-1.5 hover:bg-accent disabled:opacity-30" aria-label="Next issue"><ChevronRight className="h-3.5 w-3.5" /></button>
+            <button onClick={goPrevIssue} disabled={issueIdx === 0} className="rounded border border-line-subtle p-1.5 hover:bg-accent disabled:opacity-30" aria-label="Previous issue"><ChevronLeft className="h-3.5 w-3.5" /></button>
+            <button onClick={goNextIssue} disabled={issueIdx >= issues.length - 1} className="rounded border border-line-subtle p-1.5 hover:bg-accent disabled:opacity-30" aria-label="Next issue"><ChevronRight className="h-3.5 w-3.5" /></button>
             <Button size="sm" variant="outline" onClick={markIssueFixed}>{activeIssue.resolved ? 'Unmark' : 'Mark fixed'}</Button>
           </div>
         </div>
       )}
 
       {/* Mobile tool bar */}
-      <div className="flex items-center gap-1 overflow-x-auto border-b border-border px-2 py-1.5 md:hidden no-scrollbar">
+      <div className="flex items-center gap-1 overflow-x-auto border-b border-line-subtle px-2 py-1.5 md:hidden no-scrollbar">
         {tools.map((t) => (
           <button key={t.id} onClick={() => setTool(t.id)} className={`flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs ${tool === t.id ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent'}`}>
             <t.icon className="h-4 w-4" /> {t.label}
@@ -226,7 +226,7 @@ export default function Editor() {
       </div>
 
       {/* View toggle */}
-      <div className="flex items-center gap-1 border-b border-border px-4 py-1.5">
+      <div className="flex items-center gap-1 border-b border-line-subtle px-4 py-1.5">
         <ViewTab active={view === 'score'} onClick={() => setView('score')} icon={Music2} label="Score" />
         <ViewTab active={view === 'original'} onClick={() => setView('original')} icon={ScanLine} label="Original" />
         <ViewTab active={view === 'split'} onClick={() => setView('split')} icon={ChevronLeft} label="Side by side" />
@@ -234,7 +234,7 @@ export default function Editor() {
 
       <div className="flex min-h-0 flex-1">
         {/* Tool rail */}
-        <div className="hidden w-14 shrink-0 flex-col items-center gap-1 border-r border-border py-3 md:flex">
+        <div className="hidden w-14 shrink-0 flex-col items-center gap-1 border-r border-line-subtle py-3 md:flex">
           {tools.map((t) => (
             <button key={t.id} onClick={() => setTool(t.id)} className={`flex h-11 w-11 flex-col items-center justify-center gap-0.5 rounded-md transition-colors ${tool === t.id ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent'}`}>
               <t.icon className="h-4 w-4" />
@@ -249,29 +249,29 @@ export default function Editor() {
         </div>
 
         {/* Canvas area */}
-        <div className="min-w-0 flex-1 overflow-auto bg-background p-6">
+        <div className="min-w-0 flex-1 overflow-auto bg-surface-canvas p-6">
           {view === 'original' ? (
-            <div className="mx-auto max-w-sm rounded-md border border-border bg-card p-4">
-              <div className="staff-bg aspect-[3/4] w-full rounded border border-border opacity-60" />
+            <div className="mx-auto max-w-sm rounded-md border border-line-subtle bg-surface-panel p-4">
+              <div className="staff-bg aspect-[3/4] w-full rounded border border-line-subtle opacity-60" />
               <p className="mt-2 text-center text-xs text-muted-foreground">Original scan · Page 1</p>
             </div>
           ) : view === 'split' ? (
             <div className="flex gap-4">
               <div className="flex-1">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Original</p>
-                <div className="rounded-md border border-border bg-card p-4">
-                  <div className="staff-bg aspect-[3/4] w-full rounded border border-border opacity-60" />
+                <div className="rounded-md border border-line-subtle bg-surface-panel p-4">
+                  <div className="staff-bg aspect-[3/4] w-full rounded border border-line-subtle opacity-60" />
                 </div>
               </div>
               <div className="flex-1">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Score</p>
-                <div className="mx-auto max-w-3xl rounded-md border border-border bg-card p-6 shadow-sm">
+                <div className="mx-auto max-w-3xl rounded-md border border-line-subtle bg-surface-panel p-6 shadow-sm">
                   <ScoreCanvas notes={notes} selectedIds={selectedIds} onSelect={handleSelect} onAddNote={addNote} onDelete={deleteNote} tool={tool} zoom={zoom} activeIssueMeasure={activeIssue?.measure} />
                 </div>
               </div>
             </div>
           ) : (
-            <div className="mx-auto max-w-3xl rounded-md border border-border bg-card p-6 shadow-sm">
+            <div className="mx-auto max-w-3xl rounded-md border border-line-subtle bg-surface-panel p-6 shadow-sm">
               <ScoreCanvas notes={notes} selectedIds={selectedIds} onSelect={handleSelect} onAddNote={addNote} onDelete={deleteNote} tool={tool} zoom={zoom} activeIssueMeasure={activeIssue?.measure} />
               <p className="mt-4 text-center text-sm text-muted-foreground">Page 1 of {score.pages}</p>
             </div>
@@ -279,16 +279,16 @@ export default function Editor() {
         </div>
 
         {/* Inspector — desktop */}
-        <div className="hidden w-60 shrink-0 overflow-y-auto border-l border-border p-4 lg:block">
+        <div className="hidden w-60 shrink-0 overflow-y-auto border-l border-line-subtle p-4 lg:block">
           <EditorInspector note={firstSelected} onChange={updateNote} />
           {selectedIds.size > 1 && (
-            <div className="mt-4 space-y-2 border-t border-border pt-3">
+            <div className="mt-4 space-y-2 border-t border-line-subtle pt-3">
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{selectedIds.size} notes selected</p>
               <Button variant="outline" size="sm" className="w-full" onClick={deleteSelected}><Trash2 className="mr-1.5 h-3.5 w-3.5" /> Delete selected</Button>
               <Button variant="outline" size="sm" className="w-full" onClick={copySelected}><Copy className="mr-1.5 h-3.5 w-3.5" /> Copy selected</Button>
               <div className="flex gap-1">
                 {['1', '2', '4', '8'].map((d) => (
-                  <button key={d} onClick={() => changeDurationSelected(d)} className="flex-1 rounded border border-border py-1 text-xs hover:bg-accent">{d}</button>
+                  <button key={d} onClick={() => changeDurationSelected(d)} className="flex-1 rounded border border-line-subtle py-1 text-xs hover:bg-accent">{d}</button>
                 ))}
               </div>
             </div>
@@ -298,22 +298,22 @@ export default function Editor() {
 
       {/* Mobile inspector trigger */}
       {firstSelected && (
-        <button onClick={() => setMobileInspectorOpen(true)} className="flex items-center justify-between border-t border-border px-4 py-2.5 lg:hidden">
+        <button onClick={() => setMobileInspectorOpen(true)} className="flex items-center justify-between border-t border-line-subtle px-4 py-2.5 lg:hidden">
           <span className="text-sm font-medium">Edit note · {firstSelected.type === 'rest' ? 'Rest' : 'Note'} {firstSelected.measure + 1}</span>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </button>
       )}
 
       {/* Playback bar */}
-      <div className="flex items-center justify-between border-t border-border px-4 py-2 text-sm text-muted-foreground">
+      <div className="flex items-center justify-between border-t border-line-subtle px-4 py-2 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
           <button className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90" aria-label="Play"><Play className="h-3.5 w-3.5" /></button>
           <span>Playback</span>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => setMeasure((m) => Math.max(1, m - 1))} className="rounded border border-border px-2 py-1 hover:bg-accent" aria-label="Previous measure"><ChevronLeft className="h-3.5 w-3.5" /></button>
+          <button onClick={() => setMeasure((m) => Math.max(1, m - 1))} className="rounded border border-line-subtle px-2 py-1 hover:bg-accent" aria-label="Previous measure"><ChevronLeft className="h-3.5 w-3.5" /></button>
           <span>Measure {measure} / {score.measures || 16}</span>
-          <button onClick={() => setMeasure((m) => Math.min(score.measures || 16, m + 1))} className="rounded border border-border px-2 py-1 hover:bg-accent" aria-label="Next measure"><ChevronRight className="h-3.5 w-3.5" /></button>
+          <button onClick={() => setMeasure((m) => Math.min(score.measures || 16, m + 1))} className="rounded border border-line-subtle px-2 py-1 hover:bg-accent" aria-label="Next measure"><ChevronRight className="h-3.5 w-3.5" /></button>
         </div>
       </div>
 
@@ -323,7 +323,7 @@ export default function Editor() {
       {mobileInspectorOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" onClick={() => setMobileInspectorOpen(false)}>
           <div className="absolute inset-0 bg-black/40" />
-          <div className="absolute inset-x-0 bottom-0 max-h-[70vh] overflow-y-auto rounded-t-lg border-t border-border bg-card p-4" onClick={(e) => e.stopPropagation()}>
+          <div className="absolute inset-x-0 bottom-0 max-h-[70vh] overflow-y-auto rounded-t-lg border-t border-line-subtle bg-surface-panel p-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold">Edit note</p>
               <button onClick={() => setMobileInspectorOpen(false)} className="text-muted-foreground"><X className="h-4 w-4" /></button>

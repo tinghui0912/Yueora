@@ -6,7 +6,7 @@ const base = 'flex flex-1 flex-col items-center justify-center gap-1 py-2 text-x
 export default function MobileNav() {
   const navigate = useNavigate();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-border bg-background md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line-subtle bg-surface-panel md:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <NavLink
         to="/library"
         className={({ isActive }) => `${base} ${isActive ? 'text-primary' : 'text-muted-foreground'}`}

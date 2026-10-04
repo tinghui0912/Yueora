@@ -5,6 +5,7 @@ import { usePrototypeStore } from '@/stores/prototypeStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import FileThumbnail from '@/components/visuals/FileThumbnail';
 
 const sources = [
   { id: 'pdf', icon: Upload, label: 'Upload PDF', desc: 'One or more pages from your device' },
@@ -115,7 +116,7 @@ export default function AddScore() {
               <div className="mt-3 space-y-2">
                 {files.map((f, i) => (
                   <div key={f.id} className="flex items-center gap-3 rounded-container border border-line-subtle bg-surface-panel p-3">
-                    <FileMusic className="h-5 w-5 text-muted-foreground" />
+                    <FileThumbnail seed={f.id} className="h-14 w-12" />
                     <span className="flex-1 text-sm">{f.name}{f.rotated && ' (rotated)'}</span>
                     <div className="flex items-center gap-0.5">
                       <button onClick={() => moveUp(f.id)} disabled={i === 0} className="rounded p-1.5 text-muted-foreground hover:bg-accent disabled:opacity-30" aria-label="Move up"><ChevronUp className="h-4 w-4" /></button>
