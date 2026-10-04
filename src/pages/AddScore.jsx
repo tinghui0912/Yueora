@@ -103,10 +103,10 @@ export default function AddScore() {
               {/* Error state demo */}
               {fileError && (
                 <div className="mt-3 flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3">
-                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
                   <div className="flex-1">
-                    <p className="text-sm text-destructive">{errorTypes[fileError].msg}</p>
-                    <button onClick={clearFileError} className="mt-1 text-xs font-medium text-destructive underline">{errorTypes[fileError].action}</button>
+                    <p className="text-sm text-danger">{errorTypes[fileError].msg}</p>
+                    <button onClick={clearFileError} className="mt-1 text-xs font-medium text-danger underline">{errorTypes[fileError].action}</button>
                   </div>
                   <button onClick={clearFileError} className="rounded p-0.5 text-muted-foreground hover:bg-accent"><X className="h-3.5 w-3.5" /></button>
                 </div>
@@ -114,7 +114,7 @@ export default function AddScore() {
 
               <div className="mt-3 space-y-2">
                 {files.map((f, i) => (
-                  <div key={f.id} className="flex items-center gap-3 rounded-md border border-border bg-card p-3">
+                  <div key={f.id} className="flex items-center gap-3 rounded-container border border-line-subtle bg-surface-panel p-3">
                     <FileMusic className="h-5 w-5 text-muted-foreground" />
                     <span className="flex-1 text-sm">{f.name}{f.rotated && ' (rotated)'}</span>
                     <div className="flex items-center gap-0.5">
@@ -153,7 +153,7 @@ export default function AddScore() {
                 <div className="space-y-1.5">
                   <Label htmlFor="title">Title</Label>
                   <Input id="title" value={details.title} onChange={(e) => { setDetails({ ...details, title: e.target.value }); setError(''); }} placeholder="Moonlight Sonata" />
-                  {error && <p className="text-xs text-destructive">{error}</p>}
+                  {error && <p className="text-xs text-danger">{error}</p>}
                 </div>
                 <div className="space-y-1.5"><Label htmlFor="composer">Composer (optional)</Label><Input id="composer" value={details.composer} onChange={(e) => setDetails({ ...details, composer: e.target.value })} placeholder="Beethoven" /></div>
                 <div className="space-y-1.5"><Label htmlFor="instrument">Instrument</Label><Input id="instrument" value={details.instrument} onChange={(e) => setDetails({ ...details, instrument: e.target.value })} /></div>
@@ -176,7 +176,7 @@ export default function AddScore() {
         {/* Step 4 — confirm */}
         {step === 4 && (
           <div className="space-y-5">
-            <div className="rounded-md border border-border bg-card p-5">
+            <div className="rounded-container border border-line-subtle bg-surface-panel p-5">
               <h2 className="font-display text-lg font-medium">Confirm</h2>
               <dl className="mt-3 space-y-2 text-sm">
                 <div className="flex justify-between"><dt className="text-muted-foreground">Title</dt><dd>{details.title || 'Untitled'}</dd></div>
@@ -196,7 +196,7 @@ export default function AddScore() {
 
         {/* Step 5 — recognition begins */}
         {step === 5 && (
-          <div className="rounded-md border border-border bg-card p-6">
+          <div className="rounded-container border border-line-subtle bg-surface-panel p-6">
             <div className="flex items-center gap-2 text-primary"><Check className="h-5 w-5" /></div>
             <h2 className="mt-2 font-display text-xl font-medium">Recognition has started</h2>
             <p className="mt-1 text-sm text-muted-foreground">{details.title || 'Untitled score'} · {files.length} {files.length === 1 ? 'page' : 'pages'}</p>

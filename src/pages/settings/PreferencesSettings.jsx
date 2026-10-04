@@ -39,14 +39,6 @@ export default function PreferencesSettings() {
         </div>
       </SettingsSection>
 
-      <SettingsSection title="Appearance" desc="Choose how Yueora looks.">
-        <div className="inline-flex rounded-md border border-border p-0.5">
-          {[['system', 'System'], ['light', 'Light'], ['dark', 'Dark']].map(([v, l]) => (
-            <button key={v} onClick={() => update({ appearance: v })} className={`rounded px-3 py-1.5 text-sm ${prefs.appearance === v ? 'bg-accent font-medium' : 'text-muted-foreground hover:bg-accent/60'}`}>{l}</button>
-          ))}
-        </div>
-      </SettingsSection>
-
       <SettingsSection title="Language & region" desc="Interface language.">
         <select value={prefs.language} onChange={(e) => update({ language: e.target.value })} className="h-9 w-full max-w-sm rounded-md border border-input bg-transparent px-3 text-sm">
           <option>English</option>

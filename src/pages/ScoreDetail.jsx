@@ -143,11 +143,11 @@ export default function ScoreDetail() {
           <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-line-subtle pt-3 type-body-small text-ink-secondary">
             <span>Page {page} of {score.pages}</span>
             <div className="flex items-center gap-1">
-              <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="rounded-control border border-line-subtle p-1.5 hover:bg-accent" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
-              <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="rounded-control border border-line-subtle p-1.5 hover:bg-accent" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
+              <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
+              <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
               <div className="mx-1 h-5 w-px bg-border" />
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="rounded-control border border-line-subtle p-1.5 hover:bg-accent" aria-label="Previous page"><ChevronLeft className="h-4 w-4" /></button>
-              <button onClick={() => setPage((p) => Math.min(score.pages, p + 1))} className="rounded-control border border-line-subtle p-1.5 hover:bg-accent" aria-label="Next page"><ChevronRight className="h-4 w-4" /></button>
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Previous page"><ChevronLeft className="h-4 w-4" /></button>
+              <button onClick={() => setPage((p) => Math.min(score.pages, p + 1))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Next page"><ChevronRight className="h-4 w-4" /></button>
             </div>
           </div>
         </div>

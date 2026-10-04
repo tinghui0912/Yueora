@@ -45,7 +45,7 @@ export default function HelpArticle() {
       {/* Related */}
       {article.related.length > 0 && (
         <div className="mt-8 border-t border-border pt-6">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Related articles</p>
+          <p className="type-caption text-ink-tertiary">Related articles</p>
           <ul className="mt-3 divide-y divide-border rounded-md border border-border bg-card">
             {article.related.map((r) => {
               const a = getHelpArticle(r);

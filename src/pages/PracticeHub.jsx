@@ -48,7 +48,7 @@ export default function PracticeHub() {
       {/* Section 1 — pick up where you left off */}
       {continueScore && (
         <section className="mt-8">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pick up where you left off</h2>
+          <h2 className="type-caption text-ink-tertiary">Pick up where you left off</h2>
           <Link to={`/score/${continueScore.id}/practice`} className="mt-3 flex flex-col gap-4 rounded-md border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
               <div className="h-16 w-24 shrink-0 overflow-hidden rounded border border-border"><ScorePreview id={continueScore.id} className="h-full w-full" /></div>
@@ -68,7 +68,7 @@ export default function PracticeHub() {
       {/* Section 2 — recently loved */}
       {recentlyLoved.length > 0 && (
         <section className="mt-10">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recently loved</h2>
+          <h2 className="type-caption text-ink-tertiary">Recently loved</h2>
           <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {recentlyLoved.map((r) => (
               <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="group flex items-center gap-3 rounded-md border border-border bg-card p-3 hover:bg-accent/40">
@@ -87,7 +87,7 @@ export default function PracticeHub() {
       {/* Section 3 — haven't played in a while */}
       {havenPlayed.length > 0 && (
         <section className="mt-10">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Haven't played in a while</h2>
+          <h2 className="type-caption text-ink-tertiary">Haven't played in a while</h2>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {havenPlayed.map((r) => (
               <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="group flex items-center justify-between rounded-md border border-border bg-card p-4 hover:bg-accent/40">
@@ -106,7 +106,7 @@ export default function PracticeHub() {
       {/* Section 4 — tricky section */}
       {trickySection && (
         <section className="mt-10">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Want to try this part again?</h2>
+          <h2 className="type-caption text-ink-tertiary">Want to try this part again?</h2>
           <div className="mt-3 rounded-md border border-border bg-card p-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -135,7 +135,7 @@ export default function PracticeHub() {
 
       {/* Section 5 — this week */}
       <section className="mt-10">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">This week</h2>
+        <h2 className="type-caption text-ink-tertiary">This week</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           <div className="rounded-md border border-border bg-card p-4">
             <p className="font-display text-2xl font-medium">{thisWeekMinutes}<span className="text-base text-muted-foreground"> min</span></p>

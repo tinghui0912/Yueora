@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Inbox } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
+import PageHeader from '@/components/patterns/PageHeader';
+import StateMessage from '@/components/patterns/StateMessage';
+import StatusIndicator from '@/components/patterns/StatusIndicator';
 
 const tabs = [
   { key: 'all', label: 'All' },
@@ -11,11 +14,11 @@ const tabs = [
   { key: 'completed', label: 'Completed' },
 ];
 
-const statusStyle = {
-  processing: 'text-primary',
-  needs_review: 'text-gold',
-  failed: 'text-destructive',
-  completed: 'text-muted-foreground',
+const statusTone = {
+  processing: 'brand',
+  needs_review: 'warning',
+  failed: 'danger',
+  completed: 'success',
 };
 const statusLabel = {
   processing: 'Processing',
@@ -45,43 +48,57 @@ export default function Imports() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 md:px-8">
-      <h1 className="font-display text-2xl font-medium">Imports</h1>
-      <p className="mt-1 text-sm text-muted-foreground">How are your recently added scores doing? Add new scores from the Add score button.</p>
+      <PageHeader
+        title="Imports"
+        description="How are your recently added scores doing? Add new scores from the Add score button."
+      />
 
-      <div className="mt-5 flex flex-wrap gap-1 border-b border-border">
+      <div className="mt-5 flex flex-wrap gap-1 border-b border-line-subtle">
         {tabs.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)} className={`border-b-2 px-3 py-2 text-sm font-medium transition-colors ${tab === t.key ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>{t.label}</button>
+          <button
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            className={`border-b-2 px-3 py-2 text-sm font-medium transition-colors ${tab === t.key ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+          >
+            {t.label}
+          </button>
         ))}
       </div>
 
       <div className="mt-4 space-y-2">
         {list.length === 0 && (
-          <div className="flex flex-col items-center gap-2 rounded-md border border-dashed border-border py-16 text-center">
-            <p className="font-medium">No imports here</p>
-            <p className="max-w-sm text-sm text-muted-foreground">Scores you add will show their recognition progress here. To add music, use the Add score button.</p>
-            <Link to="/add-score" className="mt-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">Add a score</Link>
-          </div>
+          <StateMessage
+            tone="neutral"
+            icon={Inbox}
+            title="No imports yet"
+            description="Scores you add will show recognition progress here."
+            primaryAction={
+              <Link to="/add-score" className="rounded-control bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">
+                Add a score
+              </Link>
+            }
+          />
         )}
         {list.map((imp) => (
-          <Link key={imp.id} to={`/imports/${imp.id}`} className="block rounded-md border border-border bg-card p-4 hover:bg-accent/40">
+          <Link key={imp.id} to={`/imports/${imp.id}`} className="block rounded-container border border-line-subtle bg-surface-panel p-4 hover:bg-accent/40">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="truncate font-medium">{imp.title}</p>
-                <p className="text-sm text-muted-foreground">Started {imp.started} · {imp.pages} pages · {imp.source}</p>
+                <p className="truncate font-medium text-ink-primary">{imp.title}</p>
+                <p className="type-body-small text-ink-tertiary">Started {imp.started} · {imp.pages} pages · {imp.source}</p>
               </div>
               <div className="flex shrink-0 items-center gap-3">
-                <span className={`text-sm font-medium ${statusStyle[imp.status]}`}>{statusLabel[imp.status]}</span>
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                <StatusIndicator tone={statusTone[imp.status]} label={statusLabel[imp.status]} pulse={imp.status === 'processing'} />
+                <ChevronRight className="h-4 w-4 text-ink-tertiary" />
               </div>
             </div>
             {imp.status === 'processing' && (
               <div className="mt-3">
-                <div className="mb-1 flex justify-between text-xs text-muted-foreground"><span>Recognizing notation…</span><span>{imp.progress}%</span></div>
+                <div className="mb-1 flex justify-between type-metadata text-ink-tertiary"><span>Recognizing notation…</span><span>{imp.progress}%</span></div>
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all duration-1000" style={{ width: `${imp.progress}%` }} /></div>
               </div>
             )}
-            {imp.status === 'failed' && <p className="mt-2 text-sm text-destructive">{imp.failure}</p>}
-            <p className="mt-2 text-sm text-primary">{nextAction[imp.status]}</p>
+            {imp.status === 'failed' && <p className="mt-2 type-body-small text-danger">{imp.failure}</p>}
+            <p className="mt-2 type-body-small text-brand">{nextAction[imp.status]}</p>
           </Link>
         ))}
       </div>

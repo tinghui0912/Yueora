@@ -11,6 +11,7 @@ import {
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Textarea } from '@/components/ui/textarea';
+import StateMessage from '@/components/patterns/StateMessage';
 
 export default function SharedScore() {
   const { shareToken } = useParams();
@@ -49,19 +50,15 @@ export default function SharedScore() {
 
   if (status !== 'valid') {
     const states = {
-      expired: { icon: Clock, title: 'This link has expired', body: 'The owner set an expiration on this link. Ask them to share it again.' },
-      revoked: { icon: Ban, title: 'This link was revoked', body: 'The owner turned off sharing for this score.' },
-      invalid: { icon: FileX, title: 'This link is not valid', body: 'Check that you have the right link, or ask the owner to send it again.' },
-      removed: { icon: ShieldOff, title: 'This score is no longer available', body: 'The owner removed this score from Yueora.' },
+      expired: { tone: 'warning', icon: Clock, title: 'This link has expired', body: 'The owner set an expiration on this link. Ask them to share it again.' },
+      revoked: { tone: 'warning', icon: Ban, title: 'This link was revoked', body: 'The owner turned off sharing for this score.' },
+      invalid: { tone: 'neutral', icon: FileX, title: 'This link is not valid', body: 'Check that you have the right link, or ask the owner to send it again.' },
+      removed: { tone: 'neutral', icon: ShieldOff, title: 'This score is no longer available', body: 'The owner removed this score from Yueora.' },
     };
     const s = states[status] || states.invalid;
     return (
       <ExternalShell>
-        <div className="mx-auto flex max-w-md flex-col items-center px-5 py-16 text-center">
-          <s.icon className="h-8 w-8 text-muted-foreground" />
-          <h1 className="mt-4 font-display text-2xl font-medium">{s.title}</h1>
-          <p className="mt-2 max-w-xs text-sm text-muted-foreground">{s.body}</p>
-        </div>
+        <StateMessage tone={s.tone} icon={s.icon} title={s.title} description={s.body} />
       </ExternalShell>
     );
   }
@@ -92,14 +89,14 @@ export default function SharedScore() {
           <button onClick={() => setReportOpen(true)} className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm text-muted-foreground hover:bg-accent"><Flag className="h-4 w-4" /> Report</button>
         </div>
 
-        <div className="mt-6 rounded-md border border-border bg-card p-4">
+        <div className="mt-6 rounded-container border border-line-subtle bg-surface-panel p-4">
           <div className="aspect-[16/10]"><ScorePreview id={score.id} className="h-full w-full" /></div>
-          <div className="mt-3 flex items-center justify-between border-t border-border pt-3 text-sm text-muted-foreground">
+          <div className="mt-3 flex items-center justify-between border-t border-line-subtle pt-3 type-body-small text-ink-secondary">
             <span>Page {page} of {score.pages}</span>
             <div className="flex items-center gap-2">
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="rounded border border-border p-1.5 hover:bg-accent" aria-label="Previous"><ChevronLeft className="h-4 w-4" /></button>
-              <button onClick={() => setPlaying((p) => !p)} className="rounded border border-border p-1.5 hover:bg-accent" aria-label="Play">{playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}</button>
-              <button onClick={() => setPage((p) => Math.min(score.pages, p + 1))} className="rounded border border-border p-1.5 hover:bg-accent" aria-label="Next"><ChevronRight className="h-4 w-4" /></button>
+              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Previous"><ChevronLeft className="h-4 w-4" /></button>
+              <button onClick={() => setPlaying((p) => !p)} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Play">{playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}</button>
+              <button onClick={() => setPage((p) => Math.min(score.pages, p + 1))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Next"><ChevronRight className="h-4 w-4" /></button>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/AuthContext';
 import ExternalShell from '@/components/external/ExternalShell';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import StateMessage from '@/components/patterns/StateMessage';
 
 export default function InviteAcceptance() {
   const { inviteToken } = useParams();
@@ -76,8 +77,8 @@ export default function InviteAcceptance() {
             {isAuthenticated ? (
               wrongAccount ? (
                 <div className="mt-8 flex flex-col items-center gap-3">
-                  <div className="flex items-start gap-2 rounded-md border border-gold/40 bg-gold/10 p-3 text-left">
-                    <AlertTriangle className="mt-0.5 h-4 w-4 text-gold" />
+                  <div className="flex items-start gap-2 rounded-md border border-warning/40 bg-warning/10 p-3 text-left">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 text-warning" />
                     <p className="text-sm text-muted-foreground">This invitation was sent to <strong>{invitedEmail}</strong>, but you are signed in as <strong>{user?.email}</strong>. Switch accounts to accept it.</p>
                   </div>
                   <div className="flex gap-2">
@@ -101,38 +102,28 @@ export default function InviteAcceptance() {
 
         {status === 'wrong_account' && (
           <>
-            <StateCard icon={UserX} title="This invitation is not for this account" body={`It was sent to ${invitedEmail}. Sign in with that email to accept.`} />
+            <StateMessage tone="warning" icon={UserX} title="This invitation is not for this account" description={`It was sent to ${invitedEmail}. Sign in with that email to accept.`} />
             <div className="mt-6 flex gap-2">
               <Button variant="outline" onClick={() => navigate('/login')}>Switch account</Button>
               <Button variant="ghost" onClick={decline}>Decline</Button>
             </div>
           </>
         )}
-        {status === 'expired' && <StateCard icon={Clock} title="This invitation has expired" body="Ask the owner to send you a new invitation." />}
-        {status === 'revoked' && <StateCard icon={Ban} title="This invitation was revoked" body="The owner no longer shares this score with you." />}
+        {status === 'expired' && <StateMessage tone="warning" icon={Clock} title="This invitation has expired" description="Ask the owner to send you a new invitation." />}
+        {status === 'revoked' && <StateMessage tone="warning" icon={Ban} title="This invitation was revoked" description="The owner no longer shares this score with you." />}
         {status === 'declined' && (
           <>
-            <StateCard icon={Ban} title="Invitation declined" body="You declined this invitation. It will not appear again." />
+            <StateMessage tone="neutral" icon={Ban} title="Invitation declined" description="You declined this invitation. It will not appear again." />
             <Button variant="outline" onClick={() => navigate('/')} className="mt-6">Back to home</Button>
           </>
         )}
         {status === 'already_accepted' && (
           <div className="flex flex-col items-center gap-4">
-            <StateCard icon={CheckCircle2} title="You already accepted this" body="This score is in your library under Shared with me." />
+            <StateMessage tone="success" icon={CheckCircle2} title="You already accepted this" description="This score is in your library under Shared with me." />
             <Button variant="outline" onClick={() => navigate('/library?view=shared')}>Go to Shared with me</Button>
           </div>
         )}
       </div>
     </ExternalShell>
-  );
-}
-
-function StateCard({ icon: Icon, title, body }) {
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <Icon className="h-8 w-8 text-muted-foreground" />
-      <h1 className="font-display text-2xl font-medium">{title}</h1>
-      <p className="max-w-xs text-sm text-muted-foreground">{body}</p>
-    </div>
   );
 }

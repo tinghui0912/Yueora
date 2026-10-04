@@ -350,7 +350,7 @@ function SaveIndicator({ state, onRetry, onFail }) {
   if (state === 'saving') return <span className="hidden items-center gap-1 text-muted-foreground sm:flex"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Saving…</span>;
   if (state === 'failed') return (
     <span className="hidden items-center gap-2 sm:flex">
-      <button onClick={onRetry} className="text-destructive">Save failed — Retry</button>
+      <button onClick={onRetry} className="text-danger">Save failed — Retry</button>
       <button onClick={onFail} className="text-xs text-muted-foreground underline" title="Demo: simulate save failure">Demo fail</button>
     </span>
   );

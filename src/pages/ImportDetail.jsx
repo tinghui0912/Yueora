@@ -9,10 +9,10 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 
 const statusMeta = {
-  processing: { label: 'Processing your score…', color: 'text-primary' },
-  needs_review: { label: 'Needs review', color: 'text-gold' },
-  failed: { label: 'Recognition failed', color: 'text-destructive' },
-  completed: { label: 'Completed', color: 'text-muted-foreground' },
+  processing: { label: 'Processing your score…', color: 'text-brand' },
+  needs_review: { label: 'Needs review', color: 'text-warning' },
+  failed: { label: 'Recognition failed', color: 'text-danger' },
+  completed: { label: 'Completed', color: 'text-ink-tertiary' },
 };
 
 export default function ImportDetail() {
@@ -68,14 +68,14 @@ export default function ImportDetail() {
         )}
         {imp.status === 'needs_review' && (
           <div className="flex items-center gap-3">
-            <AlertTriangle className="h-5 w-5 text-gold" />
+            <AlertTriangle className="h-5 w-5 text-warning" />
             <p className="text-sm text-muted-foreground">Recognition finished with {issueCount} {issueCount === 1 ? 'spot' : 'spots'} to review.</p>
           </div>
         )}
         {imp.status === 'failed' && (
           <div>
             <div className="flex items-center gap-3">
-              <AlertTriangle className="h-5 w-5 text-destructive" />
+              <AlertTriangle className="h-5 w-5 text-danger" />
               <p className="text-sm text-foreground">{imp.failure}</p>
             </div>
             <button onClick={handleRetry} className="mt-4 flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm font-medium hover:bg-accent"><RefreshCw className="h-4 w-4" /> Try again</button>
@@ -91,7 +91,7 @@ export default function ImportDetail() {
 
       {/* Source files */}
       <div className="mt-6">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Source files</h2>
+        <h2 className="type-caption text-ink-tertiary">Source files</h2>
         <div className="mt-2 space-y-2">
           {Array.from({ length: imp.pages }).map((_, i) => (
             <div key={i} className="flex items-center gap-3 rounded-md border border-border bg-card p-3">
@@ -106,7 +106,7 @@ export default function ImportDetail() {
       {/* Resulting score */}
       {imp.status === 'completed' && imp.scoreId && (
         <div className="mt-6 rounded-md border border-border bg-card p-5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Resulting score</p>
+          <p className="type-caption text-ink-tertiary">Resulting score</p>
           <Link to={`/score/${imp.scoreId}`} className="mt-2 flex items-center justify-between hover:bg-accent/40">
             <span className="font-medium">{imp.title}</span>
             <span className="flex items-center gap-1 text-sm text-primary">Open score <ArrowRight className="h-4 w-4" /></span>

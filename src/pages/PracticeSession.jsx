@@ -34,8 +34,8 @@ export default function PracticeSession() {
   const [countIn, setCountIn] = useState(true);
   const [autoScroll, setAutoScroll] = useState(true);
   const [loop, setLoop] = useState(false);
-  const [micReady, setMicReady] = useState(null);
-  const [midiReady, setMidiReady] = useState(null);
+  const [micState, setMicState] = useState('idle');
+  const [midiState, setMidiState] = useState('idle');
 
   const [running, setRunning] = useState(false);
   const [idx, setIdx] = useState(0);
@@ -125,7 +125,7 @@ export default function PracticeSession() {
 
   const fmt = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
   const originalTempo = score.tempo;
-  const ready = input === 'microphone' ? micReady === true : midiReady === true;
+  const ready = input === 'microphone' ? micState === 'ready' : midiState === 'connected';
 
   // Tricky section: from score data or a valid fallback within score measures
   const maxM = score?.measures || 32;
@@ -158,25 +158,38 @@ export default function PracticeSession() {
             <Field label="Microphone readiness">
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <span className={`h-2 w-2 rounded-full ${micReady === true ? 'bg-practice-correct' : micReady === false ? 'bg-practice-error' : 'bg-ink-tertiary'}`} />
-                  {micReady === true ? 'Microphone ready' : micReady === false ? 'Permission denied — allow access in your browser' : 'Not tested yet'}
+                  <span className={`h-2 w-2 rounded-full ${micState === 'ready' ? 'bg-practice-correct' : (micState === 'denied' || micState === 'no-input') ? 'bg-practice-error' : 'bg-ink-tertiary'}`} />
+                  {micState === 'ready' ? 'Microphone ready' : micState === 'denied' ? 'Permission denied — allow access in your browser' : micState === 'no-input' ? 'No input detected — check your microphone' : 'Not tested yet'}
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setMicReady(true)}><Mic className="mr-1.5 h-4 w-4" /> Test microphone</Button>
-                  {micReady === false && <Button variant="outline" size="sm" onClick={() => setMicReady(null)}><RotateCcw className="mr-1.5 h-3.5 w-3.5" /> Reset</Button>}
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setMicState('ready')}><Mic className="mr-1.5 h-4 w-4" /> Test microphone</Button>
+                  {micState === 'denied' && <Button variant="outline" size="sm" onClick={() => setMicState('idle')}><RotateCcw className="mr-1.5 h-3.5 w-3.5" /> Reset</Button>}
+                  {micState === 'no-input' && <Button variant="outline" size="sm" onClick={() => setMicState('ready')}><RotateCcw className="mr-1.5 h-3.5 w-3.5" /> Retry</Button>}
+                  <span className="text-xs text-ink-tertiary">Demo:</span>
+                  <Button variant="ghost" size="sm" onClick={() => setMicState('no-input')} className="text-xs h-7">No input</Button>
+                  <Button variant="ghost" size="sm" onClick={() => setMicState('denied')} className="text-xs h-7">Permission denied</Button>
                 </div>
-                {micReady === false && <p className="flex items-center gap-1.5 text-xs text-practice-error"><AlertCircle className="h-3.5 w-3.5" /> Allow microphone access, then test again.</p>}
+                {micState === 'denied' && <p className="flex items-center gap-1.5 text-xs text-practice-error"><AlertCircle className="h-3.5 w-3.5" /> Allow microphone access, then test again.</p>}
+                {micState === 'no-input' && <p className="flex items-center gap-1.5 text-xs text-practice-error"><AlertCircle className="h-3.5 w-3.5" /> No sound detected. Check your microphone connection.</p>}
               </div>
             </Field>
           ) : (
             <Field label="MIDI device">
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <span className={`h-2 w-2 rounded-full ${midiReady === true ? 'bg-practice-correct' : 'bg-ink-tertiary'}`} />
-                  {midiReady === true ? 'MIDI keyboard connected' : 'No device detected'}
+                  <span className={`h-2 w-2 rounded-full ${midiState === 'connected' ? 'bg-practice-correct' : midiState === 'disconnected' ? 'bg-practice-error' : 'bg-ink-tertiary'}`} />
+                  {midiState === 'connected' ? 'MIDI keyboard connected' : midiState === 'disconnected' ? 'MIDI device disconnected' : 'No device detected'}
                 </div>
-                <Button variant="outline" size="sm" onClick={() => setMidiReady(true)}><Piano className="mr-1.5 h-4 w-4" /> Detect devices</Button>
-                {midiReady !== true && <p className="text-xs text-muted-foreground">Connect your MIDI device, then detect.</p>}
+                <div className="flex flex-wrap items-center gap-2">
+                  {midiState === 'disconnected' ? (
+                    <Button variant="outline" size="sm" onClick={() => setMidiState('connected')}><RotateCcw className="mr-1.5 h-3.5 w-3.5" /> Reconnect</Button>
+                  ) : (
+                    <Button variant="outline" size="sm" onClick={() => setMidiState('connected')}><Piano className="mr-1.5 h-4 w-4" /> Detect devices</Button>
+                  )}
+                  {midiState === 'connected' && <Button variant="ghost" size="sm" onClick={() => setMidiState('disconnected')} className="text-xs h-7">Simulate disconnect</Button>}
+                </div>
+                {midiState === 'idle' && <p className="text-xs text-muted-foreground">Connect your MIDI device, then detect.</p>}
+                {midiState === 'disconnected' && <p className="flex items-center gap-1.5 text-xs text-practice-error"><AlertCircle className="h-3.5 w-3.5" /> Device lost. Reconnect to continue.</p>}
               </div>
             </Field>
           )}

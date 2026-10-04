@@ -16,7 +16,7 @@ const accidentalSymbols = { sharp: '♯', flat: '♭', natural: '♮' };
 export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, onDelete, tool, zoom, activeMeasure, activeIssueMeasure, measureStart: measureStartProp }) {
   // Auto-select window: center the focus measure in the visible 8-measure range
   const focusMeasure = activeIssueMeasure ?? activeMeasure;
-  const measureStart = measureStartProp ?? (focusMeasure ? Math.max(1, Math.floor((focusMeasure - 1) / 8) * 8 + 1) : 1);
+  const measureStart = measureStartProp ?? (focusMeasure ? Math.max(1, Math.floor((focusMeasure - 1) / 4) * 4 + 1) : 1);
 
   const width = STAFF_LEFT + MEASURES * MEASURE_W + 20;
   const height = STAVES[STAVES.length - 1].top + 70;
@@ -63,7 +63,7 @@ export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, o
             <g key={si}>
               {/* Active measure highlight */}
               {activeMeasure != null && Array.from({ length: MEASURES }).map((_, mi) => {
-                const measureNum = measureStart + si * MEASURES + mi;
+                const measureNum = measureStart + mi;
                 if (measureNum !== activeMeasure) return null;
                 return (
                   <rect
@@ -79,7 +79,7 @@ export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, o
               })}
               {/* Issue measure highlight */}
               {activeIssueMeasure != null && Array.from({ length: MEASURES }).map((_, mi) => {
-                const measureNum = measureStart + si * MEASURES + mi;
+                const measureNum = measureStart + mi;
                 if (measureNum !== activeIssueMeasure) return null;
                 return (
                   <rect
@@ -103,7 +103,7 @@ export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, o
               ))}
               {/* Measure number labels */}
               {Array.from({ length: MEASURES }).map((_, mi) => {
-                const measureNum = measureStart + si * MEASURES + mi;
+                const measureNum = measureStart + mi;
                 if (mi === 0 || measureNum % 4 === 1) {
                   return <text key={`mn-${si}-${mi}`} x={STAFF_LEFT + mi * MEASURE_W + 2} y={st.top - 6} fontSize="9" fill="hsl(var(--muted-foreground))">{measureNum}</text>;
                 }
