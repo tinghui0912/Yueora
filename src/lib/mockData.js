@@ -48,6 +48,7 @@ export const scores = [
   {
     id: 'gymnopedie-1', title: 'Gymnopédie No. 1', composer: 'Satie', instrument: 'Piano',
     tags: ['Classical'], ownership: 'saved', favorite: true, folderIds: ['recital'],
+    savedPermission: { canPractice: true, canDownload: true },
     lastPlayed: 'never', lastMeasure: 1, tempo: 52, pages: 2, measures: 39,
     difficultSections: [], created: '2026-08-28', source: 'Saved link',
   },

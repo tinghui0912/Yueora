@@ -68,7 +68,11 @@ export default function SharedScore() {
   const canEdit = sharing?.link?.access === 'Can edit';
 
   const handleSave = () => {
-    saveSharedScoreToLibrary(score.id);
+    saveSharedScoreToLibrary(score.id, {
+      shareToken,
+      canPractice,
+      canDownload,
+    });
     setSaved(true);
     toast({ title: 'Saved to library', description: `${score.title} is now in your library under Saved.` });
   };

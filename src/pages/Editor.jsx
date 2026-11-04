@@ -11,6 +11,7 @@ import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import EditorInspector from '@/components/editor/EditorInspector';
 import SharingDialog from '@/components/sharing/SharingDialog';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 const tools = [
   { id: 'select', icon: MousePointer2, label: 'Select' },
@@ -320,20 +321,16 @@ export default function Editor() {
       <SharingDialog open={sharingOpen} onOpenChange={setSharingOpen} score={score} />
 
       {/* Mobile inspector bottom sheet */}
-      {mobileInspectorOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden" onClick={() => setMobileInspectorOpen(false)}>
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="absolute inset-x-0 bottom-0 max-h-[70vh] overflow-y-auto rounded-t-lg border-t border-line-subtle bg-surface-panel p-4" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold">Edit note</p>
-              <button onClick={() => setMobileInspectorOpen(false)} className="text-muted-foreground"><X className="h-4 w-4" /></button>
-            </div>
-            <div className="mt-3">
-              <EditorInspector note={firstSelected} onChange={(n) => { updateNote(n); }} />
-            </div>
+      <Sheet open={mobileInspectorOpen} onOpenChange={setMobileInspectorOpen}>
+        <SheetContent side="bottom" className="max-h-[70dvh] overflow-y-auto lg:hidden">
+          <SheetHeader>
+            <SheetTitle>Edit note</SheetTitle>
+          </SheetHeader>
+          <div className="mt-3">
+            <EditorInspector note={firstSelected} onChange={(n) => { updateNote(n); }} />
           </div>
-        </div>
-      )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

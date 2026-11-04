@@ -9,7 +9,7 @@ import ScorePreview from '@/components/library/ScorePreview';
 
 export default function HeroProductVisual() {
   return (
-    <div className="relative">
+    <div aria-hidden="true" className="relative">
       {/* Scan page — slightly behind, rotated */}
       <div className="absolute left-0 top-4 w-[42%] rotate-[-3deg] rounded-md border border-line-subtle bg-surface-panel p-2 shadow-md">
         <MockScanPage seed="hero-scan" className="aspect-[3/4] w-full" />

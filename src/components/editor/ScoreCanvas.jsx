@@ -13,10 +13,16 @@ const durationFill = { '1': false, '2': false, '4': true, '8': true };
 
 const accidentalSymbols = { sharp: '♯', flat: '♭', natural: '♮' };
 
-export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, onDelete, tool, zoom, activeMeasure, activeIssueMeasure, measureStart: measureStartProp }) {
-  // Auto-select window: center the focus measure in the visible 8-measure range
+export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, onDelete, tool, zoom, activeMeasure, activeIssueMeasure, measureStart: measureStartProp, activeMeasureVariant = 'default' }) {
+  // Visible window: explicit measureStart wins; otherwise follow the focus measure
   const focusMeasure = activeIssueMeasure ?? activeMeasure;
   const measureStart = measureStartProp ?? (focusMeasure ? Math.max(1, Math.floor((focusMeasure - 1) / 4) * 4 + 1) : 1);
+
+  // Highlight tone: practice/editor share the canvas, so tone is explicit
+  const activeFill =
+    activeMeasureVariant === 'practice' ? 'hsl(var(--practice-current) / 0.18)'
+      : activeMeasureVariant === 'warning' ? 'hsl(var(--warning) / 0.12)'
+        : 'hsl(var(--primary) / 0.08)';
 
   const width = STAFF_LEFT + MEASURES * MEASURE_W + 20;
   const height = STAVES[STAVES.length - 1].top + 70;
@@ -72,7 +78,7 @@ export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, o
                     y={st.top - 4}
                     width={MEASURE_W}
                     height={4 * LINE_GAP + 8}
-                    fill="hsl(var(--primary) / 0.08)"
+                    fill={activeFill}
                     rx={2}
                   />
                 );
@@ -88,8 +94,8 @@ export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, o
                     y={st.top - 4}
                     width={MEASURE_W}
                     height={4 * LINE_GAP + 8}
-                    fill="hsl(var(--gold) / 0.12)"
-                    stroke="hsl(var(--gold) / 0.5)"
+                    fill="hsl(var(--warning) / 0.12)"
+                    stroke="hsl(var(--warning) / 0.5)"
                     strokeWidth={1}
                     rx={2}
                   />

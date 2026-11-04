@@ -8,7 +8,7 @@ export default function PageNotFound() {
   const home = isAuthenticated ? '/library' : '/';
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface-canvas px-4">
+    <div className="flex min-h-dvh items-center justify-center bg-surface-canvas px-4">
       <StateMessage
         tone="neutral"
         icon={Music2}

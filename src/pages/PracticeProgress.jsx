@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { TrendingUp, Clock, Music2, Smile } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
-import { practiceProgress as seedProgress } from '@/lib/mockData';
+import { practiceProgress as seedProgress, practiceHistory as seedPracticeHistory } from '@/lib/mockData';
 import PageHeader from '@/components/patterns/PageHeader';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import Metric from '@/components/patterns/Metric';
@@ -20,11 +20,14 @@ export default function PracticeProgress() {
   const piecesPlayed = new Set(sessions.map((s) => s.scoreId)).size;
   const sessionCount = sessions.length;
 
-  // Use seed weekly chart as baseline, but add today's session
+  // Seed weekly chart is the historical baseline — it already accounts for the seed history,
+  // so only sessions created in this prototype session are added on top (no double counting).
+  const seedSessionIds = new Set(seedPracticeHistory.map((s) => s.id));
+  const newSessions = sessions.filter((s) => !seedSessionIds.has(s.id));
   const weeklyMinutes = seedProgress.weeklyMinutes.slice();
-  if (sessions.length > 0) {
-    const todayMin = parseInt(sessions[0]?.duration) || 0;
-    weeklyMinutes[weeklyMinutes.length - 1] = (weeklyMinutes[weeklyMinutes.length - 1] || 0) + todayMin;
+  if (newSessions.length > 0) {
+    const addedMinutes = newSessions.reduce((sum, s) => sum + (parseInt(s.duration) || 0), 0);
+    weeklyMinutes[weeklyMinutes.length - 1] = (weeklyMinutes[weeklyMinutes.length - 1] || 0) + addedMinutes;
   }
 
   // Recurring tricky sections from recent sessions

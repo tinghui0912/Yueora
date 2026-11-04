@@ -22,7 +22,7 @@ export default function ProgressVisual() {
   const areaD = `${pathD} L ${chartW} ${chartH} L 0 ${chartH} Z`;
 
   return (
-    <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-sm">
+    <div aria-hidden="true" className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-sm">
       <div className="flex items-center justify-between">
         <p className="type-caption text-ink-tertiary">Tempo trend</p>
         <span className="flex items-center gap-1 text-xs font-medium text-practice-correct">

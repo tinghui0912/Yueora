@@ -12,7 +12,7 @@ export default function AppShell() {
         </aside>
         <div className="flex min-w-0 flex-1 flex-col">
           <Topbar />
-          <main className="flex-1 pb-20 md:pb-0">
+          <main className="flex-1 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0">
             <Outlet />
           </main>
         </div>

@@ -6,7 +6,7 @@ import { Globe, Link2, Lock } from 'lucide-react';
 
 export default function SharingVisual() {
   return (
-    <div className="rounded-container border border-line-subtle bg-surface-panel p-5 shadow-sm">
+    <div aria-hidden="true" className="rounded-container border border-line-subtle bg-surface-panel p-5 shadow-sm">
       {/* People with access */}
       <div>
         <p className="type-caption text-ink-tertiary">People with access</p>

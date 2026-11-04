@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ArrowLeft, Play, Pause, Flag, Timer, RotateCcw, Mic, Piano, Check, AlertCircle, Repeat } from 'lucide-react';
-import { usePrototypeStore } from '@/stores/prototypeStore';
+import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
 import { generateNotes } from '@/lib/mockData';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,9 @@ import {
 } from '@/components/ui/dialog';
 
 const noteSeq = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'E', 'G', 'F', 'D', 'C'];
+
+// Measures are shown 4 at a time — the window that contains a measure
+const measureWindowStart = (measure) => Math.max(1, Math.floor((measure - 1) / 4) * 4 + 1);
 
 export default function PracticeSession() {
   const { scoreId } = useParams();
@@ -40,6 +43,8 @@ export default function PracticeSession() {
   const [running, setRunning] = useState(false);
   const [idx, setIdx] = useState(0);
   const [activeMeasure, setActiveMeasure] = useState(1);
+  // The measure window currently shown. Follows the active measure only while auto-scroll is on.
+  const [visibleMeasureStart, setVisibleMeasureStart] = useState(() => measureWindowStart(inheritedFrom || 1));
   const [correct, setCorrect] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [exitOpen, setExitOpen] = useState(false);
@@ -58,6 +63,22 @@ export default function PracticeSession() {
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running, mode, idx]);
+
+  // Auto-scroll on → window follows the active measure.
+  // Auto-scroll off → the window stays exactly where the player left it.
+  // Turning it back on re-syncs immediately (this effect also runs on that change).
+  useEffect(() => {
+    if (!autoScroll) return;
+    setVisibleMeasureStart(measureWindowStart(activeMeasure));
+  }, [activeMeasure, autoScroll]);
+
+  const restart = () => {
+    setIdx(0);
+    setCorrect(0);
+    setElapsed(0);
+    setActiveMeasure(rangeFrom);
+    setVisibleMeasureStart(measureWindowStart(rangeFrom));
+  };
 
   const advance = () => {
     setCorrect((c) => c + 1);
@@ -122,6 +143,17 @@ export default function PracticeSession() {
   };
 
   if (!score) return <div className="px-8 py-16 text-center"><p>Score not found.</p><Button onClick={() => navigate('/library')} className="mt-4">Back to library</Button></div>;
+
+  // A saved score inherits its share-link permissions — never broaden them here.
+  if (!getPermissions(score).canPractice) {
+    return (
+      <div className="mx-auto max-w-md px-4 py-16 text-center">
+        <p className="font-display text-xl">Practice isn't available for this score</p>
+        <p className="mt-2 text-sm text-ink-secondary">The link you saved it from didn't include practice access, so it wasn't carried into your library.</p>
+        <Button onClick={() => navigate(`/score/${scoreId}`)} className="mt-4">Back to score</Button>
+      </div>
+    );
+  }
 
   const fmt = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
   const originalTempo = score.tempo;
@@ -220,7 +252,7 @@ export default function PracticeSession() {
 
           <div className="flex items-center justify-between">
             {!ready && <p className="text-xs text-muted-foreground">{input === 'microphone' ? 'Test your microphone to start.' : 'Detect your MIDI device to start.'}</p>}
-            <Button onClick={() => { setSetup(false); setRunning(true); setIdx(0); setCorrect(0); setElapsed(0); setActiveMeasure(rangeFrom); }} disabled={!ready} className="ml-auto"><Play className="mr-1.5 h-4 w-4" /> Start practice</Button>
+            <Button onClick={() => { restart(); setSetup(false); setRunning(true); }} disabled={!ready} className="ml-auto"><Play className="mr-1.5 h-4 w-4" /> Start practice</Button>
           </div>
         </div>
       </div>
@@ -230,22 +262,32 @@ export default function PracticeSession() {
   // ---- Practice workspace (immersive) ----
   return (
     <div className="flex h-dvh flex-col">
-      <div className="flex items-center justify-between border-b border-line-subtle px-4 py-3">
-        <button onClick={() => setExitOpen(true)} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" /> {score.title}
+      <div className="flex items-center justify-between gap-3 border-b border-line-subtle px-4 py-3">
+        <button onClick={() => setExitOpen(true)} className="flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="h-4 w-4 shrink-0" /> <span className="truncate">{score.title}</span>
         </button>
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1"><span className={`h-2 w-2 rounded-full ${running ? 'bg-practice-current animate-pulse' : 'bg-ink-tertiary'}`} /> {running ? 'Live' : 'Paused'}</span>
-          <span className="capitalize">{input}</span>
-          <span>{Math.round(originalTempo * tempoPct / 100)} BPM</span>
-          <span className="rounded-control bg-practice-current/15 px-2 py-0.5 text-xs font-medium text-practice-current">Measure {activeMeasure}</span>
+        <div className="flex shrink-0 items-center gap-3 text-sm text-muted-foreground">
+          <span className="flex items-center gap-1 whitespace-nowrap"><span className={`h-2 w-2 rounded-full ${running ? 'bg-practice-current animate-pulse' : 'bg-ink-tertiary'}`} /> {running ? 'Live' : 'Paused'}</span>
+          <span className="hidden capitalize sm:inline">{input}</span>
+          <span className="hidden whitespace-nowrap sm:inline">{Math.round(originalTempo * tempoPct / 100)} BPM</span>
+          <span className="whitespace-nowrap rounded-control bg-practice-current/15 px-2 py-0.5 text-xs font-medium text-practice-current">Measure {activeMeasure}</span>
         </div>
       </div>
 
       <div className="flex flex-1 items-center justify-center overflow-auto bg-surface-canvas p-6">
         <div className="w-full max-w-3xl rounded-md border border-line-subtle bg-surface-panel p-6 shadow-sm">
-          <ScoreCanvas notes={notes} selectedIds={null} onSelect={() => {}} zoom={1.1} activeMeasure={activeMeasure} />
-          {autoScroll && <p className="mt-2 text-center text-xs text-muted-foreground">Auto-scrolling to measure {activeMeasure}</p>}
+          <ScoreCanvas
+            notes={notes}
+            selectedIds={null}
+            onSelect={() => {}}
+            zoom={1.1}
+            activeMeasure={activeMeasure}
+            activeMeasureVariant="practice"
+            measureStart={visibleMeasureStart}
+          />
+          <p className="mt-2 text-center text-xs text-muted-foreground">
+            {autoScroll ? `Auto-scrolling to measure ${activeMeasure}` : `Showing measures ${visibleMeasureStart}–${visibleMeasureStart + 3}`}
+          </p>
         </div>
       </div>
 
@@ -270,7 +312,7 @@ export default function PracticeSession() {
           ) : (
             <Button onClick={() => setRunning((r) => !r)} className="px-6">{running ? <><Pause className="mr-1.5 h-4 w-4" /> Pause</> : <><Play className="mr-1.5 h-4 w-4" /> Resume</>}</Button>
           )}
-          <Button variant="outline" onClick={() => { setIdx(0); setCorrect(0); setElapsed(0); setActiveMeasure(rangeFrom); }} className="px-4"><RotateCcw className="mr-1.5 h-4 w-4" /> Restart</Button>
+          <Button variant="outline" onClick={restart} className="px-4"><RotateCcw className="mr-1.5 h-4 w-4" /> Restart</Button>
           <Button variant="outline" onClick={finish} className="px-4"><Flag className="mr-1.5 h-4 w-4" /> Finish</Button>
         </div>
         <p className="mt-2 text-center text-xs text-muted-foreground">{fmt(elapsed)} · {correct}/{noteSeq.length} notes · {loop ? 'Looping' : 'No loop'}</p>

@@ -7,7 +7,7 @@ import { Play, Timer } from 'lucide-react';
 
 export default function PracticeWorkspaceVisual() {
   return (
-    <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-sm">
+    <div aria-hidden="true" className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-sm">
       {/* Mock topbar */}
       <div className="flex items-center justify-between border-b border-line-subtle pb-2">
         <span className="text-sm text-ink-secondary">Clair de Lune</span>
@@ -31,12 +31,12 @@ export default function PracticeWorkspaceVisual() {
 
       {/* Minimal controls */}
       <div className="mt-3 flex items-center justify-center gap-2">
-        <button className="flex items-center gap-1.5 rounded-control border border-line-subtle px-3 py-1.5 text-xs text-ink-secondary">
+        <span className="flex items-center gap-1.5 rounded-control border border-line-subtle px-3 py-1.5 text-xs text-ink-secondary">
           <Timer className="h-3.5 w-3.5" /> Metronome
-        </button>
-        <button className="flex items-center gap-1.5 rounded-control bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground">
+        </span>
+        <span className="flex items-center gap-1.5 rounded-control bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground">
           <Play className="h-3.5 w-3.5" /> Play
-        </button>
+        </span>
       </div>
     </div>
   );

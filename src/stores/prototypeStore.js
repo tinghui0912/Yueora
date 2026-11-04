@@ -87,7 +87,16 @@ export function getPermissions(score) {
     return { canEdit, canShare: false, canDelete: false, canPractice: true, canDownload: canEdit };
   }
   if (o === 'saved') {
-    return { canEdit: false, canShare: false, canDelete: false, canPractice: score.linkPermission !== 'Can view only', canDownload: score.linkPermission !== 'Can view only' };
+    // Saving a shared score must never broaden access: permissions are inherited
+    // from the share link at save time, and a missing permission means denied.
+    const saved = score.savedPermission || {};
+    return {
+      canEdit: false,
+      canShare: false,
+      canDelete: false,
+      canPractice: saved.canPractice === true,
+      canDownload: saved.canDownload === true,
+    };
   }
   return {};
 }
@@ -282,7 +291,7 @@ export const usePrototypeStore = create(
       bulkRemoveSaved: (scoreIds) =>
         set((st) => ({ scores: st.scores.filter((s) => !scoreIds.includes(s.id) || s.ownership !== 'saved') })),
 
-      saveSharedScoreToLibrary: (scoreId) =>
+      saveSharedScoreToLibrary: (scoreId, permissions = {}) =>
         set((st) => {
           const score = st.scores.find((s) => s.id === scoreId);
           if (!score) return {};
@@ -292,7 +301,19 @@ export const usePrototypeStore = create(
           if (score.ownership === 'saved') return {};
           return {
             scores: st.scores.map((s) =>
-              s.id === scoreId ? { ...s, ownership: 'saved', favorite: false, folderIds: [], created: new Date().toISOString().slice(0, 10) } : s
+              s.id === scoreId ? {
+                ...s,
+                ownership: 'saved',
+                favorite: false,
+                folderIds: [],
+                created: new Date().toISOString().slice(0, 10),
+                // Inherit exactly what the link granted — never more.
+                savedPermission: {
+                  canPractice: permissions.canPractice === true,
+                  canDownload: permissions.canDownload === true,
+                },
+                sourceShareToken: permissions.shareToken || null,
+              } : s
             ),
           };
         }),
@@ -760,7 +781,7 @@ export const usePrototypeStore = create(
     }),
     {
       name: 'yueora-prototype',
-      version: 3,
+      version: 4,
       migrate: (persistedState, version) => {
         // Merge any missing keys from defaults
         const merged = { ...persistedState };
@@ -769,6 +790,15 @@ export const usePrototypeStore = create(
         if (!merged.sharing) merged.sharing = {};
         if (merged.subscription && merged.subscription.renewal === 'Sep 15, 2026') {
           merged.subscription.renewal = 'Nov 15, 2026';
+        }
+        // Normalize the seed saved score (it was saved from a fully-permitted link).
+        // User-saved scores without recorded permissions stay denied by default.
+        if (Array.isArray(merged.scores)) {
+          merged.scores = merged.scores.map((s) =>
+            s.id === 'gymnopedie-1' && !s.savedPermission
+              ? { ...s, savedPermission: { canPractice: true, canDownload: true } }
+              : s
+          );
         }
         // Ensure sharing links have token field
         if (merged.sharing) {

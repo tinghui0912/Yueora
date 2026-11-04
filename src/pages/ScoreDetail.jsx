@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, Pencil, Share2, MoreHorizontal, Star, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download, Copy, Trash2, FolderInput, History, LogOut, BookmarkMinus, Check } from 'lucide-react';
+import { ArrowLeft, Play, Pencil, Share2, MoreHorizontal, Star, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download, Copy, Trash2, FolderInput, History, LogOut, BookmarkMinus, Check, Lock } from 'lucide-react';
 import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
 import ScorePreview from '@/components/library/ScorePreview';
 import SharingDialog from '@/components/sharing/SharingDialog';
@@ -100,9 +100,15 @@ export default function ScoreDetail() {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Link to={`/score/${score.id}/practice`} className="flex items-center gap-2 rounded-control bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
-            <Play className="h-4 w-4" /> {score.lastMeasure > 1 ? 'Continue playing' : 'Practice'}
-          </Link>
+          {perms.canPractice ? (
+            <Link to={`/score/${score.id}/practice`} className="flex items-center gap-2 rounded-control bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
+              <Play className="h-4 w-4" /> {score.lastMeasure > 1 ? 'Continue playing' : 'Practice'}
+            </Link>
+          ) : (
+            <span className="flex items-center gap-2 rounded-control bg-muted px-4 py-2.5 text-sm font-semibold text-muted-foreground">
+              <Lock className="h-4 w-4" /> Practice unavailable
+            </span>
+          )}
           {perms.canEdit && (
             <Link to={`/score/${score.id}/edit`} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
               <Pencil className="h-4 w-4" /> Edit
@@ -164,9 +170,13 @@ export default function ScoreDetail() {
             {score.difficultSections.length > 0 && (
               <p className="mt-1 type-body-small text-ink-secondary">{score.difficultSections[0].note}</p>
             )}
-            <Link to={`/score/${score.id}/practice`} className="mt-4 block rounded-control bg-primary py-2 text-center text-sm font-semibold text-primary-foreground hover:opacity-90">
-              Continue playing
-            </Link>
+            {perms.canPractice ? (
+              <Link to={`/score/${score.id}/practice`} className="mt-4 block rounded-control bg-primary py-2 text-center text-sm font-semibold text-primary-foreground hover:opacity-90">
+                Continue playing
+              </Link>
+            ) : (
+              <p className="mt-4 rounded-control bg-muted py-2 text-center text-sm font-semibold text-muted-foreground">Practice unavailable</p>
+            )}
           </div>
 
           {/* Information — flat section */}

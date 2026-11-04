@@ -128,7 +128,7 @@ export default function RecognitionReview() {
 
       {/* Mobile issues sheet */}
       <Sheet open={mobileIssuesOpen} onOpenChange={setMobileIssuesOpen}>
-        <SheetContent side="bottom" className="max-h-[70vh] overflow-y-auto">
+        <SheetContent side="bottom" className="max-h-[70dvh] overflow-y-auto">
           <SheetHeader><SheetTitle>Issues to review</SheetTitle></SheetHeader>
           <div className="mt-3 space-y-2">
             {issues.map((iss) => (
