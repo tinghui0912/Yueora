@@ -159,7 +159,7 @@ export default function Library() {
         {/* Continue practicing shortcut (hidden in trash) */}
         {!isTrash && continueScore && (
           <Link
-            to={`/score/${continueScore.id}/practice`}
+            to={`/score/${continueScore.id}/setup`}
             className="mx-4 mt-4 flex items-center justify-between gap-3 rounded-md border border-border bg-accent px-4 py-3 md:mx-8"
           >
             <div className="min-w-0">

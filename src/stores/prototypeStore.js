@@ -5,6 +5,7 @@ import {
   folders as seedFolders,
   imports as seedImports,
   practiceHistory as seedPracticeHistory,
+  practicePerformances as seedPracticePerformances,
   notifications as seedNotifications,
   plans as seedPlans,
   billingHistory as seedBillingHistory,
@@ -136,6 +137,9 @@ export const usePrototypeStore = create(
       imports: clone(seedImports),
       recognitionIssues: clone(recognitionIssuesSeed),
       practiceSessions: clone(seedPracticeHistory),
+      practicePerformances: clone(seedPracticePerformances),
+      // Remembered technical readiness — what Setup has already prepared.
+      preflight: { modelReady: false, micGranted: false, midiConnected: false, cameraGranted: false },
       sharing: {},
       invitations: [],
       revokedShareTokens: [],
@@ -481,8 +485,14 @@ export const usePrototypeStore = create(
             scoreId: session.scoreId,
             date: 'Today',
             duration: session.duration || '12 min',
+            durationSec: session.durationSec ?? null,
             mode: session.mode || 'Follow',
             input: session.input || 'Microphone',
+            recordingMode: session.recordingMode || 'off',
+            mediaKind: session.mediaKind || null,
+            tempoBpm: session.tempoBpm ?? null,
+            skippedGroups: session.skippedGroups || 0,
+            rangeDetail: session.rangeDetail || null,
             range: session.range || 'Whole score',
             insight: session.insight || 'Nice session.',
             accuracy: session.accuracy,
@@ -491,6 +501,31 @@ export const usePrototypeStore = create(
           };
           return { practiceSessions: [newSession, ...st.practiceSessions] };
         }),
+
+      // ---- Performances (explicitly kept media) ----
+      // Saving is an explicit act: a session can exist with a recording and still
+      // never appear in Performances until the user keeps it.
+      savePerformance: (performance) =>
+        set((st) => {
+          const existing = st.practicePerformances.find(
+            (p) => p.sessionId && p.sessionId === performance.sessionId
+          );
+          const record = {
+            ...performance,
+            id: existing?.id || performance.id || `perf-${Date.now()}`,
+          };
+          return {
+            practicePerformances: existing
+              ? st.practicePerformances.map((p) => (p.id === existing.id ? { ...p, ...record } : p))
+              : [record, ...st.practicePerformances],
+          };
+        }),
+
+      deletePerformance: (id) =>
+        set((st) => ({ practicePerformances: st.practicePerformances.filter((p) => p.id !== id) })),
+
+      setPreflight: (partial) =>
+        set((st) => ({ preflight: { ...st.preflight, ...partial } })),
 
       // ---- Sharing actions ----
       invitePerson: (scoreId, email, role) =>
@@ -767,6 +802,8 @@ export const usePrototypeStore = create(
           imports: clone(seedImports),
           recognitionIssues: clone(recognitionIssuesSeed),
           practiceSessions: clone(seedPracticeHistory),
+          practicePerformances: clone(seedPracticePerformances),
+          preflight: { modelReady: false, micGranted: false, midiConnected: false, cameraGranted: false },
           sharing: {},
           invitations: [],
           revokedShareTokens: [],
@@ -781,13 +818,15 @@ export const usePrototypeStore = create(
     }),
     {
       name: 'yueora-prototype',
-      version: 4,
+      version: 5,
       migrate: (persistedState, version) => {
         // Merge any missing keys from defaults
         const merged = { ...persistedState };
         if (!merged.invitations) merged.invitations = [];
         if (!merged.revokedShareTokens) merged.revokedShareTokens = [];
         if (!merged.sharing) merged.sharing = {};
+        if (!Array.isArray(merged.practicePerformances)) merged.practicePerformances = clone(seedPracticePerformances);
+        if (!merged.preflight) merged.preflight = { modelReady: false, micGranted: false, midiConnected: false, cameraGranted: false };
         if (merged.subscription && merged.subscription.renewal === 'Sep 15, 2026') {
           merged.subscription.renewal = 'Nov 15, 2026';
         }

@@ -46,7 +46,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
 
         <div className="mt-3 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
           <Link
-            to={`/score/${score.id}/practice`}
+            to={`/score/${score.id}/setup`}
             className="flex items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90"
           >
             <Play className="h-3 w-3" /> Practice

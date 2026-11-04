@@ -35,6 +35,7 @@ import ImportDetail from '@/pages/ImportDetail';
 import PracticeHub from '@/pages/PracticeHub';
 import PracticeHistory from '@/pages/PracticeHistory';
 import PracticeProgress from '@/pages/PracticeProgress';
+import Performances from '@/pages/Performances';
 import Notifications from '@/pages/Notifications';
 import Help from '@/pages/Help';
 import HelpArticle from '@/pages/HelpArticle';
@@ -47,6 +48,7 @@ import PlanSettings from '@/pages/settings/PlanSettings';
 import PrivacySettings from '@/pages/settings/PrivacySettings';
 
 // Workspaces (full screen)
+import PracticeSetup from '@/pages/PracticeSetup';
 import Editor from '@/pages/Editor';
 import PracticeSession from '@/pages/PracticeSession';
 import PracticeSummary from '@/pages/PracticeSummary';
@@ -98,12 +100,14 @@ const AuthenticatedApp = () => {
         <Route element={<AppShell />}>
           <Route path="/library" element={<Library />} />
           <Route path="/score/:scoreId" element={<ScoreDetail />} />
+          <Route path="/score/:scoreId/setup" element={<PracticeSetup />} />
           <Route path="/add-score" element={<AddScore />} />
           <Route path="/imports" element={<Imports />} />
           <Route path="/imports/:importId" element={<ImportDetail />} />
           <Route path="/practice" element={<PracticeHub />} />
           <Route path="/practice/history" element={<PracticeHistory />} />
           <Route path="/practice/progress" element={<PracticeProgress />} />
+          <Route path="/performances" element={<Performances />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />}>
             <Route index element={<Navigate to="/settings/account" replace />} />

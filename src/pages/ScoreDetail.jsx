@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, Pencil, Share2, MoreHorizontal, Star, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download, Copy, Trash2, FolderInput, History, LogOut, BookmarkMinus, Check, Lock } from 'lucide-react';
+import { ArrowLeft, Play, Pencil, Share2, MoreHorizontal, Star, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download, Trash2, FolderInput, History, LogOut, BookmarkMinus, Check, Lock, Headphones, FileImage, FileCode } from 'lucide-react';
 import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
 import ScorePreview from '@/components/library/ScorePreview';
+import ListenControl from '@/components/score/ListenControl';
 import SharingDialog from '@/components/sharing/SharingDialog';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,11 +23,11 @@ export default function ScoreDetail() {
   const { toast } = useToast();
   const score = usePrototypeStore((s) => s.scores.find((sc) => sc.id === scoreId));
   const practiceSessions = usePrototypeStore((s) => s.practiceSessions);
+  const practicePerformances = usePrototypeStore((s) => s.practicePerformances);
   const toggleFavorite = usePrototypeStore((s) => s.toggleScoreFavorite);
   const moveToTrash = usePrototypeStore((s) => s.moveOwnedScoreToTrash);
   const leaveShared = usePrototypeStore((s) => s.leaveSharedScore);
   const removeSaved = usePrototypeStore((s) => s.removeSavedScore);
-  const duplicate = usePrototypeStore((s) => s.duplicateScore);
   const moveToFolder = usePrototypeStore((s) => s.moveScoreToFolder);
   const folders = usePrototypeStore((s) => s.folders);
   const restoreVersion = usePrototypeStore((s) => s.restoreVersion);
@@ -39,7 +40,7 @@ export default function ScoreDetail() {
   const [confirmLeave, setConfirmLeave] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [moveFolderOpen, setMoveFolderOpen] = useState(false);
-  const [exporting, setExporting] = useState(false);
+  const [exporting, setExporting] = useState(null);
 
   if (!score) {
     return (
@@ -56,18 +57,15 @@ export default function ScoreDetail() {
 
   const perms = getPermissions(score);
   const sessions = practiceSessions.filter((s) => s.scoreId === score.id);
+  const scorePerformances = practicePerformances.filter((p) => p.scoreId === score.id);
 
-  const handleExport = () => {
-    setExporting(true);
+  // Only the formats Yueora actually produces — no placeholder options.
+  const handleExport = (kind) => {
+    setExporting(kind);
     setTimeout(() => {
-      setExporting(false);
-      toast({ title: 'Export ready', description: `${score.title} has been exported as PDF.` });
-    }, 1500);
-  };
-
-  const handleDuplicate = () => {
-    duplicate(score.id);
-    toast({ title: 'Score duplicated', description: `${score.title} (copy) added to your library.` });
+      setExporting(null);
+      toast({ title: 'Export ready', description: `${score.title} exported as ${kind}.` });
+    }, 1200);
   };
 
   const handleFavorite = () => {
@@ -101,13 +99,18 @@ export default function ScoreDetail() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {perms.canPractice ? (
-            <Link to={`/score/${score.id}/practice`} className="flex items-center gap-2 rounded-control bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
+            <Link to={`/score/${score.id}/setup`} className="flex items-center gap-2 rounded-control bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
               <Play className="h-4 w-4" /> {score.lastMeasure > 1 ? 'Continue playing' : 'Practice'}
             </Link>
           ) : (
             <span className="flex items-center gap-2 rounded-control bg-muted px-4 py-2.5 text-sm font-semibold text-muted-foreground">
               <Lock className="h-4 w-4" /> Practice unavailable
             </span>
+          )}
+          {score.source !== 'Photo' && (
+            <a href="#listen" className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
+              <Headphones className="h-4 w-4" /> Listen
+            </a>
           )}
           {perms.canEdit && (
             <Link to={`/score/${score.id}/edit`} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
@@ -119,6 +122,23 @@ export default function ScoreDetail() {
               <Share2 className="h-4 w-4" /> Share
             </button>
           )}
+          {perms.canDownload && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
+                  <Download className="h-4 w-4" /> {exporting ? 'Exporting…' : 'Export'}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuItem onClick={() => handleExport('PNG')} disabled={!!exporting}>
+                  <FileImage className="mr-2 h-4 w-4" /> Export PNG
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport('MusicXML')} disabled={!!exporting}>
+                  <FileCode className="mr-2 h-4 w-4" /> Export MusicXML
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="rounded-control border border-line-subtle p-2.5 text-ink-secondary hover:bg-accent" aria-label="More"><MoreHorizontal className="h-4 w-4" /></button>
@@ -127,8 +147,6 @@ export default function ScoreDetail() {
               <DropdownMenuItem onClick={handleFavorite}><Star className="mr-2 h-4 w-4" /> {score.favorite ? 'Remove favorite' : 'Add to favorites'}</DropdownMenuItem>
               <DropdownMenuItem onClick={() => setMoveFolderOpen(true)}><FolderInput className="mr-2 h-4 w-4" /> Move to folder</DropdownMenuItem>
               {score.ownership === 'mine' && <DropdownMenuItem onClick={() => setVersionsOpen(true)}><History className="mr-2 h-4 w-4" /> Version history</DropdownMenuItem>}
-              {score.ownership === 'mine' && <DropdownMenuItem onClick={handleDuplicate}><Copy className="mr-2 h-4 w-4" /> Duplicate</DropdownMenuItem>}
-              {perms.canDownload && <DropdownMenuItem onClick={handleExport}><Download className="mr-2 h-4 w-4" /> {exporting ? 'Exporting…' : 'Export'}</DropdownMenuItem>}
               <DropdownMenuSeparator />
               {score.ownership === 'mine' && <DropdownMenuItem className="text-destructive" onClick={() => setConfirmDelete(true)}><Trash2 className="mr-2 h-4 w-4" /> Move to trash</DropdownMenuItem>}
               {score.ownership === 'shared' && <DropdownMenuItem className="text-destructive" onClick={() => setConfirmLeave(true)}><LogOut className="mr-2 h-4 w-4" /> Leave shared score</DropdownMenuItem>}
@@ -156,6 +174,9 @@ export default function ScoreDetail() {
               <button onClick={() => setPage((p) => Math.min(score.pages, p + 1))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Next page"><ChevronRight className="h-4 w-4" /></button>
             </div>
           </div>
+          <div id="listen" className="scroll-mt-24">
+            <ListenControl score={score} />
+          </div>
         </div>
 
         {/* Side column */}
@@ -171,7 +192,7 @@ export default function ScoreDetail() {
               <p className="mt-1 type-body-small text-ink-secondary">{score.difficultSections[0].note}</p>
             )}
             {perms.canPractice ? (
-              <Link to={`/score/${score.id}/practice`} className="mt-4 block rounded-control bg-primary py-2 text-center text-sm font-semibold text-primary-foreground hover:opacity-90">
+              <Link to={`/score/${score.id}/setup`} className="mt-4 block rounded-control bg-primary py-2 text-center text-sm font-semibold text-primary-foreground hover:opacity-90">
                 Continue playing
               </Link>
             ) : (
@@ -198,16 +219,35 @@ export default function ScoreDetail() {
               <p className="mt-3 type-body-small text-ink-tertiary">No sessions yet. When you practice, they’ll show up here.</p>
             ) : (
               <div className="mt-3 divide-y divide-line-subtle">
-                {sessions.slice(0, 5).map((s) => (
-                  <Link key={s.id} to={`/practice/${s.id}/summary`} className="flex items-center justify-between py-2.5 hover:bg-accent/40">
-                    <div>
-                      <p className="type-body-small font-medium text-ink-primary">{s.date} · {s.duration}</p>
-                      <p className="type-metadata text-ink-tertiary">{s.range}</p>
+                {sessions.slice(0, 5).map((s) => {
+                  const saved = practicePerformances.find((p) => p.sessionId === s.id);
+                  return (
+                    <div key={s.id} className="flex items-center justify-between gap-2 py-2.5">
+                      <div className="min-w-0">
+                        <p className="type-body-small font-medium text-ink-primary">{s.date} · {s.duration}</p>
+                        <p className="type-metadata text-ink-tertiary">
+                          {s.range}{saved ? ` · ${saved.mediaKind === 'video' ? 'Video saved' : 'Audio saved'}` : ''}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-1">
+                        {saved && (
+                          <Link to={`/practice/${s.id}/summary`} className="flex items-center gap-1 rounded-control border border-line-subtle px-2 py-1 type-metadata font-medium text-ink-primary hover:bg-accent">
+                            <Play className="h-3 w-3" /> Play
+                          </Link>
+                        )}
+                        <Link to={`/practice/${s.id}/summary`} aria-label={`Open report from ${s.date}`} className="rounded-control p-1 text-ink-tertiary hover:bg-accent">
+                          <ChevronRight className="h-4 w-4" />
+                        </Link>
+                      </div>
                     </div>
-                    <ChevronRight className="h-4 w-4 text-ink-tertiary" />
-                  </Link>
-                ))}
+                  );
+                })}
               </div>
+            )}
+            {scorePerformances.length > 0 && (
+              <Link to={`/performances?score=${score.id}`} className="mt-3 inline-flex items-center gap-1.5 type-body-small font-medium text-brand hover:underline">
+                View performances <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
             )}
           </div>
         </div>

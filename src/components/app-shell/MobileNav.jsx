@@ -1,8 +1,9 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Library as LibraryIcon, Plus, Music2 } from 'lucide-react';
+import { Library as LibraryIcon, Plus, Music2, Disc3 } from 'lucide-react';
 
 const base = 'flex flex-1 flex-col items-center justify-center gap-1 py-2 text-xs font-medium';
 
+// Three primary areas, plus the always-available add action.
 export default function MobileNav() {
   const navigate = useNavigate();
   return (
@@ -13,20 +14,27 @@ export default function MobileNav() {
       >
         <LibraryIcon className="h-5 w-5" /> Library
       </NavLink>
-      <button
-        onClick={() => navigate('/add-score')}
-        className="flex flex-1 flex-col items-center justify-center gap-1 py-2 text-xs font-semibold text-primary"
-      >
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
-          <Plus className="h-5 w-5" />
-        </span>
-      </button>
       <NavLink
         to="/practice"
         className={({ isActive }) => `${base} ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
       >
         <Music2 className="h-5 w-5" /> Practice
       </NavLink>
+      <NavLink
+        to="/performances"
+        className={({ isActive }) => `${base} ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
+      >
+        <Disc3 className="h-5 w-5" /> Performances
+      </NavLink>
+      <button
+        onClick={() => navigate('/add-score')}
+        className="flex flex-1 flex-col items-center justify-center gap-1 py-2 text-xs font-semibold text-primary"
+        aria-label="Add score"
+      >
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <Plus className="h-5 w-5" />
+        </span>
+      </button>
     </nav>
   );
 }

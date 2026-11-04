@@ -106,6 +106,24 @@ export const practiceHistory = [
   { id: 's5', scoreId: 'clair-de-lune', date: 'Sep 1', duration: '15 min', mode: 'Follow', input: 'Microphone', range: 'Whole score', insight: 'Nice, relaxed session.' },
 ];
 
+// ---------- Performances (explicitly kept recordings) ----------
+export const practicePerformances = [
+  {
+    id: 'perf-interstellar', sessionId: 's2', scoreId: 'interstellar', scoreTitle: 'Interstellar Main Theme',
+    createdAt: 'Sep 8', duration: '4:22', durationSec: 262, mediaKind: 'video',
+    tempo: { mode: 'score', bpm: 56 },
+    range: { kind: 'full', startMeasure: 1, endMeasure: 30 },
+    rangeLabel: 'Full score', mockMediaUrl: 'mock://video/perf-interstellar', reportId: 's2',
+  },
+  {
+    id: 'perf-etude', sessionId: 's4', scoreId: 'etude10-4', scoreTitle: 'Étude Op. 10 No. 4',
+    createdAt: 'Sep 5', duration: '3:10', durationSec: 190, mediaKind: 'audio',
+    tempo: { mode: 'fixed', bpm: 120 },
+    range: { kind: 'section', startGroupId: 'g1-1', endGroupId: 'g32-2', startMeasure: 1, endMeasure: 32 },
+    rangeLabel: 'Measures 1–32', mockMediaUrl: 'mock://audio/perf-etude', reportId: 's4',
+  },
+];
+
 // ---------- Practice Progress ----------
 export const practiceProgress = {
   weeklyMinutes: [42, 38, 55, 62, 48, 60, 62],

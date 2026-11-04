@@ -1,113 +1,204 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { ArrowLeft, Play, Pause, RotateCcw, BarChart3, History } from 'lucide-react';
+import { ArrowLeft, BarChart3, Download, History, Play, RotateCcw, Wand2 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
-import { buildSummary } from '@/lib/mockData';
+import { buildSummary, generateNotes } from '@/lib/mockData';
+import { fmtClock, measureWindowStart } from '@/lib/practiceUtils';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import Metric from '@/components/patterns/Metric';
+import ScoreCanvas from '@/components/editor/ScoreCanvas';
+import PerformanceReplay from '@/components/performances/PerformanceReplay';
+import ShareVideoDialog from '@/components/performances/ShareVideoDialog';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 
+/**
+ * Practice report. The session is the record of what happened; a saved
+ * performance is the recording the user chose to keep.
+ */
 export default function PracticeSummary() {
   const { sessionId } = useParams();
   const location = useLocation();
   const state = location.state || {};
-  const scoreId = state.scoreId || (sessionId || '').replace(/-session/, '').replace(/^s-/, '');
-  const base = buildSummary(scoreId);
-  const score = usePrototypeStore((s) => s.scores.find((sc) => sc.id === scoreId));
+  const { toast } = useToast();
+
   const session = usePrototypeStore((s) => s.practiceSessions.find((p) => p.id === sessionId));
-  const summary = { ...base, accuracy: state.accuracy ?? session?.accuracy ?? base.accuracy, duration: state.duration ?? session?.duration ?? base.duration };
+  const performances = usePrototypeStore((s) => s.practicePerformances);
+  const savePerformance = usePrototypeStore((s) => s.savePerformance);
+  const scores = usePrototypeStore((s) => s.scores);
+
+  const performance = performances.find((p) => p.sessionId === sessionId);
+  const scoreId = state.scoreId || session?.scoreId || performance?.scoreId;
+  const score = scores.find((s) => s.id === scoreId);
+  const scoreTitle = score?.title || performance?.scoreTitle || 'Score';
+  const base = buildSummary(scoreId);
+
+  const totalMeasures = score?.measures || 32;
+  const mediaKind = performance?.mediaKind || session?.mediaKind || (state.recordingMode && state.recordingMode !== 'off' ? state.recordingMode : null);
+  const recordingMode = session?.recordingMode || state.recordingMode || mediaKind || 'off';
+  const durationSec = session?.durationSec || state.durationSec || performance?.durationSec || Math.round((totalMeasures * 4 * 60) / (score?.tempo || 80));
+  const accuracy = state.accuracy ?? session?.accuracy ?? base.accuracy;
+  const tempoBpm = session?.tempoBpm || state.tempoBpm || score?.tempo || 80;
+  const skipped = session?.skippedGroups ?? state.skippedGroups ?? 0;
+  const rangeText = state.rangeLabel || session?.range || performance?.rangeLabel || 'Full score';
 
   const trickyFrom = state.trickyFrom ?? session?.trickyFrom ?? 1;
-  const trickyTo = state.trickyTo ?? session?.trickyTo ?? Math.min(score?.measures || 32, 5);
+  const trickyTo = state.trickyTo ?? session?.trickyTo ?? Math.min(totalMeasures, trickyFrom + 4);
+  const trickyLabel = trickyFrom === trickyTo ? `Measure ${trickyFrom}` : `Measures ${trickyFrom}–${trickyTo}`;
 
-  const [replaying, setReplaying] = useState(false);
-  const [replayPos, setReplayPos] = useState(0);
-  const totalMeasures = score?.measures || 32;
+  const [shareOpen, setShareOpen] = useState(false);
+  const [notes] = useState(() => generateNotes(scoreId));
 
-  const toggleReplay = () => {
-    if (replayPos >= totalMeasures) setReplayPos(0);
-    setReplaying((r) => !r);
+  const keepPerformance = () => {
+    savePerformance({
+      sessionId,
+      scoreId,
+      scoreTitle,
+      createdAt: 'Today',
+      duration: fmtClock(durationSec),
+      durationSec,
+      mediaKind,
+      tempo: { mode: state.tempoMode || 'score', bpm: tempoBpm },
+      range: session?.rangeDetail || { kind: 'full', startMeasure: 1, endMeasure: totalMeasures },
+      rangeLabel: rangeText,
+      mockMediaUrl: `mock://${mediaKind}/report-${sessionId}`,
+      reportId: sessionId,
+    });
+    toast({ title: 'Performance saved', description: `${scoreTitle} is now in Performances.` });
   };
-
-  useEffect(() => {
-    if (!replaying) return;
-    const t = setInterval(() => {
-      setReplayPos((p) => {
-        if (p + 1 >= totalMeasures) { setReplaying(false); return p; }
-        return p + 1;
-      });
-    }, 800);
-    return () => clearInterval(t);
-  }, [replaying]);
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 md:px-8">
-      <Link to={score ? `/score/${scoreId}` : '/practice'} className="flex items-center gap-1.5 type-body-small text-ink-secondary hover:text-ink-primary">
-        <ArrowLeft className="h-4 w-4" /> {score?.title || 'Back'}
+      <Link
+        to={scoreId ? `/score/${scoreId}` : '/performances'}
+        className="flex items-center gap-1.5 type-body-small text-ink-secondary hover:text-ink-primary"
+      >
+        <ArrowLeft className="h-4 w-4" /> {scoreId ? scoreTitle : 'Performances'}
       </Link>
 
       {/* Hero — human first */}
-      <h1 className="mt-6 type-display text-[clamp(1.75rem,4vw,2.75rem)] text-ink-primary">{summary.hero}</h1>
-      <p className="mt-2 type-body text-ink-secondary">{summary.title} · {summary.composer}</p>
+      <h1 className="mt-6 type-display text-[clamp(1.75rem,4vw,2.75rem)] text-ink-primary">{base.hero}</h1>
+      <p className="mt-2 type-body text-ink-secondary">
+        {trickyLabel} {trickyFrom === trickyTo ? 'was' : 'were'} still the trickiest part today.
+      </p>
+      <p className="mt-1 type-metadata text-ink-tertiary">{scoreTitle} · {base.composer} · {rangeText}</p>
 
-      {/* Insight — one kept surface */}
-      <div className="mt-6 rounded-container border border-line-subtle bg-surface-panel p-5">
-        <p className="type-body-small text-ink-secondary">{summary.insight}</p>
-        <Link to={`/score/${scoreId}/practice`} state={{ range: 'selected', rangeFrom: trickyFrom, rangeTo: trickyTo }} className="mt-3 inline-flex items-center gap-2 rounded-control bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
-          <Play className="h-4 w-4" /> Try that section again
-        </Link>
-        <p className="mt-2 type-metadata text-ink-tertiary">Measures {trickyFrom}–{trickyTo} will be pre-selected.</p>
+      <div className="mt-5">
+        <Button asChild>
+          <Link to={scoreId ? `/score/${scoreId}/setup` : '/practice'} state={scoreId ? { prefill: { startMeasure: trickyFrom, endMeasure: trickyTo } } : undefined}>
+            <Play className="mr-1.5 h-4 w-4" /> Try that section again
+          </Link>
+        </Button>
+        <p className="mt-1.5 type-metadata text-ink-tertiary">{trickyLabel} will be pre-selected.</p>
       </div>
 
-      {/* Metrics — flat band with separators, not KPI cards */}
+      {/* Replay */}
+      <section className="mt-9">
+        <SectionHeader title="Replay" />
+        {mediaKind ? (
+          <div className="mt-3">
+            <PerformanceReplay
+              scoreId={scoreId}
+              mediaKind={mediaKind}
+              durationSec={durationSec}
+              totalMeasures={totalMeasures}
+              startMeasure={1}
+            />
+          </div>
+        ) : (
+          <div className="mt-3">
+            <p className="type-body-small text-ink-secondary">No recording was made for this performance.</p>
+            <div className="mt-3 rounded-container border border-line-subtle bg-surface-panel p-3">
+              <ScoreCanvas
+                notes={notes}
+                selectedIds={null}
+                onSelect={() => {}}
+                zoom={1}
+                activeIssueMeasure={trickyFrom}
+                measureStart={measureWindowStart(trickyFrom)}
+              />
+            </div>
+            <p className="mt-2 type-metadata text-ink-tertiary">{trickyLabel} is marked on the score.</p>
+          </div>
+        )}
+      </section>
+
+      {/* Metrics — flat band */}
       <dl className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-0 sm:divide-x sm:divide-line-subtle">
-        <div className="sm:px-4 sm:first:pl-0"><Metric label="Accuracy" value={`${summary.accuracy}%`} /></div>
-        <div className="sm:px-4"><Metric label="Timing" value={summary.timing} /></div>
-        <div className="sm:px-4"><Metric label="Duration" value={summary.duration} /></div>
-        <div className="sm:px-4"><Metric label="Tempo" value={summary.tempo} /></div>
+        <div className="sm:px-4 sm:first:pl-0"><Metric label="Accuracy" value={`${accuracy}%`} /></div>
+        <div className="sm:px-4"><Metric label="Timing" value={base.timing} /></div>
+        <div className="sm:px-4"><Metric label="Duration" value={fmtClock(durationSec)} /></div>
+        <div className="sm:px-4"><Metric label="Tempo" value={`${tempoBpm} BPM`} /></div>
       </dl>
 
-      {/* Compared with last time — plain section */}
+      {/* Keep / Download / Share */}
+      {mediaKind && (
+        <section className="mt-8 border-t border-line-subtle pt-5">
+          <SectionHeader title="Keep this performance" />
+          <p className="mt-2 type-body-small text-ink-secondary">
+            Recording is temporary until you keep it. Saving puts it in Performances.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {performance ? (
+              <span className="flex items-center gap-2 rounded-control bg-muted px-4 py-2.5 text-sm font-semibold text-ink-secondary">
+                Saved to Performances
+              </span>
+            ) : (
+              <Button onClick={keepPerformance}>Save performance</Button>
+            )}
+            <Button
+              variant="outline"
+              onClick={() => toast({ title: 'Recording downloaded', description: `${scoreTitle} — ${mediaKind} recording (mock file).` })}
+            >
+              <Download className="mr-1.5 h-4 w-4" /> Download recording
+            </Button>
+            {mediaKind === 'video' && (
+              <Button variant="outline" onClick={() => setShareOpen(true)}>
+                <Wand2 className="mr-1.5 h-4 w-4" /> Make a share video
+              </Button>
+            )}
+            {performance && <Link to="/performances" className="flex items-center rounded-control px-3 py-2.5 text-sm font-medium text-brand hover:underline">View Performances</Link>}
+          </div>
+        </section>
+      )}
+
+      {!mediaKind && (
+        <p className="mt-6 type-metadata text-ink-tertiary">
+          Recording was off ({recordingMode === 'off' ? 'Off' : recordingMode}). You can record next time in setup.
+        </p>
+      )}
+
+      {/* Compared with last time */}
       <section className="mt-8">
         <SectionHeader title="Compared with last time" />
         <dl className="mt-3 space-y-2 type-body-small">
-          <div className="flex justify-between"><dt className="text-ink-secondary">Accuracy</dt><dd className="text-brand">{summary.compared.accuracy}</dd></div>
-          <div className="flex justify-between"><dt className="text-ink-secondary">Missed notes</dt><dd className="text-brand">{summary.compared.errors}</dd></div>
-          <div className="flex justify-between"><dt className="text-ink-secondary">Tempo</dt><dd className="text-brand">{summary.compared.tempo}</dd></div>
+          <div className="flex justify-between"><dt className="text-ink-secondary">Accuracy</dt><dd className="text-brand">{base.compared.accuracy}</dd></div>
+          <div className="flex justify-between"><dt className="text-ink-secondary">Missed notes</dt><dd className="text-brand">{base.compared.errors}</dd></div>
+          <div className="flex justify-between"><dt className="text-ink-secondary">Tempo</dt><dd className="text-brand">{base.compared.tempo}</dd></div>
         </dl>
       </section>
 
-      {/* Details — plain definition list */}
+      {/* Details */}
       <section className="mt-6">
         <SectionHeader title="Details" />
         <dl className="mt-3 space-y-2 type-body-small">
-          <div className="flex justify-between"><dt className="text-ink-secondary">Missing notes</dt><dd className="text-ink-primary">{summary.missing}</dd></div>
-          <div className="flex justify-between"><dt className="text-ink-secondary">Unexpected notes</dt><dd className="text-ink-primary">{summary.unexpected}</dd></div>
+          <div className="flex justify-between"><dt className="text-ink-secondary">Missing notes</dt><dd className="text-ink-primary">{base.missing}</dd></div>
+          <div className="flex justify-between"><dt className="text-ink-secondary">Unexpected notes</dt><dd className="text-ink-primary">{base.unexpected}</dd></div>
+          {skipped > 0 && (
+            <div className="flex justify-between"><dt className="text-ink-secondary">Groups skipped</dt><dd className="text-ink-primary">{skipped}</dd></div>
+          )}
+          <div className="flex justify-between"><dt className="text-ink-secondary">Mode</dt><dd className="text-ink-primary">{session?.mode || 'Practice'}</dd></div>
+          <div className="flex justify-between"><dt className="text-ink-secondary">Input</dt><dd className="text-ink-primary">{session?.input || 'Microphone'}</dd></div>
         </dl>
-      </section>
-
-      {/* Replay — compact player row */}
-      <section className="mt-6">
-        <SectionHeader title="Replay performance" />
-        <div className="mt-3 flex items-center gap-3">
-          <button onClick={toggleReplay} className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90">
-            {replaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-          </button>
-          <div className="flex-1">
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-              <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${(replayPos / totalMeasures) * 100}%` }} />
-            </div>
-            <p className="mt-1 type-metadata text-ink-tertiary">Measure {replayPos} of {totalMeasures}</p>
-          </div>
-        </div>
       </section>
 
       {/* Actions */}
       <div className="mt-8 flex flex-wrap gap-2">
-        <Link to={`/score/${scoreId}/practice`} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
-          <RotateCcw className="h-4 w-4" /> Play full score again
+        <Link to={scoreId ? `/score/${scoreId}/setup` : '/practice'} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
+          <RotateCcw className="h-4 w-4" /> Play it again
         </Link>
-        <Link to={`/score/${scoreId}`} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
-          Back to score
+        <Link to="/performances" className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
+          Performances
         </Link>
         <Link to="/practice" className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
           Back to Practice
@@ -118,6 +209,8 @@ export default function PracticeSummary() {
         <Link to="/practice/history" className="flex items-center gap-1.5 type-body-small text-ink-secondary hover:text-ink-primary"><History className="h-4 w-4" /> Practice history</Link>
         <Link to="/practice/progress" className="flex items-center gap-1.5 type-body-small text-ink-secondary hover:text-ink-primary"><BarChart3 className="h-4 w-4" /> Progress</Link>
       </div>
+
+      <ShareVideoDialog open={shareOpen} onOpenChange={setShareOpen} title={scoreTitle} />
     </div>
   );
 }

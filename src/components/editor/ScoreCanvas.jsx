@@ -13,7 +13,7 @@ const durationFill = { '1': false, '2': false, '4': true, '8': true };
 
 const accidentalSymbols = { sharp: '♯', flat: '♭', natural: '♮' };
 
-export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, onDelete, tool, zoom, activeMeasure, activeIssueMeasure, measureStart: measureStartProp, activeMeasureVariant = 'default' }) {
+export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, onDelete, tool, zoom, activeMeasure, activeIssueMeasure, measureStart: measureStartProp, activeMeasureVariant = 'default', selectedMeasures }) {
   // Visible window: explicit measureStart wins; otherwise follow the focus measure
   const focusMeasure = activeIssueMeasure ?? activeMeasure;
   const measureStart = measureStartProp ?? (focusMeasure ? Math.max(1, Math.floor((focusMeasure - 1) / 4) * 4 + 1) : 1);
@@ -67,6 +67,22 @@ export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, o
         <svg width={width} height={height} onClick={handleBackgroundClick} className="select-none">
           {STAVES.map((st, si) => (
             <g key={si}>
+              {/* Selected section (practice range) — restrained, sits under the playhead */}
+              {selectedMeasures && Array.from({ length: MEASURES }).map((_, mi) => {
+                const measureNum = measureStart + mi;
+                if (measureNum < selectedMeasures.from || measureNum > selectedMeasures.to) return null;
+                return (
+                  <rect
+                    key={`sel-${si}-${mi}`}
+                    x={STAFF_LEFT + mi * MEASURE_W}
+                    y={st.top - 4}
+                    width={MEASURE_W}
+                    height={4 * LINE_GAP + 8}
+                    fill="hsl(var(--selection) / 0.8)"
+                    rx={2}
+                  />
+                );
+              })}
               {/* Active measure highlight */}
               {activeMeasure != null && Array.from({ length: MEASURES }).map((_, mi) => {
                 const measureNum = measureStart + mi;

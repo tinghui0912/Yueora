@@ -108,7 +108,7 @@ export default function SharedScore() {
         <div className="mt-6 flex flex-wrap gap-2">
           {canPractice ? (
             isAuthenticated ? (
-              <Button onClick={() => navigate(`/score/${score.id}/practice`)} className="bg-primary text-primary-foreground"><Play className="mr-1.5 h-4 w-4" /> Practice</Button>
+              <Button onClick={() => navigate(`/score/${score.id}/setup`)} className="bg-primary text-primary-foreground"><Play className="mr-1.5 h-4 w-4" /> Practice</Button>
             ) : (
               <Button onClick={() => navigate(`/login?returnTo=/s/${shareToken}`)} className="bg-primary text-primary-foreground"><Play className="mr-1.5 h-4 w-4" /> Sign in to practice</Button>
             )

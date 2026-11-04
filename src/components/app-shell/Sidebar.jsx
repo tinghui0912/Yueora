@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Plus, Library as LibraryIcon, Music2, Inbox } from 'lucide-react';
+import { Plus, Library as LibraryIcon, Music2, Inbox, Disc3 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 
 const navItem = 'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors';
@@ -38,6 +38,14 @@ export default function Sidebar() {
           }
         >
           <Music2 className="h-4 w-4" /> Practice
+        </NavLink>
+        <NavLink
+          to="/performances"
+          className={({ isActive }) =>
+            `${navItem} ${isActive ? 'bg-accent text-accent-foreground' : 'text-foreground hover:bg-accent/60'}`
+          }
+        >
+          <Disc3 className="h-4 w-4" /> Performances
         </NavLink>
       </nav>
 

@@ -49,7 +49,7 @@ export default function PracticeHub() {
       {continueScore && (
         <section className="mt-8">
           <h2 className="type-caption text-ink-tertiary">Pick up where you left off</h2>
-          <Link to={`/score/${continueScore.id}/practice`} className="mt-3 flex flex-col gap-4 rounded-md border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+          <Link to={`/score/${continueScore.id}/setup`} className="mt-3 flex flex-col gap-4 rounded-md border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
               <div className="h-16 w-24 shrink-0 overflow-hidden rounded border border-border"><ScorePreview id={continueScore.id} className="h-full w-full" /></div>
               <div>
@@ -114,7 +114,7 @@ export default function PracticeHub() {
                 <p className="text-sm text-muted-foreground">{trickySection.label}</p>
                 <p className="mt-1 text-sm text-muted-foreground">{trickySection.note}</p>
               </div>
-              <Link to={`/score/${trickySection.scoreId}/practice`} state={{ range: 'selected', rangeFrom: trickySection.from, rangeTo: trickySection.to }} className="flex shrink-0 items-center gap-1.5 self-start rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
+              <Link to={`/score/${trickySection.scoreId}/setup`} state={{ prefill: { startMeasure: trickySection.from, endMeasure: trickySection.to } }} className="flex shrink-0 items-center gap-1.5 self-start rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
                 Try this section
               </Link>
             </div>
