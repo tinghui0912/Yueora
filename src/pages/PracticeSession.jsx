@@ -1,44 +1,51 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
-  ArrowLeft, Play, Pause, Flag, Timer, RotateCcw, Check, Repeat, SkipForward,
-  Settings2, MoreHorizontal, Video, EyeOff, ChevronLeft, ChevronRight, X,
+  ArrowLeft, Play, Pause, Flag, Timer, RotateCcw, Repeat, Settings2,
+  MoreHorizontal, Video, ChevronLeft, ChevronRight, X,
 } from 'lucide-react';
 import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
+import { usePracticeRuntime } from '@/stores/practiceRuntime';
 import { generateNotes } from '@/lib/mockData';
 import { measureWindowStart, fmtClock, tempoLabel, rangeLabel } from '@/lib/practiceUtils';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import TempoPopover from '@/components/practice/TempoPopover';
+import FollowFeedback from '@/components/practice/FollowFeedback';
+import VirtualKeyboard from '@/components/practice/VirtualKeyboard';
+import PracticeSettingsDialog from '@/components/practice/PracticeSettingsDialog';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/components/ui/use-toast';
 
 const GROUPS = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'E', 'G', 'F', 'D', 'C'];
 
 /**
  * Practice workspace — the music is prepared here, not the system.
- * Mode / input / recording arrived from Setup; Section, Tempo, Loop and Skip
- * live here because they only make sense once the score is in front of you.
+ * Follow notes waits for you; Performance runs at the chosen tempo.
  */
 export default function PracticeSession() {
   const { scoreId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
   const config = location.state?.config || null;
   const prefill = config?.prefill || null;
 
   const mode = config?.mode || 'follow';
   const input = config?.input || 'microphone';
   const recording = config?.recording || 'off';
+  const feedbackAvailable = config?.feedbackAvailable ?? input !== 'none';
 
   const score = usePrototypeStore((s) => s.scores.find((sc) => sc.id === scoreId));
-  const addPracticeSession = usePrototypeStore((s) => s.addPracticeSession);
+  const addPracticeActivity = usePrototypeStore((s) => s.addPracticeActivity);
   const updateScoreLastPlayed = usePrototypeStore((s) => s.updateScoreLastPlayed);
+  const setReport = usePracticeRuntime((s) => s.setReport);
+  const clearReport = usePracticeRuntime((s) => s.clearReport);
 
   const [notes] = useState(() => generateNotes(scoreId));
 
@@ -63,11 +70,18 @@ export default function PracticeSession() {
   const [matched, setMatched] = useState(0);
   const [skipped, setSkipped] = useState(0);
   const [elapsed, setElapsed] = useState(0);
+  const [groupStatus, setGroupStatus] = useState('waiting'); // waiting | matched | wrong | skipped
+
+  const [feedbackOn, setFeedbackOn] = useState(feedbackAvailable);
+  const [virtualKeyboard, setVirtualKeyboard] = useState(false);
+  const [showNoteNames, setShowNoteNames] = useState(false);
+  const [highlightMeasure, setHighlightMeasure] = useState(true);
 
   const [exitOpen, setExitOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [selfViewHidden, setSelfViewHidden] = useState(false);
   const finished = useRef(false);
+  const startedAt = useRef(null);
 
   const totalMeasures = score?.measures || 32;
   const maxMeasure = selectedRange.kind === 'section' ? selectedRange.endMeasure : totalMeasures;
@@ -75,7 +89,7 @@ export default function PracticeSession() {
   const bpm = tempoMode === 'fixed' ? customBpm : (score?.tempo || 80);
   const isActive = phase === 'running' || phase === 'paused';
   const tempoLocked = phase !== 'ready';
-  const recordingOn = recording !== 'off';
+  const beatMs = Math.round(60000 / bpm);
 
   // Setup owns technical readiness — arriving here without it means going back.
   useEffect(() => {
@@ -89,7 +103,7 @@ export default function PracticeSession() {
     return () => clearInterval(t);
   }, [phase]);
 
-  // Performance: one measure of count-in, then the music runs.
+  // Count-in follows the chosen tempo.
   useEffect(() => {
     if (phase !== 'countin') return undefined;
     const t = setInterval(() => {
@@ -100,21 +114,20 @@ export default function PracticeSession() {
         }
         return b - 1;
       });
-    }, 600);
+    }, beatMs);
     return () => clearInterval(t);
-  }, [phase]);
+  }, [phase, beatMs]);
 
-  // Performance advances on its own at the chosen tempo.
+  // Performance advances on its own; Follow advances only when you play.
   useEffect(() => {
     if (phase !== 'running' || mode !== 'performance') return undefined;
-    const interval = Math.min(2400, Math.max(400, Math.round(60000 / (bpm * 4)) * 4));
+    const interval = Math.max(280, beatMs * 4);
     const t = setInterval(() => advance(), interval);
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, mode, bpm, activeMeasure, selectedRange, loop]);
 
-  // The playhead always stays visible — following the score is a system behavior,
-  // not a toggle. Pausing hands the view back to you.
+  // The playhead always stays visible — following the score is a system behavior.
   useEffect(() => {
     if (phase === 'running' || phase === 'countin') {
       setVisibleMeasureStart(measureWindowStart(activeMeasure));
@@ -124,83 +137,89 @@ export default function PracticeSession() {
   function finish() {
     if (finished.current) return;
     finished.current = true;
-    const durationSec = Math.max(1, elapsed || 30);
-    // Skipped groups are not wrong notes: they never lower accuracy.
-    const accuracy = Math.max(56, Math.min(99, 100 - Math.floor(durationSec / 150)));
-    const sessionId = `s-${Date.now()}`;
-    const trickyFrom = selectedRange.kind === 'section'
-      ? selectedRange.startMeasure
-      : (score?.difficultSections?.[0]?.from || Math.min(Math.max(1, maxMeasure - 4), Math.floor(maxMeasure * 0.6)));
-    const trickyTo = selectedRange.kind === 'section'
-      ? selectedRange.endMeasure
-      : (score?.difficultSections?.[0]?.to || Math.min(maxMeasure, trickyFrom + 4));
+    const completedAt = new Date().toISOString();
+    const durationSeconds = Math.max(1, elapsed || (mode === 'follow' ? matched * 6 + 12 : Math.round((maxMeasure * 4 * 60) / bpm)));
+    const activityId = `act-${Date.now()}`;
+    const rangeSummary = rangeLabel(selectedRange);
 
-    addPracticeSession({
-      id: sessionId,
+    addPracticeActivity({
+      id: activityId,
       scoreId,
-      duration: `${Math.max(1, Math.round(durationSec / 60))} min`,
-      durationSec,
-      mode: mode === 'follow' ? 'Follow' : 'Performance',
-      input: input === 'microphone' ? 'Microphone' : 'MIDI',
-      recordingMode: recording,
-      mediaKind: recording === 'off' ? null : recording,
-      tempoBpm: bpm,
-      skippedGroups: skipped,
-      rangeDetail: selectedRange.kind === 'full'
-        ? { ...selectedRange, startMeasure: 1, endMeasure: maxMeasure }
-        : selectedRange,
-      range: rangeLabel(selectedRange),
-      insight: 'Nice session.',
-      accuracy,
-      trickyFrom,
-      trickyTo,
+      scoreTitleSnapshot: score.title,
+      mode,
+      startedAt: startedAt.current || completedAt,
+      completedAt,
+      durationSeconds,
+      tempoBpm: mode === 'performance' ? bpm : null,
+      rangeSummary,
     });
     updateScoreLastPlayed(scoreId, activeMeasure);
 
-    navigate(`/practice/${sessionId}/summary`, {
-      state: {
-        scoreId,
-        accuracy,
-        durationSec,
-        duration: fmtClock(durationSec),
-        tempoBpm: bpm,
-        recordingMode: recording,
-        skippedGroups: skipped,
-        trickyFrom,
-        trickyTo,
-        rangeLabel: rangeLabel(selectedRange),
-      },
+    if (mode === 'follow') {
+      clearReport();
+      toast({ title: 'Practice saved', description: `${score.title} — ${fmtClock(durationSeconds)}.` });
+      navigate(`/score/${scoreId}`);
+      return;
+    }
+
+    // A report is a moment, not a record: it lives in memory only.
+    setReport({
+      activityId,
+      scoreId,
+      scoreTitle: score.title,
+      composer: score.composer,
+      durationSeconds,
+      tempoBpm: bpm,
+      rangeSummary,
+      startMeasure: selectedRange.kind === 'section' ? selectedRange.startMeasure : 1,
+      endMeasure: maxMeasure,
+      mediaType: recording === 'off' ? null : recording,
+      mediaRef: recording === 'off' ? null : `mock://${recording}/${activityId}`,
+      feedback: feedbackAvailable && feedbackOn
+        ? {
+            accuracy: Math.max(58, Math.min(98, 96 - Math.floor(durationSeconds / 180))),
+            groupsMatched: matched,
+            groupsSkipped: skipped,
+          }
+        : null,
+      savedPerformanceId: null,
     });
+    navigate(`/practice/${activityId}/summary`);
   }
 
   function advance() {
     const next = activeMeasure + 1;
     if (next > maxMeasure) {
       if (loop && loopAllowed) {
-        setMatched((c) => c + 1);
         setActiveMeasure(selectedRange.startMeasure);
         return;
       }
-      setMatched((c) => c + 1);
       finish();
       return;
     }
-    setMatched((c) => c + 1);
     setActiveMeasure(next);
   }
 
-  function skipGroup() {
-    setSkipped((s) => s + 1);
-    const next = activeMeasure + 1;
-    if (next > maxMeasure) finish();
-    else setActiveMeasure(next);
+  // Deterministic demo recognition: matched and skipped both move the score on.
+  function resolveCurrentGroup(outcome) {
+    if (mode !== 'follow' || phase !== 'running') return;
+    if (outcome === 'wrong') {
+      setGroupStatus('wrong');
+      return;
+    }
+    setGroupStatus(outcome);
+    if (outcome === 'matched') setMatched((c) => c + 1);
+    if (outcome === 'skipped') setSkipped((s) => s + 1);
+    advance();
   }
 
   function startSession() {
     finished.current = false;
+    startedAt.current = new Date().toISOString();
     setMatched(0);
     setSkipped(0);
     setElapsed(0);
+    setGroupStatus('waiting');
     setActiveMeasure(selectedRange.startMeasure);
     setVisibleMeasureStart(measureWindowStart(selectedRange.startMeasure));
     setSectionPhase('idle');
@@ -218,6 +237,7 @@ export default function PracticeSession() {
     setMatched(0);
     setSkipped(0);
     setElapsed(0);
+    setGroupStatus('waiting');
     setActiveMeasure(selectedRange.startMeasure);
     setVisibleMeasureStart(measureWindowStart(selectedRange.startMeasure));
   }
@@ -292,13 +312,13 @@ export default function PracticeSession() {
   const hint =
     phase === 'ready'
       ? mode === 'follow'
-        ? 'Set a section or tempo if you like, then start. Nothing is timed.'
+        ? 'Set a section if you like, then start. Yueora waits for you.'
         : 'One measure of count-in, then the take runs from start to finish.'
       : phase === 'countin'
         ? 'Count-in…'
         : phase === 'running'
           ? mode === 'follow'
-            ? 'Ready. Play the current note.'
+            ? 'Waiting for the current note.'
             : 'Playing — keep going.'
           : 'Paused. Take your time.';
 
@@ -332,7 +352,7 @@ export default function PracticeSession() {
             <span className={`h-2 w-2 rounded-full ${phase === 'running' ? 'bg-practice-current' : phase === 'countin' ? 'bg-practice-current/60' : 'bg-ink-tertiary'}`} />
             {phase === 'running' ? 'Live' : phase === 'countin' ? 'Count-in' : phase === 'paused' ? 'Paused' : 'Ready'}
           </span>
-          <span className="hidden whitespace-nowrap type-body-small text-ink-secondary capitalize md:inline">{input}</span>
+          <span className="hidden whitespace-nowrap type-body-small text-ink-secondary capitalize md:inline">{input === 'none' ? 'No input' : input}</span>
           <span className="whitespace-nowrap rounded-control bg-practice-current/15 px-2 py-0.5 text-xs font-medium text-practice-current">
             Measure {activeMeasure}
           </span>
@@ -387,10 +407,11 @@ export default function PracticeSession() {
               selectedIds={null}
               onSelect={selecting ? handleSectionClick : () => {}}
               zoom={1.1}
-              activeMeasure={selecting ? null : activeMeasure}
+              activeMeasure={selecting || !highlightMeasure ? null : activeMeasure}
               activeMeasureVariant="practice"
               measureStart={canvasStart}
               selectedMeasures={selectedRange.kind === 'section' ? { from: selectedRange.startMeasure, to: selectedRange.endMeasure } : null}
+              showNoteNames={showNoteNames}
             />
 
             <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 type-metadata text-ink-tertiary">
@@ -422,31 +443,35 @@ export default function PracticeSession() {
               )}
             </div>
           </div>
+
+          {virtualKeyboard && (
+            <VirtualKeyboard current={GROUPS[activeMeasure % GROUPS.length]} showNames={showNoteNames} />
+          )}
         </div>
 
         {phase === 'countin' && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-surface-canvas/70">
             <div className="text-center">
               <p className="type-metric text-6xl text-ink-primary">{countBeat > 0 ? countBeat : '—'}</p>
-              <p className="mt-2 type-body-small text-ink-secondary">One measure count-in</p>
+              <p className="mt-2 type-body-small text-ink-secondary">One measure count-in · ♩ = {bpm}</p>
             </div>
           </div>
         )}
       </div>
 
-      {/* Live feedback / status */}
-      <div className="border-t border-line-subtle bg-surface-panel px-4 py-2 text-center">
+      {/* Status band */}
+      <div className="border-t border-line-subtle bg-surface-panel px-4 py-2">
         {mode === 'follow' && phase !== 'ready' ? (
-          <>
-            <p className="type-caption text-ink-tertiary">Current note</p>
-            <p className="type-display text-2xl text-ink-primary">{GROUPS[activeMeasure % GROUPS.length]}</p>
-            <p className="flex items-center justify-center gap-2 type-metadata text-ink-secondary">
-              <span className="flex items-center gap-1 text-practice-correct"><Check className="h-3.5 w-3.5" aria-hidden="true" /> matched</span>
-              <span className="text-ink-tertiary">· {skipped} skipped</span>
-            </p>
-          </>
+          <FollowFeedback
+            current={GROUPS[activeMeasure % GROUPS.length]}
+            status={groupStatus}
+            matched={matched}
+            skipped={skipped}
+            paused={phase === 'paused'}
+            onResolve={resolveCurrentGroup}
+          />
         ) : (
-          <p className="type-body-small text-ink-secondary">{hint}</p>
+          <p className="text-center type-body-small text-ink-secondary">{hint}</p>
         )}
       </div>
 
@@ -466,12 +491,7 @@ export default function PracticeSession() {
               {phase === 'running' ? <><Pause className="mr-1.5 h-4 w-4" /> Pause</> : <><Play className="mr-1.5 h-4 w-4" /> Resume</>}
             </Button>
           ) : (
-            <Button
-              onClick={() => setPhase((p) => (p === 'running' ? 'paused' : 'running'))}
-              className="px-5"
-            >
-              {phase === 'running' ? <><Pause className="mr-1.5 h-4 w-4" /> Pause</> : <><Play className="mr-1.5 h-4 w-4" /> Resume</>}
-            </Button>
+            <span className="type-metadata text-ink-tertiary">Waiting for you…</span>
           )}
 
           <TempoPopover
@@ -516,15 +536,9 @@ export default function PracticeSession() {
             </button>
           )}
 
-          {mode === 'follow' && isActive && (
-            <Button variant="outline" onClick={skipGroup} className="px-3">
-              <SkipForward className="mr-1.5 h-4 w-4" /> Skip
-            </Button>
-          )}
-
           <div className="ml-auto flex items-center gap-2">
             <span className="hidden type-metadata text-ink-tertiary sm:inline">
-              {fmtClock(elapsed)} · {matched} matched{skipped > 0 ? ` · ${skipped} skipped` : ''}
+              {fmtClock(elapsed)}{mode === 'follow' ? ` · ${matched} matched` : ''}{skipped > 0 ? ` · ${skipped} skipped` : ''}
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -554,46 +568,41 @@ export default function PracticeSession() {
         </div>
       </div>
 
-      {/* Session settings — identity can be changed only by returning to setup */}
-      <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Session settings</DialogTitle>
-            <DialogDescription>What this session was prepared for.</DialogDescription>
-          </DialogHeader>
-          <dl className="space-y-2 type-body-small">
-            <div className="flex justify-between"><dt className="text-ink-secondary">Mode</dt><dd className="text-ink-primary">{mode === 'follow' ? 'Follow notes' : 'Performance'}</dd></div>
-            <div className="flex justify-between"><dt className="text-ink-secondary">Input</dt><dd className="text-ink-primary">{input === 'midi' ? 'MIDI' : 'Microphone'}</dd></div>
-            <div className="flex justify-between"><dt className="text-ink-secondary">Recording</dt><dd className="text-ink-primary capitalize">{recording}</dd></div>
-            <div className="flex justify-between"><dt className="text-ink-secondary">Section</dt><dd className="text-ink-primary">{rangeLabel(selectedRange)}</dd></div>
-          </dl>
-          {recording === 'video' && (
-            <div className="flex items-center justify-between border-t border-line-subtle pt-3">
-              <span className="flex items-center gap-2 type-body-small text-ink-primary"><EyeOff className="h-4 w-4 text-ink-tertiary" aria-hidden="true" /> Hide self-view</span>
-              <Switch checked={selfViewHidden} onCheckedChange={setSelfViewHidden} aria-label="Hide self-view" />
-            </div>
-          )}
-          <p className="type-metadata text-ink-tertiary">
-            Mode, input and recording are prepared in setup. Changing them ends this session.
-          </p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setSettingsOpen(false)}>Close</Button>
-            <Button asChild variant="outline">
-              <Link to={`/score/${scoreId}/setup`}>Return to setup</Link>
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <PracticeSettingsDialog
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        scoreId={scoreId}
+        mode={mode}
+        input={input}
+        recording={recording}
+        rangeText={rangeLabel(selectedRange)}
+        feedbackAvailable={feedbackAvailable}
+        feedbackOn={feedbackOn}
+        onFeedback={setFeedbackOn}
+        virtualKeyboard={virtualKeyboard}
+        onVirtualKeyboard={setVirtualKeyboard}
+        showNoteNames={showNoteNames}
+        onShowNoteNames={setShowNoteNames}
+        highlightMeasure={highlightMeasure}
+        onHighlightMeasure={setHighlightMeasure}
+        selfViewHidden={selfViewHidden}
+        onSelfViewHidden={setSelfViewHidden}
+      />
 
       {/* Exit confirmation */}
       <Dialog open={exitOpen} onOpenChange={setExitOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>Leave practice?</DialogTitle></DialogHeader>
-          <p className="text-sm text-ink-secondary">Your session is still going. You can keep what you have so far, or let it go.</p>
+          <p className="text-sm text-ink-secondary">You can keep this practice in your history, or let it go.</p>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setExitOpen(false)}>Keep playing</Button>
-            <Button variant="outline" onClick={() => { setExitOpen(false); finish(); }}>Save &amp; leave</Button>
-            <Button variant="destructive" onClick={() => navigate(`/score/${scoreId}`)}>Discard</Button>
+            <Button variant="outline" onClick={() => { setExitOpen(false); finish(); }}>Finish &amp; save</Button>
+            <Button
+              variant="destructive"
+              onClick={() => { setExitOpen(false); clearReport(); navigate(`/score/${scoreId}`); }}
+            >
+              Discard
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

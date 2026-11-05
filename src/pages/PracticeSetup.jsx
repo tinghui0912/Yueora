@@ -11,9 +11,14 @@ const MODES = [
   { value: 'follow', label: 'Follow notes', description: 'Yueora waits for each note or chord before moving on.' },
   { value: 'performance', label: 'Performance', description: 'Play through continuously at the chosen tempo.' },
 ];
-const INPUTS = [
-  { value: 'microphone', label: 'Microphone', description: 'Yueora listens to the acoustic performance.' },
-  { value: 'midi', label: 'MIDI', description: 'Yueora uses note events from a connected MIDI keyboard.' },
+const FOLLOW_INPUTS = [
+  { value: 'microphone', label: 'Microphone', description: 'Yueora listens for the notes you play.' },
+  { value: 'midi', label: 'MIDI', description: 'Yueora reads note events from a connected keyboard.' },
+];
+const PERFORMANCE_INPUTS = [
+  { value: 'none', label: 'No input', description: 'Play without real-time feedback. Nothing is listened to.' },
+  { value: 'microphone', label: 'Microphone', description: 'Listens while you play, for optional real-time feedback.' },
+  { value: 'midi', label: 'MIDI', description: 'Reads note events for optional real-time feedback.' },
 ];
 const RECORDINGS = [
   { value: 'off', label: 'Off', description: 'Just play. Nothing is recorded.' },
@@ -51,11 +56,18 @@ export default function PracticeSetup() {
   const [modelProgress, setModelProgress] = useState(preflight.modelReady ? 100 : 0);
   const [modelAttempt, setModelAttempt] = useState(0);
 
+  // Only what this exact configuration depends on is checked.
   const needsRecognition = input === 'microphone';
   const needsMidi = input === 'midi';
   const needsRecordingMic = mode === 'performance' && (recording === 'audio' || recording === 'video');
   const needsCamera = mode === 'performance' && recording === 'video';
   const needsMic = needsRecognition || needsRecordingMic;
+  const inputOptions = mode === 'follow' ? FOLLOW_INPUTS : PERFORMANCE_INPUTS;
+
+  // Follow notes cannot run without an input; Performance may run with none.
+  useEffect(() => {
+    if (mode === 'follow' && input === 'none') setInput('microphone');
+  }, [mode, input]);
 
   // The recognition model is prepared on arrival, never after Start.
   useEffect(() => {
@@ -132,7 +144,15 @@ export default function PracticeSetup() {
 
   const start = () => {
     navigate(`/score/${scoreId}/practice`, {
-      state: { config: { mode, input, recording: mode === 'performance' ? recording : 'off', prefill } },
+      state: {
+        config: {
+          mode,
+          input,
+          recording: mode === 'performance' ? recording : 'off',
+          feedbackAvailable: input !== 'none',
+          prefill,
+        },
+      },
     });
   };
 
@@ -154,8 +174,10 @@ export default function PracticeSetup() {
 
       <section className="mt-7">
         <h2 className="type-caption text-ink-tertiary">Input</h2>
-        <p className="mt-1 type-body-small text-ink-secondary">How Yueora listens to your playing.</p>
-        <OptionGroup ariaLabel="Input source" value={input} onChange={setInput} options={INPUTS} />
+        <p className="mt-1 type-body-small text-ink-secondary">
+          {mode === 'follow' ? 'How Yueora listens to your playing.' : 'Optional — used only for real-time feedback.'}
+        </p>
+        <OptionGroup ariaLabel="Input source" value={input} onChange={setInput} options={inputOptions} />
       </section>
 
       {mode === 'performance' && (
@@ -164,7 +186,7 @@ export default function PracticeSetup() {
           <p className="mt-1 type-body-small text-ink-secondary">Keep a recording of this performance.</p>
           <OptionGroup ariaLabel="Recording" value={recording} onChange={setRecording} options={RECORDINGS} />
           <p className="mt-2 type-metadata text-ink-tertiary">
-            Recording is optional. Nothing is shared unless you choose to export or share it.
+            Recording is optional. Nothing is uploaded unless you choose to save it.
           </p>
         </section>
       )}

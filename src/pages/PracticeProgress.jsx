@@ -1,57 +1,49 @@
 import { Link } from 'react-router-dom';
-import { TrendingUp, Clock, Music2, Smile } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
-import { practiceProgress as seedProgress, practiceHistory as seedPracticeHistory } from '@/lib/mockData';
+import { dayLabel, minutesLabel } from '@/lib/practiceUtils';
 import PageHeader from '@/components/patterns/PageHeader';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import Metric from '@/components/patterns/Metric';
+import StateMessage from '@/components/patterns/StateMessage';
 
-const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 
+/**
+ * Progress is read from lightweight activity only — time, pieces and how often.
+ * There is no historical accuracy here because accuracy was never stored.
+ */
 export default function PracticeProgress() {
-  const sessions = usePrototypeStore((s) => s.practiceSessions);
-  const scores = usePrototypeStore((s) => s.scores);
+  const activities = (usePrototypeStore((s) => s.practiceActivities) || []).filter((a) => a.ownerId === 'you');
 
-  // Derive live stats from sessions
-  const totalMinutes = sessions.reduce((sum, s) => {
-    const m = parseInt(s.duration) || 0;
-    return sum + m;
-  }, 0);
-  const piecesPlayed = new Set(sessions.map((s) => s.scoreId)).size;
-  const sessionCount = sessions.length;
+  const totalSeconds = activities.reduce((sum, a) => sum + (a.durationSeconds || 0), 0);
+  const totalMinutes = Math.round(totalSeconds / 60);
+  const pieceIds = [...new Set(activities.map((a) => a.scoreId))];
 
-  // Seed weekly chart is the historical baseline — it already accounts for the seed history,
-  // so only sessions created in this prototype session are added on top (no double counting).
-  const seedSessionIds = new Set(seedPracticeHistory.map((s) => s.id));
-  const newSessions = sessions.filter((s) => !seedSessionIds.has(s.id));
-  const weeklyMinutes = seedProgress.weeklyMinutes.slice();
-  if (newSessions.length > 0) {
-    const addedMinutes = newSessions.reduce((sum, s) => sum + (parseInt(s.duration) || 0), 0);
-    weeklyMinutes[weeklyMinutes.length - 1] = (weeklyMinutes[weeklyMinutes.length - 1] || 0) + addedMinutes;
-  }
-
-  // Recurring tricky sections from recent sessions
-  const trickyMap = {};
-  sessions.forEach((s) => {
-    if (s.trickyFrom && s.trickyTo) {
-      const key = `${s.scoreId}-${s.trickyFrom}-${s.trickyTo}`;
-      const score = scores.find((sc) => sc.id === s.scoreId);
-      if (!trickyMap[key]) trickyMap[key] = { scoreId: s.scoreId, label: `Measures ${s.trickyFrom}–${s.trickyTo}`, note: 'Showing up across sessions — getting steadier.', count: 0, title: score?.title };
-      trickyMap[key].count++;
-    }
+  const today = startOfDay(new Date());
+  const days = Array.from({ length: 7 }).map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    const key = startOfDay(d);
+    const minutes = Math.round(
+      activities
+        .filter((a) => a.completedAt && startOfDay(new Date(a.completedAt)) === key)
+        .reduce((sum, a) => sum + (a.durationSeconds || 0), 0) / 60
+    );
+    return { label: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()], minutes, isToday: key === today };
   });
-  const recurringTricky = Object.values(trickyMap).sort((a, b) => b.count - a.count).slice(0, 5);
-  const fallbackTricky = recurringTricky.length > 0 ? recurringTricky : seedProgress.recurringTricky;
+  const max = Math.max(1, ...days.map((d) => d.minutes));
 
-  // Smoother pieces — derive from scores with recent sessions
-  const recentScoreIds = new Set(sessions.slice(0, 10).map((s) => s.scoreId));
-  const smoother = scores.filter((s) => recentScoreIds.has(s.id)).slice(0, 4).map((s) => ({
-    scoreId: s.id, title: s.title, note: 'Fewer missed notes than last time.',
-  }));
-  const fallbackSmoother = smoother.length > 0 ? smoother : seedProgress.smoother;
-
-  const tempoTrend = seedProgress.tempoTrend;
-  const max = Math.max(...weeklyMinutes);
+  const pieces = pieceIds.map((id) => {
+    const items = activities.filter((a) => a.scoreId === id);
+    const latest = items.reduce((acc, a) => (!acc || new Date(a.completedAt) > new Date(acc.completedAt) ? a : acc), null);
+    return {
+      id,
+      title: latest?.scoreTitleSnapshot || 'Score',
+      sessions: items.length,
+      minutes: Math.round(items.reduce((sum, a) => sum + (a.durationSeconds || 0), 0) / 60),
+      lastLabel: dayLabel(latest?.completedAt),
+    };
+  }).sort((a, b) => b.minutes - a.minutes);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 md:px-8">
@@ -59,83 +51,61 @@ export default function PracticeProgress() {
       <div className="mt-3">
         <PageHeader
           title="Progress"
-          description="A calm look at how things are going — no grades, no rankings."
+          description="Time spent and pieces played — nothing graded."
         />
       </div>
 
-      {/* Metric band — flat, editorial, not KPI cards */}
-      <dl className="mt-6 grid grid-cols-3 gap-4 sm:gap-0 sm:divide-x sm:divide-line-subtle">
-        <div className="sm:px-5 sm:first:pl-0">
-          <Metric label="Practice time" value={`${totalMinutes}`} context="minutes" />
+      {activities.length === 0 ? (
+        <div className="mt-8">
+          <StateMessage
+            tone="neutral"
+            title="Nothing to look back on yet"
+            description="Once you practise, this page shows how much time you've spent and which pieces you keep returning to."
+            primaryAction={<Link to="/practice" className="rounded-control bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">Go to Practice</Link>}
+          />
         </div>
-        <div className="sm:px-5">
-          <Metric label="Pieces played" value={`${piecesPlayed}`} />
-        </div>
-        <div className="sm:px-5">
-          <Metric label="Sessions" value={`${sessionCount}`} />
-        </div>
-      </dl>
+      ) : (
+        <>
+          <dl className="mt-6 grid grid-cols-3 gap-4 sm:gap-0 sm:divide-x sm:divide-line-subtle">
+            <div className="sm:px-5 sm:first:pl-0"><Metric label="Practice time" value={`${totalMinutes}`} context="minutes" /></div>
+            <div className="sm:px-5"><Metric label="Pieces played" value={`${pieces.length}`} /></div>
+            <div className="sm:px-5"><Metric label="Sessions" value={`${activities.length}`} /></div>
+          </dl>
 
-      <section className="mt-8">
-        <SectionHeader title="Time played" />
-        <div className="mt-3 rounded-container border border-line-subtle bg-surface-panel p-5">
-          <div className="flex h-40 items-end justify-between gap-2">
-            {weeklyMinutes.map((m, i) => (
-              <div key={i} className="flex flex-1 flex-col items-center gap-1">
-                <div className="w-full rounded-t bg-primary/80" style={{ height: `${max > 0 ? (m / max) * 100 : 0}%` }} />
-                <span className="text-[10px] text-ink-tertiary">{days[i]}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mt-8">
-        <SectionHeader title="Tempo progression" />
-        <div className="mt-3 space-y-3">
-          {tempoTrend.map((t) => (
-            <div key={t.scoreId} className="rounded-container border border-line-subtle bg-surface-panel p-4">
-              <Link to={`/score/${t.scoreId}`} className="font-medium hover:underline">{t.label}</Link>
-              <div className="mt-2 flex items-center gap-1">
-                {t.values.map((v, i) => (
-                  <div key={i} className="flex flex-1 flex-col items-center">
-                    <div className="w-full rounded-t bg-accent" style={{ height: `${(v / 80) * 60}px` }} />
-                    <span className="mt-1 text-[10px] text-ink-tertiary">{v}</span>
+          <section className="mt-8">
+            <SectionHeader title="Last seven days" />
+            <div className="mt-3 border-y border-line-subtle py-5">
+              <div className="flex h-40 items-end justify-between gap-2">
+                {days.map((d, i) => (
+                  <div key={i} className="flex flex-1 flex-col items-center gap-1">
+                    <span className="text-[10px] tabular-nums text-ink-tertiary">{d.minutes > 0 ? d.minutes : ''}</span>
+                    <div
+                      className={`w-full rounded-t ${d.isToday ? 'bg-primary' : 'bg-primary/50'}`}
+                      style={{ height: `${(d.minutes / max) * 100}%`, minHeight: d.minutes > 0 ? 3 : 0 }}
+                    />
+                    <span className="text-[10px] text-ink-tertiary">{d.label}</span>
                   </div>
                 ))}
               </div>
-              <p className="mt-1 type-metadata text-brand">+{t.values[t.values.length - 1] - t.values[0]} BPM over recent sessions</p>
             </div>
-          ))}
-        </div>
-      </section>
+          </section>
 
-      <section className="mt-8">
-        <SectionHeader title="Recurring tricky sections" />
-        <div className="mt-3 space-y-2">
-          {fallbackTricky.map((t) => (
-            <Link key={`${t.scoreId}-${t.label}`} to={`/score/${t.scoreId}`} className="block rounded-container border border-line-subtle bg-surface-panel p-4 hover:bg-accent/40">
-              <p className="font-medium text-ink-primary">{scores.find((s) => s.id === t.scoreId)?.title || t.title} · {t.label}</p>
-              <p className="mt-0.5 type-body-small text-ink-secondary">{t.note}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-8">
-        <SectionHeader title="Becoming smoother" />
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          {fallbackSmoother.map((s) => (
-            <div key={s.scoreId} className="flex items-start gap-3 rounded-container border border-line-subtle bg-surface-panel p-4">
-              <Smile className="mt-0.5 h-4 w-4 text-brand" />
-              <div>
-                <p className="font-medium text-ink-primary">{s.title}</p>
-                <p className="type-body-small text-ink-secondary">{s.note}</p>
-              </div>
+          <section className="mt-8">
+            <SectionHeader title="Pieces you return to" />
+            <div className="mt-3 divide-y divide-line-subtle border-y border-line-subtle">
+              {pieces.map((p) => (
+                <div key={p.id} className="flex items-center justify-between gap-3 py-3">
+                  <div className="min-w-0">
+                    <p className="font-medium text-ink-primary">{p.title}</p>
+                    <p className="type-metadata text-ink-tertiary">{p.sessions} {p.sessions === 1 ? 'session' : 'sessions'} · {minutesLabel(p.minutes * 60)} total · last {p.lastLabel}</p>
+                  </div>
+                  <Link to={`/score/${p.id}`} className="shrink-0 type-body-small font-medium text-brand hover:underline">Open</Link>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+          </section>
+        </>
+      )}
     </div>
   );
 }

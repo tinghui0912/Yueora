@@ -97,31 +97,35 @@ export const practiceHome = {
   thisWeek: { minutes: 62, sessions: 5, pieces: 3, marks: [true, true, false, true, true, false, false] },
 };
 
-// ---------- Practice History ----------
-export const practiceHistory = [
-  { id: 's1', scoreId: 'moonlight', date: 'Sep 8', duration: '18 min', mode: 'Follow', input: 'Microphone', range: 'Measures 32–48', insight: 'Measures 34–38 were the trickiest part.' },
-  { id: 's2', scoreId: 'interstellar', date: 'Sep 8', duration: '9 min', mode: 'Performance', input: 'MIDI', range: 'Whole score', insight: 'Tempo held steady throughout.' },
-  { id: 's3', scoreId: 'prelude-c', date: 'Sep 7', duration: '12 min', mode: 'Follow', input: 'Microphone', range: 'Whole score', insight: 'Felt smoother than last time.' },
-  { id: 's4', scoreId: 'etude10-4', date: 'Sep 5', duration: '22 min', mode: 'Performance', input: 'MIDI', range: 'Measures 1–32', insight: 'A few missed notes in the run.' },
-  { id: 's5', scoreId: 'clair-de-lune', date: 'Sep 1', duration: '15 min', mode: 'Follow', input: 'Microphone', range: 'Whole score', insight: 'Nice, relaxed session.' },
+// ---------- Team ----------
+export const teamMembers = [
+  { id: 'alice', name: 'Alice Chen', email: 'alice@example.com', role: 'Teacher' },
+  { id: 'bob', name: 'Bob Ramirez', email: 'bob@example.com', role: 'Member' },
+  { id: 'dana', name: 'Dana Okafor', email: 'dana@example.com', role: 'Member' },
 ];
 
-// ---------- Performances (explicitly kept recordings) ----------
-export const practicePerformances = [
-  {
-    id: 'perf-interstellar', sessionId: 's2', scoreId: 'interstellar', scoreTitle: 'Interstellar Main Theme',
-    createdAt: 'Sep 8', duration: '4:22', durationSec: 262, mediaKind: 'video',
-    tempo: { mode: 'score', bpm: 56 },
-    range: { kind: 'full', startMeasure: 1, endMeasure: 30 },
-    rangeLabel: 'Full score', mockMediaUrl: 'mock://video/perf-interstellar', reportId: 's2',
-  },
-  {
-    id: 'perf-etude', sessionId: 's4', scoreId: 'etude10-4', scoreTitle: 'Étude Op. 10 No. 4',
-    createdAt: 'Sep 5', duration: '3:10', durationSec: 190, mediaKind: 'audio',
-    tempo: { mode: 'fixed', bpm: 120 },
-    range: { kind: 'section', startGroupId: 'g1-1', endGroupId: 'g32-2', startMeasure: 1, endMeasure: 32 },
-    rangeLabel: 'Measures 1–32', mockMediaUrl: 'mock://audio/perf-etude', reportId: 's4',
-  },
+const daysAgo = (n, hour = 18, minute = 0) => {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  d.setHours(hour, minute, 0, 0);
+  return d.toISOString();
+};
+
+// ---------- Practice Activity (lightweight, no scoring, no media) ----------
+export const practiceActivities = [
+  { id: 'act-moon', ownerId: 'you', scoreId: 'moonlight', scoreTitleSnapshot: 'Moonlight Sonata', mode: 'follow', startedAt: daysAgo(0, 9, 12), completedAt: daysAgo(0, 9, 30), durationSeconds: 1080, tempoBpm: null, rangeSummary: 'Measures 32–48', visibility: 'private', sharedWith: [], teamId: 'team-yueora' },
+  { id: 'act-inter', ownerId: 'you', scoreId: 'interstellar', scoreTitleSnapshot: 'Interstellar Main Theme', mode: 'performance', startedAt: daysAgo(1, 20, 2), completedAt: daysAgo(1, 20, 7), durationSeconds: 262, tempoBpm: 56, rangeSummary: 'Full score', visibility: 'shared', sharedWith: ['alice'], teamId: 'team-yueora' },
+  { id: 'act-prelude', ownerId: 'you', scoreId: 'prelude-c', scoreTitleSnapshot: 'Prelude in C', mode: 'follow', startedAt: daysAgo(2, 19, 4), completedAt: daysAgo(2, 19, 16), durationSeconds: 720, tempoBpm: null, rangeSummary: 'Full score', visibility: 'private', sharedWith: [], teamId: 'team-yueora' },
+  { id: 'act-etude', ownerId: 'you', scoreId: 'etude10-4', scoreTitleSnapshot: 'Étude Op. 10 No. 4', mode: 'performance', startedAt: daysAgo(5, 17, 30), completedAt: daysAgo(5, 17, 52), durationSeconds: 1320, tempoBpm: 120, rangeSummary: 'Measures 1–32', visibility: 'private', sharedWith: [], teamId: 'team-yueora' },
+  { id: 'act-clair', ownerId: 'you', scoreId: 'clair-de-lune', scoreTitleSnapshot: 'Clair de Lune', mode: 'follow', startedAt: daysAgo(9, 21, 0), completedAt: daysAgo(9, 21, 15), durationSeconds: 900, tempoBpm: null, rangeSummary: 'Full score', visibility: 'private', sharedWith: [], teamId: 'team-yueora' },
+  { id: 'act-alice-nocturne', ownerId: 'alice', scoreId: 'nocturne-eb', scoreTitleSnapshot: 'Nocturne in E♭', mode: 'performance', startedAt: daysAgo(1, 11, 10), completedAt: daysAgo(1, 11, 16), durationSeconds: 340, tempoBpm: 66, rangeSummary: 'Full score', visibility: 'shared', sharedWith: ['you'], teamId: 'team-yueora' },
+];
+
+// ---------- Saved Performances (only what the user chose to keep) ----------
+export const savedPerformances = [
+  { id: 'perf-inter', activityId: 'act-inter', ownerId: 'you', scoreId: 'interstellar', scoreTitleSnapshot: 'Interstellar Main Theme', mediaType: 'video', mediaRef: 'mock://video/perf-inter', createdAt: daysAgo(1, 20, 7), durationSeconds: 262, tempoBpm: 56, rangeSummary: 'Full score', visibility: 'shared', sharedWith: ['alice'], teamId: 'team-yueora' },
+  { id: 'perf-etude', activityId: 'act-etude', ownerId: 'you', scoreId: 'etude10-4', scoreTitleSnapshot: 'Étude Op. 10 No. 4', mediaType: 'audio', mediaRef: 'mock://audio/perf-etude', createdAt: daysAgo(5, 17, 52), durationSeconds: 190, tempoBpm: 120, rangeSummary: 'Measures 1–32', visibility: 'private', sharedWith: [], teamId: 'team-yueora' },
+  { id: 'perf-alice', activityId: 'act-alice-nocturne', ownerId: 'alice', scoreId: 'nocturne-eb', scoreTitleSnapshot: 'Nocturne in E♭', mediaType: 'video', mediaRef: 'mock://video/perf-alice', createdAt: daysAgo(1, 11, 16), durationSeconds: 212, tempoBpm: 66, rangeSummary: 'Full score', visibility: 'shared', sharedWith: ['you'], teamId: 'team-yueora' },
 ];
 
 // ---------- Practice Progress ----------

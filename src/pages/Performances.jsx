@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import PerformanceRow from '@/components/performances/PerformanceRow';
-import ShareVideoDialog from '@/components/performances/ShareVideoDialog';
+import ShareResourceDialog from '@/components/sharing/ShareResourceDialog';
 import StateMessage from '@/components/patterns/StateMessage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,10 @@ import {
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 
+const TABS = [
+  { value: 'mine', label: 'My performances' },
+  { value: 'shared', label: 'Shared with me' },
+];
 const FILTERS = [
   { value: 'all', label: 'All' },
   { value: 'audio', label: 'Audio' },
@@ -22,49 +26,59 @@ export default function Performances() {
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const scoreFilter = searchParams.get('score');
-  const performances = usePrototypeStore((s) => s.practicePerformances);
-  const scores = usePrototypeStore((s) => s.scores);
-  const deletePerformance = usePrototypeStore((s) => s.deletePerformance);
 
+  const performances = usePrototypeStore((s) => s.savedPerformances) || [];
+  const scores = usePrototypeStore((s) => s.scores);
+  const members = usePrototypeStore((s) => s.teamMembers) || [];
+  const deletePerformance = usePrototypeStore((s) => s.deletePerformance);
+  const updateSharing = usePrototypeStore((s) => s.updatePerformanceSharing);
+
+  const [tab, setTab] = useState('mine');
   const [kind, setKind] = useState('all');
   const [query, setQuery] = useState('');
-  const [playingId, setPlayingId] = useState(null);
-  const [position, setPosition] = useState(0);
+  const [player, setPlayer] = useState({ id: null, position: 0, playing: false });
   const [pendingDelete, setPendingDelete] = useState(null);
-  const [shareFor, setShareFor] = useState(null);
+  const [sharing, setSharing] = useState(null);
 
-  // One performance at a time: starting another stops the previous one.
+  const mine = performances.filter((p) => p.ownerId === 'you');
+  const sharedWithMe = performances.filter((p) => p.ownerId !== 'you' && (p.sharedWith || []).includes('you'));
+  const source = tab === 'mine' ? mine : sharedWithMe;
+
+  // One performance plays at a time; pausing keeps the position.
   useEffect(() => {
-    if (!playingId) return undefined;
-    const current = performances.find((p) => p.id === playingId);
+    if (!player.playing || !player.id) return undefined;
+    const current = performances.find((p) => p.id === player.id);
     if (!current) return undefined;
     const t = setInterval(() => {
-      setPosition((pos) => {
-        if (pos + 1 >= current.durationSec) {
-          setPlayingId(null);
-          return 0;
+      setPlayer((cur) => {
+        if (cur.position + 1 >= (current.durationSeconds || 0)) {
+          return { ...cur, playing: false, position: current.durationSeconds || 0 };
         }
-        return pos + 1;
+        return { ...cur, position: cur.position + 1 };
       });
     }, 1000);
     return () => clearInterval(t);
-  }, [playingId, performances]);
+  }, [player.playing, player.id, performances]);
 
-  const togglePlay = (performance) => {
-    if (playingId === performance.id) {
-      setPlayingId(null);
-      return;
-    }
-    setPlayingId(performance.id);
-    setPosition(0);
+  const togglePlay = (p) => {
+    setPlayer((cur) => {
+      if (cur.id === p.id) return { ...cur, playing: !cur.playing };
+      return { id: p.id, position: 0, playing: true };
+    });
+  };
+  const seek = (p, value) => {
+    setPlayer((cur) =>
+      cur.id === p.id
+        ? { ...cur, position: value }
+        : { id: p.id, position: value, playing: true }
+    );
   };
 
   const contextualScore = scoreFilter ? scores.find((s) => s.id === scoreFilter) : null;
-
-  const visible = performances.filter((p) => {
+  const visible = source.filter((p) => {
     if (scoreFilter && p.scoreId !== scoreFilter) return false;
-    if (kind !== 'all' && p.mediaKind !== kind) return false;
-    if (query && !p.scoreTitle.toLowerCase().includes(query.toLowerCase())) return false;
+    if (kind !== 'all' && p.mediaType !== kind) return false;
+    if (query && !p.scoreTitleSnapshot.toLowerCase().includes(query.toLowerCase())) return false;
     return true;
   });
 
@@ -89,8 +103,22 @@ export default function Performances() {
         </div>
       )}
 
-      {performances.length > 0 && (
-        <div className="mt-5 flex flex-wrap items-center gap-2">
+      <div role="tablist" aria-label="Performances" className="mt-5 inline-flex rounded-control border border-line-subtle p-0.5">
+        {TABS.map((t) => (
+          <button
+            key={t.value}
+            role="tab"
+            aria-selected={tab === t.value}
+            onClick={() => setTab(t.value)}
+            className={`rounded px-3 py-1.5 text-sm ${tab === t.value ? 'bg-accent font-medium text-accent-foreground' : 'text-ink-secondary hover:text-ink-primary'}`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {source.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center gap-2">
           <div role="group" aria-label="Filter by media" className="inline-flex rounded-control border border-line-subtle p-0.5">
             {FILTERS.map((f) => (
               <button
@@ -117,13 +145,21 @@ export default function Performances() {
         </div>
       )}
 
-      {performances.length === 0 ? (
+      {source.length === 0 ? (
         <div className="mt-8">
           <StateMessage
             tone="neutral"
-            title="No saved performances yet."
-            description="When a performance feels worth keeping, you can save it from the report."
-            primaryAction={<Button asChild><Link to="/practice">Choose something to play</Link></Button>}
+            title={tab === 'mine' ? 'No saved performances yet.' : 'Nothing shared with you yet'}
+            description={
+              tab === 'mine'
+                ? 'When a performance feels worth keeping, you can save it from the report.'
+                : 'When someone shares a performance with you, it appears here.'
+            }
+            primaryAction={
+              tab === 'mine'
+                ? <Button asChild><Link to="/practice">Choose something to play</Link></Button>
+                : undefined
+            }
           />
         </div>
       ) : visible.length === 0 ? (
@@ -135,29 +171,43 @@ export default function Performances() {
               key={p.id}
               performance={p}
               scoreExists={scores.some((s) => s.id === p.scoreId && s.ownership !== 'trash')}
-              playing={playingId === p.id}
-              position={playingId === p.id ? position : 0}
+              isOwner={p.ownerId === 'you'}
+              ownerName={p.ownerId !== 'you' ? (members.find((m) => m.id === p.ownerId) || {}).name : null}
+              playing={player.id === p.id && player.playing}
+              position={player.id === p.id ? player.position : 0}
               onToggle={() => togglePlay(p)}
-              onSeek={(v) => { setPlayingId(p.id); setPosition(v); }}
-              onDownload={() => toast({ title: 'Recording downloaded', description: `${p.scoreTitle} — ${p.mediaKind} recording (mock file).` })}
-              onShareVideo={() => setShareFor(p)}
+              onSeek={(v) => seek(p, v)}
+              onDownload={() => toast({ title: 'Recording downloaded', description: `${p.scoreTitleSnapshot} — ${p.mediaType} recording (mock file).` })}
+              onShare={() => setSharing(p)}
               onDelete={() => setPendingDelete(p)}
             />
           ))}
         </div>
       )}
 
-      <ShareVideoDialog
-        open={!!shareFor}
-        onOpenChange={(open) => !open && setShareFor(null)}
-        title={shareFor?.scoreTitle || ''}
+      <p className="mt-8 type-metadata text-ink-tertiary">
+        Practice reports aren’t stored, so performances open here as recordings — not as old reports.
+      </p>
+
+      <ShareResourceDialog
+        open={!!sharing}
+        onOpenChange={(open) => !open && setSharing(null)}
+        kind="performance"
+        title={sharing?.scoreTitleSnapshot || ''}
+        members={members}
+        value={sharing}
+        onSave={(next) => {
+          updateSharing(sharing.id, next);
+          setSharing(null);
+          toast({ title: 'Sharing updated' });
+        }}
       />
 
       <Dialog open={!!pendingDelete} onOpenChange={(open) => !open && setPendingDelete(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Delete this performance?</DialogTitle></DialogHeader>
           <p className="text-sm text-ink-secondary">
-            {pendingDelete?.scoreTitle} — the recording will be removed from Performances. The practice session stays in your history.
+            {pendingDelete?.scoreTitleSnapshot} — the recording will be removed from Performances. Your practice activity stays in history.
           </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setPendingDelete(null)}>Cancel</Button>
@@ -165,7 +215,7 @@ export default function Performances() {
               variant="destructive"
               onClick={() => {
                 deletePerformance(pendingDelete.id);
-                if (playingId === pendingDelete.id) setPlayingId(null);
+                if (player.id === pendingDelete.id) setPlayer({ id: null, position: 0, playing: false });
                 setPendingDelete(null);
                 toast({ title: 'Performance deleted' });
               }}

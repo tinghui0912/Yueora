@@ -13,7 +13,12 @@ const durationFill = { '1': false, '2': false, '4': true, '8': true };
 
 const accidentalSymbols = { sharp: '♯', flat: '♭', natural: '♮' };
 
-export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, onDelete, tool, zoom, activeMeasure, activeIssueMeasure, measureStart: measureStartProp, activeMeasureVariant = 'default', selectedMeasures }) {
+const NOTE_LETTERS = [
+  ['E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F'],
+  ['G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A'],
+];
+
+export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, onDelete, tool, zoom, activeMeasure, activeIssueMeasure, measureStart: measureStartProp, activeMeasureVariant = 'default', selectedMeasures, showNoteNames = false }) {
   // Visible window: explicit measureStart wins; otherwise follow the focus measure
   const focusMeasure = activeIssueMeasure ?? activeMeasure;
   const measureStart = measureStartProp ?? (focusMeasure ? Math.max(1, Math.floor((focusMeasure - 1) / 4) * 4 + 1) : 1);
@@ -208,6 +213,11 @@ export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, o
                     {/* Fingering */}
                     {n.finger && n.finger !== '—' && (
                       <text x={x - 3} y={y + (stemUp ? 16 : -10)} fontSize="9" fill="hsl(var(--muted-foreground))">{n.finger}</text>
+                    )}
+                    {showNoteNames && (
+                      <text x={x - 3} y={y - 12} fontSize="8" fill="hsl(var(--muted-foreground))">
+                        {(NOTE_LETTERS[n.staff] || NOTE_LETTERS[0])[n.step] || ''}
+                      </text>
                     )}
                   </>
                 )}

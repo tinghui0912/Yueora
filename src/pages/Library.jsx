@@ -46,7 +46,7 @@ export default function Library() {
 
   const scores = usePrototypeStore((s) => s.scores);
   const folders = usePrototypeStore((s) => s.folders);
-  const practiceSessions = usePrototypeStore((s) => s.practiceSessions);
+  const practiceActivities = usePrototypeStore((s) => s.practiceActivities) || [];
   const createFolder = usePrototypeStore((s) => s.createFolder);
   const renameFolder = usePrototypeStore((s) => s.renameFolder);
   const deleteFolder = usePrototypeStore((s) => s.deleteFolder);

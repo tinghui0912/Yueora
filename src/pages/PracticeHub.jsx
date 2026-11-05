@@ -7,7 +7,8 @@ const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function PracticeHub() {
   const scores = usePrototypeStore((s) => s.scores);
-  const sessions = usePrototypeStore((s) => s.practiceSessions);
+  const activities = usePrototypeStore((s) => s.practiceActivities) || [];
+  const sessions = activities.filter((a) => a.ownerId === 'you');
 
   // Pick up where you left off — most recently played score
   const playedScores = scores.filter((s) => s.ownership !== 'trash' && s.lastPlayed && s.lastPlayed !== 'never');
@@ -28,15 +29,11 @@ export default function PracticeHub() {
     scoreId: s.id, title: s.title, composer: s.composer, lastPlayed: s.lastPlayed || 'never',
   }));
 
-  // Tricky section — from most recent session
-  const recentTricky = sessions.find((s) => s.trickyFrom && s.trickyTo);
-  const trickyScore = recentTricky ? scores.find((s) => s.id === recentTricky.scoreId) : null;
-  const trickySection = recentTricky && trickyScore
-    ? { scoreId: trickyScore.id, title: trickyScore.title, from: recentTricky.trickyFrom, to: recentTricky.trickyTo, label: `Measures ${recentTricky.trickyFrom}–${recentTricky.trickyTo}`, note: 'This section felt trickier last time.' }
-    : null;
+  // No note-level data survives a session, so nothing is suggested as "tricky".
+  const trickySection = null;
 
   // This week stats
-  const thisWeekMinutes = sessions.slice(0, 7).reduce((sum, s) => sum + (parseInt(s.duration) || 0), 0);
+  const thisWeekMinutes = Math.round(sessions.slice(0, 7).reduce((sum, s) => sum + (s.durationSeconds || 0), 0) / 60);
   const thisWeekSessions = Math.min(sessions.length, 7);
   const thisWeekPieces = new Set(sessions.slice(0, 7).map((s) => s.scoreId)).size;
   const thisWeekMarks = days.map((_, i) => i < Math.min(sessions.length, 7));

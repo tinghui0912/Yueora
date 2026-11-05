@@ -4,8 +4,9 @@ import {
   scores as seedScores,
   folders as seedFolders,
   imports as seedImports,
-  practiceHistory as seedPracticeHistory,
-  practicePerformances as seedPracticePerformances,
+  practiceActivities as seedPracticeActivities,
+  savedPerformances as seedSavedPerformances,
+  teamMembers as seedTeamMembers,
   notifications as seedNotifications,
   plans as seedPlans,
   billingHistory as seedBillingHistory,
@@ -136,8 +137,9 @@ export const usePrototypeStore = create(
       folders: clone(seedFolders),
       imports: clone(seedImports),
       recognitionIssues: clone(recognitionIssuesSeed),
-      practiceSessions: clone(seedPracticeHistory),
-      practicePerformances: clone(seedPracticePerformances),
+      practiceActivities: clone(seedPracticeActivities),
+      savedPerformances: clone(seedSavedPerformances),
+      teamMembers: clone(seedTeamMembers),
       // Remembered technical readiness — what Setup has already prepared.
       preflight: { modelReady: false, micGranted: false, midiConnected: false, cameraGranted: false },
       sharing: {},
@@ -476,53 +478,66 @@ export const usePrototypeStore = create(
           };
         }),
 
-      // ---- Practice session actions ----
-      addPracticeSession: (session) =>
+      // ---- Practice Activity (lightweight, permanent) ----
+      // Only what happened: which piece, when, how long, in which mode.
+      // No scores, no note data, no media, no report.
+      addPracticeActivity: (activity) =>
         set((st) => {
-          const id = session.id || `s-${Date.now()}`;
-          const newSession = {
-            id,
-            scoreId: session.scoreId,
-            date: 'Today',
-            duration: session.duration || '12 min',
-            durationSec: session.durationSec ?? null,
-            mode: session.mode || 'Follow',
-            input: session.input || 'Microphone',
-            recordingMode: session.recordingMode || 'off',
-            mediaKind: session.mediaKind || null,
-            tempoBpm: session.tempoBpm ?? null,
-            skippedGroups: session.skippedGroups || 0,
-            rangeDetail: session.rangeDetail || null,
-            range: session.range || 'Whole score',
-            insight: session.insight || 'Nice session.',
-            accuracy: session.accuracy,
-            trickyFrom: session.trickyFrom,
-            trickyTo: session.trickyTo,
+          const record = {
+            id: activity.id || `act-${Date.now()}`,
+            scoreId: activity.scoreId,
+            scoreTitleSnapshot: activity.scoreTitleSnapshot || 'Score',
+            mode: activity.mode || 'follow',
+            startedAt: activity.startedAt,
+            completedAt: activity.completedAt || new Date().toISOString(),
+            durationSeconds: activity.durationSeconds || 0,
+            tempoBpm: activity.tempoBpm ?? null,
+            rangeSummary: activity.rangeSummary || 'Full score',
+            ownerId: 'you',
+            teamId: 'team-yueora',
+            visibility: 'private',
+            sharedWith: [],
           };
-          return { practiceSessions: [newSession, ...st.practiceSessions] };
+          return { practiceActivities: [record, ...st.practiceActivities] };
         }),
+
+      deletePracticeActivity: (id) =>
+        set((st) => ({ practiceActivities: st.practiceActivities.filter((a) => a.id !== id) })),
+
+      updateActivitySharing: (id, { visibility, sharedWith }) =>
+        set((st) => ({
+          practiceActivities: st.practiceActivities.map((a) =>
+            a.id === id ? { ...a, visibility, sharedWith: sharedWith || [] } : a
+          ),
+        })),
 
       // ---- Performances (explicitly kept media) ----
       // Saving is an explicit act: a session can exist with a recording and still
       // never appear in Performances until the user keeps it.
       savePerformance: (performance) =>
         set((st) => {
-          const existing = st.practicePerformances.find(
-            (p) => p.sessionId && p.sessionId === performance.sessionId
-          );
           const record = {
+            ownerId: 'you',
+            teamId: 'team-yueora',
+            visibility: 'private',
+            sharedWith: [],
             ...performance,
-            id: existing?.id || performance.id || `perf-${Date.now()}`,
+            id: performance.id || `perf-${Date.now()}`,
           };
           return {
-            practicePerformances: existing
-              ? st.practicePerformances.map((p) => (p.id === existing.id ? { ...p, ...record } : p))
-              : [record, ...st.practicePerformances],
+            savedPerformances: [record, ...st.savedPerformances],
           };
         }),
 
       deletePerformance: (id) =>
-        set((st) => ({ practicePerformances: st.practicePerformances.filter((p) => p.id !== id) })),
+        set((st) => ({ savedPerformances: st.savedPerformances.filter((p) => p.id !== id) })),
+
+      updatePerformanceSharing: (id, { visibility, sharedWith }) =>
+        set((st) => ({
+          savedPerformances: st.savedPerformances.map((p) =>
+            p.id === id ? { ...p, visibility, sharedWith: sharedWith || [] } : p
+          ),
+        })),
 
       setPreflight: (partial) =>
         set((st) => ({ preflight: { ...st.preflight, ...partial } })),
@@ -801,8 +816,9 @@ export const usePrototypeStore = create(
           folders: clone(seedFolders),
           imports: clone(seedImports),
           recognitionIssues: clone(recognitionIssuesSeed),
-          practiceSessions: clone(seedPracticeHistory),
-          practicePerformances: clone(seedPracticePerformances),
+          practiceActivities: clone(seedPracticeActivities),
+          savedPerformances: clone(seedSavedPerformances),
+          teamMembers: clone(seedTeamMembers),
           preflight: { modelReady: false, micGranted: false, midiConnected: false, cameraGranted: false },
           sharing: {},
           invitations: [],
@@ -818,14 +834,20 @@ export const usePrototypeStore = create(
     }),
     {
       name: 'yueora-prototype',
-      version: 5,
+      version: 6,
       migrate: (persistedState, version) => {
         // Merge any missing keys from defaults
         const merged = { ...persistedState };
         if (!merged.invitations) merged.invitations = [];
         if (!merged.revokedShareTokens) merged.revokedShareTokens = [];
         if (!merged.sharing) merged.sharing = {};
-        if (!Array.isArray(merged.practicePerformances)) merged.practicePerformances = clone(seedPracticePerformances);
+        if (!Array.isArray(merged.practiceActivities)) merged.practiceActivities = clone(seedPracticeActivities);
+        if (!Array.isArray(merged.savedPerformances)) merged.savedPerformances = clone(seedSavedPerformances);
+        if (!Array.isArray(merged.teamMembers)) merged.teamMembers = clone(seedTeamMembers);
+        // Old sessions carried note scores, reports and media references that no
+        // longer belong to a practice record. Start the prototype on the new model.
+        delete merged.practiceSessions;
+        delete merged.practicePerformances;
         if (!merged.preflight) merged.preflight = { modelReady: false, micGranted: false, midiConnected: false, cameraGranted: false };
         if (merged.subscription && merged.subscription.renewal === 'Sep 15, 2026') {
           merged.subscription.renewal = 'Nov 15, 2026';

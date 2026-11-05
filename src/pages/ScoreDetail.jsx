@@ -13,6 +13,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
+import { dayLabel, minutesLabel } from '@/lib/practiceUtils';
 import { Badge } from '@/components/ui/badge';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import StateMessage from '@/components/patterns/StateMessage';
@@ -22,8 +23,8 @@ export default function ScoreDetail() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const score = usePrototypeStore((s) => s.scores.find((sc) => sc.id === scoreId));
-  const practiceSessions = usePrototypeStore((s) => s.practiceSessions);
-  const practicePerformances = usePrototypeStore((s) => s.practicePerformances);
+  const practiceActivities = usePrototypeStore((s) => s.practiceActivities) || [];
+  const savedPerformances = usePrototypeStore((s) => s.savedPerformances) || [];
   const toggleFavorite = usePrototypeStore((s) => s.toggleScoreFavorite);
   const moveToTrash = usePrototypeStore((s) => s.moveOwnedScoreToTrash);
   const leaveShared = usePrototypeStore((s) => s.leaveSharedScore);
@@ -56,8 +57,8 @@ export default function ScoreDetail() {
   }
 
   const perms = getPermissions(score);
-  const sessions = practiceSessions.filter((s) => s.scoreId === score.id);
-  const scorePerformances = practicePerformances.filter((p) => p.scoreId === score.id);
+  const sessions = practiceActivities.filter((a) => a.scoreId === score.id);
+  const scorePerformances = savedPerformances.filter((p) => p.scoreId === score.id);
 
   // Only the formats Yueora actually produces — no placeholder options.
   const handleExport = (kind) => {
@@ -219,26 +220,21 @@ export default function ScoreDetail() {
               <p className="mt-3 type-body-small text-ink-tertiary">No sessions yet. When you practice, they’ll show up here.</p>
             ) : (
               <div className="mt-3 divide-y divide-line-subtle">
-                {sessions.slice(0, 5).map((s) => {
-                  const saved = practicePerformances.find((p) => p.sessionId === s.id);
+                {sessions.slice(0, 5).map((a) => {
+                  const saved = savedPerformances.find((p) => p.activityId === a.id);
                   return (
-                    <div key={s.id} className="flex items-center justify-between gap-2 py-2.5">
+                    <div key={a.id} className="flex items-center justify-between gap-2 py-2.5">
                       <div className="min-w-0">
-                        <p className="type-body-small font-medium text-ink-primary">{s.date} · {s.duration}</p>
+                        <p className="type-body-small font-medium text-ink-primary">{dayLabel(a.completedAt)} · {minutesLabel(a.durationSeconds)}</p>
                         <p className="type-metadata text-ink-tertiary">
-                          {s.range}{saved ? ` · ${saved.mediaKind === 'video' ? 'Video saved' : 'Audio saved'}` : ''}
+                          {a.rangeSummary}{saved ? ` · ${saved.mediaType === 'video' ? 'Video saved' : 'Audio saved'}` : ''}
                         </p>
                       </div>
-                      <div className="flex shrink-0 items-center gap-1">
-                        {saved && (
-                          <Link to={`/practice/${s.id}/summary`} className="flex items-center gap-1 rounded-control border border-line-subtle px-2 py-1 type-metadata font-medium text-ink-primary hover:bg-accent">
-                            <Play className="h-3 w-3" /> Play
-                          </Link>
-                        )}
-                        <Link to={`/practice/${s.id}/summary`} aria-label={`Open report from ${s.date}`} className="rounded-control p-1 text-ink-tertiary hover:bg-accent">
-                          <ChevronRight className="h-4 w-4" />
+                      {saved && (
+                        <Link to={`/performances?score=${score.id}`} className="flex shrink-0 items-center gap-1 rounded-control border border-line-subtle px-2 py-1 type-metadata font-medium text-ink-primary hover:bg-accent">
+                          <Play className="h-3 w-3" /> Play
                         </Link>
-                      </div>
+                      )}
                     </div>
                   );
                 })}
