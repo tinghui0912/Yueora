@@ -99,7 +99,7 @@ export const practiceHome = {
 
 // ---------- Team ----------
 export const teamMembers = [
-  { id: 'alice', name: 'Alice Chen', email: 'alice@example.com', role: 'Teacher' },
+  { id: 'alice', name: 'Alice Chen', email: 'alice@example.com', role: 'Member' },
   { id: 'bob', name: 'Bob Ramirez', email: 'bob@example.com', role: 'Member' },
   { id: 'dana', name: 'Dana Okafor', email: 'dana@example.com', role: 'Member' },
 ];
@@ -113,20 +113,16 @@ const daysAgo = (n, hour = 18, minute = 0) => {
 
 // ---------- Practice Activity (lightweight, no scoring, no media) ----------
 export const practiceActivities = [
-  { id: 'act-moon', ownerId: 'you', scoreId: 'moonlight', scoreTitleSnapshot: 'Moonlight Sonata', mode: 'follow', startedAt: daysAgo(0, 9, 12), completedAt: daysAgo(0, 9, 30), durationSeconds: 1080, tempoBpm: null, rangeSummary: 'Measures 32–48', visibility: 'private', sharedWith: [], teamId: 'team-yueora' },
-  { id: 'act-inter', ownerId: 'you', scoreId: 'interstellar', scoreTitleSnapshot: 'Interstellar Main Theme', mode: 'performance', startedAt: daysAgo(1, 20, 2), completedAt: daysAgo(1, 20, 7), durationSeconds: 262, tempoBpm: 56, rangeSummary: 'Full score', visibility: 'shared', sharedWith: ['alice'], teamId: 'team-yueora' },
-  { id: 'act-prelude', ownerId: 'you', scoreId: 'prelude-c', scoreTitleSnapshot: 'Prelude in C', mode: 'follow', startedAt: daysAgo(2, 19, 4), completedAt: daysAgo(2, 19, 16), durationSeconds: 720, tempoBpm: null, rangeSummary: 'Full score', visibility: 'private', sharedWith: [], teamId: 'team-yueora' },
-  { id: 'act-etude', ownerId: 'you', scoreId: 'etude10-4', scoreTitleSnapshot: 'Étude Op. 10 No. 4', mode: 'performance', startedAt: daysAgo(5, 17, 30), completedAt: daysAgo(5, 17, 52), durationSeconds: 1320, tempoBpm: 120, rangeSummary: 'Measures 1–32', visibility: 'private', sharedWith: [], teamId: 'team-yueora' },
-  { id: 'act-clair', ownerId: 'you', scoreId: 'clair-de-lune', scoreTitleSnapshot: 'Clair de Lune', mode: 'follow', startedAt: daysAgo(9, 21, 0), completedAt: daysAgo(9, 21, 15), durationSeconds: 900, tempoBpm: null, rangeSummary: 'Full score', visibility: 'private', sharedWith: [], teamId: 'team-yueora' },
-  { id: 'act-alice-nocturne', ownerId: 'alice', scoreId: 'nocturne-eb', scoreTitleSnapshot: 'Nocturne in E♭', mode: 'performance', startedAt: daysAgo(1, 11, 10), completedAt: daysAgo(1, 11, 16), durationSeconds: 340, tempoBpm: 66, rangeSummary: 'Full score', visibility: 'shared', sharedWith: ['you'], teamId: 'team-yueora' },
+  { id: 'act-moon', ownerId: 'you', scoreId: 'moonlight', scoreTitleSnapshot: 'Moonlight Sonata', mode: 'follow', startedAt: daysAgo(0, 9, 12), completedAt: daysAgo(0, 9, 30), durationSeconds: 1080, tempoBpm: null, rangeSummary: 'Measures 32–48' },
+  { id: 'act-inter', ownerId: 'you', scoreId: 'interstellar', scoreTitleSnapshot: 'Interstellar Main Theme', mode: 'performance', startedAt: daysAgo(1, 20, 2), completedAt: daysAgo(1, 20, 7), durationSeconds: 262, tempoBpm: 56, rangeSummary: 'Full score' },
+  { id: 'act-prelude', ownerId: 'you', scoreId: 'prelude-c', scoreTitleSnapshot: 'Prelude in C', mode: 'follow', startedAt: daysAgo(2, 19, 4), completedAt: daysAgo(2, 19, 16), durationSeconds: 720, tempoBpm: null, rangeSummary: 'Full score' },
+  { id: 'act-etude', ownerId: 'you', scoreId: 'etude10-4', scoreTitleSnapshot: 'Étude Op. 10 No. 4', mode: 'performance', startedAt: daysAgo(5, 17, 30), completedAt: daysAgo(5, 17, 52), durationSeconds: 1320, tempoBpm: 120, rangeSummary: 'Measures 1–32' },
+  { id: 'act-clair', ownerId: 'you', scoreId: 'clair-de-lune', scoreTitleSnapshot: 'Clair de Lune', mode: 'follow', startedAt: daysAgo(9, 21, 0), completedAt: daysAgo(9, 21, 15), durationSeconds: 900, tempoBpm: null, rangeSummary: 'Full score' },
 ];
 
 // ---------- Saved Performances (only what the user chose to keep) ----------
-export const savedPerformances = [
-  { id: 'perf-inter', activityId: 'act-inter', ownerId: 'you', scoreId: 'interstellar', scoreTitleSnapshot: 'Interstellar Main Theme', mediaType: 'video', mediaRef: 'mock://video/perf-inter', createdAt: daysAgo(1, 20, 7), durationSeconds: 262, tempoBpm: 56, rangeSummary: 'Full score', visibility: 'shared', sharedWith: ['alice'], teamId: 'team-yueora' },
-  { id: 'perf-etude', activityId: 'act-etude', ownerId: 'you', scoreId: 'etude10-4', scoreTitleSnapshot: 'Étude Op. 10 No. 4', mediaType: 'audio', mediaRef: 'mock://audio/perf-etude', createdAt: daysAgo(5, 17, 52), durationSeconds: 190, tempoBpm: 120, rangeSummary: 'Measures 1–32', visibility: 'private', sharedWith: [], teamId: 'team-yueora' },
-  { id: 'perf-alice', activityId: 'act-alice-nocturne', ownerId: 'alice', scoreId: 'nocturne-eb', scoreTitleSnapshot: 'Nocturne in E♭', mediaType: 'video', mediaRef: 'mock://video/perf-alice', createdAt: daysAgo(1, 11, 16), durationSeconds: 212, tempoBpm: 66, rangeSummary: 'Full score', visibility: 'shared', sharedWith: ['you'], teamId: 'team-yueora' },
-];
+// Seeded as empty: a performance exists only after a real recording was saved.
+export const savedPerformances = [];
 
 // ---------- Practice Progress ----------
 export const practiceProgress = {
@@ -247,28 +243,6 @@ export const billingHistory = [
   { id: 'b3', date: 'Jun 15, 2026', amount: '$6.00', plan: 'Pro monthly', invoice: 'INV-2026-06' },
 ];
 
-// ---------- Practice Summary ----------
-export function buildSummary(scoreId) {
-  const score = getScore(scoreId);
-  const hero = ['That felt smoother.', 'Nice session.', 'Good to be back at this one.', 'That came together nicely.'];
-  const h = hero[(scoreId || '').length % hero.length];
-  return {
-    scoreId,
-    title: score?.title ?? 'Score',
-    composer: score?.composer ?? '',
-    hero: h,
-    insight: 'Measures 34–38 were still the trickiest part today.',
-    trickySection: { from: 34, to: 38, label: 'Measures 34–38' },
-    accuracy: 88,
-    timing: 'Steady',
-    duration: '12:42',
-    tempo: '60 BPM',
-    missing: 3,
-    unexpected: 2,
-    compared: { accuracy: '+4%', errors: -7, tempo: '+8 BPM' },
-  };
-}
-
 // ---------- Help articles ----------
 export const helpCategories = [
   'Getting started', 'Adding music', 'Recognition & editing', 'Practice', 'Library', 'Sharing', 'Account & billing', 'Privacy',
@@ -292,7 +266,7 @@ export const helpArticles = [
   { slug: 'practice-feedback', category: 'Practice', title: 'How feedback works', updated: 'Sep 2, 2026', excerpt: 'Feedback is calm and informational — never a grade.',
     body: ['During a session, Yueora can show whether a note matched, what’s coming next, and where things felt uncertain.', 'You won’t see a failing score or a judgment. Afterward, the summary leads with how it felt, then offers details if you want them.'], related: ['practice-setup', 'practice-summary'] },
   { slug: 'practice-summary', category: 'Practice', title: 'Reading your practice summary', updated: 'Sep 2, 2026', excerpt: 'The summary leads with a feeling, then the details.',
-    body: ['Each summary opens with a short, human line about the session, then highlights the trickiest part and invites you to try it again.', 'Accuracy, timing, and tempo are there as information — not a grade. You can compare with last time, replay, or head back.'], related: ['practice-feedback'] },
+    body: ['Each summary opens with a short, human line about the session, then shows the range and tempo you chose and offers to run it again.', 'Yueora shows what it actually knows — how long you played, which range, the tempo you chose, and your recording if you made one. Note-level accuracy is not measured, so it is not shown, and the summary is a moment rather than a stored record.'], related: ['practice-feedback'] },
   { slug: 'organize-library', category: 'Library', title: 'Organize your library', updated: 'Aug 25, 2026', excerpt: 'Folders, favorites, and ownership views keep things tidy.',
     body: ['Your library separates All music, Mine, Shared with me, Saved, and Favorites. Folders live inside the library for finer grouping.', 'You can create, rename, and delete folders, and move scores between them. Deleting a folder never deletes the scores inside.'], related: ['trash-and-restore', 'sharing-basics'] },
   { slug: 'trash-and-restore', category: 'Library', title: 'Trash and restoring scores', updated: 'Aug 25, 2026', excerpt: 'Deleted scores go to Trash, where you can restore or remove them for good.',

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Download, MoreHorizontal, Pause, Play, Share2, Trash2 } from 'lucide-react';
+import { Download, Loader2, MoreHorizontal, Pause, Play, Share2, Trash2 } from 'lucide-react';
 import { dayLabel, fmtClock } from '@/lib/practiceUtils';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -7,7 +7,8 @@ import {
 
 export default function PerformanceRow({
   performance, scoreExists, isOwner, ownerName,
-  playing, position, onToggle, onSeek, onDownload, onShare, onDelete,
+  playing, position, loading, error, canPlay = true,
+  onToggle, onSeek, onDownload, onShare, onDelete,
 }) {
   const { durationSeconds = 0, mediaType } = performance;
   const progress = durationSeconds ? Math.min(100, (position / durationSeconds) * 100) : 0;
@@ -39,7 +40,7 @@ export default function PerformanceRow({
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
-            <DropdownMenuItem onClick={onDownload}>
+            <DropdownMenuItem onClick={onDownload} disabled={!canPlay}>
               <Download className="mr-2 h-4 w-4" /> Download recording
             </DropdownMenuItem>
             {isOwner && (
@@ -64,10 +65,11 @@ export default function PerformanceRow({
         <button
           type="button"
           onClick={onToggle}
+          disabled={!canPlay || loading}
           aria-label={playing ? `Pause ${performance.scoreTitleSnapshot}` : `Play ${performance.scoreTitleSnapshot}`}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line-subtle text-ink-primary hover:bg-accent"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line-subtle text-ink-primary hover:bg-accent disabled:opacity-50"
         >
-          {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </button>
         <div className="min-w-0 flex-1">
           <div className="relative">
@@ -91,6 +93,11 @@ export default function PerformanceRow({
           </div>
         </div>
       </div>
+
+      {error && <p className="mt-2 type-metadata text-destructive">{error}</p>}
+      {!canPlay && !error && (
+        <p className="mt-2 type-metadata text-ink-tertiary">No recording file is stored for this performance.</p>
+      )}
     </article>
   );
 }

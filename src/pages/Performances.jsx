@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
+import { signedUrlFor, slugify } from '@/lib/media';
 import PerformanceRow from '@/components/performances/PerformanceRow';
 import ShareResourceDialog from '@/components/sharing/ShareResourceDialog';
 import StateMessage from '@/components/patterns/StateMessage';
@@ -37,41 +38,89 @@ export default function Performances() {
   const [kind, setKind] = useState('all');
   const [query, setQuery] = useState('');
   const [player, setPlayer] = useState({ id: null, position: 0, playing: false });
+  const [sources, setSources] = useState({});
+  const [loadingId, setLoadingId] = useState(null);
+  const [errors, setErrors] = useState({});
   const [pendingDelete, setPendingDelete] = useState(null);
   const [sharing, setSharing] = useState(null);
+  const mediaRef = useRef(null);
 
   const mine = performances.filter((p) => p.ownerId === 'you');
   const sharedWithMe = performances.filter((p) => p.ownerId !== 'you' && (p.sharedWith || []).includes('you'));
   const source = tab === 'mine' ? mine : sharedWithMe;
 
-  // One performance plays at a time; pausing keeps the position.
-  useEffect(() => {
-    if (!player.playing || !player.id) return undefined;
-    const current = performances.find((p) => p.id === player.id);
-    if (!current) return undefined;
-    const t = setInterval(() => {
-      setPlayer((cur) => {
-        if (cur.position + 1 >= (current.durationSeconds || 0)) {
-          return { ...cur, playing: false, position: current.durationSeconds || 0 };
+  // Stored recordings are private; playback uses a short-lived signed link.
+  const resolveSource = useCallback(async (p) => {
+    if (sources[p.id]) return sources[p.id];
+    if (!p.fileUri) throw new Error('No recording file is stored for this performance.');
+    const url = await signedUrlFor(p.fileUri);
+    if (!url) throw new Error('The recording could not be opened right now.');
+    setSources((cur) => ({ ...cur, [p.id]: url }));
+    return url;
+  }, [sources]);
+
+  const setItemError = (id, message) =>
+    setErrors((cur) => ({ ...cur, [id]: message }));
+
+  const startPlayback = async (p) => {
+    setItemError(p.id, null);
+    try {
+      setLoadingId(p.id);
+      const url = await resolveSource(p);
+      setPlayer({ id: p.id, position: 0, playing: true });
+      const el = mediaRef.current;
+      if (el) {
+        if (el.dataset.id !== p.id) {
+          el.dataset.id = p.id;
+          el.src = url;
+          el.currentTime = 0;
         }
-        return { ...cur, position: cur.position + 1 };
-      });
-    }, 1000);
-    return () => clearInterval(t);
-  }, [player.playing, player.id, performances]);
+        await el.play();
+      }
+    } catch (err) {
+      setPlayer((cur) => ({ ...cur, playing: false }));
+      setItemError(p.id, err?.message || 'This recording could not be played.');
+    } finally {
+      setLoadingId(null);
+    }
+  };
 
   const togglePlay = (p) => {
-    setPlayer((cur) => {
-      if (cur.id === p.id) return { ...cur, playing: !cur.playing };
-      return { id: p.id, position: 0, playing: true };
-    });
+    const el = mediaRef.current;
+    if (player.id === p.id && el && el.dataset.id === p.id && el.src) {
+      if (el.paused) {
+        el.play().catch(() => setItemError(p.id, 'Playback was blocked. Press play again.'));
+        setPlayer((cur) => ({ ...cur, playing: true }));
+      } else {
+        el.pause();
+        setPlayer((cur) => ({ ...cur, playing: false }));
+      }
+      return;
+    }
+    startPlayback(p);
   };
+
   const seek = (p, value) => {
-    setPlayer((cur) =>
-      cur.id === p.id
-        ? { ...cur, position: value }
-        : { id: p.id, position: value, playing: true }
-    );
+    if (player.id !== p.id) {
+      startPlayback(p);
+      return;
+    }
+    if (mediaRef.current) mediaRef.current.currentTime = value;
+    setPlayer((cur) => ({ ...cur, position: value }));
+  };
+
+  const download = async (p) => {
+    try {
+      const url = await resolveSource(p);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `${slugify(p.scoreTitleSnapshot)}-${p.mediaType === 'video' ? 'performance' : 'recording'}.webm`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+    } catch (err) {
+      toast({ title: 'Download unavailable', description: err?.message || 'The recording could not be downloaded.' });
+    }
   };
 
   const contextualScore = scoreFilter ? scores.find((s) => s.id === scoreFilter) : null;
@@ -175,9 +224,12 @@ export default function Performances() {
               ownerName={p.ownerId !== 'you' ? (members.find((m) => m.id === p.ownerId) || {}).name : null}
               playing={player.id === p.id && player.playing}
               position={player.id === p.id ? player.position : 0}
+              loading={loadingId === p.id}
+              error={errors[p.id]}
+              canPlay={!!p.fileUri}
               onToggle={() => togglePlay(p)}
               onSeek={(v) => seek(p, v)}
-              onDownload={() => toast({ title: 'Recording downloaded', description: `${p.scoreTitleSnapshot} — ${p.mediaType} recording (mock file).` })}
+              onDownload={() => download(p)}
               onShare={() => setSharing(p)}
               onDelete={() => setPendingDelete(p)}
             />
@@ -189,10 +241,23 @@ export default function Performances() {
         Practice reports aren’t stored, so performances open here as recordings — not as old reports.
       </p>
 
+      {/* One real media element drives whichever performance is playing */}
+      <video
+        ref={mediaRef}
+        className="hidden"
+        playsInline
+        onTimeUpdate={(e) => setPlayer((cur) => (cur.id ? { ...cur, position: e.target.currentTime } : cur))}
+        onPlay={() => setPlayer((cur) => ({ ...cur, playing: true }))}
+        onPause={() => setPlayer((cur) => ({ ...cur, playing: false }))}
+        onEnded={() => setPlayer((cur) => ({ ...cur, playing: false }))}
+        onError={() => {
+          if (player.id) setItemError(player.id, 'The recording file could not be played.');
+        }}
+      />
+
       <ShareResourceDialog
         open={!!sharing}
         onOpenChange={(open) => !open && setSharing(null)}
-        kind="performance"
         title={sharing?.scoreTitleSnapshot || ''}
         members={members}
         value={sharing}
@@ -215,7 +280,14 @@ export default function Performances() {
               variant="destructive"
               onClick={() => {
                 deletePerformance(pendingDelete.id);
-                if (player.id === pendingDelete.id) setPlayer({ id: null, position: 0, playing: false });
+                if (player.id === pendingDelete.id) {
+                  if (mediaRef.current) {
+                    mediaRef.current.pause();
+                    mediaRef.current.removeAttribute('src');
+                    delete mediaRef.current.dataset.id;
+                  }
+                  setPlayer({ id: null, position: 0, playing: false });
+                }
                 setPendingDelete(null);
                 toast({ title: 'Performance deleted' });
               }}

@@ -494,22 +494,12 @@ export const usePrototypeStore = create(
             tempoBpm: activity.tempoBpm ?? null,
             rangeSummary: activity.rangeSummary || 'Full score',
             ownerId: 'you',
-            teamId: 'team-yueora',
-            visibility: 'private',
-            sharedWith: [],
           };
           return { practiceActivities: [record, ...st.practiceActivities] };
         }),
 
       deletePracticeActivity: (id) =>
         set((st) => ({ practiceActivities: st.practiceActivities.filter((a) => a.id !== id) })),
-
-      updateActivitySharing: (id, { visibility, sharedWith }) =>
-        set((st) => ({
-          practiceActivities: st.practiceActivities.map((a) =>
-            a.id === id ? { ...a, visibility, sharedWith: sharedWith || [] } : a
-          ),
-        })),
 
       // ---- Performances (explicitly kept media) ----
       // Saving is an explicit act: a session can exist with a recording and still
@@ -834,7 +824,7 @@ export const usePrototypeStore = create(
     }),
     {
       name: 'yueora-prototype',
-      version: 6,
+      version: 7,
       migrate: (persistedState, version) => {
         // Merge any missing keys from defaults
         const merged = { ...persistedState };
@@ -848,6 +838,21 @@ export const usePrototypeStore = create(
         // longer belong to a practice record. Start the prototype on the new model.
         delete merged.practiceSessions;
         delete merged.practicePerformances;
+        // Practice activity is private: revoke any legacy sharing grant without
+        // deleting the underlying record.
+        if (Array.isArray(merged.practiceActivities)) {
+          merged.practiceActivities = merged.practiceActivities.map((a) => {
+            const { visibility, sharedWith, teamId, ...rest } = a;
+            return rest;
+          });
+        }
+        // Performances saved while media was a placeholder pointed at files that
+        // never existed. Keep only recordings that really have a stored file.
+        if (Array.isArray(merged.savedPerformances)) {
+          merged.savedPerformances = merged.savedPerformances
+            .filter((p) => !!p.fileUri)
+            .map(({ mediaRef, ...rest }) => rest);
+        }
         if (!merged.preflight) merged.preflight = { modelReady: false, micGranted: false, midiConnected: false, cameraGranted: false };
         if (merged.subscription && merged.subscription.renewal === 'Sep 15, 2026') {
           merged.subscription.renewal = 'Nov 15, 2026';

@@ -123,7 +123,7 @@ const AuthenticatedApp = () => {
         <Route path="/score/:scoreId/edit" element={<Editor />} />
         <Route path="/score/:scoreId/practice" element={<PracticeSession />} />
         <Route path="/review/:importId" element={<RecognitionReview />} />
-        <Route path="/practice/:sessionId/summary" element={<PracticeSummary />} />
+        <Route path="/practice/:activityId/summary" element={<PracticeSummary />} />
       </Route>
 
       <Route path="*" element={<PageNotFound />} />

@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Download, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { composeShareVideo } from '@/lib/composeShareVideo';
+import { downloadBlob, slugify } from '@/lib/media';
 
 const FORMATS = [
   { value: 'landscape', label: 'Landscape 16:9' },
@@ -13,19 +14,54 @@ const LAYOUTS = [
   { value: 'overlay', label: 'Score over video' },
 ];
 
-export default function ShareVideoDialog({ open, onOpenChange, title }) {
-  const { toast } = useToast();
+/**
+ * Builds the share video from the real recording. Nothing is uploaded here —
+ * the user keeps the generated file.
+ */
+export default function ShareVideoDialog({ open, onOpenChange, title, composer, rangeSummary, startMeasure, mediaBlob }) {
   const [format, setFormat] = useState('landscape');
   const [layout, setLayout] = useState('side');
-  const [stage, setStage] = useState('idle'); // idle | generating | ready
+  const [stage, setStage] = useState('idle'); // idle | generating | ready | error
+  const [error, setError] = useState(null);
+  const [result, setResult] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   useEffect(() => {
-    if (!open) setStage('idle');
+    if (!open) {
+      setStage('idle');
+      setError(null);
+      setResult(null);
+    }
   }, [open]);
 
-  const generate = () => {
+  useEffect(() => {
+    if (!result) { setPreviewUrl(null); return undefined; }
+    const url = URL.createObjectURL(result);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [result]);
+
+  const generate = async () => {
     setStage('generating');
-    setTimeout(() => setStage('ready'), 1600);
+    setError(null);
+    try {
+      const blob = await composeShareVideo({
+        videoBlob: mediaBlob,
+        format,
+        layout,
+        meta: { title, composer, rangeSummary, startMeasure },
+      });
+      setResult(blob);
+      setStage('ready');
+    } catch (err) {
+      setError(err?.message || 'The video could not be generated.');
+      setStage('error');
+    }
+  };
+
+  const download = () => {
+    if (!result) return;
+    downloadBlob(result, `${slugify(title)}-share.webm`);
   };
 
   return (
@@ -33,66 +69,83 @@ export default function ShareVideoDialog({ open, onOpenChange, title }) {
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>Make a share video</DialogTitle>
-          <DialogDescription>{title} — a short clip you can share.</DialogDescription>
+          <DialogDescription>{title} — your recording with the score beside it.</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div>
-            <p className="type-caption text-ink-tertiary">Format</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {FORMATS.map((f) => (
-                <button
-                  key={f.value}
-                  type="button"
-                  onClick={() => setFormat(f.value)}
-                  aria-pressed={format === f.value}
-                  className={`rounded-control border px-3 py-1.5 text-sm ${format === f.value ? 'border-brand text-brand' : 'border-line-subtle text-ink-secondary hover:bg-accent/50'}`}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="type-caption text-ink-tertiary">Layout</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {LAYOUTS.map((l) => (
-                <button
-                  key={l.value}
-                  type="button"
-                  onClick={() => setLayout(l.value)}
-                  aria-pressed={layout === l.value}
-                  className={`rounded-control border px-3 py-1.5 text-sm ${layout === l.value ? 'border-brand text-brand' : 'border-line-subtle text-ink-secondary hover:bg-accent/50'}`}
-                >
-                  {l.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="type-caption text-ink-tertiary">Preview</p>
-            <div className={`mt-2 mx-auto overflow-hidden rounded-container border border-line-subtle bg-foreground/90 p-2 ${format === 'portrait' ? 'aspect-[9/16] max-w-[180px]' : 'aspect-video w-full'}`}>
-              <div className={`flex h-full gap-2 ${format === 'portrait' ? 'flex-col' : layout === 'overlay' ? 'relative' : ''}`}>
-                <div className={`rounded bg-surface-panel ${format === 'portrait' ? 'h-1/2' : 'w-1/2'} ${layout === 'overlay' ? 'absolute inset-x-2 bottom-2 h-1/3 w-auto' : ''}`}>
-                  <div className="staff-bg h-full w-full rounded opacity-60" aria-hidden="true" />
-                </div>
-                <div className={`rounded bg-gradient-to-br from-ink-primary/80 to-ink-primary/40 ${format === 'portrait' ? 'h-1/2' : 'w-1/2'} ${layout === 'overlay' ? 'absolute inset-0' : ''}`} aria-hidden="true" />
+        {!mediaBlob ? (
+          <p className="type-body-small text-ink-secondary">
+            A share video needs the session recording. This session wasn’t recorded, so there’s nothing to build from.
+          </p>
+        ) : (
+          <div className="space-y-4">
+            <div>
+              <p className="type-caption text-ink-tertiary">Format</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {FORMATS.map((f) => (
+                  <button
+                    key={f.value}
+                    type="button"
+                    onClick={() => setFormat(f.value)}
+                    aria-pressed={format === f.value}
+                    disabled={stage === 'generating'}
+                    className={`rounded-control border px-3 py-1.5 text-sm disabled:opacity-50 ${format === f.value ? 'border-brand text-brand' : 'border-line-subtle text-ink-secondary hover:bg-accent/50'}`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
               </div>
             </div>
+
+            <div>
+              <p className="type-caption text-ink-tertiary">Layout</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {LAYOUTS.map((l) => (
+                  <button
+                    key={l.value}
+                    type="button"
+                    onClick={() => setLayout(l.value)}
+                    aria-pressed={layout === l.value}
+                    disabled={stage === 'generating'}
+                    className={`rounded-control border px-3 py-1.5 text-sm disabled:opacity-50 ${layout === l.value ? 'border-brand text-brand' : 'border-line-subtle text-ink-secondary hover:bg-accent/50'}`}
+                  >
+                    {l.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {previewUrl && (
+              <div>
+                <p className="type-caption text-ink-tertiary">Your share video</p>
+                <video
+                  src={previewUrl}
+                  controls
+                  playsInline
+                  className="mt-2 w-full rounded-container border border-line-subtle bg-black"
+                />
+              </div>
+            )}
+
+            {stage === 'error' && <p className="type-body-small text-destructive">{error}</p>}
+
+            <p className="type-metadata text-ink-tertiary">
+              The video is built on this device from your recording. Nothing is uploaded.
+            </p>
           </div>
-        </div>
+        )}
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Close</Button>
-          {stage === 'ready' ? (
-            <Button onClick={() => toast({ title: 'Share video downloaded', description: `${title} — share video (mock file).` })}>
-              <Download className="mr-1.5 h-4 w-4" /> Download video
-            </Button>
-          ) : (
+          {mediaBlob && stage !== 'ready' && (
             <Button onClick={generate} disabled={stage === 'generating'}>
-              {stage === 'generating' ? <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Generating…</> : 'Generate video'}
+              {stage === 'generating'
+                ? <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Building video…</>
+                : stage === 'error' ? 'Try again' : 'Generate video'}
+            </Button>
+          )}
+          {stage === 'ready' && (
+            <Button onClick={download}>
+              <Download className="mr-1.5 h-4 w-4" /> Download video
             </Button>
           )}
         </DialogFooter>

@@ -5,10 +5,11 @@ import { usePrototypeStore } from '@/stores/prototypeStore';
 import { usePracticeRuntime } from '@/stores/practiceRuntime';
 import { generateNotes } from '@/lib/mockData';
 import { fmtClock, measureWindowStart } from '@/lib/practiceUtils';
+import { downloadBlob, extensionFor, slugify, uploadRecording } from '@/lib/media';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import Metric from '@/components/patterns/Metric';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
-import PerformanceReplay from '@/components/performances/PerformanceReplay';
+import RecordedMedia from '@/components/performances/RecordedMedia';
 import ShareVideoDialog from '@/components/performances/ShareVideoDialog';
 import SavePerformanceDialog from '@/components/performances/SavePerformanceDialog';
 import { Button } from '@/components/ui/button';
@@ -23,12 +24,13 @@ export default function PracticeSummary() {
   const { toast } = useToast();
   const report = usePracticeRuntime((s) => s.report);
   const clearReport = usePracticeRuntime((s) => s.clearReport);
-  const scored = usePrototypeStore((s) => s.scores);
+  const scores = usePrototypeStore((s) => s.scores);
   const savePerformance = usePrototypeStore((s) => s.savePerformance);
-  const members = usePrototypeStore((s) => s.teamMembers) || [];
 
   const [saveOpen, setSaveOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
   const [notes] = useState(() => generateNotes(report?.scoreId));
   const alive = useRef(false);
 
@@ -44,7 +46,6 @@ export default function PracticeSummary() {
   }, [clearReport]);
 
   const live = report && report.activityId === activityId ? report : null;
-  const score = live ? scored.find((s) => s.id === live.scoreId) : null;
 
   if (!live) {
     return (
@@ -61,32 +62,52 @@ export default function PracticeSummary() {
     );
   }
 
-  const { durationSeconds, tempoBpm, rangeSummary, feedback, mediaType, savedPerformanceId } = live;
+  const { durationSeconds, tempoBpm, rangeSummary, mediaType, mediaBlob, savedPerformanceId } = live;
+  const score = scores.find((s) => s.id === live.scoreId);
   const saved = !!savedPerformanceId;
   const markerMeasure = live.startMeasure || 1;
+  const filename = `${slugify(live.scoreTitle)}-${new Date().toISOString().slice(0, 10)}`;
 
-  const handleSave = ({ visibility, sharedWith }) => {
-    const id = `perf-${Date.now()}`;
-    savePerformance({
-      id,
-      activityId: live.activityId,
-      scoreId: live.scoreId,
-      scoreTitleSnapshot: live.scoreTitle,
-      mediaType,
-      mediaRef: live.mediaRef,
-      createdAt: new Date().toISOString(),
-      durationSeconds,
-      tempoBpm,
-      rangeSummary,
-      visibility,
-      sharedWith,
-    });
-    usePracticeRuntime.getState().markSaved(id);
-    setSaveOpen(false);
-    toast({
-      title: 'Performance saved',
-      description: `${live.scoreTitle} is now in Performances.`,
-    });
+  const downloadRecording = () => {
+    if (!mediaBlob) return;
+    downloadBlob(mediaBlob, `${filename}.${extensionFor(mediaBlob)}`);
+  };
+
+  const handleSave = async () => {
+    if (!mediaBlob) {
+      setSaveError('There is no recording file to keep for this session.');
+      return;
+    }
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const fileUri = await uploadRecording(mediaBlob, `${filename}.${extensionFor(mediaBlob)}`);
+      const id = `perf-${Date.now()}`;
+      savePerformance({
+        id,
+        activityId: live.activityId,
+        scoreId: live.scoreId,
+        scoreTitleSnapshot: live.scoreTitle,
+        mediaType,
+        fileUri,
+        createdAt: new Date().toISOString(),
+        durationSeconds,
+        tempoBpm,
+        rangeSummary,
+        visibility: 'private',
+        sharedWith: [],
+      });
+      usePracticeRuntime.getState().markSaved(id);
+      setSaveOpen(false);
+      toast({
+        title: 'Performance saved',
+        description: `${live.scoreTitle} is now in Performances.`,
+      });
+    } catch (err) {
+      setSaveError(err?.message || 'The recording could not be uploaded. Check your connection and try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -117,17 +138,11 @@ export default function PracticeSummary() {
       {/* Replay — the recording only exists while this page is open */}
       <section className="mt-9">
         <SectionHeader title="Replay" />
-        {mediaType ? (
+        {mediaBlob ? (
           <div className="mt-3">
-            <PerformanceReplay
-              scoreId={live.scoreId}
-              mediaKind={mediaType}
-              durationSec={durationSeconds}
-              totalMeasures={live.endMeasure || 32}
-              startMeasure={markerMeasure}
-            />
+            <RecordedMedia blob={mediaBlob} mediaType={mediaType} />
             <p className="mt-2 type-metadata text-ink-tertiary">
-              Temporary recording. Saved only if you keep this performance.
+              This recording lives on this page only — it is kept if you save the performance.
             </p>
           </div>
         ) : (
@@ -150,29 +165,18 @@ export default function PracticeSummary() {
         )}
       </section>
 
-      {/* Reference feedback — only when a listening input was configured */}
-      {feedback ? (
-        <dl className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-0 sm:divide-x sm:divide-line-subtle">
-          <div className="sm:px-4 sm:first:pl-0"><Metric label="Reference accuracy" value={`${feedback.accuracy}%`} /></div>
-          <div className="sm:px-4"><Metric label="Duration" value={fmtClock(durationSeconds)} /></div>
-          <div className="sm:px-4"><Metric label="Tempo" value={`${tempoBpm} BPM`} /></div>
-          <div className="sm:px-4"><Metric label="Measures" value={`${feedback.groupsMatched}`} /></div>
-        </dl>
-      ) : (
-        <dl className="mt-8 grid grid-cols-2 gap-4 border-t border-line-subtle pt-5 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-line-subtle">
-          <div className="sm:px-4 sm:first:pl-0"><Metric label="Duration" value={fmtClock(durationSeconds)} /></div>
-          <div className="sm:px-4"><Metric label="Tempo" value={`${tempoBpm} BPM`} /></div>
-          <div className="sm:px-4"><Metric label="Section" value={rangeSummary} /></div>
-        </dl>
-      )}
-      {feedback && (
-        <p className="mt-2 type-metadata text-ink-tertiary">
-          A listening model never hears every note — treat this as a reference, not a score.
-        </p>
-      )}
+      {/* What actually happened in this session */}
+      <dl className="mt-8 grid grid-cols-2 gap-4 border-t border-line-subtle pt-5 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-line-subtle">
+        <div className="sm:px-4 sm:first:pl-0"><Metric label="Duration" value={fmtClock(durationSeconds)} /></div>
+        <div className="sm:px-4"><Metric label="Tempo" value={`${tempoBpm} BPM`} /></div>
+        <div className="sm:px-4"><Metric label="Section" value={rangeSummary} /></div>
+      </dl>
+      <p className="mt-3 type-metadata text-ink-tertiary">
+        Yueora knows what you chose and how long you played. Note-level accuracy isn’t measured, so it isn’t shown.
+      </p>
 
-      {/* Keep / download / share */}
-      {mediaType && (
+      {/* Keep / download / share video */}
+      {mediaBlob && (
         <section className="mt-8 border-t border-line-subtle pt-5">
           <SectionHeader title="Keep this performance" />
           <p className="mt-2 type-body-small text-ink-secondary">
@@ -189,10 +193,7 @@ export default function PracticeSummary() {
             ) : (
               <Button onClick={() => setSaveOpen(true)}>Save performance</Button>
             )}
-            <Button
-              variant="outline"
-              onClick={() => toast({ title: 'Recording downloaded', description: `${live.scoreTitle} — ${mediaType} recording (mock file).` })}
-            >
+            <Button variant="outline" onClick={downloadRecording}>
               <Download className="mr-1.5 h-4 w-4" /> Download recording
             </Button>
             {mediaType === 'video' && (
@@ -201,12 +202,15 @@ export default function PracticeSummary() {
               </Button>
             )}
           </div>
+          <p className="mt-2 type-metadata text-ink-tertiary">
+            Save or download works on the real recording file captured in this session.
+          </p>
         </section>
       )}
 
-      {!mediaType && (
+      {!mediaBlob && (
         <p className="mt-6 type-metadata text-ink-tertiary">
-          Recording was off. You can choose audio or video next time in setup.
+          This session has no recording attached. You can choose audio or video next time in setup.
         </p>
       )}
 
@@ -230,10 +234,19 @@ export default function PracticeSummary() {
         open={saveOpen}
         onOpenChange={setSaveOpen}
         scoreTitle={live.scoreTitle}
-        members={members}
+        saving={saving}
+        error={saveError}
         onSave={handleSave}
       />
-      <ShareVideoDialog open={shareOpen} onOpenChange={setShareOpen} title={live.scoreTitle} />
+      <ShareVideoDialog
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        title={live.scoreTitle}
+        composer={live.composer}
+        rangeSummary={rangeSummary}
+        startMeasure={markerMeasure}
+        mediaBlob={mediaBlob}
+      />
     </div>
   );
 }

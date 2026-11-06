@@ -8,6 +8,7 @@ import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
 import { usePracticeRuntime } from '@/stores/practiceRuntime';
 import { generateNotes } from '@/lib/mockData';
 import { measureWindowStart, fmtClock, tempoLabel, rangeLabel } from '@/lib/practiceUtils';
+import useSessionRecorder from '@/lib/useSessionRecorder';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import TempoPopover from '@/components/practice/TempoPopover';
 import FollowFeedback from '@/components/practice/FollowFeedback';
@@ -46,6 +47,7 @@ export default function PracticeSession() {
   const updateScoreLastPlayed = usePrototypeStore((s) => s.updateScoreLastPlayed);
   const setReport = usePracticeRuntime((s) => s.setReport);
   const clearReport = usePracticeRuntime((s) => s.clearReport);
+  const recorder = useSessionRecorder();
 
   const [notes] = useState(() => generateNotes(scoreId));
 
@@ -96,6 +98,9 @@ export default function PracticeSession() {
     if (!config) navigate(`/score/${scoreId}/setup`, { replace: true });
   }, [config, navigate, scoreId]);
 
+  // Leaving the workspace always releases the microphone and camera.
+  useEffect(() => () => recorder.cancel(), [recorder.cancel]);
+
   // Session clock
   useEffect(() => {
     if (phase !== 'running') return undefined;
@@ -134,11 +139,15 @@ export default function PracticeSession() {
     }
   }, [activeMeasure, phase]);
 
-  function finish() {
+  // Nothing can be finished before it has started: no empty activity, no report.
+  async function finish() {
     if (finished.current) return;
+    if (!startedAt.current) return;
     finished.current = true;
+
+    const mediaBlob = recording === 'off' ? null : await recorder.stop();
     const completedAt = new Date().toISOString();
-    const durationSeconds = Math.max(1, elapsed || (mode === 'follow' ? matched * 6 + 12 : Math.round((maxMeasure * 4 * 60) / bpm)));
+    const durationSeconds = Math.max(1, elapsed);
     const activityId = `act-${Date.now()}`;
     const rangeSummary = rangeLabel(selectedRange);
 
@@ -173,15 +182,8 @@ export default function PracticeSession() {
       rangeSummary,
       startMeasure: selectedRange.kind === 'section' ? selectedRange.startMeasure : 1,
       endMeasure: maxMeasure,
-      mediaType: recording === 'off' ? null : recording,
-      mediaRef: recording === 'off' ? null : `mock://${recording}/${activityId}`,
-      feedback: feedbackAvailable && feedbackOn
-        ? {
-            accuracy: Math.max(58, Math.min(98, 96 - Math.floor(durationSeconds / 180))),
-            groupsMatched: matched,
-            groupsSkipped: skipped,
-          }
-        : null,
+      mediaType: mediaBlob ? recording : null,
+      mediaBlob,
       savedPerformanceId: null,
     });
     navigate(`/practice/${activityId}/summary`);
@@ -213,9 +215,8 @@ export default function PracticeSession() {
     advance();
   }
 
-  function startSession() {
+  async function startSession() {
     finished.current = false;
-    startedAt.current = new Date().toISOString();
     setMatched(0);
     setSkipped(0);
     setElapsed(0);
@@ -223,6 +224,13 @@ export default function PracticeSession() {
     setActiveMeasure(selectedRange.startMeasure);
     setVisibleMeasureStart(measureWindowStart(selectedRange.startMeasure));
     setSectionPhase('idle');
+
+    if (recording !== 'off') {
+      const result = await recorder.start(recording);
+      if (!result.ok) toast({ title: 'No recording this time', description: result.error });
+    }
+
+    startedAt.current = new Date().toISOString();
     if (mode === 'performance') {
       setCountBeat(4);
       setPhase('countin');
@@ -233,6 +241,8 @@ export default function PracticeSession() {
 
   function restart() {
     finished.current = false;
+    startedAt.current = null;
+    recorder.cancel();
     setPhase('ready');
     setMatched(0);
     setSkipped(0);
@@ -559,7 +569,7 @@ export default function PracticeSession() {
                   <RotateCcw className="mr-2 h-4 w-4" /> Restart
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={finish}>
+                <DropdownMenuItem onClick={finish} disabled={!startedAt.current}>
                   <Flag className="mr-2 h-4 w-4" /> Finish
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -599,7 +609,7 @@ export default function PracticeSession() {
             <Button variant="outline" onClick={() => { setExitOpen(false); finish(); }}>Finish &amp; save</Button>
             <Button
               variant="destructive"
-              onClick={() => { setExitOpen(false); clearReport(); navigate(`/score/${scoreId}`); }}
+              onClick={() => { setExitOpen(false); recorder.cancel(); clearReport(); navigate(`/score/${scoreId}`); }}
             >
               Discard
             </Button>
