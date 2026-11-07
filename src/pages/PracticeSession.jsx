@@ -84,6 +84,15 @@ export default function PracticeSession() {
   const [selfViewHidden, setSelfViewHidden] = useState(false);
   const finished = useRef(false);
   const startedAt = useRef(null);
+  const startedMs = useRef(null);
+  // { t, measure } each time the score moved on — the timeline replay follows.
+  const positionRef = useRef([]);
+
+  const recordPosition = (measure) => {
+    if (!startedMs.current) return;
+    const t = Math.max(0, Math.round((Date.now() - startedMs.current) / 1000));
+    positionRef.current = [...positionRef.current.filter((p) => p.t < t), { t, measure }];
+  };
 
   const totalMeasures = score?.measures || 32;
   const maxMeasure = selectedRange.kind === 'section' ? selectedRange.endMeasure : totalMeasures;
@@ -184,6 +193,7 @@ export default function PracticeSession() {
       endMeasure: maxMeasure,
       mediaType: mediaBlob ? recording : null,
       mediaBlob,
+      positionTimeline: positionRef.current,
       savedPerformanceId: null,
     });
     navigate(`/practice/${activityId}/summary`);
@@ -194,12 +204,14 @@ export default function PracticeSession() {
     if (next > maxMeasure) {
       if (loop && loopAllowed) {
         setActiveMeasure(selectedRange.startMeasure);
+        recordPosition(selectedRange.startMeasure);
         return;
       }
       finish();
       return;
     }
     setActiveMeasure(next);
+    recordPosition(next);
   }
 
   // Deterministic demo recognition: matched and skipped both move the score on.
@@ -231,6 +243,8 @@ export default function PracticeSession() {
     }
 
     startedAt.current = new Date().toISOString();
+    startedMs.current = Date.now();
+    positionRef.current = [{ t: 0, measure: selectedRange.startMeasure }];
     if (mode === 'performance') {
       setCountBeat(4);
       setPhase('countin');

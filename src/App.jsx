@@ -36,6 +36,7 @@ import PracticeHub from '@/pages/PracticeHub';
 import PracticeHistory from '@/pages/PracticeHistory';
 import PracticeProgress from '@/pages/PracticeProgress';
 import Performances from '@/pages/Performances';
+import PerformanceDetail from '@/pages/PerformanceDetail';
 import Notifications from '@/pages/Notifications';
 import Help from '@/pages/Help';
 import HelpArticle from '@/pages/HelpArticle';
@@ -108,6 +109,7 @@ const AuthenticatedApp = () => {
           <Route path="/practice/history" element={<PracticeHistory />} />
           <Route path="/practice/progress" element={<PracticeProgress />} />
           <Route path="/performances" element={<Performances />} />
+          <Route path="/performances/:performanceId" element={<PerformanceDetail />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />}>
             <Route index element={<Navigate to="/settings/account" replace />} />

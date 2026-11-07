@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Download, History, Play, RotateCcw, Wand2 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
@@ -9,7 +9,7 @@ import { downloadBlob, extensionFor, slugify, uploadRecording } from '@/lib/medi
 import SectionHeader from '@/components/patterns/SectionHeader';
 import Metric from '@/components/patterns/Metric';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
-import RecordedMedia from '@/components/performances/RecordedMedia';
+import SyncPlayback from '@/components/performances/SyncPlayback';
 import ShareVideoDialog from '@/components/performances/ShareVideoDialog';
 import SavePerformanceDialog from '@/components/performances/SavePerformanceDialog';
 import { Button } from '@/components/ui/button';
@@ -33,6 +33,11 @@ export default function PracticeSummary() {
   const [saveError, setSaveError] = useState(null);
   const [notes] = useState(() => generateNotes(report?.scoreId));
   const alive = useRef(false);
+
+  // The captured file never leaves this page unless the user saves it.
+  const reportBlob = report?.mediaBlob || null;
+  const reportMediaUrl = useMemo(() => (reportBlob ? URL.createObjectURL(reportBlob) : null), [reportBlob]);
+  useEffect(() => () => { if (reportMediaUrl) URL.revokeObjectURL(reportMediaUrl); }, [reportMediaUrl]);
 
   // Leaving the report destroys it; a brief delay survives a dev remount.
   useEffect(() => {
@@ -94,8 +99,14 @@ export default function PracticeSummary() {
         durationSeconds,
         tempoBpm,
         rangeSummary,
+        startMeasure: live.startMeasure,
+        endMeasure: live.endMeasure,
+        // The measure changes captured during the session, so replay can follow
+        // the score against the recording instead of guessing.
+        positionTimeline: live.positionTimeline || [],
         visibility: 'private',
         sharedWith: [],
+        allowComments: true,
       });
       usePracticeRuntime.getState().markSaved(id);
       setSaveOpen(false);
@@ -140,7 +151,16 @@ export default function PracticeSummary() {
         <SectionHeader title="Replay" />
         {mediaBlob ? (
           <div className="mt-3">
-            <RecordedMedia blob={mediaBlob} mediaType={mediaType} />
+            <SyncPlayback
+              src={reportMediaUrl}
+              mediaType={mediaType}
+              scoreId={live.scoreId}
+              scoreTitle={live.scoreTitle}
+              startMeasure={live.startMeasure}
+              endMeasure={live.endMeasure}
+              durationSeconds={durationSeconds}
+              timeline={live.positionTimeline}
+            />
             <p className="mt-2 type-metadata text-ink-tertiary">
               This recording lives on this page only — it is kept if you save the performance.
             </p>
@@ -244,7 +264,12 @@ export default function PracticeSummary() {
         title={live.scoreTitle}
         composer={live.composer}
         rangeSummary={rangeSummary}
-        startMeasure={markerMeasure}
+        scoreId={live.scoreId}
+        startMeasure={live.startMeasure}
+        endMeasure={live.endMeasure}
+        timeline={live.positionTimeline}
+        durationSeconds={durationSeconds}
+        mediaType={mediaType}
         mediaBlob={mediaBlob}
       />
     </div>

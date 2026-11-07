@@ -73,6 +73,8 @@ const preferencesSeed = {
 const notificationPrefsSeed = {
   imports: { inApp: true, email: true },
   sharing: { inApp: true, email: true },
+  performances: { inApp: true, email: true },
+  comments: { inApp: true, email: true },
   security: { inApp: true, email: true },
   billing: { inApp: true, email: false },
   practice: { inApp: true, email: false },
@@ -80,19 +82,32 @@ const notificationPrefsSeed = {
 };
 
 // ---- Permission helpers ----
+// View, edit, practice and download are separate grants. Nothing is implied:
+// being able to edit a shared score does not hand over permission to download
+// it, and being able to view one does not hand over permission to practise it.
 export function getPermissions(score) {
   if (!score) return {};
   const o = score.ownership;
-  if (o === 'mine') return { canEdit: true, canShare: true, canDelete: true, canPractice: true, canDownload: true };
+  if (o === 'mine') {
+    return { canView: true, canEdit: true, canShare: true, canDelete: true, canPractice: true, canDownload: true };
+  }
   if (o === 'shared') {
-    const canEdit = score.permission === 'Can edit';
-    return { canEdit, canShare: false, canDelete: false, canPractice: true, canDownload: canEdit };
+    const granted = score.permissions || {};
+    return {
+      canView: true,
+      canEdit: score.permission === 'Can edit',
+      canShare: false,
+      canDelete: false,
+      canPractice: granted.practice === true,
+      canDownload: granted.download === true,
+    };
   }
   if (o === 'saved') {
     // Saving a shared score must never broaden access: permissions are inherited
     // from the share link at save time, and a missing permission means denied.
     const saved = score.savedPermission || {};
     return {
+      canView: true,
       canEdit: false,
       canShare: false,
       canDelete: false,
@@ -139,6 +154,7 @@ export const usePrototypeStore = create(
       recognitionIssues: clone(recognitionIssuesSeed),
       practiceActivities: clone(seedPracticeActivities),
       savedPerformances: clone(seedSavedPerformances),
+      performanceComments: [],
       teamMembers: clone(seedTeamMembers),
       // Remembered technical readiness — what Setup has already prepared.
       preflight: { modelReady: false, micGranted: false, midiConnected: false, cameraGranted: false },
@@ -508,9 +524,11 @@ export const usePrototypeStore = create(
         set((st) => {
           const record = {
             ownerId: 'you',
-            teamId: 'team-yueora',
             visibility: 'private',
             sharedWith: [],
+            sharedCommenters: [],
+            allowComments: true,
+            positionTimeline: null,
             ...performance,
             id: performance.id || `perf-${Date.now()}`,
           };
@@ -520,13 +538,114 @@ export const usePrototypeStore = create(
         }),
 
       deletePerformance: (id) =>
-        set((st) => ({ savedPerformances: st.savedPerformances.filter((p) => p.id !== id) })),
-
-      updatePerformanceSharing: (id, { visibility, sharedWith }) =>
         set((st) => ({
-          savedPerformances: st.savedPerformances.map((p) =>
-            p.id === id ? { ...p, visibility, sharedWith: sharedWith || [] } : p
-          ),
+          savedPerformances: st.savedPerformances.filter((p) => p.id !== id),
+          performanceComments: (st.performanceComments || []).filter((c) => c.performanceId !== id),
+        })),
+
+      // Sharing a performance grants viewing only. Commenting is a separate,
+      // per-person grant, and the owner can turn comments off entirely.
+      updatePerformanceSharing: (id, patch) =>
+        set((st) => {
+          const performance = st.savedPerformances.find((p) => p.id === id);
+          if (!performance) return {};
+          const next = { ...performance, ...patch };
+          const sharedWith = next.sharedWith || [];
+          return {
+            savedPerformances: st.savedPerformances.map((p) => (p.id === id ? {
+              ...next,
+              sharedWith,
+              sharedCommenters: (next.sharedCommenters || []).filter((personId) => sharedWith.includes(personId)),
+            } : p)),
+            notifications: [
+              ...sharedWith
+                .filter((personId) => !(performance.sharedWith || []).includes(personId) && personId !== 'you')
+                .map((personId) => ({
+                  id: `n-perf-${id}-${personId}`,
+                  category: 'performances',
+                  recipientId: personId,
+                  title: 'A performance was shared with you',
+                  body: `${next.scoreTitleSnapshot} — you can watch it, and your access to the score is unchanged.`,
+                  time: 'just now',
+                  unread: true,
+                  href: `/performances/${id}`,
+                })),
+              ...st.notifications,
+            ],
+          };
+        }),
+
+      // ---- Performance comments (belong to the performance, never the score) ----
+      addPerformanceComment: ({ performanceId, body, parentId = null }) =>
+        set((st) => {
+          const text = (body || '').trim();
+          const performance = st.savedPerformances.find((p) => p.id === performanceId);
+          if (!text || !performance) return {};
+          const comment = {
+            id: `c-${Date.now()}-${Math.round(Math.random() * 999)}`,
+            performanceId,
+            parentId,
+            authorId: 'you',
+            authorName: 'You',
+            body: text,
+            createdAt: new Date().toISOString(),
+          };
+          const notifications = [];
+
+          if (performance.ownerId !== 'you') {
+            notifications.push({
+              id: `n-comment-${comment.id}`,
+              category: 'comments',
+              recipientId: performance.ownerId,
+              title: 'New comment on your performance',
+              body: `${comment.authorName} — ${performance.scoreTitleSnapshot}`,
+              time: 'just now',
+              unread: true,
+              href: `/performances/${performanceId}`,
+            });
+          }
+
+          if (parentId) {
+            const parent = (st.performanceComments || []).find((c) => c.id === parentId);
+            if (parent && parent.authorId !== 'you') {
+              notifications.push({
+                id: `n-reply-${comment.id}`,
+                category: 'comments',
+                recipientId: parent.authorId,
+                title: 'A reply to your comment',
+                body: `${comment.authorName} — ${performance.scoreTitleSnapshot}`,
+                time: 'just now',
+                unread: true,
+                href: `/performances/${performanceId}`,
+              });
+            }
+          }
+
+          return {
+            performanceComments: [...(st.performanceComments || []), comment],
+            notifications: [...notifications, ...st.notifications],
+          };
+        }),
+
+      updatePerformanceComment: (id, body) =>
+        set((st) => {
+          const text = (body || '').trim();
+          if (!text) return {};
+          return {
+            performanceComments: (st.performanceComments || []).map((c) => (c.id === id ? { ...c, body: text, editedAt: new Date().toISOString() } : c)),
+          };
+        }),
+
+      deletePerformanceComment: (id) =>
+        set((st) => {
+          const removed = new Set([id]);
+          (st.performanceComments || []).forEach((c) => { if (c.parentId === id) removed.add(c.id); });
+          return { performanceComments: (st.performanceComments || []).filter((c) => !removed.has(c.id)) };
+        }),
+
+      setPerformanceCommentsEnabled: (id, allowComments) =>
+        set((st) => ({
+          savedPerformances: st.savedPerformances.map((p) => (p.id === id ? { ...p, allowComments } : p)),
         })),
 
       setPreflight: (partial) =>
@@ -808,6 +927,7 @@ export const usePrototypeStore = create(
           recognitionIssues: clone(recognitionIssuesSeed),
           practiceActivities: clone(seedPracticeActivities),
           savedPerformances: clone(seedSavedPerformances),
+          performanceComments: [],
           teamMembers: clone(seedTeamMembers),
           preflight: { modelReady: false, micGranted: false, midiConnected: false, cameraGranted: false },
           sharing: {},
@@ -824,10 +944,26 @@ export const usePrototypeStore = create(
     }),
     {
       name: 'yueora-prototype',
-      version: 7,
+      version: 8,
       migrate: (persistedState, version) => {
         // Merge any missing keys from defaults
         const merged = { ...persistedState };
+        if (!Array.isArray(merged.performanceComments)) merged.performanceComments = [];
+        // Independent permissions and the performance permission model arrived
+        // together; older saved state gets explicit defaults instead of the
+        // inherited ones it used to rely on.
+        if (merged.notificationPrefs) {
+          if (!merged.notificationPrefs.performances) merged.notificationPrefs.performances = { inApp: true, email: true };
+          if (!merged.notificationPrefs.comments) merged.notificationPrefs.comments = { inApp: true, email: true };
+        }
+        if (Array.isArray(merged.savedPerformances)) {
+          merged.savedPerformances = merged.savedPerformances.map((p) => ({
+            allowComments: true,
+            sharedCommenters: [],
+            positionTimeline: null,
+            ...p,
+          }));
+        }
         if (!merged.invitations) merged.invitations = [];
         if (!merged.revokedShareTokens) merged.revokedShareTokens = [];
         if (!merged.sharing) merged.sharing = {};
@@ -860,11 +996,17 @@ export const usePrototypeStore = create(
         // Normalize the seed saved score (it was saved from a fully-permitted link).
         // User-saved scores without recorded permissions stay denied by default.
         if (Array.isArray(merged.scores)) {
-          merged.scores = merged.scores.map((s) =>
-            s.id === 'gymnopedie-1' && !s.savedPermission
-              ? { ...s, savedPermission: { canPractice: true, canDownload: true } }
-              : s
-          );
+          merged.scores = merged.scores.map((s) => {
+            if (s.id === 'gymnopedie-1' && !s.savedPermission) {
+              return { ...s, savedPermission: { canPractice: true, canDownload: true } };
+            }
+            // Scores shared before permissions were separate kept their abilities
+            // implicitly. Record what they actually had, once, as explicit grants.
+            if (s.ownership === 'shared' && !s.permissions) {
+              return { ...s, permissions: { practice: true, download: s.permission === 'Can edit' } };
+            }
+            return s;
+          });
         }
         // Ensure sharing links have token field
         if (merged.sharing) {

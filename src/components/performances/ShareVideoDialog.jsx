@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Download, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { composeShareVideo } from '@/lib/composeShareVideo';
 import { downloadBlob, slugify } from '@/lib/media';
+import { generateNotes } from '@/lib/mockData';
 
 const FORMATS = [
   { value: 'landscape', label: 'Landscape 16:9' },
@@ -15,16 +16,23 @@ const LAYOUTS = [
 ];
 
 /**
- * Builds the share video from the real recording. Nothing is uploaded here —
- * the user keeps the generated file.
+ * Builds the share video from the saved original recording. It is generated on
+ * this device, previewed here, and downloaded — it is never uploaded to Yueora.
  */
-export default function ShareVideoDialog({ open, onOpenChange, title, composer, rangeSummary, startMeasure, mediaBlob }) {
+export default function ShareVideoDialog({
+  open, onOpenChange, title, composer, rangeSummary,
+  scoreId, startMeasure = 1, endMeasure, timeline, durationSeconds = 0,
+  mediaBlob = null, mediaType = 'video', mediaUrl = null,
+}) {
   const [format, setFormat] = useState('landscape');
   const [layout, setLayout] = useState('side');
   const [stage, setStage] = useState('idle'); // idle | generating | ready | error
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+
+  const notes = useMemo(() => generateNotes(scoreId), [scoreId]);
+  const hasSource = !!mediaBlob || !!mediaUrl;
 
   useEffect(() => {
     if (!open) {
@@ -45,13 +53,27 @@ export default function ShareVideoDialog({ open, onOpenChange, title, composer, 
     setStage('generating');
     setError(null);
     try {
-      const blob = await composeShareVideo({
-        videoBlob: mediaBlob,
+      let blob = mediaBlob;
+      if (!blob && mediaUrl) {
+        const response = await fetch(mediaUrl);
+        if (!response.ok) throw new Error('The saved recording could not be read for this video.');
+        blob = await response.blob();
+      }
+      if (!blob) throw new Error('A share video needs the saved recording.');
+
+      const video = await composeShareVideo({
+        mediaBlob: blob,
+        mediaType,
         format,
         layout,
-        meta: { title, composer, rangeSummary, startMeasure },
+        notes,
+        startMeasure,
+        endMeasure,
+        timeline,
+        durationSeconds,
+        meta: { title, composer, rangeSummary },
       });
-      setResult(blob);
+      setResult(video);
       setStage('ready');
     } catch (err) {
       setError(err?.message || 'The video could not be generated.');
@@ -72,9 +94,9 @@ export default function ShareVideoDialog({ open, onOpenChange, title, composer, 
           <DialogDescription>{title} — your recording with the score beside it.</DialogDescription>
         </DialogHeader>
 
-        {!mediaBlob ? (
+        {!hasSource ? (
           <p className="type-body-small text-ink-secondary">
-            A share video needs the session recording. This session wasn’t recorded, so there’s nothing to build from.
+            A share video is built from a saved recording. This performance has no recording file.
           </p>
         ) : (
           <div className="space-y-4">
@@ -114,9 +136,16 @@ export default function ShareVideoDialog({ open, onOpenChange, title, composer, 
               </div>
             </div>
 
+            {stage === 'generating' && (
+              <p className="flex items-center gap-2 type-body-small text-ink-secondary">
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                Building the video from your recording — this takes about as long as the recording.
+              </p>
+            )}
+
             {previewUrl && (
               <div>
-                <p className="type-caption text-ink-tertiary">Your share video</p>
+                <p className="type-caption text-ink-tertiary">Preview</p>
                 <video
                   src={previewUrl}
                   controls
@@ -129,14 +158,15 @@ export default function ShareVideoDialog({ open, onOpenChange, title, composer, 
             {stage === 'error' && <p className="type-body-small text-destructive">{error}</p>}
 
             <p className="type-metadata text-ink-tertiary">
-              The video is built on this device from your recording. Nothing is uploaded.
+              Built on this device and downloaded by you. The video is not uploaded to Yueora, does not appear in
+              Performances, and does not use your storage.
             </p>
           </div>
         )}
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Close</Button>
-          {mediaBlob && stage !== 'ready' && (
+          {hasSource && stage !== 'ready' && (
             <Button onClick={generate} disabled={stage === 'generating'}>
               {stage === 'generating'
                 ? <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Building video…</>

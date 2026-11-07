@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Camera, Video } from 'lucide-react';
+import { ArrowLeft, Video } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import OptionGroup from '@/components/practice/OptionGroup';
 import ReadinessRow from '@/components/practice/ReadinessRow';
@@ -54,7 +54,8 @@ export default function PracticeSetup() {
   const [cameraStatus, setCameraStatus] = useState(preflight.cameraGranted ? 'ready' : 'not-tested');
   const [modelStatus, setModelStatus] = useState(preflight.modelReady ? 'ready' : 'idle');
   const [modelProgress, setModelProgress] = useState(preflight.modelReady ? 100 : 0);
-  const [modelAttempt, setModelAttempt] = useState(0);
+  const [cameraStream, setCameraStream] = useState(null);
+  const cameraRef = useRef(null);
 
   // Only what this exact configuration depends on is checked.
   const needsRecognition = input === 'microphone';
@@ -92,6 +93,13 @@ export default function PracticeSetup() {
     return () => clearInterval(id);
   }, [needsRecognition, preflight.modelReady, setPreflight]);
 
+  // The device is released as soon as this page is left.
+  useEffect(() => () => { cameraStream?.getTracks().forEach((t) => t.stop()); }, [cameraStream]);
+
+  useEffect(() => {
+    if (cameraRef.current && cameraStream) cameraRef.current.srcObject = cameraStream;
+  }, [cameraStream]);
+
   if (!score) {
     return (
       <div className="px-6 py-16 text-center">
@@ -101,26 +109,54 @@ export default function PracticeSetup() {
     );
   }
 
-  const checkMic = () => {
+  // Readiness is asked of the browser, not assumed. A device only reads "Ready"
+  // once it has actually answered.
+  const checkMic = async () => {
     setMicStatus('requesting');
-    setTimeout(() => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setMicStatus('unavailable');
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((t) => t.stop());
       setMicStatus('ready');
       setPreflight({ micGranted: true });
-    }, 900);
+    } catch (err) {
+      setMicStatus(err?.name === 'NotAllowedError' ? 'denied' : 'unavailable');
+    }
   };
-  const detectMidi = () => {
+
+  const detectMidi = async () => {
     setMidiStatus('detecting');
-    setTimeout(() => {
-      setMidiStatus('connected');
-      setPreflight({ midiConnected: true });
-    }, 800);
+    if (!navigator.requestMIDIAccess) {
+      setMidiStatus('unsupported');
+      return;
+    }
+    try {
+      const access = await navigator.requestMIDIAccess();
+      const inputs = Array.from(access.inputs.values());
+      setMidiStatus(inputs.length > 0 ? 'connected' : 'disconnected');
+      if (inputs.length > 0) setPreflight({ midiConnected: true });
+    } catch {
+      setMidiStatus('unsupported');
+    }
   };
-  const checkCamera = () => {
+
+  const checkCamera = async () => {
     setCameraStatus('requesting');
-    setTimeout(() => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraStatus('unavailable');
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setCameraStream(stream);
       setCameraStatus('ready');
       setPreflight({ cameraGranted: true });
-    }, 900);
+    } catch (err) {
+      setCameraStatus(err?.name === 'NotAllowedError' ? 'denied' : 'unavailable');
+    }
   };
 
   const micOk = !needsMic || micStatus === 'ready';
@@ -267,6 +303,9 @@ export default function PracticeSetup() {
                 status={modelStatus === 'ready' ? 'ready' : 'progress'}
                 statusText={modelStatus === 'ready' ? 'Ready' : 'Preparing'}
               />
+              <p className="py-2 type-metadata text-ink-tertiary">
+                Prototype: the recognition model is simulated here — nothing is actually downloaded to this device.
+              </p>
             </>
           )}
 
@@ -298,14 +337,15 @@ export default function PracticeSetup() {
               </div>
               {cameraStatus === 'ready' && (
                 <div className="mt-2 flex items-center gap-3">
-                  <div
-                    role="img"
+                  <video
+                    ref={cameraRef}
+                    autoPlay
+                    muted
+                    playsInline
                     aria-label="Camera preview"
-                    className="flex h-16 w-24 items-center justify-center overflow-hidden rounded-control border border-line-subtle bg-gradient-to-br from-ink-primary/25 to-ink-primary/5"
-                  >
-                    <Camera className="h-5 w-5 text-ink-tertiary" aria-hidden="true" />
-                  </div>
-                  <p className="type-metadata text-ink-tertiary">Your framing looks fine.</p>
+                    className="h-16 w-24 rounded-control border border-line-subtle bg-ink-primary/10 object-cover"
+                  />
+                  <p className="type-metadata text-ink-tertiary">This is the camera Yueora will record from.</p>
                 </div>
               )}
             </ReadinessRow>

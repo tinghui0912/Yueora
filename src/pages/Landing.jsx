@@ -7,6 +7,7 @@ import HeroProductVisual from '@/components/visuals/HeroProductVisual';
 import PracticeWorkspaceVisual from '@/components/visuals/PracticeWorkspaceVisual';
 import ProgressVisual from '@/components/visuals/ProgressVisual';
 import SharingVisual from '@/components/visuals/SharingVisual';
+import PerformanceMemoryVisual from '@/components/visuals/PerformanceMemoryVisual';
 import MockScanPage from '@/components/visuals/MockScanPage';
 
 const flow = [
@@ -20,7 +21,7 @@ const libraryViews = ['All music', 'Mine', 'Shared with me', 'Saved', 'Favorites
 const faqs = [
   { q: 'Do I have to practice every day?', a: 'No. Yueora has no streaks, no assignments, and no overdue items. You come back when you feel like playing.' },
   { q: 'Where does my music come from?', a: 'You bring it — scans, photos, or MusicXML. Yueora doesn’t hand you a curriculum; it helps you play what you love.' },
-  { q: 'Does Yueora grade my playing?', a: 'No. You get information — pitch, timing, tempo, and which sections felt tricky — but never a score, grade, or judgment.' },
+  { q: 'Does Yueora grade my playing?', a: 'No. Yueora doesn’t measure accuracy at all. It keeps what you actually did — the piece, the section, how long you played — with no score, grade, or judgment.' },
   { q: 'Can I share scores with others?', a: 'Yes. Invite people by email with view or edit access, or turn on a link with the permissions you choose.' },
 ];
 
@@ -131,7 +132,7 @@ export default function Landing() {
         <div className="grid gap-10 md:grid-cols-2 md:items-center">
           <div>
             <h2 className="font-display text-2xl font-medium text-ink-primary">Practice without pressure</h2>
-            <p className="mt-3 text-ink-secondary">Pick up where you left off. Yueora gives you calm feedback — pitch, timing, tempo — and never grades or judges your playing.</p>
+            <p className="mt-3 text-ink-secondary">Pick up where you left off. Yueora follows along as you play, stays quiet when you want it to, and never grades or judges what it hears.</p>
             <ul className="mt-5 space-y-2 text-sm text-ink-secondary">
               <li>• Continue playing from where you stopped</li>
               <li>• Revisit a section that felt tricky</li>
@@ -149,7 +150,7 @@ export default function Landing() {
             <ProgressVisual />
             <div>
               <h2 className="font-display text-2xl font-medium text-ink-primary">See progress without being judged</h2>
-              <p className="mt-3 text-ink-secondary">Track tempo trends, recent sessions, and which sections are becoming easier — without scores, grades, or pressure.</p>
+              <p className="mt-3 text-ink-secondary">See how much you’ve played, and which pieces you keep coming back to — without scores, grades, or pressure.</p>
             </div>
           </div>
         </div>
@@ -168,6 +169,32 @@ export default function Landing() {
             </ul>
           </div>
           <SharingVisual />
+        </div>
+      </section>
+
+      {/* Performances */}
+      <section className="border-t border-line-subtle bg-surface-panel">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:px-8">
+          <div className="grid gap-10 md:grid-cols-2 md:items-center">
+            <PerformanceMemoryVisual />
+            <div>
+              <h2 className="font-display text-2xl font-medium text-ink-primary">Keep the performances you choose</h2>
+              <p className="mt-3 text-ink-secondary">
+                Practice stays yours and private. When something feels worth keeping, save the original audio or video
+                and revisit it beside the sheet music it came from.
+              </p>
+              <ul className="mt-5 space-y-2 text-sm text-ink-secondary">
+                <li>• Personal practice — private, never published</li>
+                <li>• Saved performances — the recordings you decided to keep</li>
+                <li>• Selective sharing — chosen people, and only the recording</li>
+                <li>• Optional comments and replies, which you can turn off</li>
+              </ul>
+              <p className="mt-4 text-sm text-ink-tertiary">
+                Share videos are generated on your device when you want one, and downloaded. Yueora keeps the
+                recording, not the export.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

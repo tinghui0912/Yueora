@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { dayLabel, minutesLabel } from '@/lib/practiceUtils';
+import { practiceWeek } from '@/lib/practiceStats';
 import PageHeader from '@/components/patterns/PageHeader';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import Metric from '@/components/patterns/Metric';
@@ -19,18 +20,10 @@ export default function PracticeProgress() {
   const totalMinutes = Math.round(totalSeconds / 60);
   const pieceIds = [...new Set(activities.map((a) => a.scoreId))];
 
+  // The seven dates ending today — the same calculation Practice shows.
   const today = startOfDay(new Date());
-  const days = Array.from({ length: 7 }).map((_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
-    const key = startOfDay(d);
-    const minutes = Math.round(
-      activities
-        .filter((a) => a.completedAt && startOfDay(new Date(a.completedAt)) === key)
-        .reduce((sum, a) => sum + (a.durationSeconds || 0), 0) / 60
-    );
-    return { label: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()], minutes, isToday: key === today };
-  });
+  const week = practiceWeek(activities);
+  const days = week.days.map((d) => ({ ...d, isToday: d.key === today }));
   const max = Math.max(1, ...days.map((d) => d.minutes));
 
   const pieces = pieceIds.map((id) => {

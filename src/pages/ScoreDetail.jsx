@@ -57,8 +57,10 @@ export default function ScoreDetail() {
   }
 
   const perms = getPermissions(score);
-  const sessions = practiceActivities.filter((a) => a.scoreId === score.id);
-  const scorePerformances = savedPerformances.filter((p) => p.scoreId === score.id);
+  // Practice activity is private and belongs to its owner: sharing a score never
+  // exposes someone else's practice history here.
+  const sessions = practiceActivities.filter((a) => a.scoreId === score.id && a.ownerId === 'you');
+  const scorePerformances = savedPerformances.filter((p) => p.scoreId === score.id && p.ownerId === 'you');
 
   // Only the formats Yueora actually produces — no placeholder options.
   const handleExport = (kind) => {
@@ -221,7 +223,7 @@ export default function ScoreDetail() {
             ) : (
               <div className="mt-3 divide-y divide-line-subtle">
                 {sessions.slice(0, 5).map((a) => {
-                  const saved = savedPerformances.find((p) => p.activityId === a.id);
+                  const saved = scorePerformances.find((p) => p.activityId === a.id);
                   return (
                     <div key={a.id} className="flex items-center justify-between gap-2 py-2.5">
                       <div className="min-w-0">
@@ -231,7 +233,7 @@ export default function ScoreDetail() {
                         </p>
                       </div>
                       {saved && (
-                        <Link to={`/performances?score=${score.id}`} className="flex shrink-0 items-center gap-1 rounded-control border border-line-subtle px-2 py-1 type-metadata font-medium text-ink-primary hover:bg-accent">
+                        <Link to={`/performances/${saved.id}`} className="flex shrink-0 items-center gap-1 rounded-control border border-line-subtle px-2 py-1 type-metadata font-medium text-ink-primary hover:bg-accent">
                           <Play className="h-3 w-3" /> Play
                         </Link>
                       )}

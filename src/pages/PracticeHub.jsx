@@ -1,14 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Play, ChevronRight, Clock, BarChart3 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
+import { practiceWeek } from '@/lib/practiceStats';
 import ScorePreview from '@/components/library/ScorePreview';
-
-const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function PracticeHub() {
   const scores = usePrototypeStore((s) => s.scores);
   const activities = usePrototypeStore((s) => s.practiceActivities) || [];
-  const sessions = activities.filter((a) => a.ownerId === 'you');
 
   // Pick up where you left off — most recently played score
   const playedScores = scores.filter((s) => s.ownership !== 'trash' && s.lastPlayed && s.lastPlayed !== 'never');
@@ -32,11 +30,12 @@ export default function PracticeHub() {
   // No note-level data survives a session, so nothing is suggested as "tricky".
   const trickySection = null;
 
-  // This week stats
-  const thisWeekMinutes = Math.round(sessions.slice(0, 7).reduce((sum, s) => sum + (s.durationSeconds || 0), 0) / 60);
-  const thisWeekSessions = Math.min(sessions.length, 7);
-  const thisWeekPieces = new Set(sessions.slice(0, 7).map((s) => s.scoreId)).size;
-  const thisWeekMarks = days.map((_, i) => i < Math.min(sessions.length, 7));
+  // This week — the seven dates ending today, counted by calendar day
+  const week = practiceWeek(activities);
+  const thisWeekMinutes = week.totalMinutes;
+  const thisWeekSessions = week.sessions;
+  const thisWeekPieces = week.pieces;
+  const thisWeekMarks = week.days.map((d) => d.sessions > 0);
 
   return (
     <div className="px-4 py-6 md:px-8">
@@ -144,10 +143,10 @@ export default function PracticeHub() {
           </div>
           <div className="rounded-md border border-border bg-card p-4">
             <div className="flex justify-between">
-              {days.map((d, i) => (
-                <div key={d} className="flex flex-col items-center gap-1">
+              {week.days.map((d, i) => (
+                <div key={d.key} className="flex flex-col items-center gap-1">
                   <span className={`h-2.5 w-2.5 rounded-full ${thisWeekMarks[i] ? 'bg-primary' : 'bg-muted'}`} />
-                  <span className="text-[10px] text-muted-foreground">{d}</span>
+                  <span className="text-[10px] text-muted-foreground">{d.label}</span>
                 </div>
               ))}
             </div>

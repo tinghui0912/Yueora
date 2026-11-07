@@ -1,109 +1,99 @@
+import { measureWindowStart } from '@/lib/practiceUtils';
+import { measureAtTime } from '@/lib/syncTimeline';
+import { rasterizeScoreWindow } from '@/lib/scoreFrame';
+
 const SIZES = {
   landscape: { width: 1280, height: 720 },
   portrait: { width: 720, height: 1280 },
 };
 
 const PAPER = '#fffdf8';
-const INK = '#23252a';
-const LINE = '#d8d3c6';
-const BRAND = '#2c5f47';
+const INK = '#f7f5ef';
+const BRAND = '#8fbfa6';
 
-function drawStaff(ctx, x, y, width, staffGap) {
-  ctx.strokeStyle = LINE;
-  ctx.lineWidth = 1;
-  for (let i = 0; i < 5; i += 1) {
-    const lineY = y + i * staffGap;
-    ctx.beginPath();
-    ctx.moveTo(x, lineY);
-    ctx.lineTo(x + width, lineY);
-    ctx.stroke();
-  }
+function drawCover(ctx, video, x, y, w, h) {
+  const vw = video.videoWidth || 16;
+  const vh = video.videoHeight || 9;
+  const scale = Math.max(w / vw, h / vh);
+  const dw = vw * scale;
+  const dh = vh * scale;
+  ctx.drawImage(video, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
 }
 
-/** The score presentation drawn over the recording — the same notation the app shows. */
-function drawScore(ctx, box, meta) {
-  ctx.fillStyle = PAPER;
-  ctx.fillRect(box.x, box.y, box.width, box.height);
-
-  const pad = Math.max(12, box.width * 0.04);
-  ctx.fillStyle = INK;
-  ctx.textAlign = 'left';
-  ctx.font = `600 ${Math.round(box.width * 0.035)}px Georgia, serif`;
-  ctx.fillText(meta.title || 'Performance', box.x + pad, box.y + pad + box.width * 0.03);
-
-  ctx.fillStyle = BRAND;
-  ctx.font = `${Math.round(box.width * 0.022)}px Helvetica, Arial, sans-serif`;
-  const subtitle = [meta.composer, meta.rangeSummary].filter(Boolean).join(' · ');
-  if (subtitle) ctx.fillText(subtitle, box.x + pad, box.y + pad + box.width * 0.065);
-
-  const staffTop = box.y + box.height * 0.3;
-  const staffGap = Math.max(5, box.height * 0.014);
-  drawStaff(ctx, box.x + pad, staffTop, box.width - pad * 2, staffGap);
-  drawStaff(ctx, box.x + pad, staffTop + staffGap * 6, box.width - pad * 2, staffGap);
-
-  // Bar markers give the notation its measure structure.
-  const barCount = 5;
-  const usable = box.width - pad * 2;
-  ctx.strokeStyle = LINE;
-  for (let i = 1; i < barCount; i += 1) {
-    const barX = box.x + pad + (usable / barCount) * i;
-    ctx.beginPath();
-    ctx.moveTo(barX, staffTop);
-    ctx.lineTo(barX, staffTop + staffGap * 10);
-    ctx.stroke();
-  }
-
-  ctx.fillStyle = '#8b8b86';
-  ctx.font = `${Math.round(box.width * 0.02)}px Helvetica, Arial, sans-serif`;
-  const first = meta.startMeasure || 1;
-  for (let i = 0; i < barCount; i += 1) {
-    ctx.fillText(String(first + i), box.x + pad + (usable / barCount) * i + 4, staffTop - staffGap);
-  }
+function clock(sec) {
+  const s = Math.max(0, Math.round(sec || 0));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
 /**
- * Builds the share video in the browser: the real recording is laid out with the
- * score presentation and captured back into a real video file.
+ * Builds the share video locally: the saved recording laid out with the real
+ * score, captured into a real video file in the browser.
+ *
+ * Nothing here is uploaded. The returned Blob only becomes a file on the user's
+ * device — it is never a stored performance.
  */
-export async function composeShareVideo({ videoBlob, format, layout, meta = {} }) {
-  if (!videoBlob) throw new Error('The original recording is needed to build a share video.');
+export async function composeShareVideo({
+  mediaBlob,
+  mediaType = 'video',
+  format = 'landscape',
+  layout = 'side',
+  meta = {},
+  notes = [],
+  startMeasure = 1,
+  endMeasure,
+  timeline,
+  durationSeconds = 0,
+}) {
+  if (!mediaBlob) throw new Error('The original recording is needed to build a video.');
   if (typeof MediaRecorder === 'undefined') throw new Error('This browser cannot build a video.');
 
   const { width, height } = SIZES[format] || SIZES.landscape;
-  const objectUrl = URL.createObjectURL(videoBlob);
+  const objectUrl = URL.createObjectURL(mediaBlob);
   const video = document.createElement('video');
   video.src = objectUrl;
   video.playsInline = true;
-  video.muted = true;
+  video.preload = 'auto';
 
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d');
 
-  const draw = () => {
-    ctx.fillStyle = '#15171a';
-    ctx.fillRect(0, 0, width, height);
+  let audioContext = null;
 
-    if (layout === 'overlay') {
-      ctx.drawImage(video, 0, 0, width, height);
-      const scoreHeight = height * 0.34;
-      ctx.globalAlpha = 0.94;
-      drawScore(ctx, { x: width * 0.05, y: height - scoreHeight - height * 0.05, width: width * 0.9, height: scoreHeight }, meta);
-      ctx.globalAlpha = 1;
-      return;
+  const drawScoreBox = (box, scoreCanvas, measure) => {
+    ctx.fillStyle = PAPER;
+    ctx.fillRect(box.x, box.y, box.width, box.height);
+
+    const pad = Math.max(10, Math.round(box.width * 0.035));
+    const titleSize = Math.max(13, Math.round(box.width * 0.034));
+    const metaSize = Math.max(10, Math.round(box.width * 0.021));
+
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#23252a';
+    ctx.font = `600 ${titleSize}px Georgia, serif`;
+    ctx.fillText(meta.title || 'Performance', box.x + pad, box.y + pad + titleSize);
+
+    ctx.fillStyle = '#2c5f47';
+    ctx.font = `${metaSize}px Helvetica, Arial, sans-serif`;
+    const subtitle = [meta.composer, meta.rangeSummary].filter(Boolean).join(' · ');
+    if (subtitle) ctx.fillText(subtitle, box.x + pad, box.y + pad + titleSize + metaSize + 6);
+
+    if (scoreCanvas) {
+      const top = box.y + pad + titleSize + metaSize + 18;
+      const availW = box.width - pad * 2;
+      const availH = box.y + box.height - pad - top;
+      const scale = Math.min(availW / scoreCanvas.width, availH / scoreCanvas.height);
+      const dw = scoreCanvas.width * scale;
+      const dh = scoreCanvas.height * scale;
+      ctx.drawImage(scoreCanvas, box.x + pad + (availW - dw) / 2, top, dw, dh);
     }
 
-    if (format === 'portrait') {
-      const videoHeight = height * 0.55;
-      ctx.drawImage(video, 0, 0, width, videoHeight);
-      drawScore(ctx, { x: 0, y: videoHeight, width, height: height - videoHeight }, meta);
-      return;
-    }
-
-    const half = width / 2;
-    ctx.drawImage(video, 0, 0, half, height);
-    drawScore(ctx, { x: half, y: 0, width: half, height }, meta);
+    ctx.fillStyle = '#6f7370';
+    ctx.font = `${Math.max(9, Math.round(metaSize * 0.85))}px Helvetica, Arial, sans-serif`;
+    ctx.textAlign = 'right';
+    ctx.fillText(`Measure ${measure}`, box.x + box.width - pad, box.y + box.height - pad * 0.7);
+    ctx.textAlign = 'left';
   };
 
   try {
@@ -112,12 +102,84 @@ export async function composeShareVideo({ videoBlob, format, layout, meta = {} }
       video.onerror = () => reject(new Error('The recording could not be read for a share video.'));
     });
 
+    const duration = Number.isFinite(video.duration) && video.duration > 0
+      ? video.duration
+      : Math.max(1, durationSeconds);
+
+    // The score follows the recording in four-measure windows — the same window
+    // size the practice screen uses. Each window is rasterised from the real
+    // notation before recording starts.
+    const windows = new Map();
+    const step = Math.max(0.5, Math.min(2, duration / 180));
+    for (let t = 0; t <= duration; t += step) {
+      const measure = measureAtTime({ timeline, time: t, startMeasure, endMeasure, durationSeconds: duration });
+      const windowStart = measureWindowStart(measure);
+      if (!windows.has(windowStart)) windows.set(windowStart, measure);
+    }
+    if (!windows.size) windows.set(measureWindowStart(startMeasure), startMeasure);
+
+    const frames = new Map();
+    for (const [windowStart, measure] of windows) {
+      frames.set(windowStart, await rasterizeScoreWindow({ notes, measureStart: windowStart, activeMeasure: measure }));
+    }
+
+    const draw = () => {
+      const time = video.currentTime;
+      const measure = measureAtTime({ timeline, time, startMeasure, endMeasure, durationSeconds: duration });
+      const frame = frames.get(measureWindowStart(measure)) || frames.values().next().value;
+
+      ctx.fillStyle = '#15171a';
+      ctx.fillRect(0, 0, width, height);
+
+      if (mediaType === 'video') {
+        if (layout === 'overlay') {
+          drawCover(ctx, video, 0, 0, width, height);
+          const scoreHeight = height * 0.36;
+          ctx.globalAlpha = 0.96;
+          drawScoreBox({ x: width * 0.04, y: height - scoreHeight - height * 0.05, width: width * 0.92, height: scoreHeight }, frame, measure);
+          ctx.globalAlpha = 1;
+        } else if (format === 'portrait') {
+          const videoHeight = height * 0.52;
+          drawCover(ctx, video, 0, 0, width, videoHeight);
+          drawScoreBox({ x: 0, y: videoHeight, width, height: height - videoHeight }, frame, measure);
+        } else {
+          const half = width / 2;
+          drawCover(ctx, video, 0, 0, half, height);
+          drawScoreBox({ x: half, y: 0, width: half, height }, frame, measure);
+        }
+      } else {
+        // An audio recording gets the score as its picture.
+        ctx.fillStyle = '#12201a';
+        ctx.fillRect(0, 0, width, height);
+        drawScoreBox({ x: width * 0.05, y: height * 0.05, width: width * 0.9, height: height * 0.82 }, frame, measure);
+        ctx.fillStyle = BRAND;
+        ctx.font = `500 ${Math.round(width * 0.018)}px Helvetica, Arial, sans-serif`;
+        ctx.textAlign = 'left';
+        ctx.fillText('Audio recording', width * 0.05, height * 0.945);
+      }
+
+      ctx.fillStyle = INK;
+      ctx.font = `500 ${Math.round(width * 0.017)}px Helvetica, Arial, sans-serif`;
+      ctx.textAlign = 'right';
+      ctx.fillText(`${clock(time)} / ${clock(duration)}`, width - width * 0.04, height - height * 0.03);
+      ctx.textAlign = 'left';
+    };
+
     const stream = canvas.captureStream(30);
+
+    // The recording's own audio track is routed straight into the export; the
+    // graph has no speaker output, so building a video stays silent.
     try {
-      const captured = video.captureStream ? video.captureStream() : null;
-      captured?.getAudioTracks().forEach((track) => stream.addTrack(track));
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) {
+        audioContext = new AudioCtx();
+        const source = audioContext.createMediaElementSource(video);
+        const destination = audioContext.createMediaStreamDestination();
+        source.connect(destination);
+        destination.stream.getAudioTracks().forEach((track) => stream.addTrack(track));
+      }
     } catch {
-      // A silent share video is still a real video; audio capture is best-effort.
+      // A silent share video is still a real export; audio capture is best-effort.
     }
 
     const mimeType = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']
@@ -135,25 +197,24 @@ export async function composeShareVideo({ videoBlob, format, layout, meta = {} }
     await video.play();
 
     await new Promise((resolve) => {
-      let frame = 0;
       const tick = () => {
         if (video.ended) { resolve(); return; }
         draw();
-        frame += 1;
         requestAnimationFrame(tick);
       };
       video.onended = resolve;
       requestAnimationFrame(tick);
-      if (frame === 0) draw();
     });
 
     recorder.stop();
     const blob = await finished;
-    if (!blob.size) throw new Error('The share video came out empty. Try again.');
+    if (!blob.size) throw new Error('The video came out empty. Try again.');
     return blob;
   } finally {
     video.pause();
     video.removeAttribute('src');
+    video.load?.();
     URL.revokeObjectURL(objectUrl);
+    if (audioContext) audioContext.close().catch(() => {});
   }
 }

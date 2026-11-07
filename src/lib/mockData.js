@@ -36,12 +36,16 @@ export const scores = [
   {
     id: 'nocturne-eb', title: 'Nocturne in E♭', composer: 'Chopin', instrument: 'Piano',
     tags: ['Classical', 'Romantic'], ownership: 'shared', sharedBy: 'Alice', permission: 'Can edit',
+    // Editing, practising and downloading are granted separately.
+    permissions: { practice: true, download: true },
     favorite: false, folderIds: [], lastPlayed: 'never', lastMeasure: 1, tempo: 76, pages: 3, measures: 40,
     difficultSections: [], created: '2026-08-25', source: 'Shared',
   },
   {
     id: 'invention-13', title: 'Two-Part Invention No. 13', composer: 'J. S. Bach', instrument: 'Piano',
     tags: ['Baroque'], ownership: 'shared', sharedBy: 'Alice', permission: 'Can view',
+    // View only: no practising, no download, no editing.
+    permissions: { practice: false, download: false },
     favorite: false, folderIds: [], lastPlayed: '5 days ago', lastMeasure: 1, tempo: 92, pages: 2, measures: 28,
     difficultSections: [], created: '2026-08-22', source: 'Shared',
   },
@@ -245,7 +249,7 @@ export const billingHistory = [
 
 // ---------- Help articles ----------
 export const helpCategories = [
-  'Getting started', 'Adding music', 'Recognition & editing', 'Practice', 'Library', 'Sharing', 'Account & billing', 'Privacy',
+  'Getting started', 'Adding music', 'Recognition & editing', 'Practice', 'Performances', 'Library', 'Sharing', 'Account & billing', 'Privacy',
 ];
 
 export const helpArticles = [
@@ -267,6 +271,24 @@ export const helpArticles = [
     body: ['During a session, Yueora can show whether a note matched, what’s coming next, and where things felt uncertain.', 'You won’t see a failing score or a judgment. Afterward, the summary leads with how it felt, then offers details if you want them.'], related: ['practice-setup', 'practice-summary'] },
   { slug: 'practice-summary', category: 'Practice', title: 'Reading your practice summary', updated: 'Sep 2, 2026', excerpt: 'The summary leads with a feeling, then the details.',
     body: ['Each summary opens with a short, human line about the session, then shows the range and tempo you chose and offers to run it again.', 'Yueora shows what it actually knows — how long you played, which range, the tempo you chose, and your recording if you made one. Note-level accuracy is not measured, so it is not shown, and the summary is a moment rather than a stored record.'], related: ['practice-feedback'] },
+  { slug: 'saving-a-performance', category: 'Performances', title: 'Saving an original recording', updated: 'Nov 7, 2026', excerpt: 'Choose to keep the audio or video you actually recorded.',
+    body: ['Recording is a choice you make in setup, and saving is a second choice you make afterwards. Finishing a practice session never uploads anything by itself.', 'In the practice report, Save performance uploads the original file to your private Performances library and links it to the score you were playing. Its media type, duration, recording date and the section you played are kept with it.', 'If the upload fails you will see the error on the report instead of a success message, and you can try again. Nothing appears in Performances until the file has actually been stored.'], related: ['downloading-a-recording', 'history-vs-performances'] },
+  { slug: 'downloading-a-recording', category: 'Performances', title: 'Downloading an original recording', updated: 'Nov 7, 2026', excerpt: 'Keep a copy of the original audio or video on your device.',
+    body: ['A saved performance stays downloadable. Open it from Performances and use Download to save the original file to your device.', 'The download is the same recording that was captured in the session — not a re-export and not a share video.', 'If you have not saved the performance yet, you can still download from the practice report while the report is open. Reports disappear when you leave them; saved performances stay.'], related: ['saving-a-performance', 'composite-share-video'] },
+  { slug: 'sharing-a-performance', category: 'Performances', title: 'Sharing a performance', updated: 'Nov 7, 2026', excerpt: 'Share a recording without sharing the score behind it.',
+    body: ['Open a saved performance and choose Share. You can keep it private or share it with selected people.', 'Sharing a performance is separate from sharing a score. The people you choose can watch the recording; they do not gain access to the score, to your practice history, or to your other performances.', 'You can change or revoke access at any time. Someone who loses access can no longer open the performance.'], related: ['managing-performance-access', 'sharing-basics'] },
+  { slug: 'managing-performance-access', category: 'Performances', title: 'Managing performance access', updated: 'Nov 7, 2026', excerpt: 'See who can watch, change what they can do, or revoke access.',
+    body: ['The sharing panel on a performance lists everyone who can currently watch it. Choosing Private again removes everyone at once.', 'Watching and commenting are separate grants. Someone can be allowed to watch without being allowed to comment, and you can grant commenting per person or turn comments off for everyone.', 'Removing someone takes effect immediately. Their access is not restored if you later share the performance with somebody else.'], related: ['sharing-a-performance', 'performance-comments'] },
+  { slug: 'composite-share-video', category: 'Performances', title: 'Making a share video', updated: 'Nov 7, 2026', excerpt: 'Build a video of your recording with the score beside it.',
+    body: ['From a saved performance, choose Make share video. Yueora builds the video on your device from the saved original recording and the score it belongs to.', 'The score shown is the same notation you see in the app, and it moves with the recording, following the measure changes recorded during the session. Individual notes are not tracked, so the score follows the music measure by measure rather than note by note.', 'You can pick a landscape or portrait format and either a side-by-side or an overlay layout, preview the result, and download it. Building a video takes roughly as long as the recording itself.'], related: ['why-share-videos-stay-local', 'saving-a-performance'] },
+  { slug: 'why-share-videos-stay-local', category: 'Performances', title: 'Why share videos stay on your device', updated: 'Nov 7, 2026', excerpt: 'The share video is an export, not a second copy in your library.',
+    body: ['A share video is something you make to send to someone, so it is never uploaded to Yueora. It is generated in your browser, previewed there, and downloaded to your device.', 'It does not appear in Performances, is not stored as a media file, does not use your storage allowance, and does not create a Yueora link. The original recording remains the only asset Yueora keeps.', 'If you want another video later, or in a different format, generate it again from the saved original recording and its score.'], related: ['composite-share-video', 'downloading-a-recording'] },
+  { slug: 'performance-comments', category: 'Performances', title: 'Comments and replies', updated: 'Nov 7, 2026', excerpt: 'A short conversation attached to one performance.',
+    body: ['Comments live on a performance, not on the score. A comment stays with the recording it belongs to and is only visible to people who can open that performance.', 'You can reply to a comment, edit your own comments, and delete them. Comments and replies show who wrote them and when.', 'Commenting is a separate permission from watching. If you can watch but not comment, the comment box is closed and says so.'], related: ['managing-performance-access', 'managing-comments'] },
+  { slug: 'managing-comments', category: 'Performances', title: 'Managing or deleting comments', updated: 'Nov 7, 2026', excerpt: 'Comment controls belong to the owner of the performance.',
+    body: ['As the owner of a performance you can remove any comment on it, including replies, and you can turn comments off entirely from the sharing panel.', 'When comments are off, existing comments stay visible to people who can watch, but new comments and replies are not accepted until you turn them back on.', 'This only affects that one performance. Your scores are unaffected.'], related: ['performance-comments', 'sharing-a-performance'] },
+  { slug: 'history-vs-performances', category: 'Performances', title: 'Practice history vs Performances', updated: 'Nov 7, 2026', excerpt: 'One is a private record of practice; the other is music you chose to keep.',
+    body: ['Practice history records what you played, when, and for how long. It is private, it is never shared, and it holds no media and no report.', 'Performances hold the recordings you chose to keep. They can be replayed alongside their score, downloaded, and shared with people you trust.', 'Saving a performance does not publish your practice history, and deleting a performance leaves your practice history untouched.'], related: ['saving-a-performance', 'sharing-a-performance'] },
   { slug: 'organize-library', category: 'Library', title: 'Organize your library', updated: 'Aug 25, 2026', excerpt: 'Folders, favorites, and ownership views keep things tidy.',
     body: ['Your library separates All music, Mine, Shared with me, Saved, and Favorites. Folders live inside the library for finer grouping.', 'You can create, rename, and delete folders, and move scores between them. Deleting a folder never deletes the scores inside.'], related: ['trash-and-restore', 'sharing-basics'] },
   { slug: 'trash-and-restore', category: 'Library', title: 'Trash and restoring scores', updated: 'Aug 25, 2026', excerpt: 'Deleted scores go to Trash, where you can restore or remove them for good.',

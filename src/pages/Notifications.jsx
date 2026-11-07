@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCheck, Bell, Users, Music, Sparkles, Shield, CreditCard, Inbox } from 'lucide-react';
+import { CheckCheck, Bell, Users, Music, Sparkles, Shield, CreditCard, Inbox, Disc3, MessageCircle } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/patterns/PageHeader';
@@ -9,6 +9,8 @@ import StateMessage from '@/components/patterns/StateMessage';
 const categoryIcon = {
   practice: Music,
   sharing: Users,
+  performances: Disc3,
+  comments: MessageCircle,
   imports: Inbox,
   security: Shield,
   billing: CreditCard,
@@ -18,7 +20,9 @@ const categoryIcon = {
 const filters = [
   { key: 'all', label: 'All' },
   { key: 'unread', label: 'Unread' },
-  { key: 'sharing', label: 'Sharing' },
+  { key: 'sharing', label: 'Scores' },
+  { key: 'performances', label: 'Performances' },
+  { key: 'comments', label: 'Comments' },
   { key: 'imports', label: 'Imports' },
   { key: 'system', label: 'System' },
 ];
@@ -30,13 +34,16 @@ export default function Notifications() {
   const markAllRead = usePrototypeStore((s) => s.markAllNotificationsRead);
   const [filter, setFilter] = useState('all');
 
-  const filtered = useMemo(() => {
-    if (filter === 'all') return items;
-    if (filter === 'unread') return items.filter((n) => n.unread);
-    return items.filter((n) => n.category === filter);
-  }, [items, filter]);
+  // Notifications can be addressed to a specific person; only yours are listed.
+  const mine = useMemo(() => items.filter((n) => !n.recipientId || n.recipientId === 'you'), [items]);
 
-  const unreadCount = items.filter((n) => n.unread).length;
+  const filtered = useMemo(() => {
+    if (filter === 'all') return mine;
+    if (filter === 'unread') return mine.filter((n) => n.unread);
+    return mine.filter((n) => n.category === filter);
+  }, [mine, filter]);
+
+  const unreadCount = mine.filter((n) => n.unread).length;
 
   const groups = useMemo(() => {
     const today = filtered.filter((n) => ['just now', '2m', '1h', '5h'].includes(n.time));

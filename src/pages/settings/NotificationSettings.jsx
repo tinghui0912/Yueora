@@ -4,7 +4,9 @@ import SettingsSection from '@/components/patterns/SettingsSection';
 
 const categories = [
   { key: 'imports', label: 'Imports', desc: 'Recognition finished, ready to review, or failed.' },
-  { key: 'sharing', label: 'Sharing', desc: 'Invitations sent, accepted, or access changed.' },
+  { key: 'sharing', label: 'Score sharing', desc: 'Invitations sent, accepted, or score access changed.' },
+  { key: 'performances', label: 'Performance sharing', desc: 'A recording was shared with you, or access changed.' },
+  { key: 'comments', label: 'Comments & replies', desc: 'Someone commented on your performance or replied to you.' },
   { key: 'security', label: 'Security', desc: 'New sign-ins and account changes.' },
   { key: 'billing', label: 'Billing', desc: 'Renewals, receipts, and plan changes.' },
   { key: 'practice', label: 'Practice suggestions', desc: 'A gentle nudge — never a streak reminder.' },

@@ -1,10 +1,9 @@
 import { useCallback, useRef, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { signedUrlFor, slugify } from '@/lib/media';
 import PerformanceRow from '@/components/performances/PerformanceRow';
-import ShareResourceDialog from '@/components/sharing/ShareResourceDialog';
 import StateMessage from '@/components/patterns/StateMessage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,6 +24,7 @@ const FILTERS = [
 
 export default function Performances() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const scoreFilter = searchParams.get('score');
 
@@ -32,7 +32,6 @@ export default function Performances() {
   const scores = usePrototypeStore((s) => s.scores);
   const members = usePrototypeStore((s) => s.teamMembers) || [];
   const deletePerformance = usePrototypeStore((s) => s.deletePerformance);
-  const updateSharing = usePrototypeStore((s) => s.updatePerformanceSharing);
 
   const [tab, setTab] = useState('mine');
   const [kind, setKind] = useState('all');
@@ -42,7 +41,6 @@ export default function Performances() {
   const [loadingId, setLoadingId] = useState(null);
   const [errors, setErrors] = useState({});
   const [pendingDelete, setPendingDelete] = useState(null);
-  const [sharing, setSharing] = useState(null);
   const mediaRef = useRef(null);
 
   const mine = performances.filter((p) => p.ownerId === 'you');
@@ -230,7 +228,7 @@ export default function Performances() {
               onToggle={() => togglePlay(p)}
               onSeek={(v) => seek(p, v)}
               onDownload={() => download(p)}
-              onShare={() => setSharing(p)}
+              onOpen={() => navigate(`/performances/${p.id}`)}
               onDelete={() => setPendingDelete(p)}
             />
           ))}
@@ -252,19 +250,6 @@ export default function Performances() {
         onEnded={() => setPlayer((cur) => ({ ...cur, playing: false }))}
         onError={() => {
           if (player.id) setItemError(player.id, 'The recording file could not be played.');
-        }}
-      />
-
-      <ShareResourceDialog
-        open={!!sharing}
-        onOpenChange={(open) => !open && setSharing(null)}
-        title={sharing?.scoreTitleSnapshot || ''}
-        members={members}
-        value={sharing}
-        onSave={(next) => {
-          updateSharing(sharing.id, next);
-          setSharing(null);
-          toast({ title: 'Sharing updated' });
         }}
       />
 

@@ -8,7 +8,7 @@ import {
 export default function PerformanceRow({
   performance, scoreExists, isOwner, ownerName,
   playing, position, loading, error, canPlay = true,
-  onToggle, onSeek, onDownload, onShare, onDelete,
+  onToggle, onSeek, onDownload, onOpen, onDelete,
 }) {
   const { durationSeconds = 0, mediaType } = performance;
   const progress = durationSeconds ? Math.min(100, (position / durationSeconds) * 100) : 0;
@@ -17,13 +17,9 @@ export default function PerformanceRow({
     <article className="py-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          {scoreExists ? (
-            <Link to={`/score/${performance.scoreId}`} className="font-display text-lg font-medium text-ink-primary hover:text-brand">
-              {performance.scoreTitleSnapshot}
-            </Link>
-          ) : (
-            <p className="font-display text-lg font-medium text-ink-primary">{performance.scoreTitleSnapshot}</p>
-          )}
+          <Link to={`/performances/${performance.id}`} className="font-display text-lg font-medium text-ink-primary hover:text-brand">
+            {performance.scoreTitleSnapshot}
+          </Link>
           <p className="mt-0.5 type-metadata text-ink-secondary">
             {ownerName ? `${ownerName} · ` : ''}{dayLabel(performance.createdAt)} · {fmtClock(durationSeconds)} · {mediaType === 'video' ? 'Video' : 'Audio'}
             {performance.tempoBpm ? ` · ${performance.tempoBpm} BPM` : ''} · {performance.rangeSummary}
@@ -43,11 +39,9 @@ export default function PerformanceRow({
             <DropdownMenuItem onClick={onDownload} disabled={!canPlay}>
               <Download className="mr-2 h-4 w-4" /> Download recording
             </DropdownMenuItem>
-            {isOwner && (
-              <DropdownMenuItem onClick={onShare}>
-                <Share2 className="mr-2 h-4 w-4" /> Manage sharing
-              </DropdownMenuItem>
-            )}
+            <DropdownMenuItem onClick={onOpen}>
+              <Share2 className="mr-2 h-4 w-4" /> Open performance
+            </DropdownMenuItem>
             {isOwner && (
               <>
                 <DropdownMenuSeparator />
