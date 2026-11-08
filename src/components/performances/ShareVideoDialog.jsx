@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Download, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { composeShareVideo } from '@/lib/composeShareVideo';
 import { downloadBlob, slugify } from '@/lib/media';
-import { generateNotes } from '@/lib/mockData';
+import { getScoreNotation, NOTATION_PREVIEW_NOTICE } from '@/lib/scoreNotation';
+import { usePrototypeStore } from '@/stores/prototypeStore';
 
 const FORMATS = [
   { value: 'landscape', label: 'Landscape 16:9' },
@@ -16,8 +17,11 @@ const LAYOUTS = [
 ];
 
 /**
- * Builds the share video from the saved original recording. It is generated on
- * this device, previewed here, and downloaded — it is never uploaded to Yueora.
+ * Builds the share video from the saved original recording. Audio and video
+ * recordings both work: an audio recording gets the score as its picture.
+ *
+ * Generated on this device, previewed here, and downloaded — never uploaded.
+ * Closing the dialog aborts the build and releases the capture.
  */
 export default function ShareVideoDialog({
   open, onOpenChange, title, composer, rangeSummary,
@@ -31,11 +35,19 @@ export default function ShareVideoDialog({
   const [result, setResult] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
 
-  const notes = useMemo(() => generateNotes(scoreId), [scoreId]);
+  const controllerRef = useRef(null);
+  const score = usePrototypeStore((s) => s.scores.find((x) => x.id === scoreId));
+  const { notes, approximate } = useMemo(() => getScoreNotation(score, scoreId), [score, scoreId]);
   const hasSource = !!mediaBlob || !!mediaUrl;
+  const isVideo = mediaType === 'video';
+
+  // Leaving the dialog — or unmounting the page — stops any build in progress.
+  useEffect(() => () => controllerRef.current?.abort(), []);
 
   useEffect(() => {
     if (!open) {
+      controllerRef.current?.abort();
+      controllerRef.current = null;
       setStage('idle');
       setError(null);
       setResult(null);
@@ -50,12 +62,17 @@ export default function ShareVideoDialog({
   }, [result]);
 
   const generate = async () => {
+    controllerRef.current?.abort();
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
     setStage('generating');
     setError(null);
+
     try {
       let blob = mediaBlob;
       if (!blob && mediaUrl) {
-        const response = await fetch(mediaUrl);
+        const response = await fetch(mediaUrl, { signal: controller.signal });
         if (!response.ok) throw new Error('The saved recording could not be read for this video.');
         blob = await response.blob();
       }
@@ -65,20 +82,30 @@ export default function ShareVideoDialog({
         mediaBlob: blob,
         mediaType,
         format,
-        layout,
+        layout: isVideo ? layout : 'side',
         notes,
         startMeasure,
         endMeasure,
         timeline,
         durationSeconds,
+        signal: controller.signal,
         meta: { title, composer, rangeSummary },
       });
+      if (controller.signal.aborted) return;
       setResult(video);
       setStage('ready');
     } catch (err) {
+      if (controller.signal.aborted) return;
       setError(err?.message || 'The video could not be generated.');
       setStage('error');
+    } finally {
+      if (controllerRef.current === controller) controllerRef.current = null;
     }
+  };
+
+  const close = () => {
+    controllerRef.current?.abort();
+    onOpenChange(false);
   };
 
   const download = () => {
@@ -87,11 +114,13 @@ export default function ShareVideoDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(next) => (next ? onOpenChange(true) : close())}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>Make a share video</DialogTitle>
-          <DialogDescription>{title} — your recording with the score beside it.</DialogDescription>
+          <DialogDescription>
+            {title} — your {isVideo ? 'video' : 'audio'} recording with the score alongside it.
+          </DialogDescription>
         </DialogHeader>
 
         {!hasSource ? (
@@ -118,23 +147,34 @@ export default function ShareVideoDialog({
               </div>
             </div>
 
-            <div>
-              <p className="type-caption text-ink-tertiary">Layout</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {LAYOUTS.map((l) => (
-                  <button
-                    key={l.value}
-                    type="button"
-                    onClick={() => setLayout(l.value)}
-                    aria-pressed={layout === l.value}
-                    disabled={stage === 'generating'}
-                    className={`rounded-control border px-3 py-1.5 text-sm disabled:opacity-50 ${layout === l.value ? 'border-brand text-brand' : 'border-line-subtle text-ink-secondary hover:bg-accent/50'}`}
-                  >
-                    {l.label}
-                  </button>
-                ))}
+            {isVideo ? (
+              <div>
+                <p className="type-caption text-ink-tertiary">Layout</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {LAYOUTS.map((l) => (
+                    <button
+                      key={l.value}
+                      type="button"
+                      onClick={() => setLayout(l.value)}
+                      aria-pressed={layout === l.value}
+                      disabled={stage === 'generating'}
+                      className={`rounded-control border px-3 py-1.5 text-sm disabled:opacity-50 ${layout === l.value ? 'border-brand text-brand' : 'border-line-subtle text-ink-secondary hover:bg-accent/50'}`}
+                    >
+                      {l.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : (
+              <p className="type-body-small text-ink-secondary">
+                Your audio recording with the score as the picture — the page follows the measure changes recorded
+                during the session.
+              </p>
+            )}
+
+            {approximate && (
+              <p className="type-metadata text-ink-tertiary">{NOTATION_PREVIEW_NOTICE}</p>
+            )}
 
             {stage === 'generating' && (
               <p className="flex items-center gap-2 type-body-small text-ink-secondary">
@@ -165,7 +205,9 @@ export default function ShareVideoDialog({
         )}
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Close</Button>
+          <Button variant="outline" onClick={close}>
+            {stage === 'generating' ? 'Stop and close' : 'Close'}
+          </Button>
           {hasSource && stage !== 'ready' && (
             <Button onClick={generate} disabled={stage === 'generating'}>
               {stage === 'generating'

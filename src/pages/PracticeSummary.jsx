@@ -216,11 +216,9 @@ export default function PracticeSummary() {
             <Button variant="outline" onClick={downloadRecording}>
               <Download className="mr-1.5 h-4 w-4" /> Download recording
             </Button>
-            {mediaType === 'video' && (
-              <Button variant="outline" onClick={() => setShareOpen(true)}>
-                <Wand2 className="mr-1.5 h-4 w-4" /> Make a share video
-              </Button>
-            )}
+            <Button variant="outline" onClick={() => setShareOpen(true)}>
+              <Wand2 className="mr-1.5 h-4 w-4" /> Make a share video
+            </Button>
           </div>
           <p className="mt-2 type-metadata text-ink-tertiary">
             Save or download works on the real recording file captured in this session.

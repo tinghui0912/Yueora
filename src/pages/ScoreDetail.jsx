@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, Pencil, Share2, MoreHorizontal, Star, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download, Trash2, FolderInput, History, LogOut, BookmarkMinus, Check, Lock, Headphones, FileImage, FileCode } from 'lucide-react';
+import { ArrowLeft, Play, Pencil, Share2, MoreHorizontal, Star, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download, Trash2, FolderInput, History, LogOut, BookmarkMinus, Lock, Headphones, FileImage, FileCode } from 'lucide-react';
 import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
 import ScorePreview from '@/components/library/ScorePreview';
 import ListenControl from '@/components/score/ListenControl';

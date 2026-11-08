@@ -43,9 +43,11 @@ export async function composeShareVideo({
   endMeasure,
   timeline,
   durationSeconds = 0,
+  signal,
 }) {
   if (!mediaBlob) throw new Error('The original recording is needed to build a video.');
   if (typeof MediaRecorder === 'undefined') throw new Error('This browser cannot build a video.');
+  if (signal?.aborted) throw new Error('The video build was stopped.');
 
   const { width, height } = SIZES[format] || SIZES.landscape;
   const objectUrl = URL.createObjectURL(mediaBlob);
@@ -60,6 +62,18 @@ export async function composeShareVideo({
   const ctx = canvas.getContext('2d');
 
   let audioContext = null;
+  let destination = null;
+  let stream = null;
+  let recorder = null;
+
+  // Aborting (dialog closed, user left the page) stops capture immediately, so
+  // nothing is left recording in the background.
+  const stopCapture = () => {
+    try { if (recorder && recorder.state !== 'inactive') recorder.stop(); } catch { /* already stopped */ }
+    try { video.pause(); } catch { /* not playing */ }
+  };
+  const onAbort = () => stopCapture();
+  if (signal) signal.addEventListener('abort', onAbort);
 
   const drawScoreBox = (box, scoreCanvas, measure) => {
     ctx.fillStyle = PAPER;
@@ -165,7 +179,7 @@ export async function composeShareVideo({
       ctx.textAlign = 'left';
     };
 
-    const stream = canvas.captureStream(30);
+    stream = canvas.captureStream(30);
 
     // The recording's own audio track is routed straight into the export; the
     // graph has no speaker output, so building a video stays silent.
@@ -174,7 +188,7 @@ export async function composeShareVideo({
       if (AudioCtx) {
         audioContext = new AudioCtx();
         const source = audioContext.createMediaElementSource(video);
-        const destination = audioContext.createMediaStreamDestination();
+        destination = audioContext.createMediaStreamDestination();
         source.connect(destination);
         destination.stream.getAudioTracks().forEach((track) => stream.addTrack(track));
       }
@@ -185,7 +199,7 @@ export async function composeShareVideo({
     const mimeType = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']
       .find((m) => MediaRecorder.isTypeSupported(m)) || 'video/webm';
 
-    const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4000000 });
+    recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4000000 });
     const chunks = [];
     recorder.ondataavailable = (event) => { if (event.data?.size) chunks.push(event.data); };
     const finished = new Promise((resolve) => {
@@ -194,11 +208,15 @@ export async function composeShareVideo({
 
     draw();
     recorder.start(500);
-    await video.play();
+    try {
+      await video.play();
+    } catch (err) {
+      if (!signal?.aborted) throw err;
+    }
 
     await new Promise((resolve) => {
       const tick = () => {
-        if (video.ended) { resolve(); return; }
+        if (signal?.aborted || video.ended) { resolve(); return; }
         draw();
         requestAnimationFrame(tick);
       };
@@ -206,11 +224,17 @@ export async function composeShareVideo({
       requestAnimationFrame(tick);
     });
 
+    if (signal?.aborted) throw new Error('The video build was stopped.');
     recorder.stop();
     const blob = await finished;
+    if (signal?.aborted) throw new Error('The video build was stopped.');
     if (!blob.size) throw new Error('The video came out empty. Try again.');
     return blob;
   } finally {
+    if (signal) signal.removeEventListener('abort', onAbort);
+    stopCapture();
+    if (stream) stream.getTracks().forEach((track) => track.stop());
+    if (destination) destination.stream.getTracks().forEach((track) => track.stop());
     video.pause();
     video.removeAttribute('src');
     video.load?.();

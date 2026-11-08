@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, Music2, Bell, Settings, Library as LibraryIcon, Folder, Inbox, Clock, ArrowRight } from 'lucide-react';
+import { Search, Plus, Music2, Bell, Settings, Folder, Inbox, Clock, ArrowRight } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,

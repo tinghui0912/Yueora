@@ -11,6 +11,7 @@ import {
   plans as seedPlans,
   billingHistory as seedBillingHistory,
 } from '@/lib/mockData';
+import { addBillingPeriod, demoReference, formatDate, planPrice } from '@/lib/commercial';
 
 const clone = (obj) => JSON.parse(JSON.stringify(obj));
 
@@ -52,11 +53,25 @@ const accountSeed = {
 const subscriptionSeed = {
   plan: 'pro',
   status: 'active',
+  billingInterval: 'monthly',
   renewal: 'Nov 15, 2026',
   cancelAt: null,
   pendingPlan: null,
-  payment: { method: 'Visa', last4: '4242' },
+  // Sample display data only — this prototype never collects or stores a card.
+  payment: { method: 'Demo card', last4: '4242', demo: true },
   usage: { scores: 8, imports: 14, storage: '1.2 GB' },
+};
+
+// The result of the last completed demo checkout. Empty means nothing has been
+// purchased in this prototype yet — the success page validates against it.
+const checkoutSeed = {
+  status: 'idle', // idle | complete
+  reference: null,
+  planId: null,
+  interval: null,
+  amount: null,
+  completedAt: null,
+  sessionKey: null,
 };
 
 const preferencesSeed = {
@@ -164,6 +179,7 @@ export const usePrototypeStore = create(
       notifications: clone(seedNotifications),
       subscription: clone(subscriptionSeed),
       billingHistory: clone(seedBillingHistory),
+      checkout: clone(checkoutSeed),
       account: clone(accountSeed),
       preferences: clone(preferencesSeed),
       notificationPrefs: clone(notificationPrefsSeed),
@@ -890,8 +906,51 @@ export const usePrototypeStore = create(
           subscription: { ...st.subscription, status: 'cancelling', cancelAt: st.subscription.renewal, pendingPlan: 'free' },
         })),
 
-      updatePayment: (method, last4) =>
-        set((st) => ({ subscription: { ...st.subscription, payment: { method, last4 } } })),
+      // The only path to Pro. It records a demo purchase, never a payment.
+      // sessionKey makes repeat clicks on the same checkout a no-op.
+      completeDemoCheckout: ({ planId, interval, sessionKey }) =>
+        set((st) => {
+          const plan = st.plans[planId];
+          if (!plan || planId === 'free') return st;
+          if (st.checkout?.sessionKey === sessionKey) return st;
+
+          const now = new Date();
+          const amount = planPrice(plan, interval);
+          const reference = demoReference();
+          const renewal = formatDate(addBillingPeriod(now, interval));
+
+          return {
+            subscription: {
+              ...st.subscription,
+              plan: planId,
+              status: 'active',
+              billingInterval: interval,
+              renewal,
+              cancelAt: null,
+              pendingPlan: null,
+            },
+            billingHistory: [
+              {
+                id: `demo-${Date.now()}`,
+                date: formatDate(now),
+                amount: `$${amount}.00`,
+                plan: `${plan.name} ${interval === 'yearly' ? 'yearly' : 'monthly'}`,
+                invoice: reference,
+                demo: true,
+              },
+              ...st.billingHistory,
+            ],
+            checkout: {
+              status: 'complete',
+              reference,
+              planId,
+              interval,
+              amount,
+              completedAt: now.toISOString(),
+              sessionKey,
+            },
+          };
+        }),
 
       // ---- Account actions ----
       setAvatar: (avatar) => set((st) => ({ account: { ...st.account, avatar } })),
@@ -936,6 +995,7 @@ export const usePrototypeStore = create(
           notifications: clone(seedNotifications),
           subscription: clone(subscriptionSeed),
           billingHistory: clone(seedBillingHistory),
+      checkout: clone(checkoutSeed),
           account: clone(accountSeed),
           preferences: clone(preferencesSeed),
           notificationPrefs: clone(notificationPrefsSeed),

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import PublicMobileMenu from '@/components/external/PublicMobileMenu';
+import Logo from '@/components/brand/Logo';
 
 /**
  * PublicHeader — shared marketing/help/legal header.
@@ -14,8 +15,8 @@ export default function PublicHeader() {
   return (
     <header className="sticky top-0 z-40 shrink-0 border-b border-line-subtle bg-surface-canvas/95 backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:px-8">
-        <Link to="/" className="font-display text-xl tracking-tight text-ink-primary">
-          Yueora
+        <Link to="/" aria-label="Yueora home" className="inline-flex">
+          <Logo variant="full" size="md" />
         </Link>
         <nav className="flex items-center gap-1">
           <Link to="/about" className="hidden rounded-control px-3 py-2 text-sm text-ink-secondary hover:text-ink-primary sm:inline">About</Link>

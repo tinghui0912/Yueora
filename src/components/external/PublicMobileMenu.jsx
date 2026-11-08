@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useAuth } from '@/lib/AuthContext';
+import Logo from '@/components/brand/Logo';
 
 /**
  * PublicMobileMenu — lightweight mobile nav for Landing and ExternalShell.
@@ -18,7 +19,7 @@ export default function PublicMobileMenu() {
       </button>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" className="w-72">
-          <SheetHeader><SheetTitle>Yueora</SheetTitle></SheetHeader>
+          <SheetHeader><SheetTitle><Logo variant="full" size="sm" /></SheetTitle></SheetHeader>
           <nav className="mt-4 flex flex-col gap-1" onClick={() => setOpen(false)}>
             <Link to="/about" className="rounded-control px-3 py-2.5 type-body-small text-ink-secondary hover:bg-accent">About</Link>
             <Link to="/pricing" className="rounded-control px-3 py-2.5 type-body-small text-ink-secondary hover:bg-accent">Pricing</Link>

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AlertCircle, Loader2, Mic, Pause, Play, RotateCcw, SkipBack, SkipForward } from 'lucide-react';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
-import { generateNotes } from '@/lib/mockData';
+import { getScoreNotation, NOTATION_PREVIEW_NOTICE } from '@/lib/scoreNotation';
+import { usePrototypeStore } from '@/stores/prototypeStore';
 import { fmtClock, measureWindowStart } from '@/lib/practiceUtils';
 import { measureAtTime, hasTimeline } from '@/lib/syncTimeline';
 import { Button } from '@/components/ui/button';
@@ -32,7 +33,8 @@ export default function SyncPlayback({
   const [duration, setDuration] = useState(durationSeconds || 0);
   const [mediaError, setMediaError] = useState(null);
 
-  const notes = useMemo(() => generateNotes(scoreId), [scoreId]);
+  const score = usePrototypeStore((s) => s.scores.find((x) => x.id === scoreId));
+  const { notes, approximate } = useMemo(() => getScoreNotation(score, scoreId), [score, scoreId]);
   const exact = hasTimeline(timeline);
 
   const measure = measureAtTime({
@@ -149,6 +151,9 @@ export default function SyncPlayback({
               ? 'The score follows the measure changes recorded during this session.'
               : 'Approximate: this session did not record measure changes, so the range is spread evenly across the recording.'}
           </p>
+          {approximate && (
+            <p className="mt-1 type-metadata text-ink-tertiary">{NOTATION_PREVIEW_NOTICE}</p>
+          )}
         </div>
       </div>
 

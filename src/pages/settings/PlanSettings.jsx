@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Check, Download, Sparkles, AlertCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Check, AlertCircle, Info, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import SettingsSection from '@/components/patterns/SettingsSection';
+import { checkoutPath, formatPrice, intervalLabel, intervalNoun } from '@/lib/commercial';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -14,25 +14,20 @@ export default function PlanSettings() {
   const subscription = usePrototypeStore((s) => s.subscription);
   const billingHistory = usePrototypeStore((s) => s.billingHistory);
   const plans = usePrototypeStore((s) => s.plans);
-  const upgradeToPro = usePrototypeStore((s) => s.upgradeToPro);
   const cancelSubscription = usePrototypeStore((s) => s.cancelSubscription);
   const resumeSubscription = usePrototypeStore((s) => s.resumeSubscription);
   const downgradeToFree = usePrototypeStore((s) => s.downgradeToFree);
 
-  const [annual, setAnnual] = useState(true);
+  const [annual, setAnnual] = useState(subscription.billingInterval === 'yearly');
   const [dialog, setDialog] = useState(null);
   const [done, setDone] = useState(null);
-  const [downloadingInvoice, setDownloadingInvoice] = useState(null);
-  const [payOpen, setPayOpen] = useState(false);
-  const [paySaving, setPaySaving] = useState(false);
-  const [cardNum, setCardNum] = useState('');
-  const updatePayment = usePrototypeStore((s) => s.updatePayment);
 
   const isPro = subscription.plan === 'pro';
   const isCancelling = subscription.status === 'cancelling';
+  const currentPlan = plans[subscription.plan] || plans.free;
+  const chosenInterval = annual ? 'yearly' : 'monthly';
 
   const confirm = () => {
-    if (dialog === 'upgrade') upgradeToPro();
     if (dialog === 'downgrade') downgradeToFree();
     if (dialog === 'cancel') cancelSubscription();
     setDone(dialog);
@@ -40,86 +35,133 @@ export default function PlanSettings() {
     setTimeout(() => setDone(null), 2500);
   };
 
-  const downloadInvoice = (invoiceId) => {
-    setDownloadingInvoice(invoiceId);
-    setTimeout(() => setDownloadingInvoice(null), 1500);
-  };
-
   return (
     <div className="divide-y divide-line-subtle">
-      <SettingsSection title="Current plan" desc={isPro ? (isCancelling ? `Pro until ${subscription.cancelAt}, then Free.` : "You're on Pro. Thanks for being on Yueora.") : "You're on the Free plan."}>
-        <div className="flex items-center justify-between rounded-md border border-border p-4">
-          <div>
-            <p className="flex items-center gap-1.5 font-display text-lg font-medium">{isPro && <Sparkles className="h-4 w-4 text-gold" />} {plans[subscription.plan]?.name || 'Pro'}</p>
-            <p className="text-sm text-muted-foreground">{plans[subscription.plan]?.scores} · {plans[subscription.plan]?.storage} storage</p>
-          </div>
-          {isPro && !isCancelling ? (
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => setDialog('downgrade')}>Downgrade</Button>
-              <Button variant="outline" size="sm" onClick={() => setDialog('cancel')}>Cancel</Button>
+      <SettingsSection
+        title="Current plan"
+        desc={isPro
+          ? (isCancelling ? `Pro until ${subscription.cancelAt}, then Free.` : "You're on Pro. Thanks for being on Yueora.")
+          : "You're on the Free plan."}
+      >
+        <div className="rounded-container border border-line-subtle p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="font-display text-lg font-medium text-ink-primary">{currentPlan.name}</p>
+              <p className="type-body-small text-ink-secondary">
+                {isPro
+                  ? `${intervalLabel(subscription.billingInterval)} billing · renews ${subscription.renewal}`
+                  : 'No billing interval — the Free plan never renews.'}
+              </p>
             </div>
-          ) : isPro && isCancelling ? (
-            <Button size="sm" onClick={() => { resumeSubscription(); setDone('resume'); setTimeout(() => setDone(null), 2500); }}>Resume Pro</Button>
-          ) : (
-            <Button size="sm" onClick={() => setDialog('upgrade')}>Upgrade to Pro</Button>
-          )}
+            <div className="flex flex-wrap gap-2">
+              {isPro && !isCancelling ? (
+                <>
+                  <Button variant="outline" size="sm" onClick={() => setDialog('downgrade')}>Downgrade</Button>
+                  <Button variant="outline" size="sm" onClick={() => setDialog('cancel')}>Cancel subscription</Button>
+                </>
+              ) : isPro && isCancelling ? (
+                <Button size="sm" onClick={() => { resumeSubscription(); setDone('resume'); setTimeout(() => setDone(null), 2500); }}>
+                  Resume subscription
+                </Button>
+              ) : null}
+            </div>
+          </div>
+
+          <ul className="mt-4 grid gap-1.5 border-t border-line-subtle pt-3 type-metadata text-ink-secondary sm:grid-cols-2">
+            <li>{currentPlan.scores} in your library</li>
+            <li>{currentPlan.imports}</li>
+            <li>{currentPlan.storage} of storage</li>
+            <li>{currentPlan.sharing} sharing</li>
+          </ul>
         </div>
-        {isPro && !isCancelling && <p className="mt-2 text-xs text-muted-foreground">Renews {subscription.renewal} · {subscription.payment.method} •{subscription.payment.last4}</p>}
+
         {isPro && isCancelling && (
-          <div className="mt-3 flex items-start gap-2 rounded-md border border-border bg-accent/40 p-3 text-sm">
-            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-            <span>Your subscription ends on {subscription.cancelAt}. You'll keep Pro features until then.</span>
+          <div className="mt-3 flex items-start gap-2 rounded-container border border-line-subtle bg-accent/40 p-3 type-body-small text-ink-secondary">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-ink-tertiary" />
+            <span>
+              Your Pro plan stays active until {subscription.cancelAt}. Nothing changes before then, and you can resume
+              at any time.
+            </span>
           </div>
         )}
-        {done && <p className="mt-2 text-sm text-primary">{done === 'upgrade' ? 'Welcome to Pro!' : done === 'resume' ? 'Subscription resumed — welcome back.' : done === 'downgrade' ? `You'll keep Pro until ${subscription.cancelAt}, then move to Free.` : 'Subscription cancelled.'}</p>}
+        {done && (
+          <p className="mt-2 type-body-small text-brand">
+            {done === 'resume' ? 'Subscription resumed — welcome back.' : done === 'downgrade' ? `You'll keep Pro until ${subscription.cancelAt}, then move to Free.` : 'Subscription cancelled. Pro stays active until the end of the period.'}
+          </p>
+        )}
       </SettingsSection>
 
       {isPro && (
         <SettingsSection title="Usage" desc="How much of your plan you're using.">
           <div className="space-y-3">
-            <UsageBar label="Scores" value={subscription.usage.scores} limit={plans.pro.scores} />
+            <UsageBar label="Scores" value={subscription.usage.scores} limit={currentPlan.scores} />
             <UsageBar label="Imports this month" value={subscription.usage.imports} limit="Unlimited" />
-            <UsageBar label="Storage" value={subscription.usage.storage} limit="10 GB" />
+            <UsageBar label="Storage" value={subscription.usage.storage} limit={`${currentPlan.storage}`} />
           </div>
         </SettingsSection>
       )}
 
-      <SettingsSection title="Pro plan" desc="Unlimited scores, analytics, and export.">
-        <div className="rounded-md border border-border p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-display text-xl font-medium">Pro</p>
-              <p className="mt-1 text-sm text-muted-foreground">${annual ? plans.pro.priceYearly : plans.pro.priceMonthly}/{annual ? 'year' : 'month'}</p>
+      {!isPro && (
+        <SettingsSection title="Pro plan" desc="Unlimited scores, insights, and export.">
+          <div className="rounded-container border border-line-subtle p-5">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="font-display text-xl font-medium text-ink-primary">Pro</p>
+                <p className="mt-1 type-body-small text-ink-secondary">
+                  {formatPrice(annual ? plans.pro.priceYearly : plans.pro.priceMonthly)} / {intervalNoun(chosenInterval)}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="type-metadata text-ink-secondary">Yearly</span>
+                <Switch checked={annual} onCheckedChange={setAnnual} aria-label="Choose yearly billing" />
+              </div>
             </div>
-            <div className="flex items-center gap-2"><span className="text-sm text-muted-foreground">Annual</span><Switch checked={annual} onCheckedChange={setAnnual} /></div>
+            <ul className="mt-4 space-y-2 type-body-small text-ink-secondary">
+              {[`${plans.pro.scores} scores`, plans.pro.imports, 'Practice insights', `${plans.pro.storage} storage`, `${plans.pro.sharing} sharing`, 'Export / download'].map((f) => (
+                <li key={f} className="flex items-center gap-2"><Check className="h-4 w-4 text-brand" /> {f}</li>
+              ))}
+            </ul>
+            <Button className="mt-5" asChild>
+              <Link to={checkoutPath('pro', chosenInterval)}>
+                Continue to checkout <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Link>
+            </Button>
+            <p className="mt-2 type-metadata text-ink-tertiary">
+              Your plan changes only when you complete the demo checkout.
+            </p>
           </div>
-          <ul className="mt-4 space-y-2 text-sm">
-            {['Unlimited scores', 'Unlimited imports & recognition', 'Practice analytics', '10 GB storage', 'View & edit sharing', 'Export / download'].map((f) => (
-              <li key={f} className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> {f}</li>
-            ))}
-          </ul>
-          {isPro ? <Button variant="outline" className="mt-5" disabled>Current plan</Button> : <Button className="mt-5" onClick={() => setDialog('upgrade')}>Upgrade to Pro</Button>}
-        </div>
-      </SettingsSection>
+        </SettingsSection>
+      )}
 
       <SettingsSection title="Payment method" desc="How you pay for Pro.">
-        <div className="flex items-center justify-between">
-          <span className="text-sm">{isPro ? `${subscription.payment.method} •${subscription.payment.last4}` : 'No card on file'}</span>
-          <Button variant="outline" size="sm" onClick={() => setPayOpen(true)}>{isPro ? 'Update' : 'Add card'}</Button>
+        <div className="rounded-container border border-line-subtle p-4">
+          <p className="flex items-start gap-2 type-body-small text-ink-secondary">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-ink-tertiary" />
+            <span>
+              Payment method management is not connected in this prototype. No card details are collected or stored.
+            </span>
+          </p>
+          <p className="mt-2 type-metadata text-ink-tertiary">
+            Sample data shown elsewhere in this prototype is demo data, not a real card.
+          </p>
         </div>
       </SettingsSection>
 
-      <SettingsSection title="Billing history" desc="Past invoices and receipts.">
+      <SettingsSection title="Billing history" desc="Demo records from this prototype. No real payments.">
         {billingHistory.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No charges yet.</p>
+          <p className="type-body-small text-ink-secondary">No records yet.</p>
         ) : (
-          <ul className="divide-y divide-border text-sm">
+          <ul className="divide-y divide-line-subtle text-sm">
             {billingHistory.map((b) => (
-              <li key={b.id} className="flex items-center justify-between py-3">
-                <div><p className="font-medium">{b.date} · {b.amount}</p><p className="text-xs text-muted-foreground">{b.plan} · {b.invoice}</p></div>
-                <Button variant="ghost" size="sm" onClick={() => downloadInvoice(b.id)} disabled={downloadingInvoice === b.id}>
-                  <Download className="mr-1.5 h-4 w-4" /> {downloadingInvoice === b.id ? 'Preparing…' : 'Invoice'}
-                </Button>
+              <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
+                <div>
+                  <p className="font-medium text-ink-primary">{b.date} · {b.amount}</p>
+                  <p className="type-metadata text-ink-tertiary">
+                    {b.plan} · {b.invoice}
+                    {b.demo && <span className="ml-2 rounded-control bg-accent px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-accent-foreground">Demo</span>}
+                  </p>
+                </div>
+                <span className="type-metadata text-ink-tertiary">No invoice file in this prototype</span>
               </li>
             ))}
           </ul>
@@ -128,50 +170,18 @@ export default function PlanSettings() {
 
       <Dialog open={dialog !== null} onOpenChange={(o) => !o && setDialog(null)}>
         <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>{dialog === 'upgrade' ? 'Upgrade to Pro' : dialog === 'downgrade' ? 'Downgrade to Free' : 'Cancel subscription'}</DialogTitle></DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            {dialog === 'upgrade' ? 'You\'ll be charged the Pro rate at your next renewal.' : dialog === 'downgrade' ? `You\'ll keep Pro until ${subscription.renewal}, then move to Free.` : 'Your plan will end at the next renewal. You can resume anytime.'}
+          <DialogHeader>
+            <DialogTitle>{dialog === 'downgrade' ? 'Downgrade to Free' : 'Cancel subscription'}</DialogTitle>
+          </DialogHeader>
+          <p className="type-body-small text-ink-secondary">
+            {dialog === 'downgrade'
+              ? `You'll keep Pro until ${subscription.renewal}, then move to Free.`
+              : 'Your plan will end at the next renewal. You can resume anytime.'}
           </p>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialog(null)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDialog(null)}>Keep Pro</Button>
             <Button variant={dialog === 'cancel' ? 'destructive' : 'default'} onClick={confirm}>Confirm</Button>
           </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Payment method dialog */}
-      <Dialog open={payOpen} onOpenChange={(o) => !o && setPayOpen(false)}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>{isPro ? 'Update payment method' : 'Add a card'}</DialogTitle></DialogHeader>
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="card">Card number</Label>
-              <Input id="card" value={cardNum} onChange={(e) => setCardNum(e.target.value.replace(/\D/g, '').slice(0, 16))} placeholder="4242 4242 4242 4242" />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="exp">Expiry</Label>
-                <Input id="exp" placeholder="12/28" />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="cvc">CVC</Label>
-                <Input id="cvc" placeholder="123" />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setPayOpen(false)}>Cancel</Button>
-              <Button onClick={() => {
-                setPaySaving(true);
-                setTimeout(() => {
-                  const last4 = cardNum.slice(-4) || '4242';
-                  updatePayment('Visa', last4);
-                  setPaySaving(false);
-                  setPayOpen(false);
-                  setCardNum('');
-                }, 1000);
-              }} disabled={paySaving || cardNum.length < 12}>{paySaving ? 'Saving…' : 'Save card'}</Button>
-            </DialogFooter>
-          </div>
         </DialogContent>
       </Dialog>
     </div>
@@ -182,8 +192,13 @@ function UsageBar({ label, value, limit }) {
   const pct = limit === 'Unlimited' ? 8 : 50;
   return (
     <div>
-      <div className="flex justify-between text-sm"><span className="text-muted-foreground">{label}</span><span>{value} / {limit}</span></div>
-      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} /></div>
+      <div className="flex justify-between text-sm">
+        <span className="text-ink-secondary">{label}</span>
+        <span className="text-ink-primary">{value} / {limit}</span>
+      </div>
+      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+        <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
+      </div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Logo from '@/components/brand/Logo';
 
 /**
  * AuthLayout — quiet, editorial, trustworthy.
@@ -11,8 +12,8 @@ export default function AuthLayout({ icon: Icon, title, subtitle, footer, childr
     <div className="flex min-h-dvh flex-col items-center justify-center bg-surface-canvas px-4 py-12">
       <div className="w-full max-w-sm">
         {/* Wordmark */}
-        <Link to="/" className="mb-10 block text-center">
-          <span className="font-display text-2xl tracking-tight text-ink-primary">Yueora</span>
+        <Link to="/" aria-label="Yueora home" className="mb-10 flex justify-center">
+          <Logo variant="full" size="lg" />
         </Link>
 
         {/* Heading */}

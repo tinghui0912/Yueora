@@ -9,6 +9,8 @@ import ProgressVisual from '@/components/visuals/ProgressVisual';
 import SharingVisual from '@/components/visuals/SharingVisual';
 import PerformanceMemoryVisual from '@/components/visuals/PerformanceMemoryVisual';
 import MockScanPage from '@/components/visuals/MockScanPage';
+import { usePrototypeStore } from '@/stores/prototypeStore';
+import { formatPrice } from '@/lib/commercial';
 
 const flow = [
   { icon: Upload, title: 'Bring in music', body: 'Upload a PDF, photos, or MusicXML — the music you actually want to play.', visual: 'scan' },
@@ -27,6 +29,7 @@ const faqs = [
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
+  const plans = usePrototypeStore((s) => s.plans);
   const primary = isAuthenticated ? '/library' : '/register';
 
   return (
@@ -206,12 +209,12 @@ export default function Landing() {
             <div className="rounded-container border border-line-subtle bg-surface-canvas p-5">
               <p className="font-display text-lg font-medium text-ink-primary">Free</p>
               <p className="mt-1 text-sm text-ink-secondary">A small library to get started.</p>
-              <p className="mt-3 font-display text-2xl text-ink-primary">$0</p>
+              <p className="mt-3 font-display text-2xl text-ink-primary">{formatPrice(plans.free.priceMonthly)}</p>
             </div>
             <div className="rounded-container border-2 border-primary bg-surface-canvas p-5">
               <p className="font-display text-lg font-medium text-ink-primary">Pro</p>
               <p className="mt-1 text-sm text-ink-secondary">Unlimited scores, analytics &amp; export.</p>
-              <p className="mt-3 font-display text-2xl text-ink-primary">$6<span className="text-base text-ink-tertiary">/mo</span></p>
+              <p className="mt-3 font-display text-2xl text-ink-primary">{formatPrice(plans.pro.priceMonthly)}<span className="text-base text-ink-tertiary">/mo</span></p>
             </div>
           </div>
           <Link to="/pricing" className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">

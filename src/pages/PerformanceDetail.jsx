@@ -133,11 +133,9 @@ export default function PerformanceDetail() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {performance.mediaType === 'video' && (
-            <Button variant="outline" onClick={() => setVideoOpen(true)}>
-              <Wand2 className="mr-1.5 h-4 w-4" /> Make share video
-            </Button>
-          )}
+          <Button variant="outline" onClick={() => setVideoOpen(true)}>
+            <Wand2 className="mr-1.5 h-4 w-4" /> Make share video
+          </Button>
           <Button variant="outline" onClick={download}>
             <Download className="mr-1.5 h-4 w-4" /> Download recording
           </Button>

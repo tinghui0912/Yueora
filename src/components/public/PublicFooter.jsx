@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import Logo from '@/components/brand/Logo';
 
 /**
  * PublicFooter — shared marketing/help/legal footer.
@@ -8,7 +9,10 @@ export default function PublicFooter() {
   return (
     <footer className="shrink-0 border-t border-line-subtle">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-6 text-sm text-ink-tertiary md:flex-row md:px-8">
-        <span>© 2026 Yueora</span>
+        <span className="flex items-center gap-2">
+          <Logo variant="mark" size="sm" className="text-ink-tertiary" label="Yueora" />
+          © 2026 Yueora
+        </span>
         <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2">
           <Link to="/about" className="hover:text-ink-primary">About</Link>
           <Link to="/pricing" className="hover:text-ink-primary">Pricing</Link>

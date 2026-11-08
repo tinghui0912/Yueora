@@ -241,10 +241,12 @@ export const currentPlan = {
   usage: { scores: 8, scoreLimit: 'Unlimited', imports: 14, importLimit: 'Unlimited', storage: '1.2 GB', storageLimit: '10 GB' },
 };
 
+// Sample records only. Every entry is demo data: no real payment was ever taken
+// and no invoice file exists for any of them.
 export const billingHistory = [
-  { id: 'b1', date: 'Aug 15, 2026', amount: '$6.00', plan: 'Pro monthly', invoice: 'INV-2026-08' },
-  { id: 'b2', date: 'Jul 15, 2026', amount: '$6.00', plan: 'Pro monthly', invoice: 'INV-2026-07' },
-  { id: 'b3', date: 'Jun 15, 2026', amount: '$6.00', plan: 'Pro monthly', invoice: 'INV-2026-06' },
+  { id: 'b1', date: 'Aug 15, 2026', amount: '$6.00', plan: 'Pro monthly', invoice: 'DEMO-2026-08', demo: true },
+  { id: 'b2', date: 'Jul 15, 2026', amount: '$6.00', plan: 'Pro monthly', invoice: 'DEMO-2026-07', demo: true },
+  { id: 'b3', date: 'Jun 15, 2026', amount: '$6.00', plan: 'Pro monthly', invoice: 'DEMO-2026-06', demo: true },
 ];
 
 // ---------- Help articles ----------
@@ -280,7 +282,7 @@ export const helpArticles = [
   { slug: 'managing-performance-access', category: 'Performances', title: 'Managing performance access', updated: 'Nov 7, 2026', excerpt: 'See who can watch, change what they can do, or revoke access.',
     body: ['The sharing panel on a performance lists everyone who can currently watch it. Choosing Private again removes everyone at once.', 'Watching and commenting are separate grants. Someone can be allowed to watch without being allowed to comment, and you can grant commenting per person or turn comments off for everyone.', 'Removing someone takes effect immediately. Their access is not restored if you later share the performance with somebody else.'], related: ['sharing-a-performance', 'performance-comments'] },
   { slug: 'composite-share-video', category: 'Performances', title: 'Making a share video', updated: 'Nov 7, 2026', excerpt: 'Build a video of your recording with the score beside it.',
-    body: ['From a saved performance, choose Make share video. Yueora builds the video on your device from the saved original recording and the score it belongs to.', 'The score shown is the same notation you see in the app, and it moves with the recording, following the measure changes recorded during the session. Individual notes are not tracked, so the score follows the music measure by measure rather than note by note.', 'You can pick a landscape or portrait format and either a side-by-side or an overlay layout, preview the result, and download it. Building a video takes roughly as long as the recording itself.'], related: ['why-share-videos-stay-local', 'saving-a-performance'] },
+    body: ['From a saved performance, choose Make share video. Yueora builds the video on your device from the saved original recording and the score it belongs to.', 'The score shown is the same notation you see in the app, and it moves with the recording, following the measure changes recorded during the session. Individual notes are not tracked, so the score follows the music measure by measure rather than note by note.', 'Both audio and video recordings can become a share video. With a video recording you can pick a landscape or portrait format and either a side-by-side or an overlay layout; with an audio recording the score becomes the picture.', 'Preview the result and download it. Building a video takes roughly as long as the recording itself, and closing the window stops a build in progress.'], related: ['why-share-videos-stay-local', 'saving-a-performance'] },
   { slug: 'why-share-videos-stay-local', category: 'Performances', title: 'Why share videos stay on your device', updated: 'Nov 7, 2026', excerpt: 'The share video is an export, not a second copy in your library.',
     body: ['A share video is something you make to send to someone, so it is never uploaded to Yueora. It is generated in your browser, previewed there, and downloaded to your device.', 'It does not appear in Performances, is not stored as a media file, does not use your storage allowance, and does not create a Yueora link. The original recording remains the only asset Yueora keeps.', 'If you want another video later, or in a different format, generate it again from the saved original recording and its score.'], related: ['composite-share-video', 'downloading-a-recording'] },
   { slug: 'performance-comments', category: 'Performances', title: 'Comments and replies', updated: 'Nov 7, 2026', excerpt: 'A short conversation attached to one performance.',
@@ -299,10 +301,10 @@ export const helpArticles = [
     body: ['An invitation is sent to a specific email address. To accept, sign in with that account.', 'If you’re signed in with a different email, you’ll be asked to switch accounts. You can also decline an invitation.'], related: ['sharing-basics', 'shared-score-access'] },
   { slug: 'shared-score-access', category: 'Sharing', title: 'Opening a shared score link', updated: 'Aug 20, 2026', excerpt: 'Public links let people view, and sometimes practice or download.',
     body: ['A shared score link opens a public view of the score. Depending on permissions, you may be able to practice or download.', 'To save it to your own library, sign in or create an account. If a link has expired or been revoked, you’ll see a clear message.'], related: ['sharing-basics'] },
-  { slug: 'change-plan', category: 'Account & billing', title: 'Change your plan', updated: 'Sep 1, 2026', excerpt: 'Upgrade, downgrade, or cancel from Settings → Plan & billing.',
-    body: ['Free includes a small library and monthly imports. Pro removes those limits and adds analytics, editing sharing, and export.', 'You can change or cancel your plan anytime. Changes take effect at your next renewal.'], related: ['export-data', 'billing-history'] },
-  { slug: 'billing-history', category: 'Account & billing', title: 'Billing history and invoices', updated: 'Sep 1, 2026', excerpt: 'View past payments and download invoices.',
-    body: ['Your billing history lists each payment with its invoice number. You can download any invoice for your records.'], related: ['change-plan'] },
+  { slug: 'change-plan', category: 'Account & billing', title: 'Change your plan', updated: 'Nov 8, 2026', excerpt: 'Upgrade from pricing, and downgrade, cancel, or resume in Plan & billing.',
+    body: ['Free includes a small library and monthly imports. Pro removes those limits and adds practice insights, editing sharing, and export.', 'Upgrading opens a checkout page. Checkout is part of this prototype: it demonstrates the purchase journey and does not process a payment or collect card details. Your plan changes only after you confirm.', 'Downgrading, cancelling, or resuming happens in Plan & billing. A cancellation keeps Pro active until the end of the period you have already paid for, and you can resume before then.'], related: ['export-data', 'billing-history'] },
+  { slug: 'billing-history', category: 'Account & billing', title: 'Billing history and invoices', updated: 'Nov 8, 2026', excerpt: 'Demo records only — this prototype generates no invoices.',
+    body: ['Billing history in this prototype shows demo records, each marked Demo. They exist to show what the screen would contain; no payment was taken and no real transaction exists.', 'No invoice files are generated, so records cannot be downloaded. A record marked demo is not a receipt and not a tax document.'], related: ['change-plan'] },
   { slug: 'export-data', category: 'Privacy', title: 'Export or delete your data', updated: 'Aug 22, 2026', excerpt: 'Download a copy of your data, or permanently delete your account.',
     body: ['In Settings → Data & Privacy you can export everything Yueora holds for you, or delete your account entirely.', 'Account deletion is permanent and can’t be undone. You’ll be asked to confirm by typing a phrase.'], related: ['change-plan'] },
 ];

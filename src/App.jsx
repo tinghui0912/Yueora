@@ -55,6 +55,12 @@ import PracticeSession from '@/pages/PracticeSession';
 import PracticeSummary from '@/pages/PracticeSummary';
 import RecognitionReview from '@/pages/RecognitionReview';
 
+// Commercial (focused shell)
+import CheckoutShell from '@/components/commercial/CheckoutShell';
+import Checkout from '@/pages/Checkout';
+import CheckoutSuccess from '@/pages/CheckoutSuccess';
+import CheckoutCancelled from '@/pages/CheckoutCancelled';
+
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
@@ -126,6 +132,13 @@ const AuthenticatedApp = () => {
         <Route path="/score/:scoreId/practice" element={<PracticeSession />} />
         <Route path="/review/:importId" element={<RecognitionReview />} />
         <Route path="/practice/:activityId/summary" element={<PracticeSummary />} />
+
+        {/* Checkout — focused shell, no app chrome */}
+        <Route element={<CheckoutShell />}>
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/checkout/success" element={<CheckoutSuccess />} />
+          <Route path="/checkout/cancelled" element={<CheckoutCancelled />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<PageNotFound />} />

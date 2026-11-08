@@ -2,7 +2,7 @@
  * SharingVisual — Landing sharing section visual.
  * Mock of the sharing dialog: People with access + General access.
  */
-import { Globe, Link2, Lock } from 'lucide-react';
+import { Globe, Link2 } from 'lucide-react';
 
 export default function SharingVisual() {
   return (

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
+import Logo from '@/components/brand/Logo';
 
 /**
  * ExternalHeader — compact header for shared score / invite pages.
@@ -12,7 +13,9 @@ export default function ExternalHeader({ sharedBy }) {
     <header className="shrink-0 border-b border-line-subtle">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-5 md:px-8">
         <div className="flex items-center gap-3">
-          <Link to="/" className="font-display text-xl tracking-tight text-ink-primary">Yueora</Link>
+          <Link to="/" aria-label="Yueora home" className="inline-flex">
+            <Logo variant="compact" size="md" />
+          </Link>
           {sharedBy && (
             <span className="hidden text-sm text-ink-tertiary sm:inline">Shared by {sharedBy}</span>
           )}

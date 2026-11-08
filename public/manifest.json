@@ -1,0 +1,24 @@
+{
+  "name": "Yueora — Play what you love",
+  "short_name": "Yueora",
+  "description": "A personal sheet music library and a quiet place to practise.",
+  "start_url": "/library",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F9F8F6",
+  "theme_color": "#2C5E43",
+  "icons": [
+    {
+      "src": "/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
