@@ -7,7 +7,7 @@ import ExternalFooter from './ExternalFooter';
  * Compact header + footer, no marketing navigation.
  * Flex column with sticky footer behavior (min-h-dvh).
  */
-export default function ExternalShell({ sharedBy, children }) {
+export default function ExternalShell({ sharedBy = undefined, children = null }) {
   return (
     <div className="flex min-h-dvh flex-col bg-surface-canvas">
       <ExternalHeader sharedBy={sharedBy} />

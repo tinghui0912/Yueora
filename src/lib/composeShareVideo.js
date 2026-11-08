@@ -37,7 +37,7 @@ export async function composeShareVideo({
   mediaType = 'video',
   format = 'landscape',
   layout = 'side',
-  meta = {},
+  meta = /** @type {Record<string, any>} */ ({}),
   notes = [],
   startMeasure = 1,
   endMeasure,
@@ -184,7 +184,7 @@ export async function composeShareVideo({
     // The recording's own audio track is routed straight into the export; the
     // graph has no speaker output, so building a video stays silent.
     try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const AudioCtx = window.AudioContext || /** @type {any} */ (window).webkitAudioContext;
       if (AudioCtx) {
         audioContext = new AudioCtx();
         const source = audioContext.createMediaElementSource(video);

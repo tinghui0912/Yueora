@@ -135,7 +135,11 @@ export default function PracticeSetup() {
     }
     try {
       const access = await navigator.requestMIDIAccess();
-      const inputs = Array.from(access.inputs.values());
+      /** @type {any[]} */
+      const inputs = [];
+      if (access.inputs && typeof access.inputs.forEach === 'function') {
+        access.inputs.forEach((input) => inputs.push(input));
+      }
       setMidiStatus(inputs.length > 0 ? 'connected' : 'disconnected');
       if (inputs.length > 0) setPreflight({ midiConnected: true });
     } catch {

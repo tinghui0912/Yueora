@@ -41,7 +41,7 @@ const SIZES = {
  * 'mark' (the symbol alone). size: sm | md | lg. tone: default | inverse —
  * inverse is for dark backgrounds.
  */
-export default function Logo({ variant = 'full', size = 'md', tone = 'default', className = '', label }) {
+export default function Logo({ variant = 'full', size = 'md', tone = 'default', className = '', label = undefined }) {
   const s = SIZES[size] || SIZES.md;
   const color = tone === 'inverse' ? 'text-primary-foreground' : 'text-brand';
   const wordColor = tone === 'inverse' ? 'text-primary-foreground' : 'text-ink-primary';

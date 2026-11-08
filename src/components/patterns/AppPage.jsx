@@ -23,8 +23,8 @@ export function AppPage({
   size = 'standard',
   padding = 'normal',
   as: Component = 'main',
-  className,
-  children,
+  className = '',
+  children = null,
   ...props
 }) {
   const resolvedWidth = sizeMap[size] || sizeMap.standard;

@@ -29,9 +29,16 @@ const badgeVariants = cva(
   }
 )
 
+/**
+ * @param {{
+ *   className?: string;
+ *   variant?: 'default' | 'destructive' | 'secondary' | 'danger' | 'outline' | 'neutral' | 'warning' | 'success' | 'brand';
+ *   [key: string]: any;
+ * }} props
+ */
 function Badge({
-  className,
-  variant,
+  className = '',
+  variant = 'default',
   ...props
 }) {
   return (<div className={cn(badgeVariants({ variant }), className)} {...props} />);

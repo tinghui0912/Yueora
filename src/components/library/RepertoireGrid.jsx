@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Accounts for 220px desktop sidebar + 200px subrail to prevent score cards
  * from becoming narrow or distorted across 768px, 1024px, 1280px, and 1440px viewports.
  */
-export function RepertoireGrid({ className, children, ...props }) {
+export function RepertoireGrid({ className = '', children = null, ...props }) {
   return (
     <div
       className={cn(

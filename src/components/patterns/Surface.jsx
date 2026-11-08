@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const surfaceVariants = cva(
-  'rounded-container transition-all duration-base',
+  'rounded-container transition-[box-shadow,transform,background-color,border-color] duration-base',
   {
     variants: {
       tone: {
@@ -45,17 +45,30 @@ const surfaceVariants = cva(
   }
 );
 
+/**
+ * @typedef {React.HTMLAttributes<HTMLDivElement> & {
+ *   tone?: 'panel' | 'paper' | 'paper-warm' | 'canvas' | 'raised';
+ *   elevation?: 'none' | 'paper' | 'raised' | 'overlay';
+ *   border?: boolean | 'subtle' | 'none';
+ *   padding?: 'none' | 'sm' | 'md' | 'lg';
+ *   interactive?: boolean;
+ *   asChild?: boolean;
+ *   children?: React.ReactNode;
+ * }} SurfaceProps
+ */
+
+/** @type {React.ForwardRefExoticComponent<SurfaceProps & React.RefAttributes<HTMLDivElement>>} */
 export const Surface = React.forwardRef(
   (
     {
-      className,
+      className = '',
       tone = 'panel',
       elevation = 'none',
       border = true,
       padding = 'none',
       interactive = false,
       asChild = false,
-      children,
+      children = null,
       ...props
     },
     ref

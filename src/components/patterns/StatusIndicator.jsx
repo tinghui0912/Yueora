@@ -22,7 +22,7 @@ const toneText = {
 /**
  * StatusIndicator — dot + label for import status, save state, live input, MIDI, sharing, invitation.
  */
-export default function StatusIndicator({ tone = 'neutral', label, className, pulse = false }) {
+export default function StatusIndicator({ tone = 'neutral', label, className = '', pulse = false }) {
   const dot = toneDot[tone] || toneDot.neutral;
   const text = toneText[tone] || toneText.neutral;
   return (

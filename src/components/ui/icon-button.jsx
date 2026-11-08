@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const iconButtonVariants = cva(
-  'inline-flex items-center justify-center shrink-0 rounded-control transition-all duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-40 select-none',
+  'inline-flex items-center justify-center shrink-0 rounded-control transition-[color,background-color,border-color,box-shadow,transform] duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-canvas disabled:pointer-events-none disabled:opacity-40 select-none',
   {
     variants: {
       tone: {
@@ -36,17 +36,30 @@ const iconButtonVariants = cva(
   }
 );
 
+/**
+ * @typedef {React.ButtonHTMLAttributes<HTMLButtonElement> & {
+ *   icon?: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }> | any;
+ *   label: string;
+ *   tone?: 'quiet' | 'outline' | 'surface' | 'primary' | 'danger';
+ *   size?: 'xs' | 'sm' | 'md' | 'lg';
+ *   active?: boolean;
+ *   asChild?: boolean;
+ *   children?: React.ReactNode;
+ * }} IconButtonProps
+ */
+
+/** @type {React.ForwardRefExoticComponent<IconButtonProps & React.RefAttributes<HTMLButtonElement>>} */
 const IconButton = React.forwardRef(
   (
     {
-      className,
+      className = '',
       icon: Icon,
       label,
       tone = 'quiet',
       size = 'md',
       active = false,
       asChild = false,
-      children,
+      children = null,
       ...props
     },
     ref

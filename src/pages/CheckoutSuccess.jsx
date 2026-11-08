@@ -70,7 +70,7 @@ export default function CheckoutSuccess() {
   );
 }
 
-function Row({ label, value, mono }) {
+function Row({ label, value, mono = false }) {
   return (
     <div className="flex items-baseline justify-between gap-4 py-3">
       <dt className="text-ink-secondary">{label}</dt>

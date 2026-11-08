@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
  * BackLink — Reusable back navigation primitive.
  * Consistently owns arrow icon sizing, typography, quiet motion, and focus ring.
  */
-export function BackLink({ to = '/library', label = 'Back', className, ...props }) {
+export function BackLink({ to = '/library', label = 'Back', className = '', ...props }) {
   return (
     <Link
       to={to}

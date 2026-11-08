@@ -155,7 +155,7 @@ export default function AddScore() {
                 role="alert"
                 className="flex items-start gap-2.5 rounded-container border border-danger/30 bg-danger/10 p-4"
               >
-                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
+                <AlertCircle className="mt-0.5 icon-sm shrink-0 text-danger" />
                 <div className="flex-1">
                   <p className="type-body-small font-medium text-danger">{errorTypes[fileError].msg}</p>
                   <button
@@ -239,7 +239,7 @@ export default function AddScore() {
 
             <div>
               <Button intent="quiet" size="sm" onClick={addFile} className="gap-1.5 text-brand">
-                <Plus className="h-4 w-4" />
+                <Plus className="icon-sm" />
                 <span>Add another page</span>
               </Button>
             </div>
@@ -418,7 +418,7 @@ export default function AddScore() {
           <Surface tone="panel" elevation="paper" padding="lg" className="space-y-5 text-center sm:text-left">
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand">
-                <Check className="h-5 w-5" />
+                <Check className="icon-lg" />
               </span>
               <div>
                 <h2 className="type-section-title text-ink-primary">Recognition has started</h2>
@@ -439,7 +439,7 @@ export default function AddScore() {
             </div>
 
             <p className="type-body-small text-ink-secondary">
-              Your score is dwelling into your personal collection. We’ll notify you when it’s ready for the practice stand.
+              Your score is being added to your repertoire. We’ll notify you when it’s ready for the practice stand.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">

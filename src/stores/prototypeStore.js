@@ -1007,7 +1007,9 @@ export const usePrototypeStore = create(
       version: 8,
       migrate: (persistedState, version) => {
         // Merge any missing keys from defaults
-        const merged = { ...persistedState };
+        const raw = (persistedState && typeof persistedState === 'object') ? persistedState : {};
+        /** @type {Record<string, any>} */
+        const merged = { ...raw };
         if (!Array.isArray(merged.performanceComments)) merged.performanceComments = [];
         // Independent permissions and the performance permission model arrived
         // together; older saved state gets explicit defaults instead of the

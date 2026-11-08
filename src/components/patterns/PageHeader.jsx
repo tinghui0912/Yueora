@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Used by Library, Imports, Notifications, Practice History, Practice Progress, Settings.
  * Not for Marketing pages.
  */
-export function PageHeader({ title, description, primaryAction, secondaryAction, className }) {
+export function PageHeader({ title, description = undefined, primaryAction = null, secondaryAction = null, className = '' }) {
   return (
     <div className={cn('flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between', className)}>
       <div className="min-w-0">

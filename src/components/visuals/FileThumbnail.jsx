@@ -4,10 +4,14 @@
  */
 import MockScanPage from './MockScanPage';
 
+/**
+ * @param {{ seed?: string | number, className?: string }} props
+ */
 export default function FileThumbnail({ seed = 'page-1', className = '' }) {
+  const seedStr = String(seed);
   return (
     <div className={`shrink-0 overflow-hidden rounded border border-line-subtle bg-surface-panel shadow-sm ${className}`}>
-      <MockScanPage seed={seed} className="h-full w-full" />
+      <MockScanPage seed={seedStr} className="h-full w-full" />
     </div>
   );
 }

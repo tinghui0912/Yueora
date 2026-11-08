@@ -154,8 +154,8 @@ export default function Editor() {
   useEffect(() => () => clearTimeout(saveTimer.current), []);
 
   const issueIdx = activeIssue ? issues.findIndex((i) => i.id === activeIssue.id) : -1;
-  const goPrevIssue = () => { if (issueIdx > 0) { const next = issues[issueIdx - 1]; const url = new URL(window.location); url.searchParams.set('issue', next.id); window.history.replaceState(null, '', url.toString()); window.dispatchEvent(new PopStateEvent('popstate')); } };
-  const goNextIssue = () => { if (issueIdx >= 0 && issueIdx < issues.length - 1) { const next = issues[issueIdx + 1]; const url = new URL(window.location); url.searchParams.set('issue', next.id); window.history.replaceState(null, '', url.toString()); window.dispatchEvent(new PopStateEvent('popstate')); } };
+  const goPrevIssue = () => { if (issueIdx > 0) { const next = issues[issueIdx - 1]; const url = new URL(window.location.href); url.searchParams.set('issue', next.id); window.history.replaceState(null, '', url.toString()); window.dispatchEvent(new PopStateEvent('popstate')); } };
+  const goNextIssue = () => { if (issueIdx >= 0 && issueIdx < issues.length - 1) { const next = issues[issueIdx + 1]; const url = new URL(window.location.href); url.searchParams.set('issue', next.id); window.history.replaceState(null, '', url.toString()); window.dispatchEvent(new PopStateEvent('popstate')); } };
   const markIssueFixed = () => { if (activeIssue) resolveIssue(importId, activeIssue.id); };
 
   if (!score) {
@@ -195,23 +195,39 @@ export default function Editor() {
 
       {/* Recovered unsaved changes banner */}
       {recovered && (
-        <div className="flex items-center justify-between border-b border-gold/30 bg-gold/5 px-4 py-2 text-sm">
-          <span className="flex items-center gap-2 text-gold"><Check className="h-4 w-4" /> Recovered unsaved changes from your recognition review.</span>
-          <button onClick={() => setRecovered(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+        <div className="flex items-center justify-between border-b border-gold/30 bg-gold/5 px-4 py-2 type-body-small">
+          <span className="flex items-center gap-2 text-gold"><Check className="icon-sm" aria-hidden="true" /> Recovered unsaved changes from your recognition review.</span>
+          <button type="button" onClick={() => setRecovered(false)} className="text-ink-secondary hover:text-ink-primary transition-colors" aria-label="Dismiss banner"><X className="icon-sm" aria-hidden="true" /></button>
         </div>
       )}
 
       {/* Recognition issue nav bar */}
       {activeIssue && (
         <div className="flex items-center justify-between border-b border-line-subtle bg-gold/5 px-4 py-2">
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2 type-body-small">
             <span className="font-medium text-gold">Recognition issue {issueIdx + 1} of {issues.length}</span>
-            <span className="text-muted-foreground">· Measure {activeIssue.measure} · {activeIssue.type}</span>
+            <span className="text-ink-secondary">· Measure {activeIssue.measure} · {activeIssue.type}</span>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={goPrevIssue} disabled={issueIdx === 0} className="rounded border border-line-subtle p-1.5 hover:bg-accent disabled:opacity-30" aria-label="Previous issue"><ChevronLeft className="h-3.5 w-3.5" /></button>
-            <button onClick={goNextIssue} disabled={issueIdx >= issues.length - 1} className="rounded border border-line-subtle p-1.5 hover:bg-accent disabled:opacity-30" aria-label="Next issue"><ChevronRight className="h-3.5 w-3.5" /></button>
-            <Button size="sm" variant="outline" onClick={markIssueFixed}>{activeIssue.resolved ? 'Unmark' : 'Mark fixed'}</Button>
+            <button
+              type="button"
+              onClick={goPrevIssue}
+              disabled={issueIdx === 0}
+              className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-surface-paper hover:text-ink-primary disabled:opacity-30 transition-colors"
+              aria-label="Previous issue"
+            >
+              <ChevronLeft className="icon-xs" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={goNextIssue}
+              disabled={issueIdx >= issues.length - 1}
+              className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-surface-paper hover:text-ink-primary disabled:opacity-30 transition-colors"
+              aria-label="Next issue"
+            >
+              <ChevronRight className="icon-xs" aria-hidden="true" />
+            </button>
+            <Button size="sm" intent="secondary" onClick={markIssueFixed}>{activeIssue.resolved ? 'Unmark' : 'Mark fixed'}</Button>
           </div>
         </div>
       )}
@@ -304,8 +320,8 @@ export default function Editor() {
       {/* Mobile inspector trigger */}
       {firstSelected && (
         <button onClick={() => setMobileInspectorOpen(true)} className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 lg:hidden">
-          <span className="text-sm font-medium text-ink-primary">Edit note · {firstSelected.type === 'rest' ? 'Rest' : 'Note'} {firstSelected.measure + 1}</span>
-          <ChevronRight className="h-4 w-4 text-ink-secondary" />
+          <span className="text-sm font-medium text-ink-primary">Edit note · {/** @type {any} */ (firstSelected).type === 'rest' ? 'Rest' : 'Note'} {firstSelected.measure + 1}</span>
+          <ChevronRight className="icon-sm text-ink-secondary" />
         </button>
       )}
 

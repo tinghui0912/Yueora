@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
  * SectionHeader — unified section title with optional description and action.
  * Used by Settings, Score Detail, Practice Progress, Sharing.
  */
-export function SectionHeader({ title, description, action, className }) {
+export function SectionHeader({ title, description = undefined, action = null, className = '' }) {
   return (
     <div className={cn('flex items-start justify-between gap-4', className)}>
       <div className="min-w-0">

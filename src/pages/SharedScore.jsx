@@ -87,10 +87,16 @@ export default function SharedScore() {
       <div className="mx-auto max-w-4xl px-5 py-8 md:px-8">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="type-page-title leading-tight">{score.title}</h1>
-            <p className="text-muted-foreground">{score.composer} · {score.instrument}</p>
+            <h1 className="type-page-title text-ink-primary leading-tight">{score.title}</h1>
+            <p className="type-body-small text-ink-secondary mt-1">{score.composer} · {score.instrument}</p>
           </div>
-          <button onClick={() => setReportOpen(true)} className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm text-muted-foreground hover:bg-accent"><Flag className="h-4 w-4" /> Report</button>
+          <button
+            type="button"
+            onClick={() => setReportOpen(true)}
+            className="flex items-center gap-1.5 rounded-control border border-line-subtle bg-surface-panel px-3 py-1.5 type-body-small text-ink-secondary hover:bg-surface-paper hover:text-ink-primary shadow-xs transition-colors"
+          >
+            <Flag className="icon-sm" aria-hidden="true" /> Report
+          </button>
         </div>
 
         <div className="mt-6 rounded-container border border-line-subtle bg-surface-panel p-4">
@@ -98,9 +104,30 @@ export default function SharedScore() {
           <div className="mt-3 flex items-center justify-between border-t border-line-subtle pt-3 type-body-small text-ink-secondary">
             <span>Page {page} of {score.pages}</span>
             <div className="flex items-center gap-2">
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Previous"><ChevronLeft className="h-4 w-4" /></button>
-              <button onClick={() => setPlaying((p) => !p)} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Play">{playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}</button>
-              <button onClick={() => setPage((p) => Math.min(score.pages, p + 1))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Next"><ChevronRight className="h-4 w-4" /></button>
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-surface-paper hover:text-ink-primary transition-colors"
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="icon-sm" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setPlaying((p) => !p)}
+                className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-surface-paper hover:text-ink-primary transition-colors"
+                aria-label={playing ? "Pause" : "Play"}
+              >
+                {playing ? <Pause className="icon-sm" aria-hidden="true" /> : <Play className="icon-sm" aria-hidden="true" />}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.min(score.pages, p + 1))}
+                className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-surface-paper hover:text-ink-primary transition-colors"
+                aria-label="Next page"
+              >
+                <ChevronRight className="icon-sm" aria-hidden="true" />
+              </button>
             </div>
           </div>
         </div>
@@ -108,64 +135,100 @@ export default function SharedScore() {
         <div className="mt-6 flex flex-wrap gap-2">
           {canPractice ? (
             isAuthenticated ? (
-              <Button onClick={() => navigate(`/score/${score.id}/setup`)} className="bg-primary text-primary-foreground"><Play className="mr-1.5 h-4 w-4" /> Practice</Button>
+              <Button intent="primary" onClick={() => navigate(`/score/${score.id}/setup`)}>
+                <Play className="mr-1.5 icon-sm" aria-hidden="true" /> Practice
+              </Button>
             ) : (
-              <Button onClick={() => navigate(`/login?returnTo=/s/${shareToken}`)} className="bg-primary text-primary-foreground"><Play className="mr-1.5 h-4 w-4" /> Sign in to practice</Button>
+              <Button intent="primary" onClick={() => navigate(`/login?returnTo=/s/${shareToken}`)}>
+                <Play className="mr-1.5 icon-sm" aria-hidden="true" /> Sign in to practice
+              </Button>
             )
           ) : (
-            <Button disabled className="bg-muted text-muted-foreground"><Lock className="mr-1.5 h-4 w-4" /> Practice unavailable</Button>
+            <Button intent="subtle" disabled>
+              <Lock className="mr-1.5 icon-sm" aria-hidden="true" /> Practice unavailable
+            </Button>
           )}
           {canDownload ? (
-            <Button variant="outline" onClick={() => toast({ title: 'Download started', description: `${score.title}.pdf` })}><Download className="mr-1.5 h-4 w-4" /> Download</Button>
+            <Button intent="secondary" onClick={() => toast({ title: 'Download started', description: `${score.title}.pdf` })}>
+              <Download className="mr-1.5 icon-sm" aria-hidden="true" /> Download
+            </Button>
           ) : (
-            <Button variant="outline" disabled><Lock className="mr-1.5 h-4 w-4" /> Download unavailable</Button>
+            <Button intent="secondary" disabled>
+              <Lock className="mr-1.5 icon-sm" aria-hidden="true" /> Download unavailable
+            </Button>
           )}
           {isAuthenticated ? (
             score.ownership === 'mine' ? (
-              <Button variant="outline" disabled><Check className="mr-1.5 h-4 w-4" /> In your library</Button>
+              <Button intent="secondary" disabled>
+                <Check className="mr-1.5 icon-sm" aria-hidden="true" /> In your library
+              </Button>
             ) : saved || score.ownership === 'saved' ? (
-              <Button variant="outline" disabled><Check className="mr-1.5 h-4 w-4" /> Saved to library</Button>
+              <Button intent="secondary" disabled>
+                <Check className="mr-1.5 icon-sm" aria-hidden="true" /> Saved to library
+              </Button>
             ) : (
-              <Button variant="outline" onClick={handleSave}><Bookmark className="mr-1.5 h-4 w-4" /> Save to library</Button>
+              <Button intent="secondary" onClick={handleSave}>
+                <Bookmark className="mr-1.5 icon-sm" aria-hidden="true" /> Save to library
+              </Button>
             )
           ) : (
-            <p className="self-center text-sm text-muted-foreground"><Link to={`/login?returnTo=/s/${shareToken}`} className="font-medium text-primary hover:underline">Log in</Link> to save this to your library.</p>
+            <p className="self-center type-body-small text-ink-secondary">
+              <Link to={`/login?returnTo=/s/${shareToken}`} className="font-medium text-brand hover:underline">Log in</Link> to save this to your library.
+            </p>
           )}
           {canEdit && isAuthenticated && (
-            <Button variant="outline" onClick={() => navigate(`/score/${score.id}/edit`)}><Pencil className="mr-1.5 h-4 w-4" /> Edit</Button>
+            <Button intent="secondary" onClick={() => navigate(`/score/${score.id}/edit`)}>
+              <Pencil className="mr-1.5 icon-sm" aria-hidden="true" /> Edit
+            </Button>
           )}
         </div>
       </div>
 
       <Dialog open={reportOpen} onOpenChange={setReportOpen}>
         <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Report this score</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="type-section-title text-ink-primary">Report this score</DialogTitle></DialogHeader>
           {reportSubmitted ? (
             <div className="flex flex-col items-center gap-2 py-4 text-center">
-              <Check className="h-8 w-8 text-primary" />
-              <p className="font-medium">Report received</p>
-              <p className="text-sm text-muted-foreground">Thank you. We will review this and take action if needed.</p>
+              <Check className="icon-xl text-brand" aria-hidden="true" />
+              <p className="type-subsection text-ink-primary font-medium">Report received</p>
+              <p className="type-body-small text-ink-secondary">Thank you. We will review this and take action if needed.</p>
             </div>
           ) : (
             <div className="space-y-3">
               <div>
-                <p className="text-sm font-medium">Reason</p>
+                <p className="type-label text-ink-primary font-medium">Reason</p>
                 <div className="mt-2 space-y-1">
                   {['Copyright infringement', 'Inappropriate content', 'Privacy concern', 'Other'].map((r) => (
-                    <button key={r} onClick={() => setReportReason(r)} className={`flex w-full items-center rounded-md border px-3 py-2 text-left text-sm hover:bg-accent ${reportReason === r ? 'border-primary bg-accent/40 font-medium' : 'border-border'}`}>{r}</button>
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setReportReason(r)}
+                      className={`flex w-full items-center rounded-control border px-3 py-2 text-left type-body-small transition-colors ${
+                        reportReason === r
+                          ? 'border-brand bg-brand/10 text-brand font-medium'
+                          : 'border-surface-paper-edge bg-surface-panel hover:bg-surface-paper text-ink-primary'
+                      }`}
+                    >
+                      {r}
+                    </button>
                   ))}
                 </div>
               </div>
               <div>
-                <p className="text-sm font-medium">Details (optional)</p>
-                <Textarea value={reportDetails} onChange={(e) => setReportDetails(e.target.value)} placeholder="Add any additional context…" className="mt-1.5 min-h-[80px]" />
+                <p className="type-label text-ink-primary font-medium">Details (optional)</p>
+                <Textarea
+                  value={reportDetails}
+                  onChange={(e) => setReportDetails(e.target.value)}
+                  placeholder="Add any additional context…"
+                  className="mt-1.5 min-h-[80px]"
+                />
               </div>
             </div>
           )}
           {!reportSubmitted && (
             <DialogFooter>
-              <Button variant="outline" onClick={() => setReportOpen(false)}>Cancel</Button>
-              <Button onClick={submitReport} disabled={!reportReason}>Submit report</Button>
+              <Button intent="secondary" onClick={() => setReportOpen(false)}>Cancel</Button>
+              <Button intent="primary" onClick={submitReport} disabled={!reportReason}>Submit report</Button>
             </DialogFooter>
           )}
         </DialogContent>

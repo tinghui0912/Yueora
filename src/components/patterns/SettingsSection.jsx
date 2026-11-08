@@ -6,7 +6,7 @@ import SectionHeader from './SectionHeader';
  * Parent should wrap in <div className="divide-y divide-line-subtle">.
  * Use a plain bordered div only for: security workflows, billing plan, danger zone.
  */
-export default function SettingsSection({ title, desc, children, action }) {
+export default function SettingsSection({ title, desc = undefined, children = null, action = null }) {
   return (
     <section className="py-6 first:pt-0 last:pb-0">
       <SectionHeader title={title} description={desc} action={action} />

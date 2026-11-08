@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { signedUrlFor, slugify } from '@/lib/media';
+import { dayLabel } from '@/lib/practiceUtils';
 import PerformanceRow from '@/components/performances/PerformanceRow';
 import StateMessage from '@/components/patterns/StateMessage';
 import AppPage from '@/components/patterns/AppPage';

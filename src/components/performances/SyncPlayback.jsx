@@ -21,11 +21,11 @@ export default function SyncPlayback({
   scoreTitle,
   loading = false,
   error = null,
-  onRetry,
+  onRetry = undefined,
   startMeasure = 1,
-  endMeasure,
+  endMeasure = undefined,
   durationSeconds = 0,
-  timeline,
+  timeline = undefined,
 }) {
   const mediaRef = useRef(null);
   const [playing, setPlaying] = useState(false);

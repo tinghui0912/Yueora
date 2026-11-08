@@ -9,8 +9,8 @@ import { cn } from '@/lib/utils';
 export function SearchTrigger({
   label = 'Search',
   shortcut = '⌘K',
-  onClick,
-  className,
+  onClick = undefined,
+  className = '',
   ...props
 }) {
   return (
@@ -18,7 +18,7 @@ export function SearchTrigger({
       type="button"
       onClick={onClick}
       className={cn(
-        'group flex h-control-md min-h-control-md w-full sm:w-52 xl:w-56 2xl:w-60 items-center justify-between gap-2.5 rounded-control border border-surface-paper-edge bg-surface-paper/70 px-3 type-body-small text-ink-secondary transition-all duration-base hover:border-line-strong hover:bg-surface-paper hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 select-none shadow-xs',
+        'group flex h-control-md min-h-control-md w-full sm:w-52 xl:w-56 2xl:w-60 items-center justify-between gap-2.5 rounded-control border border-surface-paper-edge bg-surface-paper/70 px-3 type-body-small text-ink-secondary transition-[color,background-color,border-color,box-shadow] duration-base hover:border-line-strong hover:bg-surface-paper hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 select-none shadow-xs',
         className
       )}
       aria-label={`${label} or command (${shortcut})`}

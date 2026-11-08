@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-control transition-all duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-control transition-[color,background-color,border-color,box-shadow,transform] duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-canvas disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -51,7 +51,18 @@ const buttonVariants = cva(
   }
 )
 
-const Button = React.forwardRef(({ className, variant, intent, size, asChild = false, ...props }, ref) => {
+/**
+ * @typedef {React.ButtonHTMLAttributes<HTMLButtonElement> & {
+ *   variant?: 'primary' | 'secondary' | 'quiet' | 'danger' | 'transport' | 'subtle' | 'link' | 'default' | 'destructive' | 'outline' | 'ghost';
+ *   intent?: 'primary' | 'secondary' | 'quiet' | 'danger' | 'transport' | 'subtle' | 'link';
+ *   size?: 'xs' | 'sm' | 'md' | 'lg' | 'icon' | 'default';
+ *   asChild?: boolean;
+ *   children?: React.ReactNode;
+ * }} ButtonProps
+ */
+
+/** @type {React.ForwardRefExoticComponent<ButtonProps & React.RefAttributes<HTMLButtonElement>>} */
+const Button = React.forwardRef(({ className = '', variant, intent, size, asChild = false, children, ...props }, ref) => {
   const Comp = asChild ? Slot : "button"
   const resolvedVariant = intent || variant || "primary";
   const resolvedSize = size === "default" ? "md" : (size || "md");
@@ -59,7 +70,9 @@ const Button = React.forwardRef(({ className, variant, intent, size, asChild = f
     (<Comp
       className={cn(buttonVariants({ variant: resolvedVariant, size: resolvedSize, className }))}
       ref={ref}
-      {...props} />)
+      {...props}>
+      {children}
+    </Comp>)
   );
 })
 Button.displayName = "Button"

@@ -18,7 +18,21 @@ const NOTE_LETTERS = [
   ['G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A'],
 ];
 
-export default function ScoreCanvas({ notes, selectedIds, onSelect, onAddNote, onDelete, tool, zoom, activeMeasure, activeIssueMeasure, measureStart: measureStartProp, activeMeasureVariant = 'default', selectedMeasures, showNoteNames = false }) {
+export default function ScoreCanvas({
+  notes = [],
+  selectedIds = null,
+  onSelect = undefined,
+  onAddNote = undefined,
+  onDelete = undefined,
+  tool = 'select',
+  zoom = 1,
+  activeMeasure = null,
+  activeIssueMeasure = null,
+  measureStart: measureStartProp = undefined,
+  activeMeasureVariant = 'default',
+  selectedMeasures = undefined,
+  showNoteNames = false,
+}) {
   // Visible window: explicit measureStart wins; otherwise follow the focus measure
   const focusMeasure = activeIssueMeasure ?? activeMeasure;
   const measureStart = measureStartProp ?? (focusMeasure ? Math.max(1, Math.floor((focusMeasure - 1) / 4) * 4 + 1) : 1);

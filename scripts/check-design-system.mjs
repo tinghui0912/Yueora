@@ -3,6 +3,7 @@ import path from 'path';
 
 // 1. Verify CSS Foundations & Token Integrity
 const INDEX_CSS_PATH = path.resolve('src/index.css');
+
 const REQUIRED_TYPOGRAPHY = [
   'type-display',
   'type-experience-title',
@@ -17,12 +18,12 @@ const REQUIRED_TYPOGRAPHY = [
   'type-metric',
 ];
 
-const REQUIRED_CONTROL_VARS = [
-  '--control-height-xs',
-  '--control-height-sm',
-  '--control-height-md',
-  '--control-height-lg',
-  '--control-height-xl',
+const CANONICAL_CONTROL_TOKENS = [
+  { name: '--control-height-xs', expected: '1.75rem' },
+  { name: '--control-height-sm', expected: '2rem' },
+  { name: '--control-height-md', expected: '2.25rem' },
+  { name: '--control-height-lg', expected: '2.5rem' },
+  { name: '--control-height-xl', expected: '2.75rem' },
 ];
 
 const REQUIRED_CONTROL_UTILITIES = [
@@ -43,12 +44,12 @@ const REQUIRED_CONTROL_UTILITIES = [
   '.min-h-control-xl',
 ];
 
-const REQUIRED_ICON_VARS = [
-  '--icon-size-xs',
-  '--icon-size-sm',
-  '--icon-size-md',
-  '--icon-size-lg',
-  '--icon-size-xl',
+const CANONICAL_ICON_TOKENS = [
+  { name: '--icon-size-xs', expected: '0.875rem' },
+  { name: '--icon-size-sm', expected: '1rem' },
+  { name: '--icon-size-md', expected: '1.125rem' },
+  { name: '--icon-size-lg', expected: '1.25rem' },
+  { name: '--icon-size-xl', expected: '1.5rem' },
 ];
 
 const REQUIRED_ICON_UTILITIES = [
@@ -85,14 +86,23 @@ function verifyFoundations(issues = []) {
     }
   });
 
-  // Verify control variables exist
-  REQUIRED_CONTROL_VARS.forEach((v) => {
-    if (!css.includes(v)) {
+  // Verify canonical control variables & values
+  CANONICAL_CONTROL_TOKENS.forEach(({ name, expected }) => {
+    const regex = new RegExp(`${name}:\\s*([^;]+);`);
+    const match = css.match(regex);
+    if (!match) {
       issues.push({
         file: 'src/index.css',
         line: 1,
-        matched: v,
-        message: `Required control token ${v} is missing from :root in src/index.css.`,
+        matched: name,
+        message: `Required control token ${name} is missing from src/index.css.`,
+      });
+    } else if (!match[1].includes(expected)) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: match[0],
+        message: `Control token ${name} value '${match[1].trim()}' does not match canonical value '${expected}'.`,
       });
     }
   });
@@ -109,14 +119,23 @@ function verifyFoundations(issues = []) {
     }
   });
 
-  // Verify icon variables exist
-  REQUIRED_ICON_VARS.forEach((v) => {
-    if (!css.includes(v)) {
+  // Verify canonical icon variables & values
+  CANONICAL_ICON_TOKENS.forEach(({ name, expected }) => {
+    const regex = new RegExp(`${name}:\\s*([^;]+);`);
+    const match = css.match(regex);
+    if (!match) {
       issues.push({
         file: 'src/index.css',
         line: 1,
-        matched: v,
-        message: `Required icon token ${v} is missing from :root in src/index.css.`,
+        matched: name,
+        message: `Required icon token ${name} is missing from src/index.css.`,
+      });
+    } else if (!match[1].includes(expected)) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: match[0],
+        message: `Icon token ${name} value '${match[1].trim()}' does not match canonical value '${expected}'.`,
       });
     }
   });
@@ -133,19 +152,46 @@ function verifyFoundations(issues = []) {
     }
   });
 
+  // Verify primitive consumption
+  const primitiveChecks = [
+    { file: 'src/components/ui/button.jsx', required: ['h-control-md'] },
+    { file: 'src/components/ui/icon-button.jsx', required: ['icon-md'] },
+    { file: 'src/components/ui/input.jsx', required: ['h-control-lg'] },
+    { file: 'src/components/app-shell/SearchTrigger.jsx', required: ['h-control-md', 'icon-md'] },
+    { file: 'src/components/patterns/ChoiceCard.jsx', required: ['icon-md'] },
+  ];
+
+  primitiveChecks.forEach(({ file, required }) => {
+    const fullPath = path.resolve(file);
+    if (!fs.existsSync(fullPath)) {
+      issues.push({
+        file,
+        line: 1,
+        matched: 'Missing primitive',
+        message: `Primitive file ${file} does not exist.`,
+      });
+      return;
+    }
+    const content = fs.readFileSync(fullPath, 'utf8');
+    required.forEach((token) => {
+      if (!content.includes(token)) {
+        issues.push({
+          file,
+          line: 1,
+          matched: `Missing ${token}`,
+          message: `Primitive ${file} must consume design token ${token}.`,
+        });
+      }
+    });
+  });
+
   return issues;
 }
 
 // 2. Scan Directories for Token Consumption & Rules
 const SCAN_DIRECTORIES = [
   path.resolve('src/pages'),
-  path.resolve('src/components/ui'),
-  path.resolve('src/components/patterns'),
-  path.resolve('src/components/app-shell'),
-  path.resolve('src/components/library'),
-  path.resolve('src/components/practice'),
-  path.resolve('src/components/editor'),
-  path.resolve('src/components/performances'),
+  path.resolve('src/components'),
 ];
 
 // Exemptions for non-application marketing pages or musical notation canvas geometry
@@ -248,7 +294,7 @@ console.log('🔍 Running Yueora Design System Integrity Checks...\n');
 
 let totalViolations = [];
 
-// Phase 1: Verify Foundations
+// Phase 1: Verify Foundations & Primitives
 verifyFoundations(totalViolations);
 
 // Phase 2: Scan Codebase
@@ -259,9 +305,10 @@ for (const dir of SCAN_DIRECTORIES) {
 if (totalViolations.length === 0) {
   console.log('✅ Design System integrity checks passed.');
   console.log(`   - Verified ${REQUIRED_TYPOGRAPHY.length} semantic typography roles in src/index.css`);
-  console.log(`   - Verified ${REQUIRED_CONTROL_VARS.length} control scale tokens & ${REQUIRED_CONTROL_UTILITIES.length} utilities`);
-  console.log(`   - Verified ${REQUIRED_ICON_VARS.length} icon size tokens & ${REQUIRED_ICON_UTILITIES.length} utilities`);
-  console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} system directories\n`);
+  console.log(`   - Verified ${CANONICAL_CONTROL_TOKENS.length} canonical control tokens & ${REQUIRED_CONTROL_UTILITIES.length} utilities`);
+  console.log(`   - Verified ${CANONICAL_ICON_TOKENS.length} canonical icon tokens & ${REQUIRED_ICON_UTILITIES.length} utilities`);
+  console.log(`   - Verified primitive token consumption contracts (Button, IconButton, Input, SearchTrigger, ChoiceCard)`);
+  console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} root directories\n`);
   process.exit(0);
 } else {
   console.error(`⚠️ Found ${totalViolations.length} Design System violations:\n`);

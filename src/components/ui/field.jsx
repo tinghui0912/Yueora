@@ -3,14 +3,14 @@ import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
 
 export function Field({
-  id,
-  htmlFor,
-  label,
-  description,
-  error,
+  id = undefined,
+  htmlFor = undefined,
+  label = undefined,
+  description = undefined,
+  error = undefined,
   required = false,
-  className,
-  children,
+  className = '',
+  children = null,
 }) {
   const targetId = htmlFor || id;
 

@@ -60,15 +60,15 @@ export default function ResetPassword() {
       subtitle="Enter your new password below"
     >
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+        <div className="mb-4 p-3 rounded-control bg-danger/10 text-danger type-caption">
           {error}
         </div>
       )}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="password">New Password</Label>
+      <form onSubmit={handleSubmit} className="space-y-4 text-left">
+        <div className="space-y-1.5">
+          <Label htmlFor="password" className="type-label text-ink-primary">New Password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 icon-sm text-ink-tertiary" aria-hidden="true" />
             <Input
               id="password"
               type="password"
@@ -77,15 +77,15 @@ export default function ResetPassword() {
               placeholder="••••••••"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-9"
               required
             />
           </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="confirm">Confirm Password</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="confirm" className="type-label text-ink-primary">Confirm Password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 icon-sm text-ink-tertiary" aria-hidden="true" />
             <Input
               id="confirm"
               type="password"
@@ -93,15 +93,15 @@ export default function ResetPassword() {
               placeholder="••••••••"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-9"
               required
             />
           </div>
         </div>
-        <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
+        <Button type="submit" intent="primary" size="lg" className="w-full" disabled={loading}>
           {loading ? (
             <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className="icon-sm mr-2 animate-spin" />
               Resetting...
             </>
           ) : (

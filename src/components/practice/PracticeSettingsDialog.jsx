@@ -6,7 +6,7 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
 
-const ToggleRow = ({ label, hint, checked, onCheckedChange, disabled }) => (
+const ToggleRow = ({ label, hint = undefined, checked, onCheckedChange, disabled = false }) => (
   <div className="flex items-center justify-between gap-3 border-t border-line-subtle py-3">
     <div className="min-w-0">
       <p className="type-body-small text-ink-primary">{label}</p>

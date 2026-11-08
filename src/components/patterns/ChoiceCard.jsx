@@ -6,25 +6,28 @@ import { cn } from '@/lib/utils';
  * Owns border, selected highlight, icon sizing, typography, hover, and focus ring.
  */
 export function ChoiceCard({
-  icon: Icon,
+  icon: Icon = undefined,
   title,
-  description,
+  description = undefined,
   selected = false,
-  onClick,
-  badge,
+  onClick = undefined,
+  badge = null,
   disabled = false,
-  className,
+  role = undefined,
+  className = '',
   ...props
 }) {
+  const isRadio = role === 'radio';
   return (
     <button
       type="button"
-      role="radio"
-      aria-checked={selected}
+      role={role}
+      aria-checked={isRadio ? selected : undefined}
+      aria-pressed={!isRadio ? selected : undefined}
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        'group flex flex-col items-start gap-2.5 rounded-container border p-5 text-left transition-all duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50 select-none',
+        'group flex flex-col items-start gap-2.5 rounded-container border p-5 text-left transition-[color,background-color,border-color,box-shadow,transform] duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-canvas active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50 select-none',
         selected
           ? 'border-brand bg-brand/5 shadow-xs ring-1 ring-brand/20'
           : 'border-surface-paper-edge bg-surface-panel hover:bg-surface-paper/70 hover:border-line-strong/80 hover:shadow-xs',

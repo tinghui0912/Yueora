@@ -4,9 +4,22 @@ import { forwardRef } from 'react';
  * MusicPaper: Archival tactile paper surface primitive.
  * Reflects physical sheet music rather than flat digital SaaS cards.
  */
+/**
+ * @typedef {React.HTMLAttributes<HTMLDivElement> & {
+ *   children?: React.ReactNode;
+ *   className?: string;
+ *   interactive?: boolean;
+ *   tone?: 'natural' | 'warm' | 'white';
+ *   elevation?: 'flat' | 'paper' | 'raised';
+ *   bordered?: boolean;
+ *   as?: any;
+ * }} MusicPaperProps
+ */
+
+/** @type {React.ForwardRefExoticComponent<MusicPaperProps & React.RefAttributes<any>>} */
 const MusicPaper = forwardRef(function MusicPaper(
   {
-    children,
+    children = null,
     className = '',
     interactive = false,
     tone = 'natural', // 'natural' | 'warm' | 'white'

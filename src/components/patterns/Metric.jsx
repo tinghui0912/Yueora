@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Used by Practice Summary, Practice Progress.
  * Not a dashboard KPI card — flat, editorial.
  */
-export default function Metric({ label, value, context, className }) {
+export default function Metric({ label, value, context = undefined, className = '' }) {
   return (
     <div className={cn('flex flex-col', className)}>
       <span className="type-caption text-ink-tertiary">{label}</span>

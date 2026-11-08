@@ -63,34 +63,35 @@ export default function Register() {
       }
     >
       <Button
-        variant="outline"
-        className="w-full h-12 text-sm font-medium mb-6"
+        intent="secondary"
+        size="lg"
+        className="w-full mb-6"
         onClick={handleGoogle}
       >
-        <GoogleIcon className="w-5 h-5 mr-2" />
+        <GoogleIcon className="icon-sm mr-2" />
         Continue with Google
       </Button>
 
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border" />
+          <div className="w-full border-t border-line-subtle" />
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-3 text-muted-foreground">or</span>
+        <div className="relative flex justify-center type-caption font-semibold uppercase tracking-wider">
+          <span className="bg-surface-canvas px-3 text-ink-secondary/70">or</span>
         </div>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+        <div className="mb-4 p-3 rounded-control bg-danger/10 text-danger type-caption">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+      <form onSubmit={handleSubmit} className="space-y-4 text-left">
+        <div className="space-y-1.5">
+          <Label htmlFor="email" className="type-label text-ink-primary">Email</Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 icon-sm text-ink-tertiary" aria-hidden="true" />
             <Input
               id="email"
               type="email"
@@ -99,15 +100,15 @@ export default function Register() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-9"
               required
             />
           </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="password" className="type-label text-ink-primary">Password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 icon-sm text-ink-tertiary" aria-hidden="true" />
             <Input
               id="password"
               type="password"
@@ -115,15 +116,15 @@ export default function Register() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-9"
               required
             />
           </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="confirm">Confirm Password</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="confirm" className="type-label text-ink-primary">Confirm Password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 icon-sm text-ink-tertiary" aria-hidden="true" />
             <Input
               id="confirm"
               type="password"
@@ -131,15 +132,15 @@ export default function Register() {
               placeholder="••••••••"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-9"
               required
             />
           </div>
         </div>
-        <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
+        <Button type="submit" intent="primary" size="lg" className="w-full" disabled={loading}>
           {loading ? (
             <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className="icon-sm mr-2 animate-spin" />
               Creating account...
             </>
           ) : (

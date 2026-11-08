@@ -64,15 +64,17 @@ export default function VerifyEmail() {
   return (
     <ExternalShell>
       <div className="mx-auto flex max-w-md flex-col items-center px-5 py-16 text-center md:px-8">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"><MailCheck className="h-6 w-6" /></div>
-        <h1 className="mt-5 type-page-title">Check your email</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand/10 text-brand">
+          <MailCheck className="icon-xl" aria-hidden="true" />
+        </div>
+        <h1 className="mt-5 type-page-title text-ink-primary">Check your email</h1>
+        <p className="mt-2 type-body-small text-ink-secondary">
           We sent a 6-digit code to {email || 'your email'}. Enter it below to verify your account.
         </p>
 
         <form onSubmit={submit} className="mt-6 w-full space-y-3 text-left">
           <div className="space-y-1.5">
-            <Label htmlFor="code">Verification code</Label>
+            <Label htmlFor="code" className="type-label text-ink-primary">Verification code</Label>
             <Input
               id="code"
               value={code}
@@ -81,23 +83,23 @@ export default function VerifyEmail() {
               className="text-center text-lg tracking-[0.4em]"
               autoFocus
             />
-            {error && <p className="text-xs text-destructive">{error}</p>}
+            {error && <p className="type-caption text-danger">{error}</p>}
           </div>
-          <Button type="submit" className="w-full" disabled={verifying || code.length < 6}>
-            {verifying ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verifying…</> : 'Verify and continue'}
+          <Button type="submit" intent="primary" className="w-full" disabled={verifying || code.length < 6}>
+            {verifying ? <><Loader2 className="mr-2 icon-sm animate-spin" /> Verifying…</> : 'Verify and continue'}
           </Button>
         </form>
 
-        <div className="mt-4 flex items-center gap-3 text-sm text-muted-foreground">
+        <div className="mt-4 flex items-center gap-3 type-body-small text-ink-secondary">
           {cooldown > 0 ? (
-            <span className="text-muted-foreground">Resend in {cooldown}s</span>
+            <span className="text-ink-tertiary">Resend in {cooldown}s</span>
           ) : (
-            <button onClick={resend} disabled={sending} className="flex items-center gap-1.5 hover:text-foreground disabled:opacity-50">
-              {sending ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Sending…</> : <><RefreshCw className="h-3.5 w-3.5" /> Resend code</>}
+            <button type="button" onClick={resend} disabled={sending} className="flex items-center gap-1.5 text-brand hover:underline disabled:opacity-50">
+              {sending ? <><Loader2 className="icon-xs animate-spin" /> Sending…</> : <><RefreshCw className="icon-xs" /> Resend code</>}
             </button>
           )}
           <span>·</span>
-          <Link to="/login" className="hover:text-foreground">Back to log in</Link>
+          <Link to="/login" className="hover:text-ink-primary hover:underline">Back to log in</Link>
         </div>
       </div>
     </ExternalShell>

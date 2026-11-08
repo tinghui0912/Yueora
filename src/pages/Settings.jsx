@@ -22,8 +22,8 @@ export default function Settings() {
                 <NavLink
                   to={i.to}
                   className={({ isActive }) =>
-                    `block whitespace-nowrap rounded-md px-3 py-2 text-sm ${
-                      isActive ? 'bg-accent font-medium text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50'
+                    `block whitespace-nowrap rounded-control px-3 py-2 type-body-small transition-colors ${
+                      isActive ? 'bg-brand/10 font-semibold text-brand' : 'text-ink-secondary hover:bg-surface-paper hover:text-ink-primary'
                     }`
                   }
                 >

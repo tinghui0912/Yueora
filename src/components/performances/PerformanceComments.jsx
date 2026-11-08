@@ -32,7 +32,7 @@ export default function PerformanceComments({ performance }) {
     && (isOwner || (performance.sharedCommenters || []).includes('you'));
 
   const comments = useMemo(
-    () => all.filter((c) => c.performanceId === performance.id).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)),
+    () => all.filter((c) => c.performanceId === performance.id).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
     [all, performance.id]
   );
   const threads = comments.filter((c) => !c.parentId);

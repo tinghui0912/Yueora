@@ -8,14 +8,21 @@ const tone = {
 };
 
 function StatusIcon({ status }) {
-  if (status === 'ready') return <Check className="h-4 w-4" aria-hidden="true" />;
-  if (status === 'progress') return <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />;
-  if (status === 'error') return <AlertCircle className="h-4 w-4" aria-hidden="true" />;
-  return <Circle className="h-4 w-4" aria-hidden="true" />;
+  if (status === 'ready') return <Check className="icon-sm" aria-hidden="true" />;
+  if (status === 'progress') return <Loader2 className="icon-sm animate-spin" aria-hidden="true" />;
+  if (status === 'error') return <AlertCircle className="icon-sm" aria-hidden="true" />;
+  return <Circle className="icon-sm" aria-hidden="true" />;
 }
 
 // Readiness is never communicated by colour alone: icon + label + status text.
-export default function ReadinessRow({ label, detail, status = 'idle', statusText, action, children }) {
+export default function ReadinessRow({
+  label,
+  detail = undefined,
+  status = 'idle',
+  statusText = undefined,
+  action = null,
+  children = null,
+}) {
   const t = tone[status] || tone.idle;
   const text = statusText || t.label;
   return (

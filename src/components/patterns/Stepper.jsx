@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
  * Stepper — Reusable progress stepper for multi-step flows.
  * Owns step badge, connector, active typography, and accessibility semantics.
  */
-export function Stepper({ steps = [], current = 1, onStepClick, className }) {
+export function Stepper({ steps = [], current = 1, onStepClick = undefined, className = '' }) {
   return (
     <nav aria-label="Step progress" className={cn('w-full select-none', className)}>
       <ol className="flex items-center gap-2 sm:gap-3">
@@ -21,36 +21,67 @@ export function Stepper({ steps = [], current = 1, onStepClick, className }) {
           return (
             <React.Fragment key={label || i}>
               <li
-                className={cn(
-                  'flex items-center gap-2',
-                  isClickable && 'cursor-pointer hover:opacity-85'
-                )}
-                onClick={() => isClickable && onStepClick(stepNum)}
+                className="flex items-center gap-2"
                 aria-current={isCurrent ? 'step' : undefined}
               >
-                {/* Number / Check Badge */}
-                <span
-                  className={cn(
-                    'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-base',
-                    isCompleted && 'bg-brand text-white shadow-xs',
-                    isCurrent && 'border-2 border-brand bg-brand/10 text-brand font-bold',
-                    isUpcoming && 'border border-line-subtle bg-surface-canvas/80 text-ink-tertiary'
-                  )}
-                >
-                  {isCompleted ? <Check className="icon-xs stroke-[2.5]" aria-hidden="true" /> : stepNum}
-                </span>
+                {isClickable ? (
+                  <button
+                    type="button"
+                    onClick={() => onStepClick(stepNum)}
+                    className="group flex items-center gap-2 rounded-control focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-canvas text-left cursor-pointer transition-opacity hover:opacity-85"
+                    aria-label={`Go back to step ${stepNum}: ${label}`}
+                  >
+                    {/* Number / Check Badge */}
+                    <span
+                      className={cn(
+                        'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-base',
+                        isCompleted && 'bg-brand text-white shadow-xs',
+                        isCurrent && 'border-2 border-brand bg-brand/10 text-brand font-bold',
+                        isUpcoming && 'border border-line-subtle bg-surface-canvas/80 text-ink-tertiary'
+                      )}
+                    >
+                      {isCompleted ? <Check className="icon-xs stroke-[2.5]" aria-hidden="true" /> : stepNum}
+                    </span>
 
-                {/* Step Label */}
-                <span
-                  className={cn(
-                    'type-label whitespace-nowrap transition-colors duration-base',
-                    isCurrent && 'font-semibold text-ink-primary',
-                    isCompleted && 'font-medium text-ink-secondary',
-                    isUpcoming && 'text-ink-secondary/60'
-                  )}
-                >
-                  {label}
-                </span>
+                    {/* Step Label */}
+                    <span
+                      className={cn(
+                        'type-label whitespace-nowrap transition-colors duration-base',
+                        isCurrent && 'font-semibold text-ink-primary',
+                        isCompleted && 'font-medium text-ink-secondary',
+                        isUpcoming && 'text-ink-secondary/60'
+                      )}
+                    >
+                      {label}
+                    </span>
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    {/* Number / Check Badge */}
+                    <span
+                      className={cn(
+                        'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-base',
+                        isCompleted && 'bg-brand text-white shadow-xs',
+                        isCurrent && 'border-2 border-brand bg-brand/10 text-brand font-bold',
+                        isUpcoming && 'border border-line-subtle bg-surface-canvas/80 text-ink-tertiary'
+                      )}
+                    >
+                      {isCompleted ? <Check className="icon-xs stroke-[2.5]" aria-hidden="true" /> : stepNum}
+                    </span>
+
+                    {/* Step Label */}
+                    <span
+                      className={cn(
+                        'type-label whitespace-nowrap transition-colors duration-base',
+                        isCurrent && 'font-semibold text-ink-primary',
+                        isCompleted && 'font-medium text-ink-secondary',
+                        isUpcoming && 'text-ink-secondary/60'
+                      )}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                )}
               </li>
 
               {/* Connecting Line */}
