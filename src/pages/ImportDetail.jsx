@@ -32,7 +32,7 @@ export default function ImportDetail() {
   if (!imp) {
     return (
       <div className="px-8 py-16 text-center">
-        <h1 className="font-display text-2xl">Import not found</h1>
+        <h1 className="type-section-title">Import not found</h1>
         <Link to="/imports" className="mt-4 inline-block text-primary underline">Back to imports</Link>
       </div>
     );
@@ -52,7 +52,7 @@ export default function ImportDetail() {
 
       <div className="mt-4 flex items-start justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-medium">{imp.title}</h1>
+          <h1 className="type-page-title">{imp.title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">Started {imp.started} · {imp.source} · {imp.pages} pages</p>
         </div>
         <span className={`shrink-0 text-sm font-medium ${meta.color}`}>{meta.label}</span>

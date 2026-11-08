@@ -22,7 +22,7 @@ export default function StateMessage({ tone = 'neutral', icon: Icon, title, desc
           <Icon className="h-6 w-6" />
         </div>
       )}
-      <h2 className={cn('type-section-title text-xl', s.title)}>{title}</h2>
+      <h2 className={cn('type-section-title', s.title)}>{title}</h2>
       {description && <p className={cn('mt-2 max-w-sm type-body-small', s.desc)}>{description}</p>}
       {(primaryAction || secondaryAction) && (
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2">

@@ -65,7 +65,7 @@ export default function VerifyEmail() {
     <ExternalShell>
       <div className="mx-auto flex max-w-md flex-col items-center px-5 py-16 text-center md:px-8">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"><MailCheck className="h-6 w-6" /></div>
-        <h1 className="mt-5 font-display text-3xl font-medium">Check your email</h1>
+        <h1 className="mt-5 type-page-title">Check your email</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           We sent a 6-digit code to {email || 'your email'}. Enter it below to verify your account.
         </p>

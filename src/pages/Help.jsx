@@ -30,8 +30,8 @@ export default function Help() {
   return (
     <PublicShell>
       <div className="mx-auto max-w-3xl px-5 py-12 md:px-8">
-        <h1 className="font-display text-3xl font-medium text-ink-primary">Help center</h1>
-        <p className="mt-1 text-ink-secondary">Find guides, tips, and answers about Yueora.</p>
+        <h1 className="type-page-title text-ink-primary">Help center</h1>
+        <p className="mt-1 type-body text-ink-secondary">Find guides, tips, and answers about Yueora.</p>
 
         <div className="relative mt-6">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-tertiary" />

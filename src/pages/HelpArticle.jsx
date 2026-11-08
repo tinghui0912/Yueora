@@ -22,7 +22,7 @@ export default function HelpArticle() {
     return (
       <PublicShell>
         <div className="mx-auto max-w-2xl px-5 py-16 text-center">
-          <h1 className="font-display text-2xl text-ink-primary">Article not found</h1>
+          <h1 className="type-section-title text-ink-primary">Article not found</h1>
           <Link to="/help" className="mt-4 inline-block text-primary underline">Back to help center</Link>
         </div>
       </PublicShell>
@@ -38,7 +38,7 @@ export default function HelpArticle() {
           <span className="text-ink-secondary">{article.category}</span>
         </nav>
 
-        <h1 className="mt-4 font-display text-3xl font-medium text-ink-primary">{article.title}</h1>
+        <h1 className="mt-4 type-page-title text-ink-primary">{article.title}</h1>
         <p className="mt-2 text-sm text-ink-tertiary">Updated {article.updated}</p>
 
         <div className="mt-8 space-y-4 type-body leading-relaxed text-ink-secondary">

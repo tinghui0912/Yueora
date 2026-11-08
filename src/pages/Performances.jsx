@@ -5,6 +5,7 @@ import { usePrototypeStore } from '@/stores/prototypeStore';
 import { signedUrlFor, slugify } from '@/lib/media';
 import PerformanceRow from '@/components/performances/PerformanceRow';
 import StateMessage from '@/components/patterns/StateMessage';
+import AppPage from '@/components/patterns/AppPage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -144,13 +145,13 @@ export default function Performances() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 md:px-8">
+    <AppPage size="standard" className="py-8">
       {/* Page Title */}
       <div>
-        <h1 className="font-display text-3xl font-medium tracking-tight text-ink-primary sm:text-4xl">
+        <h1 className="type-experience-title text-ink-primary">
           Preserved Moments
         </h1>
-        <p className="mt-1 text-sm text-ink-secondary leading-relaxed">
+        <p className="mt-1 type-body-small text-ink-secondary leading-relaxed">
           The musical takes you chose to keep.
         </p>
       </div>
@@ -287,6 +288,6 @@ export default function Performances() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AppPage>
   );
 }

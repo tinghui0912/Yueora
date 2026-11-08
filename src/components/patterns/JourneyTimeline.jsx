@@ -45,7 +45,7 @@ export default function JourneyTimeline({
       action: !hasPracticed && (
         <Link
           to={`/score/${score.id}/setup`}
-          className="mt-1.5 inline-flex items-center gap-1 text-[13px] font-semibold text-brand hover:underline"
+          className="mt-1.5 inline-flex items-center gap-1 type-metadata font-semibold text-brand hover:underline"
         >
           Begin your first session →
         </Link>
@@ -62,7 +62,7 @@ export default function JourneyTimeline({
       action: hasPerformances && (
         <Link
           to={`/performances?score=${score.id}`}
-          className="mt-1.5 inline-flex items-center gap-1 text-[13px] font-semibold text-brand hover:underline"
+          className="mt-1.5 inline-flex items-center gap-1 type-metadata font-semibold text-brand hover:underline"
         >
           Listen to preserved moments ({performances.length}) →
         </Link>
@@ -99,7 +99,7 @@ export default function JourneyTimeline({
                 <p className={`text-sm font-semibold leading-tight ${step.active ? 'text-ink-primary' : 'text-ink-secondary'}`}>
                   {step.title}
                 </p>
-                <p className="mt-1 text-[13px] text-ink-secondary leading-relaxed">{step.detail}</p>
+                <p className="mt-1 type-metadata text-ink-secondary leading-relaxed">{step.detail}</p>
                 {step.action}
               </div>
             </div>

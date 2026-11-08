@@ -71,13 +71,13 @@ export default function PublicMobileMenu() {
               <p className="px-3 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70 mb-1">
                 About &amp; Support
               </p>
-              <Link to="/about" className="block rounded-control px-3 py-2 text-[13px] text-ink-secondary hover:text-ink-primary">
+              <Link to="/about" className="block rounded-control px-3 py-2 type-metadata text-ink-secondary hover:text-ink-primary">
                 About Yueora
               </Link>
-              <Link to="/help" className="block rounded-control px-3 py-2 text-[13px] text-ink-secondary hover:text-ink-primary">
+              <Link to="/help" className="block rounded-control px-3 py-2 type-metadata text-ink-secondary hover:text-ink-primary">
                 Help &amp; Guides
               </Link>
-              <Link to="/legal/privacy" className="block rounded-control px-3 py-2 text-[13px] text-ink-secondary hover:text-ink-primary">
+              <Link to="/legal/privacy" className="block rounded-control px-3 py-2 type-metadata text-ink-secondary hover:text-ink-primary">
                 Privacy policy
               </Link>
             </div>

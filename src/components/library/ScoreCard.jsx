@@ -60,10 +60,10 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
               to={`/score/${score.id}`}
               className="min-w-0 flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
             >
-              <h3 className="truncate font-display text-base sm:text-[17px] font-medium leading-snug text-ink-primary transition-colors group-hover:text-brand">
+              <h3 className="truncate font-display text-base sm:text-lg font-medium leading-snug text-ink-primary transition-colors group-hover:text-brand">
                 {score.title}
               </h3>
-              <p className="truncate text-[13px] text-ink-secondary mt-0.5">{score.composer}</p>
+              <p className="truncate type-metadata text-ink-secondary mt-0.5">{score.composer}</p>
             </Link>
 
             {onToggleSelect && (
@@ -102,7 +102,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
         <div className="mt-1 flex items-center justify-between border-t border-surface-paper-edge/70 pt-2.5">
           <Link
             to={`/score/${score.id}/setup`}
-            className="inline-flex items-center gap-1.5 rounded-control bg-brand/10 px-3 py-1.5 text-[13px] font-semibold text-brand transition-colors hover:bg-brand hover:text-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+            className="inline-flex items-center gap-1.5 rounded-control bg-brand/10 px-3 py-1.5 type-metadata font-semibold text-brand transition-colors hover:bg-brand hover:text-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
             aria-label={`Practice ${score.title}`}
           >
             <Play className="h-3.5 w-3.5 fill-current" />

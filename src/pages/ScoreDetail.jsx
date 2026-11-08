@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, Play, Pencil, Share2, MoreHorizontal, Star, ChevronLeft,
+  Play, Pencil, Share2, MoreHorizontal, Star, ChevronLeft,
   ChevronRight, ZoomIn, ZoomOut, Download, Trash2, FolderInput, History,
   LogOut, BookmarkMinus, Lock, Headphones, FileImage, FileCode,
 } from 'lucide-react';
@@ -21,6 +21,8 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { dayLabel, minutesLabel } from '@/lib/practiceUtils';
 import StateMessage from '@/components/patterns/StateMessage';
+import AppPage from '@/components/patterns/AppPage';
+import BackLink from '@/components/patterns/BackLink';
 
 export default function ScoreDetail() {
   const { scoreId } = useParams();
@@ -81,16 +83,10 @@ export default function ScoreDetail() {
   const confirmRemoveFn = () => { removeSaved(score.id); setConfirmRemove(false); navigate('/library'); };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 md:px-8">
+    <AppPage size="wide" className="py-6">
       {/* Breadcrumb navigation */}
       <div className="flex items-center justify-between">
-        <Link
-          to="/library"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Back to Repertoire</span>
-        </Link>
+        <BackLink to="/library" label="Back to Repertoire" />
 
         {score.favorite && (
           <span className="flex items-center gap-1 text-sm font-medium text-gold">
@@ -104,7 +100,7 @@ export default function ScoreDetail() {
       <div className="mt-5 flex flex-col gap-5 border-b border-line-subtle pb-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
           <div className="flex items-baseline gap-3">
-            <h1 className="font-display text-3xl font-medium leading-tight text-ink-primary sm:text-4xl">
+            <h1 className="type-page-title text-ink-primary leading-tight">
               {score.title}
             </h1>
             <button
@@ -458,6 +454,6 @@ export default function ScoreDetail() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AppPage>
   );
 }

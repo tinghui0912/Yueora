@@ -4,6 +4,7 @@ import { usePrototypeStore } from '@/stores/prototypeStore';
 import { practiceWeek } from '@/lib/practiceStats';
 import ScorePreview from '@/components/library/ScorePreview';
 import MusicPaper from '@/components/patterns/MusicPaper';
+import AppPage from '@/components/patterns/AppPage';
 import { PracticeGlyph } from '@/components/brand/MusicalGlyphs';
 
 export default function PracticeHub() {
@@ -37,13 +38,13 @@ export default function PracticeHub() {
   const thisWeekMarks = week.days.map((d) => d.sessions > 0);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 md:px-8">
+    <AppPage size="standard" className="py-8">
       {/* Title */}
       <div>
-        <h1 className="font-display text-3xl font-medium tracking-tight text-ink-primary sm:text-4xl">
+        <h1 className="type-experience-title text-ink-primary">
           What do you feel like playing?
         </h1>
-        <p className="mt-1 text-sm text-ink-secondary leading-relaxed">
+        <p className="mt-1 type-body-small text-ink-secondary leading-relaxed">
           A quiet space to play. No streaks, no assignments, no pressure.
         </p>
       </div>
@@ -162,14 +163,14 @@ export default function PracticeHub() {
         </p>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">
           <MusicPaper tone="natural" className="p-4">
-            <p className="font-display text-2xl font-medium text-ink-primary">
-              {thisWeekMinutes} <span className="text-sm font-normal text-ink-secondary">min</span>
+            <p className="type-metric text-ink-primary">
+              {thisWeekMinutes} <span className="type-body-small font-normal text-ink-secondary">min</span>
             </p>
             <p className="type-metadata text-ink-secondary mt-1">across {thisWeekSessions} calm sessions</p>
           </MusicPaper>
 
           <MusicPaper tone="natural" className="p-4">
-            <p className="font-display text-2xl font-medium text-ink-primary">
+            <p className="type-metric text-ink-primary">
               {thisWeekPieces}
             </p>
             <p className="type-metadata text-ink-secondary mt-1">pieces brought to life</p>
@@ -202,6 +203,6 @@ export default function PracticeHub() {
           </Link>
         </div>
       </section>
-    </div>
+    </AppPage>
   );
 }

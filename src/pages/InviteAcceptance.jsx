@@ -70,7 +70,7 @@ export default function InviteAcceptance() {
         {status === 'valid' && (
           <>
             <p className="text-sm text-muted-foreground">{invitedBy} invited you to</p>
-            <h1 className="mt-1 font-display text-3xl font-medium">{score?.title || 'Score'}</h1>
+            <h1 className="mt-1 type-page-title">{score?.title || 'Score'}</h1>
             <p className="mt-1 text-muted-foreground">{score?.composer}</p>
             <span className="mt-4 rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-foreground">{permission}</span>
 

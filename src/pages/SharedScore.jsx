@@ -87,7 +87,7 @@ export default function SharedScore() {
       <div className="mx-auto max-w-4xl px-5 py-8 md:px-8">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="font-display text-3xl font-medium leading-tight">{score.title}</h1>
+            <h1 className="type-page-title leading-tight">{score.title}</h1>
             <p className="text-muted-foreground">{score.composer} · {score.instrument}</p>
           </div>
           <button onClick={() => setReportOpen(true)} className="flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm text-muted-foreground hover:bg-accent"><Flag className="h-4 w-4" /> Report</button>

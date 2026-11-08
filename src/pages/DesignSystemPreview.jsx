@@ -15,6 +15,7 @@ import { Stepper } from '@/components/patterns/Stepper';
 import { ChoiceCard } from '@/components/patterns/ChoiceCard';
 import { Surface } from '@/components/patterns/Surface';
 import MusicPaper from '@/components/patterns/MusicPaper';
+import BackLink from '@/components/patterns/BackLink';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import { Field } from '@/components/ui/field';
@@ -57,6 +58,10 @@ export default function DesignSystemPreview() {
           <div className="border-b border-line-subtle pb-3">
             <span className="type-caption text-ink-secondary/70">type-display</span>
             <p className="type-display text-ink-primary">Play what you love.</p>
+          </div>
+          <div className="border-b border-line-subtle pb-3">
+            <span className="type-caption text-ink-secondary/70">type-experience-title (Core Musical Spaces)</span>
+            <p className="type-experience-title text-ink-primary">Your Musical Journey</p>
           </div>
           <div className="border-b border-line-subtle pb-3">
             <span className="type-caption text-ink-secondary/70">type-page-title</span>
@@ -246,12 +251,18 @@ export default function DesignSystemPreview() {
           title="Shell Primitives"
           description="Search triggers, badges, and status indicators."
         />
-        <Surface tone="panel" elevation="paper" padding="md" className="flex flex-wrap items-center gap-4">
-          <SearchTrigger label="Search" shortcut="⌘K" />
-          <Badge variant="brand">Musician Choice</Badge>
-          <Badge variant="success">Active Take</Badge>
-          <Badge variant="warning">Syncing</Badge>
-          <Badge variant="neutral">Draft</Badge>
+        <Surface tone="panel" elevation="paper" padding="md" className="space-y-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <SearchTrigger label="Search" shortcut="⌘K" />
+            <Badge variant="brand">Musician Choice</Badge>
+            <Badge variant="success">Active Take</Badge>
+            <Badge variant="warning">Syncing</Badge>
+            <Badge variant="neutral">Draft</Badge>
+          </div>
+          <div className="border-t border-line-subtle pt-3">
+            <span className="type-caption text-ink-secondary/70 mb-2 block">BackLink Primitive</span>
+            <BackLink to="/design-system" label="Back to Repertoire preview" />
+          </div>
         </Surface>
       </section>
     </AppPage>

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft,
   Upload,
   Camera,
   FileMusic,
@@ -16,6 +15,7 @@ import {
 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { AppPage } from '@/components/patterns/AppPage';
+import BackLink from '@/components/patterns/BackLink';
 import { PageHeader } from '@/components/patterns/PageHeader';
 import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { Stepper } from '@/components/patterns/Stepper';
@@ -99,14 +99,7 @@ export default function AddScore() {
   return (
     <AppPage size="form">
       {/* Back link navigation */}
-      <button
-        type="button"
-        onClick={() => navigate('/library')}
-        className="group inline-flex items-center gap-1.5 type-label text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded"
-      >
-        <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-        <span>Back to library</span>
-      </button>
+      <BackLink to="/library" label="Back to library" />
 
       {/* Main Page Title */}
       <PageHeader title="Add a score" className="mt-4" />

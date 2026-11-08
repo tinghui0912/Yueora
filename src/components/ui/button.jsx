@@ -36,12 +36,12 @@ const buttonVariants = cva(
           "text-ink-secondary hover:text-ink-primary hover:bg-surface-paper active:scale-[0.98]",
       },
       size: {
-        xs: "h-7 min-h-[28px] px-2.5 text-xs rounded-control gap-1.5 [&_svg]:size-3.5",
-        sm: "h-8 min-h-[32px] px-3 text-[13px] font-medium rounded-control gap-1.5 [&_svg]:size-3.5",
-        md: "h-9 min-h-[36px] px-4 text-sm font-medium rounded-control gap-2 [&_svg]:size-4",
-        default: "h-9 min-h-[36px] px-4 text-sm font-medium rounded-control gap-2 [&_svg]:size-4",
-        lg: "h-11 min-h-[44px] px-6 text-sm font-semibold rounded-control gap-2.5 [&_svg]:size-4.5",
-        icon: "h-9 w-9 min-h-[36px] min-w-[36px] p-0 rounded-control [&_svg]:size-4",
+        xs: "h-control-xs px-2.5 type-caption rounded-control gap-1.5 [&_svg]:icon-xs",
+        sm: "h-control-sm px-3 type-body-small font-medium rounded-control gap-1.5 [&_svg]:icon-xs",
+        md: "h-control-md px-4 type-body-small font-medium rounded-control gap-2 [&_svg]:icon-sm",
+        default: "h-control-md px-4 type-body-small font-medium rounded-control gap-2 [&_svg]:icon-sm",
+        lg: "h-control-xl px-6 type-body-small font-semibold rounded-control gap-2.5 [&_svg]:icon-md",
+        icon: "h-control-md w-control-md p-0 rounded-control [&_svg]:icon-sm",
       },
     },
     defaultVariants: {

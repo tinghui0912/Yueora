@@ -265,10 +265,10 @@ export default function Library() {
         <div className="border-b border-line-subtle px-4 py-5 md:px-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h1 className="font-display text-2xl font-medium tracking-tight text-ink-primary sm:text-3xl">
+              <h1 className="type-experience-title text-ink-primary">
                 {isTrash ? 'Trash' : activeFolderId ? folders.find((f) => f.id === activeFolderId)?.name : 'Repertoire'}
               </h1>
-              <p className="mt-0.5 text-sm text-ink-secondary">
+              <p className="mt-0.5 type-body-small text-ink-secondary">
                 {isTrash ? `${filtered.length} in trash` : `${liveCount} pieces in your personal collection`}
               </p>
             </div>
@@ -663,8 +663,8 @@ function EmptyState({ active, isTrash }) {
   if (active === 'all') {
     return (
       <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-surface-paper-edge bg-surface-paper/40 py-20 text-center">
-        <h2 className="font-display text-2xl font-medium text-ink-primary">Start with something you love.</h2>
-        <p className="mt-2 max-w-sm text-xs leading-relaxed text-ink-secondary">
+        <h2 className="type-section-title text-ink-primary">Start with something you love.</h2>
+        <p className="mt-2 max-w-sm type-body-small leading-relaxed text-ink-secondary">
           Add sheet music you have always wanted to play — whether scan, photo, or MusicXML.
         </p>
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">
