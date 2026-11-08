@@ -1,10 +1,15 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { LayoutGrid, List, Plus, SlidersHorizontal, ArrowUpDown, Play, Star, FolderInput, Trash2, Heart, X, Check, LogOut, BookmarkMinus, Settings, Folder, Pencil } from 'lucide-react';
+import {
+  LayoutGrid, List, Plus, SlidersHorizontal, ArrowUpDown, Play, Star,
+  FolderInput, Trash2, Heart, X, Check, LogOut, BookmarkMinus, Settings,
+  Folder, Pencil, Sparkles,
+} from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import ScoreCard from '@/components/library/ScoreCard';
 import ScorePreview from '@/components/library/ScorePreview';
 import LibrarySubRail from '@/components/library/LibrarySubRail';
+import MusicPaper from '@/components/patterns/MusicPaper';
 import { Button } from '@/components/ui/button';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
@@ -46,7 +51,6 @@ export default function Library() {
 
   const scores = usePrototypeStore((s) => s.scores);
   const folders = usePrototypeStore((s) => s.folders);
-  const practiceActivities = usePrototypeStore((s) => s.practiceActivities) || [];
   const createFolder = usePrototypeStore((s) => s.createFolder);
   const renameFolder = usePrototypeStore((s) => s.renameFolder);
   const deleteFolder = usePrototypeStore((s) => s.deleteFolder);
@@ -110,7 +114,7 @@ export default function Library() {
   // Derive "continue practicing" from store
   const playedScores = scores.filter((s) => s.ownership !== 'trash' && s.lastPlayed && s.lastPlayed !== 'never');
   const continueScore = playedScores.length > 0
-    ? playedScores.sort((a, b) => {
+    ? [...playedScores].sort((a, b) => {
         const order = { today: -1, yesterday: 0, '2 days ago': 1, '3 days ago': 2, '4 days ago': 3, '5 days ago': 4, 'last week': 5 };
         return (order[a.lastPlayed] ?? 50) - (order[b.lastPlayed] ?? 50);
       })[0]
@@ -130,14 +134,22 @@ export default function Library() {
     if (allMine) { bulkTrashOwned(selected); }
     else if (allShared) { bulkLeaveShared(selected); }
     else if (allSaved) { bulkRemoveSaved(selected); }
-    else { bulkTrashOwned(selected.filter((id) => scores.find((s) => s.id === id)?.ownership === 'mine')); bulkLeaveShared(selected.filter((id) => scores.find((s) => s.id === id)?.ownership === 'shared')); bulkRemoveSaved(selected.filter((id) => scores.find((s) => s.id === id)?.ownership === 'saved')); }
+    else {
+      bulkTrashOwned(selected.filter((id) => scores.find((s) => s.id === id)?.ownership === 'mine'));
+      bulkLeaveShared(selected.filter((id) => scores.find((s) => s.id === id)?.ownership === 'shared'));
+      bulkRemoveSaved(selected.filter((id) => scores.find((s) => s.id === id)?.ownership === 'saved'));
+    }
     clearSelect();
   };
 
   const moveSelected = (folderId) => { moveScoresToFolder(selected, folderId); clearSelect(); setMoveOpen(false); };
 
   const handleDeleteFolder = (id) => setFolderDelete(id);
-  const confirmDeleteFolder = () => { deleteFolder(folderDelete); if (activeFolderId === folderDelete) setParam('view', 'all'); setFolderDelete(null); };
+  const confirmDeleteFolder = () => {
+    deleteFolder(folderDelete);
+    if (activeFolderId === folderDelete) setParam('view', 'all');
+    setFolderDelete(null);
+  };
 
   const isEmpty = filtered.length === 0;
 
@@ -145,7 +157,7 @@ export default function Library() {
   const RemoveIcon = allMine ? Trash2 : allShared ? LogOut : BookmarkMinus;
 
   return (
-    <div className="flex">
+    <div className="flex min-h-[calc(100vh-3.5rem)]">
       <LibrarySubRail
         active={active}
         onSelect={(k) => { setParam('view', k); clearSelect(); }}
@@ -156,30 +168,17 @@ export default function Library() {
       />
 
       <div className="min-w-0 flex-1">
-        {/* Continue practicing shortcut (hidden in trash) */}
-        {!isTrash && continueScore && (
-          <Link
-            to={`/score/${continueScore.id}/setup`}
-            className="mx-4 mt-4 flex items-center justify-between gap-3 rounded-md border border-border bg-accent px-4 py-3 md:mx-8"
-          >
-            <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-wider text-accent-foreground/70">Pick up where you left off</p>
-              <p className="truncate font-display text-lg font-medium">{continueScore.title} — {continueScore.composer}</p>
-              <p className="text-sm text-muted-foreground">Continue from measure {continueScore.lastMeasure} · last played {continueScore.lastPlayed}</p>
-            </div>
-            <span className="flex shrink-0 items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">
-              <Play className="h-4 w-4" /> Continue
-            </span>
-          </Link>
-        )}
-
-        {/* Mobile view selector */}
-        <div className="flex gap-1.5 overflow-x-auto border-b border-border px-4 py-2.5 lg:hidden no-scrollbar">
+        {/* Mobile folio filter rail */}
+        <div className="flex gap-1.5 overflow-x-auto border-b border-line-subtle bg-surface-canvas/40 px-4 py-2.5 lg:hidden no-scrollbar">
           {librarySections.map((item) => (
             <button
               key={item.key}
               onClick={() => { setParam('view', item.key); clearSelect(); }}
-              className={`whitespace-nowrap rounded-md px-3 py-1.5 text-sm ${active === item.key ? 'bg-accent font-medium text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
+              className={`whitespace-nowrap rounded-control px-3 py-1.5 text-xs transition-colors ${
+                active === item.key
+                  ? 'bg-brand/10 font-semibold text-brand'
+                  : 'text-ink-secondary hover:bg-surface-paper'
+              }`}
             >
               {item.label}
             </button>
@@ -188,145 +187,340 @@ export default function Library() {
             <button
               key={f.id}
               onClick={() => { setParam('view', `folder:${f.id}`); clearSelect(); }}
-              className={`whitespace-nowrap rounded-md px-3 py-1.5 text-sm ${active === `folder:${f.id}` ? 'bg-accent font-medium text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
+              className={`whitespace-nowrap rounded-control px-3 py-1.5 text-xs transition-colors ${
+                active === `folder:${f.id}`
+                  ? 'bg-brand/10 font-semibold text-brand'
+                  : 'text-ink-secondary hover:bg-surface-paper'
+              }`}
             >
               {f.name}
             </button>
           ))}
           <button
             onClick={() => setManageFoldersOpen(true)}
-            className="flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-accent/50"
+            className="flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 text-xs text-ink-secondary hover:bg-surface-paper"
           >
             <Settings className="h-3.5 w-3.5" /> Manage
           </button>
           <button
             onClick={() => { setParam('view', 'trash'); clearSelect(); }}
-            className={`flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-1.5 text-sm ${active === 'trash' ? 'bg-accent font-medium text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}
+            className={`flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 text-xs transition-colors ${
+              active === 'trash'
+                ? 'bg-brand/10 font-semibold text-brand'
+                : 'text-ink-secondary hover:bg-surface-paper'
+            }`}
           >
             <Trash2 className="h-3.5 w-3.5" /> Trash
           </button>
         </div>
 
-        {/* Header */}
-        <div className="border-b border-border px-4 py-4 md:px-8">
+        {/* Hero: "Pick up where you left off" - Tactical Musical Folio */}
+        {!isTrash && !search && active === 'all' && continueScore && (
+          <div className="mx-4 mt-6 md:mx-8">
+            <MusicPaper
+              interactive
+              tone="warm"
+              className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="flex items-center gap-4 min-w-0">
+                <div className="hidden h-14 w-20 shrink-0 overflow-hidden rounded border border-surface-paper-edge bg-white/90 sm:block">
+                  <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
+                </div>
+                <div className="min-w-0">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-brand">
+                    <Sparkles className="h-3 w-3" />
+                    <span>Pick up where you left off</span>
+                  </span>
+                  <h2 className="truncate font-display text-lg font-medium text-ink-primary mt-0.5 sm:text-xl">
+                    {continueScore.title}
+                  </h2>
+                  <p className="truncate text-xs text-ink-secondary mt-0.5">
+                    {continueScore.composer} · Continue from bar {continueScore.lastMeasure} · Played {continueScore.lastPlayed}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-2">
+                <Link
+                  to={`/score/${continueScore.id}/setup`}
+                  className="flex items-center gap-2 rounded-control bg-brand px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover active:scale-95"
+                >
+                  <Play className="h-3.5 w-3.5 fill-current" />
+                  <span>Resume playing</span>
+                </Link>
+                <Link
+                  to={`/score/${continueScore.id}`}
+                  className="rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2 text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm"
+                >
+                  Score folio
+                </Link>
+              </div>
+            </MusicPaper>
+          </div>
+        )}
+
+        {/* Repertoire Header & Toolbars */}
+        <div className="border-b border-line-subtle px-4 py-5 md:px-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h1 className="font-display text-2xl font-medium">{isTrash ? 'Trash' : activeFolderId ? folders.find((f) => f.id === activeFolderId)?.name : 'Library'}</h1>
-              <p className="text-sm text-muted-foreground">{isTrash ? filtered.length : liveCount} {isTrash ? 'in trash' : 'scores'}</p>
+              <h1 className="font-display text-2xl font-medium tracking-tight text-ink-primary sm:text-3xl">
+                {isTrash ? 'Trash Folios' : activeFolderId ? folders.find((f) => f.id === activeFolderId)?.name : 'Repertoire'}
+              </h1>
+              <p className="mt-0.5 text-xs text-ink-secondary">
+                {isTrash ? `${filtered.length} in trash` : `${liveCount} pieces in your personal collection`}
+              </p>
             </div>
+
+            {/* Filter, sort, view toggles */}
             <div className="flex items-center gap-2">
               <div className="relative">
                 <input
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && setParam('search', searchInput.trim())}
-                  placeholder="Search your music…"
-                  className="h-9 w-44 rounded-md border border-border bg-card pl-3 pr-3 text-sm outline-none placeholder:text-muted-foreground focus:border-primary md:w-64"
+                  placeholder="Filter by title, composer…"
+                  className="h-8 w-40 rounded-control border border-surface-paper-edge bg-surface-paper/70 px-2.5 text-xs text-ink-primary outline-none placeholder:text-ink-tertiary focus:border-brand focus:bg-surface-paper md:w-56"
                 />
               </div>
+
+              {/* Filter dropdown */}
               <div className="relative">
-                <button onClick={() => { setShowFilters((s) => !s); setShowSort(false); }} className="flex h-9 items-center gap-1.5 rounded-md border border-border px-3 text-sm text-muted-foreground hover:bg-accent">
-                  <SlidersHorizontal className="h-4 w-4" /> <span className="hidden sm:inline">Filter</span>
+                <button
+                  onClick={() => { setShowFilters((s) => !s); setShowSort(false); }}
+                  className={`flex h-8 items-center gap-1.5 rounded-control border px-2.5 text-xs transition-colors ${
+                    filterFav || filterInstrument !== 'all' || filterPlayed !== 'any'
+                      ? 'border-brand/40 bg-brand/10 font-semibold text-brand'
+                      : 'border-surface-paper-edge bg-surface-paper text-ink-secondary hover:text-ink-primary'
+                  }`}
+                  aria-label="Filter repertoire"
+                >
+                  <SlidersHorizontal className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Filter</span>
                 </button>
                 {showFilters && (
-                  <div className="absolute right-0 z-20 mt-1 w-56 rounded-md border border-border bg-card p-3 shadow-md">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Instrument</p>
-                    <div className="mt-1 flex flex-wrap gap-1">
+                  <div className="absolute right-0 z-20 mt-1 w-56 rounded-container border border-surface-paper-edge bg-surface-panel p-3 shadow-overlay">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-tertiary">Instrument</p>
+                    <div className="mt-1.5 flex flex-wrap gap-1">
                       {instruments.map((ins) => (
-                        <button key={ins} onClick={() => setFilterInstrument(ins)} className={`rounded px-2 py-1 text-xs ${filterInstrument === ins ? 'bg-accent font-medium' : 'text-muted-foreground hover:bg-accent/60'}`}>{ins === 'all' ? 'All' : ins}</button>
+                        <button
+                          key={ins}
+                          onClick={() => setFilterInstrument(ins)}
+                          className={`rounded px-2 py-0.5 text-xs ${
+                            filterInstrument === ins ? 'bg-brand/10 font-semibold text-brand' : 'text-ink-secondary hover:bg-surface-paper'
+                          }`}
+                        >
+                          {ins === 'all' ? 'All' : ins}
+                        </button>
                       ))}
                     </div>
-                    <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Played</p>
-                    <div className="mt-1 flex flex-wrap gap-1">
-                      {[['any', 'Any'], ['recent', 'Played recently'], ['notplayed', 'Not played']].map(([k, l]) => (
-                        <button key={k} onClick={() => setFilterPlayed(k)} className={`rounded px-2 py-1 text-xs ${filterPlayed === k ? 'bg-accent font-medium' : 'text-muted-foreground hover:bg-accent/60'}`}>{l}</button>
+                    <p className="mt-3 text-[10px] font-semibold uppercase tracking-wider text-ink-tertiary">Practice history</p>
+                    <div className="mt-1.5 flex flex-wrap gap-1">
+                      {[['any', 'Any'], ['recent', 'Played recently'], ['notplayed', 'Not played yet']].map(([k, l]) => (
+                        <button
+                          key={k}
+                          onClick={() => setFilterPlayed(k)}
+                          className={`rounded px-2 py-0.5 text-xs ${
+                            filterPlayed === k ? 'bg-brand/10 font-semibold text-brand' : 'text-ink-secondary hover:bg-surface-paper'
+                          }`}
+                        >
+                          {l}
+                        </button>
                       ))}
                     </div>
-                    <label className="mt-3 flex items-center gap-2 text-sm">
-                      <input type="checkbox" checked={filterFav} onChange={(e) => setFilterFav(e.target.checked)} className="accent-primary" /> Favorites only
+                    <label className="mt-3 flex items-center gap-2 text-xs text-ink-primary cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={filterFav}
+                        onChange={(e) => setFilterFav(e.target.checked)}
+                        className="rounded accent-brand"
+                      />
+                      <span>Favorites only</span>
                     </label>
                   </div>
                 )}
               </div>
+
+              {/* Sort dropdown */}
               <div className="relative">
-                <button onClick={() => { setShowSort((s) => !s); setShowFilters(false); }} className="flex h-9 items-center gap-1.5 rounded-md border border-border px-3 text-sm text-muted-foreground hover:bg-accent">
-                  <ArrowUpDown className="h-4 w-4" /> <span className="hidden sm:inline">Sort</span>
+                <button
+                  onClick={() => { setShowSort((s) => !s); setShowFilters(false); }}
+                  className="flex h-8 items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 text-xs text-ink-secondary hover:text-ink-primary"
+                  aria-label="Sort repertoire"
+                >
+                  <ArrowUpDown className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Sort</span>
                 </button>
                 {showSort && (
-                  <div className="absolute right-0 z-20 mt-1 w-44 rounded-md border border-border bg-card p-1 shadow-md">
+                  <div className="absolute right-0 z-20 mt-1 w-44 rounded-container border border-surface-paper-edge bg-surface-panel p-1 shadow-overlay">
                     {sortOptions.map((o) => (
-                      <button key={o.key} onClick={() => { setParam('sort', o.key); setShowSort(false); }} className={`flex w-full items-center justify-between rounded px-2.5 py-1.5 text-left text-sm ${sort === o.key ? 'bg-accent font-medium' : 'hover:bg-accent/60'}`}>
-                        {o.label} {sort === o.key && <Check className="h-3.5 w-3.5" />}
+                      <button
+                        key={o.key}
+                        onClick={() => { setParam('sort', o.key); setShowSort(false); }}
+                        className={`flex w-full items-center justify-between rounded px-2.5 py-1.5 text-left text-xs ${
+                          sort === o.key ? 'bg-brand/10 font-medium text-brand' : 'text-ink-secondary hover:bg-surface-paper'
+                        }`}
+                      >
+                        <span>{o.label}</span>
+                        {sort === o.key && <Check className="h-3 w-3" />}
                       </button>
                     ))}
                   </div>
                 )}
               </div>
-              <div className="flex h-9 items-center rounded-md border border-border p-0.5">
-                <button onClick={() => setParam('layout', 'grid')} className={`flex h-8 w-8 items-center justify-center rounded ${view === 'grid' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'}`} aria-label="Grid view"><LayoutGrid className="h-4 w-4" /></button>
-                <button onClick={() => setParam('layout', 'list')} className={`flex h-8 w-8 items-center justify-center rounded ${view === 'list' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'}`} aria-label="List view"><List className="h-4 w-4" /></button>
+
+              {/* Grid / List switch */}
+              <div className="flex h-8 items-center rounded-control border border-surface-paper-edge bg-surface-paper p-0.5">
+                <button
+                  onClick={() => setParam('layout', 'grid')}
+                  className={`flex h-7 w-7 items-center justify-center rounded ${
+                    view === 'grid' ? 'bg-surface-panel text-brand shadow-xs' : 'text-ink-tertiary hover:text-ink-primary'
+                  }`}
+                  aria-label="Grid view"
+                >
+                  <LayoutGrid className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() => setParam('layout', 'list')}
+                  className={`flex h-7 w-7 items-center justify-center rounded ${
+                    view === 'list' ? 'bg-surface-panel text-brand shadow-xs' : 'text-ink-tertiary hover:text-ink-primary'
+                  }`}
+                  aria-label="List view"
+                >
+                  <List className="h-3.5 w-3.5" />
+                </button>
               </div>
             </div>
           </div>
 
           {/* Multi-select bar */}
           {selected.length > 0 && !isTrash && (
-            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-md border border-primary/30 bg-accent/40 px-3 py-2">
-              <span className="text-sm font-medium">{selected.length} selected</span>
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-control border border-brand/30 bg-brand/5 px-3 py-2">
+              <span className="text-xs font-semibold text-brand">{selected.length} piece{selected.length > 1 ? 's' : ''} selected</span>
               <div className="ml-auto flex flex-wrap items-center gap-1.5">
-                <button onClick={favSelected} className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-accent"><Heart className="h-3.5 w-3.5" /> Favorite</button>
-                <button onClick={() => setMoveOpen(true)} className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-accent"><FolderInput className="h-3.5 w-3.5" /> Move to folder</button>
-                <button onClick={() => setTrashConfirm({ selected: [...selected] })} className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium hover:bg-accent"><RemoveIcon className="h-3.5 w-3.5" /> {removeLabel}</button>
-                <button onClick={clearSelect} className="rounded-md p-1.5 text-muted-foreground hover:bg-accent"><X className="h-4 w-4" /></button>
+                <button
+                  onClick={favSelected}
+                  className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs font-medium hover:bg-surface-paper-warm"
+                >
+                  <Heart className="h-3 w-3" /> Favorite
+                </button>
+                <button
+                  onClick={() => setMoveOpen(true)}
+                  className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs font-medium hover:bg-surface-paper-warm"
+                >
+                  <FolderInput className="h-3 w-3" /> Move to folder
+                </button>
+                <button
+                  onClick={() => setTrashConfirm({ selected: [...selected] })}
+                  className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs font-medium text-destructive hover:bg-destructive/10"
+                >
+                  <RemoveIcon className="h-3 w-3" /> {removeLabel}
+                </button>
+                <button
+                  onClick={clearSelect}
+                  className="rounded p-1 text-ink-tertiary hover:text-ink-primary"
+                  aria-label="Clear selection"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
               </div>
             </div>
           )}
         </div>
 
-        {/* Body */}
-        <div className="px-4 py-5 md:px-8" onClick={() => { setShowFilters(false); setShowSort(false); }}>
+        {/* Repertoire Content Grid / List */}
+        <div
+          className="px-4 py-6 md:px-8"
+          onClick={() => { setShowFilters(false); setShowSort(false); }}
+        >
           {isEmpty ? (
             <EmptyState active={active} isTrash={isTrash} />
           ) : isTrash ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="flex justify-end">
-                <Button variant="outline" size="sm" onClick={emptyTrash}><Trash2 className="mr-1.5 h-4 w-4" /> Empty trash</Button>
+                <Button variant="outline" size="sm" onClick={emptyTrash} className="text-xs">
+                  <Trash2 className="mr-1.5 h-3.5 w-3.5" /> Empty trash
+                </Button>
               </div>
-              {filtered.map((s) => (
-                <div key={s.id} className="flex items-center gap-4 rounded-md border border-border bg-card p-3">
-                  <div className="h-12 w-16 shrink-0 overflow-hidden rounded border border-border"><ScorePreview id={s.id} className="h-full w-full" /></div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium">{s.title}</p>
-                    <p className="truncate text-sm text-muted-foreground">{s.composer} · deleted {s.deletedAt}</p>
+              <div className="divide-y divide-surface-paper-edge rounded-container border border-surface-paper-edge bg-surface-paper">
+                {filtered.map((s) => (
+                  <div key={s.id} className="flex items-center gap-4 p-3.5">
+                    <div className="h-12 w-16 shrink-0 overflow-hidden rounded border border-surface-paper-edge bg-white">
+                      <ScorePreview id={s.id} className="h-full w-full object-cover" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-display font-medium text-ink-primary">{s.title}</p>
+                      <p className="truncate text-xs text-ink-secondary">{s.composer} · deleted {s.deletedAt}</p>
+                    </div>
+                    <button
+                      onClick={() => restoreScore(s.id)}
+                      className="rounded-control border border-surface-paper-edge bg-surface-panel px-3 py-1.5 text-xs font-semibold text-ink-primary hover:bg-surface-paper-warm"
+                    >
+                      Restore
+                    </button>
+                    <button
+                      onClick={() => deleteScoreForever(s.id)}
+                      className="rounded-control px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10"
+                    >
+                      Delete
+                    </button>
                   </div>
-                  <button onClick={() => restoreScore(s.id)} className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold hover:bg-accent">Restore</button>
-                  <button onClick={() => deleteScoreForever(s.id)} className="rounded-md px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10">Delete forever</button>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           ) : view === 'grid' ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filtered.map((s) => (
-                <ScoreCard key={s.id} score={s} selected={selected.includes(s.id)} onToggleSelect={toggleSelect} />
+                <ScoreCard
+                  key={s.id}
+                  score={s}
+                  selected={selected.includes(s.id)}
+                  onToggleSelect={toggleSelect}
+                />
               ))}
             </div>
           ) : (
-            <div className="divide-y divide-border rounded-md border border-border bg-card">
+            <div className="divide-y divide-surface-paper-edge rounded-container border border-surface-paper-edge bg-surface-paper shadow-paper">
               {filtered.map((s) => (
-                <div key={s.id} className="flex items-center gap-4 p-3 hover:bg-accent/40">
-                  {selected.includes(s.id) && <Check className="h-4 w-4 text-primary" />}
+                <div
+                  key={s.id}
+                  className={`flex items-center gap-4 p-3.5 transition-colors hover:bg-surface-paper-warm ${
+                    selected.includes(s.id) ? 'bg-brand/5' : ''
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleSelect(s.id)}
+                    className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
+                      selected.includes(s.id)
+                        ? 'border-brand bg-brand text-white'
+                        : 'border-surface-paper-edge hover:border-line-strong'
+                    }`}
+                    aria-label={`Select ${s.title}`}
+                  >
+                    {selected.includes(s.id) && <Check className="h-3 w-3 stroke-[3]" />}
+                  </button>
+
                   <Link to={`/score/${s.id}`} className="flex min-w-0 flex-1 items-center gap-4">
-                    <div className="h-12 w-16 shrink-0 overflow-hidden rounded border border-border"><ScorePreview id={s.id} className="h-full w-full" /></div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium">{s.title}</p>
-                      <p className="truncate text-sm text-muted-foreground">{s.composer} · {s.instrument}</p>
+                    <div className="h-11 w-14 shrink-0 overflow-hidden rounded border border-surface-paper-edge bg-white">
+                      <ScorePreview id={s.id} className="h-full w-full object-cover" />
                     </div>
-                    {s.favorite && <Star className="h-3.5 w-3.5 fill-gold text-gold" />}
-                    <span className="hidden text-xs text-muted-foreground sm:block">
-                      {s.lastPlayed === 'never' || !s.lastPlayed ? 'Not played' : `Played ${s.lastPlayed}`}
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-display font-medium text-ink-primary">{s.title}</p>
+                      <p className="truncate text-xs text-ink-secondary">{s.composer} · {s.instrument}</p>
+                    </div>
+                    {s.favorite && <Star className="h-3.5 w-3.5 fill-gold text-gold shrink-0" />}
+                    <span className="hidden text-xs text-ink-tertiary sm:block">
+                      {s.lastPlayed === 'never' || !s.lastPlayed ? 'Awaiting practice' : `Played ${s.lastPlayed}`}
                     </span>
                   </Link>
-                  <button onClick={() => toggleSelect(s.id)} className="rounded p-1.5 text-muted-foreground hover:bg-accent" aria-label="Select"><Check className="h-4 w-4" /></button>
+
+                  <Link
+                    to={`/score/${s.id}/setup`}
+                    className="flex shrink-0 items-center gap-1.5 rounded-control bg-brand/10 px-2.5 py-1 text-xs font-semibold text-brand hover:bg-brand hover:text-white transition-colors"
+                  >
+                    <Play className="h-3 w-3 fill-current" />
+                    <span>Practice</span>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -336,59 +530,64 @@ export default function Library() {
 
       {/* Move to folder dialog */}
       <Dialog open={moveOpen} onOpenChange={setMoveOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Move to folder</DialogTitle></DialogHeader>
-          <div className="space-y-1">
+        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel shadow-overlay">
+          <DialogHeader><DialogTitle className="font-display text-lg">Move to folder</DialogTitle></DialogHeader>
+          <div className="space-y-1 mt-2">
             {folders.map((f) => (
-              <button key={f.id} onClick={() => moveSelected(f.id)} className="flex w-full items-center gap-2 rounded-md border border-border px-3 py-2 text-left text-sm hover:bg-accent">
-                <FolderInput className="h-4 w-4 text-muted-foreground" /> {f.name}
+              <button
+                key={f.id}
+                onClick={() => moveSelected(f.id)}
+                className="flex w-full items-center gap-2 rounded-control border border-surface-paper-edge px-3 py-2 text-left text-xs hover:bg-surface-paper"
+              >
+                <FolderInput className="h-3.5 w-3.5 text-ink-secondary" />
+                <span className="font-medium text-ink-primary">{f.name}</span>
               </button>
             ))}
-            {folders.length === 0 && <p className="py-4 text-center text-sm text-muted-foreground">No folders yet. Create one from the sidebar.</p>}
+            {folders.length === 0 && <p className="py-4 text-center text-xs text-ink-tertiary">No folders yet.</p>}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setMoveOpen(false)}>Cancel</Button>
+            <Button variant="outline" size="sm" onClick={() => setMoveOpen(false)}>Cancel</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Folder delete confirmation */}
       <Dialog open={!!folderDelete} onOpenChange={(o) => !o && setFolderDelete(null)}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
-          <p className="text-sm text-muted-foreground">Scores in this folder won’t be deleted — they’ll stay in your library.</p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setFolderDelete(null)}>Cancel</Button>
-            <Button variant="destructive" onClick={confirmDeleteFolder}>Delete folder</Button>
+        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+          <DialogHeader><DialogTitle className="font-display text-lg">Delete folder?</DialogTitle></DialogHeader>
+          <p className="text-xs text-ink-secondary mt-1">Scores in this folder will stay in your library — only the folder is removed.</p>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" size="sm" onClick={() => setFolderDelete(null)}>Cancel</Button>
+            <Button variant="destructive" size="sm" onClick={confirmDeleteFolder}>Delete folder</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Bulk remove confirmation */}
       <Dialog open={!!trashConfirm} onOpenChange={(o) => !o && setTrashConfirm(null)}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>{removeLabel}?</DialogTitle></DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            {allMine && 'These scores will move to Trash. You can restore them for 30 days.'}
-            {allShared && 'You’ll lose access to these shared scores.'}
-            {allSaved && 'These scores will be removed from your library.'}
-            {!allMine && !allShared && !allSaved && 'Selected items will be removed based on their type.'}
+        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+          <DialogHeader><DialogTitle className="font-display text-lg">{removeLabel}?</DialogTitle></DialogHeader>
+          <p className="text-xs text-ink-secondary mt-1">
+            {allMine && 'These pieces will move to Trash for 30 days.'}
+            {allShared && 'You will lose access to these shared scores.'}
+            {allSaved && 'These scores will be removed from your repertoire.'}
+            {!allMine && !allShared && !allSaved && 'Selected pieces will be removed according to their ownership.'}
           </p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setTrashConfirm(null)}>Cancel</Button>
-            <Button variant="destructive" onClick={() => { removeSelected(); setTrashConfirm(null); }}>{removeLabel}</Button>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" size="sm" onClick={() => setTrashConfirm(null)}>Cancel</Button>
+            <Button variant="destructive" size="sm" onClick={() => { removeSelected(); setTrashConfirm(null); }}>{removeLabel}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Manage folders dialog (mobile) */}
       <Dialog open={manageFoldersOpen} onOpenChange={setManageFoldersOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Manage folders</DialogTitle></DialogHeader>
-          <div className="space-y-2">
-            {folders.length === 0 && <p className="py-4 text-center text-sm text-muted-foreground">No folders yet.</p>}
+        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+          <DialogHeader><DialogTitle className="font-display text-lg">Manage folders</DialogTitle></DialogHeader>
+          <div className="space-y-2 mt-2">
+            {folders.length === 0 && <p className="py-4 text-center text-xs text-ink-tertiary">No folders created yet.</p>}
             {folders.map((f) => (
-              <div key={f.id} className="flex items-center gap-2 rounded-md border border-border px-3 py-2">
+              <div key={f.id} className="flex items-center gap-2 rounded-control border border-surface-paper-edge px-3 py-2">
                 {editingFolderId === f.id ? (
                   <>
                     <input
@@ -396,17 +595,17 @@ export default function Library() {
                       value={editFolderName}
                       onChange={(e) => setEditFolderName(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter') { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); } }}
-                      className="h-8 flex-1 rounded-md border border-border bg-card px-2 text-sm outline-none focus:border-primary"
+                      className="h-7 flex-1 rounded border border-surface-paper-edge bg-surface-paper px-2 text-xs outline-none focus:border-brand"
                     />
-                    <button onClick={() => { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); }} className="rounded p-1 text-primary hover:bg-accent"><Check className="h-4 w-4" /></button>
-                    <button onClick={() => setEditingFolderId(null)} className="rounded p-1 text-muted-foreground hover:bg-accent"><X className="h-4 w-4" /></button>
+                    <button onClick={() => { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); }} className="rounded p-1 text-brand hover:bg-brand/10" aria-label="Confirm"><Check className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => setEditingFolderId(null)} className="rounded p-1 text-ink-tertiary hover:bg-surface-paper" aria-label="Cancel"><X className="h-3.5 w-3.5" /></button>
                   </>
                 ) : (
                   <>
-                    <Folder className="h-4 w-4 text-muted-foreground" />
-                    <span className="flex-1 text-sm font-medium">{f.name}</span>
-                    <button onClick={() => { setEditingFolderId(f.id); setEditFolderName(f.name); }} className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground" aria-label="Rename"><Pencil className="h-3.5 w-3.5" /></button>
-                    <button onClick={() => setFolderToDelete(f.id)} className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground" aria-label="Delete"><Trash2 className="h-3.5 w-3.5" /></button>
+                    <Folder className="h-3.5 w-3.5 text-ink-tertiary" />
+                    <span className="flex-1 text-xs font-medium text-ink-primary">{f.name}</span>
+                    <button onClick={() => { setEditingFolderId(f.id); setEditFolderName(f.name); }} className="rounded p-1 text-ink-tertiary hover:text-ink-primary" aria-label="Rename"><Pencil className="h-3 w-3" /></button>
+                    <button onClick={() => setFolderToDelete(f.id)} className="rounded p-1 text-ink-tertiary hover:text-destructive" aria-label="Delete"><Trash2 className="h-3 w-3" /></button>
                   </>
                 )}
               </div>
@@ -417,25 +616,25 @@ export default function Library() {
                 onChange={(e) => setNewFolderName(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}
                 placeholder="New folder name"
-                className="h-8 flex-1 rounded-md border border-border bg-card px-2 text-sm outline-none focus:border-primary"
+                className="h-7 flex-1 rounded border border-surface-paper-edge bg-surface-paper px-2 text-xs outline-none focus:border-brand"
               />
-              <Button size="sm" onClick={() => { if (newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}><Plus className="h-4 w-4" /></Button>
+              <Button size="sm" onClick={() => { if (newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}><Plus className="h-3.5 w-3.5" /></Button>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setManageFoldersOpen(false)}>Done</Button>
+            <Button variant="outline" size="sm" onClick={() => setManageFoldersOpen(false)}>Done</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Folder delete confirmation (mobile manage) */}
+      {/* Folder delete confirmation (mobile) */}
       <Dialog open={!!folderToDelete} onOpenChange={(o) => !o && setFolderToDelete(null)}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
-          <p className="text-sm text-muted-foreground">Scores in this folder won’t be deleted — they’ll stay in your library.</p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setFolderToDelete(null)}>Cancel</Button>
-            <Button variant="destructive" onClick={() => { deleteFolder(folderToDelete); if (activeFolderId === folderToDelete) setParam('view', 'all'); setFolderToDelete(null); }}>Delete folder</Button>
+        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+          <DialogHeader><DialogTitle className="font-display text-lg">Delete folder?</DialogTitle></DialogHeader>
+          <p className="text-xs text-ink-secondary mt-1">Scores in this folder will remain in your library.</p>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" size="sm" onClick={() => setFolderToDelete(null)}>Cancel</Button>
+            <Button variant="destructive" size="sm" onClick={() => { deleteFolder(folderToDelete); if (activeFolderId === folderToDelete) setParam('view', 'all'); setFolderToDelete(null); }}>Delete folder</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -446,32 +645,49 @@ export default function Library() {
 function EmptyState({ active, isTrash }) {
   if (isTrash) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border py-20 text-center">
-        <Trash2 className="h-8 w-8 text-muted-foreground" />
-        <h2 className="mt-3 font-display text-2xl font-medium">Trash is empty</h2>
-        <p className="mt-2 max-w-sm text-sm text-muted-foreground">Scores you remove go here first. You can restore them or delete them for good.</p>
+      <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-surface-paper-edge py-20 text-center">
+        <Trash2 className="h-8 w-8 text-ink-tertiary" />
+        <h2 className="mt-3 font-display text-xl font-medium text-ink-primary">Trash is empty</h2>
+        <p className="mt-1.5 max-w-sm text-xs text-ink-secondary">Scores you remove go here first. You can restore them anytime within 30 days.</p>
       </div>
     );
   }
   if (active === 'all') {
     return (
-      <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border py-20 text-center">
-        <h2 className="font-display text-2xl font-medium">Start with something you love.</h2>
-        <p className="mt-2 max-w-sm text-sm text-muted-foreground">Add a piece you’ve been wanting to play.</p>
+      <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-surface-paper-edge bg-surface-paper/40 py-20 text-center">
+        <h2 className="font-display text-2xl font-medium text-ink-primary">Start with something you love.</h2>
+        <p className="mt-2 max-w-sm text-xs leading-relaxed text-ink-secondary">
+          Add sheet music you have always wanted to play — whether scan, photo, or MusicXML.
+        </p>
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">
-          <Link to="/add-score" className="flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90"><Plus className="h-4 w-4" /> Add a score</Link>
-          <span className="text-sm text-muted-foreground">or</span>
-          <Link to="/score/moonlight" className="rounded-md border border-border px-5 py-2.5 text-sm font-semibold hover:bg-accent">Explore a sample score</Link>
+          <Link
+            to="/add-score"
+            className="flex items-center gap-2 rounded-control bg-brand px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-brand-hover transition-colors"
+          >
+            <Plus className="h-3.5 w-3.5" /> Add sheet music
+          </Link>
+          <span className="text-xs text-ink-tertiary">or</span>
+          <Link
+            to="/score/moonlight"
+            className="rounded-control border border-surface-paper-edge bg-surface-paper px-4 py-2 text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm transition-colors"
+          >
+            Explore Moonlight Sonata
+          </Link>
         </div>
       </div>
     );
   }
   const labels = { mine: 'your own scores', shared: 'scores shared with you', saved: 'saved scores', favorites: 'favorites' };
   return (
-    <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border py-20 text-center">
-      <h2 className="font-display text-xl font-medium">Nothing here yet</h2>
-      <p className="mt-2 max-w-sm text-sm text-muted-foreground">This is where {labels[active] || 'these scores'} will appear. {active === 'favorites' ? 'Mark scores with a star to see them here.' : ''}</p>
-      <Link to="/add-score" className="mt-5 flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90"><Plus className="h-4 w-4" /> Add a score</Link>
+    <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-surface-paper-edge py-20 text-center">
+      <h2 className="font-display text-xl font-medium text-ink-primary">Nothing here yet</h2>
+      <p className="mt-1.5 max-w-sm text-xs text-ink-secondary">This is where {labels[active] || 'these scores'} will appear.</p>
+      <Link
+        to="/add-score"
+        className="mt-5 flex items-center gap-2 rounded-control bg-brand px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-brand-hover transition-colors"
+      >
+        <Plus className="h-3.5 w-3.5" /> Add a score
+      </Link>
     </div>
   );
 }

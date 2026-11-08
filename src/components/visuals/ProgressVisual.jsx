@@ -1,67 +1,103 @@
 /**
  * ProgressVisual — Landing progress section visual.
- * Compact tempo trend line + recent sessions, not a BI dashboard.
+ * Focuses on reflective time immersed in music, rather than stressful BPM
+ * charts, streaks, or judgment scores.
  */
-import { TrendingUp } from 'lucide-react';
+import { Clock, Calendar, BookmarkCheck } from 'lucide-react';
 
 export default function ProgressVisual() {
-  // Deterministic mock data for tempo trend
-  const points = [72, 74, 73, 76, 78, 77, 80, 82];
-  const maxVal = 90;
-  const minVal = 60;
-  const chartW = 200;
-  const chartH = 80;
-  const stepX = chartW / (points.length - 1);
-
-  const pathD = points.map((v, i) => {
-    const x = i * stepX;
-    const y = chartH - ((v - minVal) / (maxVal - minVal)) * chartH;
-    return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-  }).join(' ');
-
-  const areaD = `${pathD} L ${chartW} ${chartH} L 0 ${chartH} Z`;
+  // Reflective weekly distribution (hours per day)
+  const days = [
+    { label: 'Mon', mins: 35, piece: 'Clair de Lune' },
+    { label: 'Tue', mins: 0, piece: null },
+    { label: 'Wed', mins: 45, piece: 'Clair de Lune' },
+    { label: 'Thu', mins: 20, piece: 'Gymnopédie No. 1' },
+    { label: 'Fri', mins: 0, piece: null },
+    { label: 'Sat', mins: 60, piece: 'Clair de Lune' },
+    { label: 'Sun', mins: 50, piece: 'Clair de Lune' },
+  ];
 
   return (
-    <div aria-hidden="true" className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <p className="type-caption text-ink-tertiary">Tempo trend</p>
-        <span className="flex items-center gap-1 text-xs font-medium text-practice-correct">
-          <TrendingUp className="h-3.5 w-3.5" /> +8 BPM
-        </span>
+    <div aria-hidden="true" className="music-paper rounded-lg p-5 shadow-paper sm:p-6">
+      {/* Reflective Overview Header */}
+      <div className="flex items-center justify-between border-b border-line-subtle pb-3">
+        <div>
+          <p className="type-caption uppercase tracking-wider text-ink-tertiary">Time with Music</p>
+          <div className="mt-1 flex items-baseline gap-2">
+            <span className="font-display text-2xl font-medium text-ink-primary">3.5 hours</span>
+            <span className="type-metadata text-ink-tertiary">this week · 5 gentle sessions</span>
+          </div>
+        </div>
+
+        <div className="rounded-control border border-line-subtle bg-surface-canvas/60 px-3 py-1.5 text-right">
+          <p className="type-caption text-ink-tertiary">No Streaks</p>
+          <p className="type-metadata font-medium text-brand">Play at your pace</p>
+        </div>
       </div>
 
-      {/* Tempo trend line */}
-      <svg viewBox={`0 0 ${chartW} ${chartH}`} className="mt-3 h-24 w-full" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="progressGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="hsl(var(--brand))" stopOpacity="0.15" />
-            <stop offset="100%" stopColor="hsl(var(--brand))" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <path d={areaD} fill="url(#progressGrad)" />
-        <path d={pathD} fill="none" stroke="hsl(var(--brand))" strokeWidth="1.5" />
-        {points.map((v, i) => {
-          const x = i * stepX;
-          const y = chartH - ((v - minVal) / (maxVal - minVal)) * chartH;
-          return <circle key={i} cx={x} cy={y} r="1.5" fill="hsl(var(--brand))" />;
-        })}
-      </svg>
+      {/* Gentle Weekly Immersion Bars (calm height, no red/green) */}
+      <div className="mt-5">
+        <p className="type-caption text-ink-tertiary mb-2">Weekly Rhythm</p>
+        <div className="grid grid-cols-7 gap-2 items-end h-24 pt-4">
+          {days.map((d) => {
+            const heightPercent = d.mins > 0 ? Math.max(20, (d.mins / 60) * 100) : 4;
+            return (
+              <div key={d.label} className="flex flex-col items-center gap-1.5 h-full justify-end group">
+                <span className="text-[10px] text-ink-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
+                  {d.mins > 0 ? `${d.mins}m` : '—'}
+                </span>
+                <div 
+                  className={`w-full rounded-sm transition-all ${
+                    d.mins > 0 ? 'bg-brand/25 group-hover:bg-brand/40' : 'bg-line-subtle/50'
+                  }`}
+                  style={{ height: `${heightPercent}%` }}
+                />
+                <span className="text-[11px] font-medium text-ink-tertiary">{d.label}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
-      {/* Recent sessions */}
-      <div className="mt-4 space-y-2 border-t border-line-subtle pt-3">
-        <p className="type-caption text-ink-tertiary">Recent sessions</p>
-        {[
-          { title: 'Clair de Lune', detail: 'Measures 12–18 · 14 min', tempo: '78 BPM' },
-          { title: 'Moonlight Sonata', detail: 'Measures 1–8 · 22 min', tempo: '72 BPM' },
-        ].map((s) => (
-          <div key={s.title} className="flex items-center justify-between text-sm">
+      {/* Repertoire Relationship Log */}
+      <div className="mt-5 space-y-2.5 border-t border-line-subtle pt-3.5">
+        <div className="flex items-center justify-between text-xs text-ink-tertiary">
+          <span>Pieces you revisited</span>
+          <span>Time spent</span>
+        </div>
+
+        <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-paper px-3 py-2">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand/10 text-brand">
+              <BookmarkCheck className="h-3 w-3" />
+            </span>
             <div>
-              <p className="font-medium text-ink-primary">{s.title}</p>
-              <p className="text-xs text-ink-tertiary">{s.detail}</p>
+              <p className="text-sm font-medium text-ink-primary">Clair de Lune</p>
+              <p className="type-metadata text-ink-tertiary">Returned 4 times · mm. 14–36</p>
             </div>
-            <span className="text-xs font-medium text-ink-secondary">{s.tempo}</span>
           </div>
-        ))}
+          <span className="type-metadata font-medium text-ink-secondary">2 hrs 30 min</span>
+        </div>
+
+        <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-canvas/40 px-3 py-2">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-canvas text-ink-tertiary border border-line-subtle">
+              <Clock className="h-3 w-3" />
+            </span>
+            <div>
+              <p className="text-sm font-medium text-ink-primary">Gymnopédie No. 1</p>
+              <p className="type-metadata text-ink-tertiary">Returned 1 time · Full score</p>
+            </div>
+          </div>
+          <span className="type-metadata font-medium text-ink-secondary">40 min</span>
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between text-xs text-ink-tertiary border-t border-line-subtle pt-2.5">
+        <span className="flex items-center gap-1.5">
+          <Calendar className="h-3 w-3" /> No countdowns or overdue pieces
+        </span>
+        <span className="italic text-ink-tertiary">Come back whenever you wish</span>
       </div>
     </div>
   );

@@ -1,50 +1,101 @@
-import { Check, SkipForward, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { SkipForward } from 'lucide-react';
 
-const STATUS = {
-  waiting: { text: 'Waiting for you', tone: 'text-ink-secondary', icon: null },
-  matched: { text: 'Matched', tone: 'text-practice-correct', icon: Check },
-  wrong: { text: 'Not quite — Yueora is still waiting', tone: 'text-practice-error', icon: X },
-  skipped: { text: 'Skipped', tone: 'text-ink-secondary', icon: SkipForward },
+/**
+ * Presentation language mapping for listening / recognition state.
+ * Yueora separates internal engine signals from user-facing language:
+ * No red 'wrong', no grading, no judgement.
+ */
+const STATUS_PRESENTATION = {
+  waiting: {
+    label: 'Listening for note…',
+    tone: 'text-ink-secondary',
+    dot: 'bg-practice-waiting',
+  },
+  matched: {
+    label: 'Following your phrasing',
+    tone: 'text-practice-following',
+    dot: 'bg-practice-following',
+  },
+  wrong: {
+    label: 'Take your time — Yueora is waiting here',
+    tone: 'text-practice-resyncing',
+    dot: 'bg-practice-resyncing',
+  },
+  skipped: {
+    label: 'Advancing phrase',
+    tone: 'text-ink-secondary',
+    dot: 'bg-ink-tertiary',
+  },
 };
 
 /**
- * Follow-notes feedback. The score only moves on when a group resolves, so the
- * demo controls below stand in for the recognition model — they are labelled.
+ * FollowFeedback: Non-judgmental practice companion.
+ * Follows the musician's pace without evaluation, grading, or red/green correction cues.
  */
-export default function FollowFeedback({ current, status, matched, skipped, paused, onResolve }) {
-  const state = STATUS[status] || STATUS.waiting;
-  const Icon = state.icon;
+export default function FollowFeedback({
+  current,
+  status,
+  matched = 0,
+  skipped = 0,
+  paused = false,
+  onResolve,
+}) {
+  const currentPresentation = STATUS_PRESENTATION[status] || STATUS_PRESENTATION.waiting;
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-x-5 gap-y-2">
-      <p className="flex items-baseline gap-2">
-        <span className="type-caption text-ink-tertiary">Current note</span>
-        <span className="type-display text-2xl text-ink-primary">{current}</span>
-      </p>
-
-      <span className={`flex items-center gap-1.5 type-body-small ${paused ? 'text-ink-tertiary' : state.tone}`}>
-        {Icon && !paused && <Icon className="h-3.5 w-3.5" aria-hidden="true" />}
-        {paused ? 'Paused' : state.text}
-      </span>
-
-      <span className="type-metadata text-ink-tertiary">{matched} matched · {skipped} skipped</span>
-
-      <div className="flex flex-wrap items-center justify-center gap-1.5">
-        <Button size="sm" variant="outline" onClick={() => onResolve('matched')} disabled={paused}>
-          Play note
-        </Button>
-        <Button size="sm" variant="ghost" onClick={() => onResolve('wrong')} disabled={paused}>
-          Play a wrong note
-        </Button>
-        <Button size="sm" variant="ghost" onClick={() => onResolve('skipped')} disabled={paused}>
-          <SkipForward className="mr-1 h-3.5 w-3.5" /> Skip
-        </Button>
+    <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-left">
+      {/* Current note & calm state */}
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-container border border-surface-paper-edge bg-surface-paper shadow-xs">
+          <span className="font-display text-xl font-medium text-ink-primary">{current}</span>
+        </div>
+        <div>
+          <div className="flex items-center gap-1.5">
+            <span
+              className={`h-2 w-2 rounded-full ${paused ? 'bg-ink-tertiary' : currentPresentation.dot}`}
+              aria-hidden="true"
+            />
+            <p className={`text-xs font-medium ${paused ? 'text-ink-tertiary' : currentPresentation.tone}`}>
+              {paused ? 'Session paused' : currentPresentation.label}
+            </p>
+          </div>
+          <p className="mt-0.5 text-[11px] text-ink-tertiary">
+            {matched > 0 ? `${matched} notes in flow` : 'Ready when you are'}
+            {skipped > 0 ? ` · ${skipped} skipped forward` : ''}
+          </p>
+        </div>
       </div>
 
-      <p className="w-full text-center type-metadata text-ink-tertiary">
-        Demo recognition — these controls stand in for the listening model.
-      </p>
+      {/* Interactive listening simulator for prototype verification */}
+      <div className="flex flex-wrap items-center justify-center gap-1.5">
+        <button
+          type="button"
+          onClick={() => onResolve('matched')}
+          disabled={paused}
+          className="rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs font-medium text-ink-primary shadow-xs transition-colors hover:bg-surface-paper-warm disabled:opacity-40"
+        >
+          Play note ({current})
+        </button>
+        <button
+          type="button"
+          onClick={() => onResolve('wrong')}
+          disabled={paused}
+          className="rounded-control border border-surface-paper-edge bg-surface-paper px-2 py-1 text-xs text-ink-secondary transition-colors hover:bg-surface-paper-warm hover:text-ink-primary disabled:opacity-40"
+          title="Simulate pausing or playing another pitch"
+        >
+          Different pitch
+        </button>
+        <button
+          type="button"
+          onClick={() => onResolve('skipped')}
+          disabled={paused}
+          className="flex items-center gap-1 rounded-control border border-transparent px-2 py-1 text-xs text-ink-tertiary transition-colors hover:bg-surface-paper hover:text-ink-secondary disabled:opacity-40"
+          title="Advance to next note"
+        >
+          <SkipForward className="h-3 w-3" />
+          <span>Advance</span>
+        </button>
+      </div>
     </div>
   );
 }

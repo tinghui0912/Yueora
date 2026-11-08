@@ -13,11 +13,11 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 
 const TABS = [
-  { value: 'mine', label: 'My performances' },
+  { value: 'mine', label: 'My preserved takes' },
   { value: 'shared', label: 'Shared with me' },
 ];
 const FILTERS = [
-  { value: 'all', label: 'All' },
+  { value: 'all', label: 'All takes' },
   { value: 'audio', label: 'Audio' },
   { value: 'video', label: 'Video' },
 ];
@@ -47,10 +47,9 @@ export default function Performances() {
   const sharedWithMe = performances.filter((p) => p.ownerId !== 'you' && (p.sharedWith || []).includes('you'));
   const source = tab === 'mine' ? mine : sharedWithMe;
 
-  // Stored recordings are private; playback uses a short-lived signed link.
   const resolveSource = useCallback(async (p) => {
     if (sources[p.id]) return sources[p.id];
-    if (!p.fileUri) throw new Error('No recording file is stored for this performance.');
+    if (!p.fileUri) throw new Error('No recording file stored for this performance.');
     const url = await signedUrlFor(p.fileUri);
     if (!url) throw new Error('The recording could not be opened right now.');
     setSources((cur) => ({ ...cur, [p.id]: url }));
@@ -87,7 +86,7 @@ export default function Performances() {
     const el = mediaRef.current;
     if (player.id === p.id && el && el.dataset.id === p.id && el.src) {
       if (el.paused) {
-        el.play().catch(() => setItemError(p.id, 'Playback was blocked. Press play again.'));
+        el.play().catch(() => setItemError(p.id, 'Playback blocked. Tap play again.'));
         setPlayer((cur) => ({ ...cur, playing: true }));
       } else {
         el.pause();
@@ -98,24 +97,33 @@ export default function Performances() {
     startPlayback(p);
   };
 
-  const seek = (p, value) => {
-    if (player.id !== p.id) {
-      startPlayback(p);
+  const seek = (p, sec) => {
+    const el = mediaRef.current;
+    if (el && player.id === p.id) {
+      el.currentTime = sec;
+      setPlayer((cur) => ({ ...cur, position: sec }));
       return;
     }
-    if (mediaRef.current) mediaRef.current.currentTime = value;
-    setPlayer((cur) => ({ ...cur, position: value }));
+    setPlayer({ id: p.id, position: sec, playing: false });
+  };
+
+  const confirmDelete = () => {
+    if (!pendingDelete) return;
+    deletePerformance(pendingDelete.id);
+    toast({ title: 'Performance removed', description: `${pendingDelete.scoreTitleSnapshot} removed.` });
+    setPendingDelete(null);
   };
 
   const download = async (p) => {
     try {
       const url = await resolveSource(p);
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = `${slugify(p.scoreTitleSnapshot)}-${p.mediaType === 'video' ? 'performance' : 'recording'}.webm`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
+      const ext = p.mediaType === 'video' ? 'mp4' : 'webm';
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${slugify(p.scoreTitleSnapshot)}-${dayLabel(p.createdAt)}.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
     } catch (err) {
       toast({ title: 'Download unavailable', description: err?.message || 'The recording could not be downloaded.' });
     }
@@ -136,83 +144,106 @@ export default function Performances() {
   };
 
   return (
-    <div className="px-4 py-6 md:px-8">
-      <h1 className="font-display text-[clamp(1.75rem,3.5vw,2.5rem)] font-medium leading-tight text-ink-primary">Performances</h1>
-      <p className="mt-1.5 type-body text-ink-secondary">The performances you chose to keep.</p>
-
-      {contextualScore && (
-        <div className="mt-4 flex flex-wrap items-center gap-2 type-body-small text-ink-secondary">
-          <span>Showing performances of</span>
-          <Link to={`/score/${contextualScore.id}`} className="font-medium text-brand hover:underline">{contextualScore.title}</Link>
-          <button onClick={clearScoreFilter} className="flex items-center gap-1 rounded-control border border-line-subtle px-2 py-0.5 hover:bg-accent">
-            <X className="h-3 w-3" aria-hidden="true" /> Show all
-          </button>
-        </div>
-      )}
-
-      <div role="tablist" aria-label="Performances" className="mt-5 inline-flex rounded-control border border-line-subtle p-0.5">
-        {TABS.map((t) => (
-          <button
-            key={t.value}
-            role="tab"
-            aria-selected={tab === t.value}
-            onClick={() => setTab(t.value)}
-            className={`rounded px-3 py-1.5 text-sm ${tab === t.value ? 'bg-accent font-medium text-accent-foreground' : 'text-ink-secondary hover:text-ink-primary'}`}
-          >
-            {t.label}
-          </button>
-        ))}
+    <div className="mx-auto max-w-5xl px-4 py-8 md:px-8">
+      {/* Page Title */}
+      <div>
+        <h1 className="font-display text-3xl font-medium tracking-tight text-ink-primary sm:text-4xl">
+          Preserved Moments
+        </h1>
+        <p className="mt-1 text-sm text-ink-secondary leading-relaxed">
+          The musical takes you chose to keep.
+        </p>
       </div>
 
-      {source.length > 0 && (
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <div role="group" aria-label="Filter by media" className="inline-flex rounded-control border border-line-subtle p-0.5">
-            {FILTERS.map((f) => (
-              <button
-                key={f.value}
-                type="button"
-                onClick={() => setKind(f.value)}
-                aria-pressed={kind === f.value}
-                className={`rounded px-3 py-1 text-sm ${kind === f.value ? 'bg-accent font-medium text-accent-foreground' : 'text-ink-secondary hover:text-ink-primary'}`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-          <div className="relative min-w-[180px] flex-1 sm:max-w-xs">
-            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-tertiary" aria-hidden="true" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by score"
-              aria-label="Search performances by score title"
-              className="h-8 pl-8"
-            />
-          </div>
+      {contextualScore && (
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-ink-secondary">
+          <span>Filtered by piece:</span>
+          <Link to={`/score/${contextualScore.id}`} className="font-semibold text-brand hover:underline">
+            {contextualScore.title}
+          </Link>
+          <button
+            onClick={clearScoreFilter}
+            className="flex items-center gap-1 rounded-control border border-surface-paper-edge bg-surface-paper px-2 py-0.5 hover:bg-surface-paper-warm"
+          >
+            <X className="h-3 w-3" /> Show all
+          </button>
         </div>
       )}
 
+      {/* Tabs */}
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-b border-line-subtle pb-3">
+        <div role="tablist" aria-label="Performances view" className="inline-flex rounded-control border border-surface-paper-edge bg-surface-paper p-0.5">
+          {TABS.map((t) => (
+            <button
+              key={t.value}
+              role="tab"
+              aria-selected={tab === t.value}
+              onClick={() => setTab(t.value)}
+              className={`rounded px-3 py-1.5 text-xs transition-colors ${
+                tab === t.value
+                  ? 'bg-surface-panel font-semibold text-brand shadow-xs'
+                  : 'text-ink-secondary hover:text-ink-primary'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {source.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <div role="group" aria-label="Filter media type" className="inline-flex rounded-control border border-surface-paper-edge bg-surface-paper p-0.5">
+              {FILTERS.map((f) => (
+                <button
+                  key={f.value}
+                  type="button"
+                  onClick={() => setKind(f.value)}
+                  className={`rounded px-2.5 py-1 text-xs transition-colors ${
+                    kind === f.value
+                      ? 'bg-surface-panel font-semibold text-brand shadow-xs'
+                      : 'text-ink-secondary hover:text-ink-primary'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-tertiary" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search score title…"
+                className="h-7 w-44 rounded-control border-surface-paper-edge bg-surface-paper/70 pl-8 text-xs focus:bg-surface-paper"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* List of Preserved Moments */}
       {source.length === 0 ? (
-        <div className="mt-8">
+        <div className="mt-10">
           <StateMessage
             tone="neutral"
-            title={tab === 'mine' ? 'No saved performances yet.' : 'Nothing shared with you yet'}
+            title={tab === 'mine' ? 'No preserved takes yet.' : 'Nothing shared with you yet'}
             description={
               tab === 'mine'
-                ? 'When a performance feels worth keeping, you can save it from the report.'
-                : 'When someone shares a performance with you, it appears here.'
+                ? 'When a practice take feels worth keeping, you can preserve it to revisit anytime.'
+                : 'When another musician shares a performance with you, it will appear here.'
             }
             primaryAction={
               tab === 'mine'
-                ? <Button asChild><Link to="/practice">Choose something to play</Link></Button>
+                ? <Button asChild size="sm" className="bg-brand text-white hover:bg-brand-hover"><Link to="/practice">Choose a piece to play</Link></Button>
                 : undefined
             }
           />
         </div>
       ) : visible.length === 0 ? (
-        <p className="mt-8 type-body-small text-ink-secondary">Nothing matches that filter yet.</p>
+        <p className="mt-8 text-xs text-ink-tertiary">No takes match that filter.</p>
       ) : (
-        <div className="mt-2 divide-y divide-line-subtle">
+        <div className="mt-6 space-y-4">
           {visible.map((p) => (
             <PerformanceRow
               key={p.id}
@@ -235,50 +266,24 @@ export default function Performances() {
         </div>
       )}
 
-      <p className="mt-8 type-metadata text-ink-tertiary">
-        Practice reports aren’t stored, so performances open here as recordings — not as old reports.
-      </p>
-
-      {/* One real media element drives whichever performance is playing */}
-      <video
+      {/* Hidden media element for playback */}
+      <audio
         ref={mediaRef}
         className="hidden"
-        playsInline
-        onTimeUpdate={(e) => setPlayer((cur) => (cur.id ? { ...cur, position: e.target.currentTime } : cur))}
-        onPlay={() => setPlayer((cur) => ({ ...cur, playing: true }))}
-        onPause={() => setPlayer((cur) => ({ ...cur, playing: false }))}
-        onEnded={() => setPlayer((cur) => ({ ...cur, playing: false }))}
-        onError={() => {
-          if (player.id) setItemError(player.id, 'The recording file could not be played.');
-        }}
+        onTimeUpdate={(e) => setPlayer((cur) => ({ ...cur, position: Math.round(e.currentTarget.currentTime) }))}
+        onEnded={() => setPlayer((cur) => ({ ...cur, playing: false, position: 0 }))}
       />
 
-      <Dialog open={!!pendingDelete} onOpenChange={(open) => !open && setPendingDelete(null)}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Delete this performance?</DialogTitle></DialogHeader>
-          <p className="text-sm text-ink-secondary">
-            {pendingDelete?.scoreTitleSnapshot} — the recording will be removed from Performances. Your practice activity stays in history.
+      {/* Delete confirmation dialog */}
+      <Dialog open={!!pendingDelete} onOpenChange={(o) => !o && setPendingDelete(null)}>
+        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel shadow-overlay">
+          <DialogHeader><DialogTitle className="font-display text-lg">Delete preserved moment?</DialogTitle></DialogHeader>
+          <p className="text-xs text-ink-secondary mt-1">
+            This will permanently remove the preserved recording of {pendingDelete?.scoreTitleSnapshot}.
           </p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setPendingDelete(null)}>Cancel</Button>
-            <Button
-              variant="destructive"
-              onClick={() => {
-                deletePerformance(pendingDelete.id);
-                if (player.id === pendingDelete.id) {
-                  if (mediaRef.current) {
-                    mediaRef.current.pause();
-                    mediaRef.current.removeAttribute('src');
-                    delete mediaRef.current.dataset.id;
-                  }
-                  setPlayer({ id: null, position: 0, playing: false });
-                }
-                setPendingDelete(null);
-                toast({ title: 'Performance deleted' });
-              }}
-            >
-              Delete
-            </Button>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" size="sm" onClick={() => setPendingDelete(null)}>Cancel</Button>
+            <Button variant="destructive" size="sm" onClick={confirmDelete}>Delete</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

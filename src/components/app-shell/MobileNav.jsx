@@ -1,40 +1,58 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Library as LibraryIcon, Plus, Music2, Disc3 } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { RepertoireGlyph, PracticeGlyph, MemoryGlyph } from '@/components/brand/MusicalGlyphs';
 
-const base = 'flex flex-1 flex-col items-center justify-center gap-1 py-2 text-xs font-medium';
+const navTabBase = 'flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium transition-colors select-none';
 
-// Three primary areas, plus the always-available add action.
 export default function MobileNav() {
   const navigate = useNavigate();
+
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line-subtle bg-surface-panel md:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <nav
+      className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-surface-paper-edge bg-surface-panel/95 backdrop-blur-md md:hidden shadow-overlay"
+      style={{ paddingBottom: 'max(0.35rem, env(safe-area-inset-bottom))' }}
+      aria-label="Mobile navigation"
+    >
       <NavLink
         to="/library"
-        className={({ isActive }) => `${base} ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
+        className={({ isActive }) =>
+          `${navTabBase} ${isActive ? 'text-brand font-semibold' : 'text-ink-secondary hover:text-ink-primary'}`
+        }
       >
-        <LibraryIcon className="h-5 w-5" /> Library
+        <RepertoireGlyph className="h-5 w-5" />
+        <span>Repertoire</span>
       </NavLink>
+
       <NavLink
         to="/practice"
-        className={({ isActive }) => `${base} ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
+        className={({ isActive }) =>
+          `${navTabBase} ${isActive ? 'text-brand font-semibold' : 'text-ink-secondary hover:text-ink-primary'}`
+        }
       >
-        <Music2 className="h-5 w-5" /> Practice
+        <PracticeGlyph className="h-5 w-5" />
+        <span>Practice</span>
       </NavLink>
-      <NavLink
-        to="/performances"
-        className={({ isActive }) => `${base} ${isActive ? 'text-primary' : 'text-muted-foreground'}`}
-      >
-        <Disc3 className="h-5 w-5" /> Performances
-      </NavLink>
+
       <button
+        type="button"
         onClick={() => navigate('/add-score')}
-        className="flex flex-1 flex-col items-center justify-center gap-1 py-2 text-xs font-semibold text-primary"
-        aria-label="Add score"
+        className="flex flex-col items-center justify-center py-1 select-none"
+        aria-label="Add sheet or file"
       >
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
-          <Plus className="h-5 w-5" />
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand text-white shadow-paper transition-transform active:scale-95">
+          <Plus className="h-4 w-4" />
         </span>
       </button>
+
+      <NavLink
+        to="/performances"
+        className={({ isActive }) =>
+          `${navTabBase} ${isActive ? 'text-brand font-semibold' : 'text-ink-secondary hover:text-ink-primary'}`
+        }
+      >
+        <MemoryGlyph className="h-5 w-5" />
+        <span>Takes</span>
+      </NavLink>
     </nav>
   );
 }

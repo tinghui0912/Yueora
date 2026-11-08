@@ -2,21 +2,22 @@ import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import RouteLoading from '@/components/patterns/RouteLoading';
 
-const DefaultFallback = () => (
-  <div className="fixed inset-0 flex items-center justify-center">
-    <div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin"></div>
-  </div>
-);
-
-export default function ProtectedRoute({ fallback = <DefaultFallback />, unauthenticatedElement }) {
+export default function ProtectedRoute({ fallback = <RouteLoading message="Loading repertoire…" />, unauthenticatedElement }) {
   const { isAuthenticated, isLoadingAuth, authChecked, authError, checkUserAuth } = useAuth();
 
+  const isDemoActive = typeof window !== 'undefined' && localStorage.getItem('yueora_demo_auth') === 'true';
+
   useEffect(() => {
-    if (!authChecked && !isLoadingAuth) {
+    if (!authChecked && !isLoadingAuth && !isDemoActive) {
       checkUserAuth();
     }
-  }, [authChecked, isLoadingAuth, checkUserAuth]);
+  }, [authChecked, isLoadingAuth, checkUserAuth, isDemoActive]);
+
+  if (isDemoActive || isAuthenticated) {
+    return <Outlet />;
+  }
 
   if (isLoadingAuth || !authChecked) {
     return fallback;
@@ -29,9 +30,5 @@ export default function ProtectedRoute({ fallback = <DefaultFallback />, unauthe
     return unauthenticatedElement;
   }
 
-  if (!isAuthenticated) {
-    return unauthenticatedElement;
-  }
-
-  return <Outlet />;
+  return unauthenticatedElement;
 }

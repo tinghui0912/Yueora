@@ -1,58 +1,122 @@
 import { Link } from 'react-router-dom';
-import { Play, Star } from 'lucide-react';
+import { Play, Star, Check } from 'lucide-react';
 import ScorePreview from './ScorePreview';
+import MusicPaper from '@/components/patterns/MusicPaper';
 
 const ownershipLabel = {
   shared: (s) => `Shared by ${s.sharedBy}`,
   saved: () => 'Saved',
-  mine: () => 'Mine',
+  mine: () => null,
 };
 
 export default function ScoreCard({ score, selected, onToggleSelect }) {
+  if (!score) return null;
+
+  const isPlayed = score.lastPlayed && score.lastPlayed !== 'never';
+  const sharedText = ownershipLabel[score.ownership]?.(score);
+
   return (
-    <div className={`group relative flex flex-col overflow-hidden rounded-md border bg-card transition-shadow hover:shadow-sm ${selected ? 'border-primary ring-1 ring-primary' : 'border-border'}`}>
-      <Link to={`/score/${score.id}`} className="block">
-        <div className="aspect-[16/10] border-b border-border bg-card">
-          <ScorePreview id={score.id} className="h-full w-full" />
+    <MusicPaper
+      interactive
+      tone="natural"
+      className={`group relative flex flex-col overflow-hidden transition-all duration-base ${
+        selected ? 'ring-2 ring-brand border-brand' : ''
+      }`}
+    >
+      {/* Miniature score folio header */}
+      <Link
+        to={`/score/${score.id}`}
+        className="block relative aspect-[16/10] overflow-hidden border-b border-surface-paper-edge bg-white/95"
+        tabIndex={-1}
+        aria-hidden="true"
+      >
+        {/* Subtle folio binding line on left */}
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-surface-paper-edge/60 z-10" />
+        <ScorePreview id={score.id} className="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.02]" />
+
+        {/* Status badges overlay */}
+        <div className="absolute top-2.5 left-3 flex flex-wrap gap-1.5 z-10">
+          {sharedText && (
+            <span className="rounded-control bg-surface-panel/90 backdrop-blur-xs px-2 py-0.5 text-[10px] font-medium text-ink-secondary shadow-xs">
+              {sharedText}
+            </span>
+          )}
         </div>
+
+        {score.favorite && (
+          <div className="absolute top-2.5 right-2.5 z-10">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-panel/90 backdrop-blur-xs shadow-xs">
+              <Star className="h-3.5 w-3.5 fill-gold text-gold" />
+            </span>
+          </div>
+        )}
       </Link>
-      <div className="flex flex-1 flex-col gap-1 p-3">
-        <div className="flex items-start justify-between gap-2">
-          <Link to={`/score/${score.id}`} className="min-w-0">
-            <h3 className="truncate font-display text-base font-medium leading-tight text-foreground">{score.title}</h3>
-            <p className="truncate text-sm text-muted-foreground">{score.composer}</p>
-          </Link>
-          {onToggleSelect && (
-            <button
-              onClick={(e) => { e.preventDefault(); onToggleSelect(score.id); }}
-              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border ${selected ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-transparent hover:border-foreground/40'}`}
-              aria-label="Select score"
+
+      {/* Folio metadata & actions */}
+      <div className="flex flex-1 flex-col justify-between p-3.5 gap-2">
+        <div>
+          <div className="flex items-start justify-between gap-2">
+            <Link
+              to={`/score/${score.id}`}
+              className="min-w-0 flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
             >
-              <svg viewBox="0 0 16 16" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 8.5l3.5 3.5L13 4" /></svg>
-            </button>
-          )}
+              <h3 className="truncate font-display text-base font-medium leading-snug text-ink-primary transition-colors group-hover:text-brand">
+                {score.title}
+              </h3>
+              <p className="truncate text-xs text-ink-secondary mt-0.5">{score.composer}</p>
+            </Link>
+
+            {onToggleSelect && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onToggleSelect(score.id);
+                }}
+                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors ${
+                  selected
+                    ? 'border-brand bg-brand text-white'
+                    : 'border-surface-paper-edge text-transparent hover:border-line-strong'
+                }`}
+                aria-label={`Select ${score.title}`}
+              >
+                <Check className="h-3 w-3 stroke-[3]" />
+              </button>
+            )}
+          </div>
+
+          {/* Relationship with this piece */}
+          <p className="mt-2 text-[11px] text-ink-tertiary">
+            {isPlayed ? (
+              <span>
+                Played {score.lastPlayed}
+                {score.lastMeasure > 1 ? ` · bar ${score.lastMeasure}` : ''}
+              </span>
+            ) : (
+              <span>Awaiting first practice</span>
+            )}
+          </p>
         </div>
 
-        <p className="mt-1 text-xs text-muted-foreground">
-          {score.lastPlayed === 'never' || !score.lastPlayed ? 'Not played yet' : `Played ${score.lastPlayed}`}
-        </p>
-
-        <div className="mt-1 flex flex-wrap items-center gap-1.5">
-          {score.ownership !== 'mine' && (
-            <span className="rounded bg-accent px-1.5 py-0.5 text-xs text-accent-foreground">{ownershipLabel[score.ownership]?.(score)}</span>
-          )}
-          {score.favorite && <Star className="h-3.5 w-3.5 fill-gold text-gold" />}
-        </div>
-
-        <div className="mt-3 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+        {/* Primary practice action — always discoverable on touch & desktop! */}
+        <div className="mt-1 flex items-center justify-between border-t border-surface-paper-edge/70 pt-2.5">
           <Link
             to={`/score/${score.id}/setup`}
-            className="flex items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90"
+            className="inline-flex items-center gap-1.5 rounded-control bg-brand/10 px-2.5 py-1.5 text-xs font-semibold text-brand transition-all hover:bg-brand hover:text-white active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+            aria-label={`Practice ${score.title}`}
           >
-            <Play className="h-3 w-3" /> Practice
+            <Play className="h-3 w-3 fill-current" />
+            <span>Practice</span>
+          </Link>
+
+          <Link
+            to={`/score/${score.id}`}
+            className="text-xs text-ink-tertiary hover:text-ink-primary transition-colors"
+          >
+            View score →
           </Link>
         </div>
       </div>
-    </div>
+    </MusicPaper>
   );
 }

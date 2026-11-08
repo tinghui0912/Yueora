@@ -1,8 +1,15 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { appParams } from '@/lib/app-params';
 
 const AuthContext = createContext();
+
+const DEMO_USER = {
+  id: 'you',
+  email: 'you@example.com',
+  full_name: 'You (Preview)',
+  role: 'user',
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -11,22 +18,77 @@ export const AuthProvider = ({ children }) => {
   const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(true);
   const [authError, setAuthError] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
-  const [appPublicSettings, setAppPublicSettings] = useState(null); // Contains only { id, public_settings }
+  const [appPublicSettings, setAppPublicSettings] = useState(null);
 
-  useEffect(() => {
-    checkAppState();
+  const loginViaDemo = useCallback((customEmail) => {
+    const demoUser = {
+      ...DEMO_USER,
+      email: customEmail || DEMO_USER.email,
+    };
+    try {
+      localStorage.setItem('yueora_demo_auth', 'true');
+    } catch (_) {}
+    setUser(demoUser);
+    setIsAuthenticated(true);
+    setAuthError(null);
+    setIsLoadingAuth(false);
+    setIsLoadingPublicSettings(false);
+    setAuthChecked(true);
+    return demoUser;
   }, []);
 
-  const checkAppState = async () => {
+  const checkUserAuth = useCallback(async () => {
+    // If local demo mode is active
+    if (typeof window !== 'undefined' && localStorage.getItem('yueora_demo_auth') === 'true') {
+      setUser(DEMO_USER);
+      setIsAuthenticated(true);
+      setIsLoadingAuth(false);
+      setAuthChecked(true);
+      return;
+    }
+
+    try {
+      setIsLoadingAuth(true);
+      const currentUser = await base44.auth.me();
+      setUser(currentUser);
+      setIsAuthenticated(true);
+      setIsLoadingAuth(false);
+      setAuthChecked(true);
+    } catch (error) {
+      console.warn('User auth check failed:', error);
+      setIsLoadingAuth(false);
+      setIsAuthenticated(false);
+      setAuthChecked(true);
+
+      if (error.status === 401 || error.status === 403) {
+        setAuthError({
+          type: 'auth_required',
+          message: 'Authentication required',
+        });
+      }
+    }
+  }, []);
+
+  const checkAppState = useCallback(async () => {
+    // Check if demo bypass is already active
+    if (typeof window !== 'undefined' && localStorage.getItem('yueora_demo_auth') === 'true') {
+      setUser(DEMO_USER);
+      setIsAuthenticated(true);
+      setIsLoadingPublicSettings(false);
+      setIsLoadingAuth(false);
+      setAuthChecked(true);
+      setAuthError(null);
+      return;
+    }
+
     try {
       setIsLoadingPublicSettings(true);
       setAuthError(null);
-      
+
       try {
         const publicSettings = await base44.app.getPublicSettings();
         setAppPublicSettings(publicSettings);
-        
-        // If we got the app public settings successfully, check if user is authenticated
+
         if (appParams.token) {
           await checkUserAuth();
         } else {
@@ -36,94 +98,67 @@ export const AuthProvider = ({ children }) => {
         }
         setIsLoadingPublicSettings(false);
       } catch (appError) {
-        console.error('App state check failed:', appError);
-        
-        // Handle app-level errors
+        console.warn('Base44 app settings unavailable in local environment:', appError);
+
         if (appError.status === 403 && appError.data?.extra_data?.reason) {
           const reason = appError.data.extra_data.reason;
-          if (reason === 'auth_required') {
-            setAuthError({
-              type: 'auth_required',
-              message: 'Authentication required'
-            });
-          } else if (reason === 'user_not_registered') {
-            setAuthError({
-              type: 'user_not_registered',
-              message: 'User not registered for this app'
-            });
-          } else {
-            setAuthError({
-              type: reason,
-              message: appError.message
-            });
-          }
-        } else {
           setAuthError({
-            type: 'unknown',
-            message: appError.message || 'Failed to load app'
+            type: reason,
+            message: appError.message,
           });
+        } else {
+          // In local dev without base44 backend, don't hard block with an unrecoverable error
+          setAuthError(null);
         }
         setIsLoadingPublicSettings(false);
         setIsLoadingAuth(false);
+        setAuthChecked(true);
       }
     } catch (error) {
-      console.error('Unexpected error:', error);
-      setAuthError({
-        type: 'unknown',
-        message: error.message || 'An unexpected error occurred'
-      });
+      console.warn('Unexpected app initialization:', error);
+      setAuthError(null);
       setIsLoadingPublicSettings(false);
       setIsLoadingAuth(false);
+      setAuthChecked(true);
     }
-  };
+  }, [checkUserAuth]);
 
-  const checkUserAuth = async () => {
-    try {
-      // Now check if the user is authenticated
-      setIsLoadingAuth(true);
-      const currentUser = await base44.auth.me();
-      setUser(currentUser);
-      setIsAuthenticated(true);
-      setIsLoadingAuth(false);
-      setAuthChecked(true);
-    } catch (error) {
-      console.error('User auth check failed:', error);
-      setIsLoadingAuth(false);
-      setIsAuthenticated(false);
-      setAuthChecked(true);
-      
-      // If user auth fails, it might be an expired token
-      if (error.status === 401 || error.status === 403) {
-        setAuthError({
-          type: 'auth_required',
-          message: 'Authentication required'
-        });
-      }
-    }
-  };
+  useEffect(() => {
+    checkAppState();
+  }, [checkAppState]);
 
   const logout = (shouldRedirect = true) => {
+    try {
+      localStorage.removeItem('yueora_demo_auth');
+    } catch (_) {}
     setUser(null);
     setIsAuthenticated(false);
-    
+
     if (shouldRedirect) {
-      // Use the SDK's logout method which handles token cleanup and redirect
-      base44.auth.logout(window.location.href);
+      try {
+        base44.auth.logout(window.location.href);
+      } catch (_) {
+        window.location.href = '/login';
+      }
     } else {
-      // Just remove the token without redirect
-      base44.auth.logout();
+      try {
+        base44.auth.logout();
+      } catch (_) {}
     }
   };
 
   const navigateToLogin = () => {
-    // Use the SDK's redirectToLogin method
-    base44.auth.redirectToLogin(window.location.href);
+    try {
+      base44.auth.redirectToLogin(window.location.href);
+    } catch (_) {
+      window.location.href = '/login';
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isAuthenticated, 
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated,
       isLoadingAuth,
       isLoadingPublicSettings,
       authError,
@@ -132,7 +167,8 @@ export const AuthProvider = ({ children }) => {
       logout,
       navigateToLogin,
       checkUserAuth,
-      checkAppState
+      checkAppState,
+      loginViaDemo,
     }}>
       {children}
     </AuthContext.Provider>

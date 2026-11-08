@@ -1,38 +1,85 @@
 /**
- * HeroProductVisual — Landing hero visual.
- * Shows the "paper → recognized score" narrative in a single focused composition.
- * Left: mock scan page (slightly rotated, shadowed).
- * Right: clean interactive score preview with "Interactive score" badge.
+ * HeroProductVisual — Demonstrates "From paper into your personal musical life".
+ * Shows the same piece (Clair de Lune) moving from a physical scan into an interactive folio with personal history.
  */
 import MockScanPage from './MockScanPage';
 import ScorePreview from '@/components/library/ScorePreview';
+import MusicPaper from '@/components/patterns/MusicPaper';
+import { ScoreSheetGlyph, PracticeGlyph, MemoryGlyph } from '@/components/brand/MusicalGlyphs';
 
 export default function HeroProductVisual() {
   return (
-    <div aria-hidden="true" className="relative">
-      {/* Scan page — slightly behind, rotated */}
-      <div className="absolute left-0 top-4 w-[42%] rotate-[-3deg] rounded-md border border-line-subtle bg-surface-panel p-2 shadow-md">
-        <MockScanPage seed="hero-scan" className="aspect-[3/4] w-full" />
-        <p className="mt-1.5 text-center text-xs text-ink-tertiary">Scanned page</p>
+    <div aria-hidden="true" className="relative select-none">
+      {/* 1. Scanned paper page — tilted archival sheet */}
+      <div className="absolute -left-2 top-6 w-[45%] rotate-[-4deg] rounded-md border border-surface-paper-edge bg-surface-paper p-2.5 shadow-paper transition-transform duration-slow hover:rotate-[-2deg] z-10 sm:left-2">
+        <div className="flex items-center justify-between pb-1.5 px-0.5 border-b border-surface-paper-edge text-[10px] text-ink-tertiary">
+          <span>Physical scan</span>
+          <span>PDF / Photo</span>
+        </div>
+        <div className="mt-1.5 overflow-hidden rounded">
+          <MockScanPage seed="clair-de-lune-scan" className="aspect-[3/4] w-full" />
+        </div>
+        <p className="mt-1.5 text-center font-display italic text-[11px] text-ink-secondary">
+          Clair de Lune · Debussy
+        </p>
       </div>
 
-      {/* Recognized score — front, larger */}
-      <div className="ml-[34%] rounded-container border border-line-subtle bg-surface-panel p-4 shadow-sm">
-        <div className="aspect-[16/10]">
-          <ScorePreview id="moonlight-hero" className="h-full w-full" />
-        </div>
-        <div className="mt-3 flex items-center justify-between border-t border-line-subtle pt-3">
-          <div>
-            <p className="font-display text-base font-medium text-ink-primary">Moonlight Sonata</p>
-            <p className="text-sm text-ink-secondary">Beethoven</p>
+      {/* 2. Recognized interactive score in personal repertoire */}
+      <MusicPaper
+        tone="white"
+        elevation="paper"
+        className="ml-[30%] sm:ml-[28%] p-4 sm:p-5 relative z-20 transition-transform duration-slow hover:translate-y-[-2px]"
+      >
+        <div className="flex items-center justify-between border-b border-surface-paper-edge pb-2.5 text-xs">
+          <div className="flex items-center gap-1.5">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand/10 text-brand">
+              <ScoreSheetGlyph className="h-3 w-3" />
+            </span>
+            <span className="font-medium text-ink-primary">In your Repertoire</span>
           </div>
-          <span className="rounded-control bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground">Interactive score</span>
+          <span className="rounded-control bg-brand/10 px-2 py-0.5 text-[10px] font-semibold text-brand">
+            Interactive Folio
+          </span>
         </div>
-      </div>
 
-      {/* Arrow connecting scan to score */}
-      <svg className="absolute left-[37%] top-[40%] h-6 w-6 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M5 12h14M13 6l6 6-6 6" />
+        {/* Score preview */}
+        <div className="aspect-[16/10] mt-3 overflow-hidden rounded border border-surface-paper-edge bg-white">
+          <ScorePreview id="clair-de-lune" className="h-full w-full object-cover" />
+        </div>
+
+        {/* Piece info & living personal history */}
+        <div className="mt-3.5 flex items-start justify-between gap-2 border-t border-surface-paper-edge pt-3">
+          <div>
+            <p className="font-display text-base font-medium text-ink-primary leading-tight">
+              Clair de Lune
+            </p>
+            <p className="text-xs text-ink-secondary mt-0.5">Claude Debussy · 3/4 Time · Key of D♭</p>
+          </div>
+        </div>
+
+        {/* Organic relationship metadata */}
+        <div className="mt-2.5 flex flex-wrap items-center gap-3 rounded-control bg-surface-canvas/60 px-2.5 py-1.5 text-[11px] text-ink-secondary">
+          <span className="flex items-center gap-1 text-brand font-medium">
+            <PracticeGlyph className="h-3 w-3" /> Continue from bar 14
+          </span>
+          <span className="text-ink-tertiary">·</span>
+          <span className="flex items-center gap-1 text-ink-tertiary">
+            <MemoryGlyph className="h-3 w-3" /> 1 take kept
+          </span>
+        </div>
+      </MusicPaper>
+
+      {/* Musical resonance connector */}
+      <svg
+        className="absolute left-[33%] top-[45%] h-8 w-8 text-brand/60 z-30 pointer-events-none drop-shadow-xs"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M4 12h14M13 6l6 6-6 6" />
       </svg>
     </div>
   );

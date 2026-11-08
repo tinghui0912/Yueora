@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   ArrowLeft, Play, Pause, Flag, Timer, RotateCcw, Repeat, Settings2,
@@ -7,13 +7,14 @@ import {
 import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
 import { usePracticeRuntime } from '@/stores/practiceRuntime';
 import { generateNotes } from '@/lib/mockData';
-import { measureWindowStart, fmtClock, tempoLabel, rangeLabel } from '@/lib/practiceUtils';
+import { measureWindowStart, fmtClock, rangeLabel } from '@/lib/practiceUtils';
 import useSessionRecorder from '@/lib/useSessionRecorder';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import TempoPopover from '@/components/practice/TempoPopover';
 import FollowFeedback from '@/components/practice/FollowFeedback';
 import VirtualKeyboard from '@/components/practice/VirtualKeyboard';
 import PracticeSettingsDialog from '@/components/practice/PracticeSettingsDialog';
+import MusicPaper from '@/components/patterns/MusicPaper';
 import { Button } from '@/components/ui/button';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
@@ -26,8 +27,8 @@ import { useToast } from '@/components/ui/use-toast';
 const GROUPS = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'E', 'G', 'F', 'D', 'C'];
 
 /**
- * Practice workspace — the music is prepared here, not the system.
- * Follow notes waits for you; Performance runs at the chosen tempo.
+ * Practice workspace — an immersive, low-chrome environment for playing.
+ * During active playing, secondary interface chrome recedes and music takes center stage.
  */
 export default function PracticeSession() {
   const { scoreId } = useParams();
@@ -85,7 +86,6 @@ export default function PracticeSession() {
   const finished = useRef(false);
   const startedAt = useRef(null);
   const startedMs = useRef(null);
-  // { t, measure } each time the score moved on — the timeline replay follows.
   const positionRef = useRef([]);
 
   const recordPosition = (measure) => {
@@ -98,26 +98,21 @@ export default function PracticeSession() {
   const maxMeasure = selectedRange.kind === 'section' ? selectedRange.endMeasure : totalMeasures;
   const loopAllowed = mode === 'follow' && selectedRange.kind === 'section';
   const bpm = tempoMode === 'fixed' ? customBpm : (score?.tempo || 80);
-  const isActive = phase === 'running' || phase === 'paused';
   const tempoLocked = phase !== 'ready';
   const beatMs = Math.round(60000 / bpm);
 
-  // Setup owns technical readiness — arriving here without it means going back.
   useEffect(() => {
     if (!config) navigate(`/score/${scoreId}/setup`, { replace: true });
   }, [config, navigate, scoreId]);
 
-  // Leaving the workspace always releases the microphone and camera.
   useEffect(() => () => recorder.cancel(), [recorder.cancel]);
 
-  // Session clock
   useEffect(() => {
     if (phase !== 'running') return undefined;
     const t = setInterval(() => setElapsed((e) => e + 1), 1000);
     return () => clearInterval(t);
   }, [phase]);
 
-  // Count-in follows the chosen tempo.
   useEffect(() => {
     if (phase !== 'countin') return undefined;
     const t = setInterval(() => {
@@ -132,23 +127,34 @@ export default function PracticeSession() {
     return () => clearInterval(t);
   }, [phase, beatMs]);
 
-  // Performance advances on its own; Follow advances only when you play.
+  const advance = useCallback(() => {
+    const next = activeMeasure + 1;
+    if (next > maxMeasure) {
+      if (loop && loopAllowed) {
+        setActiveMeasure(selectedRange.startMeasure);
+        recordPosition(selectedRange.startMeasure);
+        return;
+      }
+      finish();
+      return;
+    }
+    setActiveMeasure(next);
+    recordPosition(next);
+  }, [activeMeasure, loop, loopAllowed, maxMeasure, selectedRange.startMeasure]);
+
   useEffect(() => {
     if (phase !== 'running' || mode !== 'performance') return undefined;
     const interval = Math.max(280, beatMs * 4);
     const t = setInterval(() => advance(), interval);
     return () => clearInterval(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, mode, bpm, activeMeasure, selectedRange, loop]);
+  }, [phase, mode, beatMs, advance]);
 
-  // The playhead always stays visible — following the score is a system behavior.
   useEffect(() => {
     if (phase === 'running' || phase === 'countin') {
       setVisibleMeasureStart(measureWindowStart(activeMeasure));
     }
   }, [activeMeasure, phase]);
 
-  // Nothing can be finished before it has started: no empty activity, no report.
   async function finish() {
     if (finished.current) return;
     if (!startedAt.current) return;
@@ -175,12 +181,11 @@ export default function PracticeSession() {
 
     if (mode === 'follow') {
       clearReport();
-      toast({ title: 'Practice saved', description: `${score.title} — ${fmtClock(durationSeconds)}.` });
+      toast({ title: 'Practice preserved', description: `${score.title} — ${fmtClock(durationSeconds)}.` });
       navigate(`/score/${scoreId}`);
       return;
     }
 
-    // A report is a moment, not a record: it lives in memory only.
     setReport({
       activityId,
       scoreId,
@@ -199,22 +204,6 @@ export default function PracticeSession() {
     navigate(`/practice/${activityId}/summary`);
   }
 
-  function advance() {
-    const next = activeMeasure + 1;
-    if (next > maxMeasure) {
-      if (loop && loopAllowed) {
-        setActiveMeasure(selectedRange.startMeasure);
-        recordPosition(selectedRange.startMeasure);
-        return;
-      }
-      finish();
-      return;
-    }
-    setActiveMeasure(next);
-    recordPosition(next);
-  }
-
-  // Deterministic demo recognition: matched and skipped both move the score on.
   function resolveCurrentGroup(outcome) {
     if (mode !== 'follow' || phase !== 'running') return;
     if (outcome === 'wrong') {
@@ -253,6 +242,16 @@ export default function PracticeSession() {
     }
   }
 
+  function togglePlayPause() {
+    if (phase === 'ready') {
+      startSession();
+    } else if (phase === 'running') {
+      setPhase('paused');
+    } else if (phase === 'paused') {
+      setPhase('running');
+    }
+  }
+
   function restart() {
     finished.current = false;
     startedAt.current = null;
@@ -265,6 +264,30 @@ export default function PracticeSession() {
     setActiveMeasure(selectedRange.startMeasure);
     setVisibleMeasureStart(measureWindowStart(selectedRange.startMeasure));
   }
+
+  // Keyboard accessibility for music stand navigation (Space to toggle, Esc to exit/cancel)
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlayPause();
+      } else if (e.code === 'Escape') {
+        e.preventDefault();
+        if (sectionPhase !== 'idle') {
+          setSectionPhase('idle');
+          setPendingStart(null);
+        } else if (phase !== 'ready') {
+          setExitOpen(true);
+        } else {
+          navigate(`/score/${scoreId}`);
+        }
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [phase, sectionPhase, scoreId, navigate]);
 
   function startSectionPick() {
     setSectionPhase('start');
@@ -303,28 +326,25 @@ export default function PracticeSession() {
     }
   }
 
-  function clearSection() {
-    setSelectedRange({ kind: 'full', startGroupId: null, endGroupId: null, startMeasure: 1, endMeasure: 0 });
-    setLoop(false);
-    setSectionPhase('idle');
-  }
-
   if (!score) {
     return (
-      <div className="px-8 py-16 text-center">
-        <p>Score not found.</p>
-        <Button onClick={() => navigate('/library')} className="mt-4">Back to library</Button>
+      <div className="flex min-h-dvh items-center justify-center p-6 text-center">
+        <div>
+          <p className="font-display text-xl text-ink-primary">Score not found.</p>
+          <Button onClick={() => navigate('/library')} className="mt-4">Back to Repertoire</Button>
+        </div>
       </div>
     );
   }
 
-  // A saved score inherits its share-link permissions — never broaden them here.
   if (!getPermissions(score).canPractice) {
     return (
-      <div className="mx-auto max-w-md px-4 py-16 text-center">
-        <p className="font-display text-xl">Practice isn’t available for this score</p>
-        <p className="mt-2 text-sm text-ink-secondary">The link you saved it from didn’t include practice access, so it wasn’t carried into your library.</p>
-        <Button onClick={() => navigate(`/score/${scoreId}`)} className="mt-4">Back to score</Button>
+      <div className="mx-auto max-w-md px-4 py-20 text-center">
+        <p className="font-display text-xl text-ink-primary">Practice is not enabled for this score</p>
+        <p className="mt-2 text-xs text-ink-secondary leading-relaxed">
+          The link you received does not include practice permission.
+        </p>
+        <Button onClick={() => navigate(`/score/${scoreId}`)} className="mt-5 text-xs">Back to score</Button>
       </div>
     );
   }
@@ -333,104 +353,120 @@ export default function PracticeSession() {
 
   const selecting = sectionPhase !== 'idle';
   const canvasStart = selecting ? pickWindow : visibleMeasureStart;
-  const hint =
-    phase === 'ready'
-      ? mode === 'follow'
-        ? 'Set a section if you like, then start. Yueora waits for you.'
-        : 'One measure of count-in, then the take runs from start to finish.'
-      : phase === 'countin'
-        ? 'Count-in…'
-        : phase === 'running'
-          ? mode === 'follow'
-            ? 'Waiting for the current note.'
-            : 'Playing — keep going.'
-          : 'Paused. Take your time.';
+  const isPlaying = phase === 'running';
 
   return (
-    <div className="flex h-dvh flex-col bg-surface-canvas">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-3 border-b border-line-subtle bg-surface-panel px-3 py-3 md:px-5">
+    <div className="flex h-dvh flex-col bg-surface-canvas select-none">
+      {/* Workspace Header: softly recedes during active playing */}
+      <header
+        className={`flex items-center justify-between gap-3 border-b border-surface-paper-edge bg-surface-panel/90 px-4 py-2.5 backdrop-blur-md transition-opacity duration-slow md:px-6 ${
+          isPlaying ? 'opacity-40 hover:opacity-100' : 'opacity-100'
+        }`}
+      >
         <button
           onClick={() => (phase === 'ready' ? navigate(`/score/${scoreId}`) : setExitOpen(true))}
-          className="flex min-w-0 items-center gap-1.5 text-sm text-ink-secondary hover:text-ink-primary"
+          className="flex min-w-0 items-center gap-2 text-xs font-medium text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
         >
-          <ArrowLeft className="h-4 w-4 shrink-0" /> <span className="truncate">{score.title}</span>
+          <ArrowLeft className="h-4 w-4 shrink-0" />
+          <span className="truncate font-display text-sm font-medium text-ink-primary">{score.title}</span>
         </button>
 
-        <div className="flex shrink-0 items-center gap-2 md:gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {recording === 'video' && !selfViewHidden && (
             <div
               role="img"
               aria-label="Camera preview"
-              className="relative hidden h-11 w-16 items-center justify-center overflow-hidden rounded-control border border-line-subtle bg-gradient-to-br from-ink-primary/30 to-ink-primary/5 sm:flex"
+              className="relative hidden h-9 w-14 items-center justify-center overflow-hidden rounded-control border border-surface-paper-edge bg-ink-primary/10 sm:flex"
             >
-              <Video className="h-4 w-4 text-surface-panel/70" aria-hidden="true" />
-              {phase === 'running' && (
-                <span className="absolute left-1 top-1 flex items-center gap-1 rounded bg-danger px-1 py-px text-[8px] font-semibold uppercase tracking-wide text-danger-foreground">
-                  <span className="h-1 w-1 rounded-full bg-danger-foreground" /> REC
+              <Video className="h-3.5 w-3.5 text-ink-secondary" aria-hidden="true" />
+              {isPlaying && (
+                <span className="absolute left-1 top-1 flex items-center gap-1 rounded bg-danger px-1 py-px text-[7px] font-bold uppercase tracking-wider text-white">
+                  REC
                 </span>
               )}
             </div>
           )}
-          <span className="flex items-center gap-1 whitespace-nowrap type-body-small text-ink-secondary">
-            <span className={`h-2 w-2 rounded-full ${phase === 'running' ? 'bg-practice-current' : phase === 'countin' ? 'bg-practice-current/60' : 'bg-ink-tertiary'}`} />
-            {phase === 'running' ? 'Live' : phase === 'countin' ? 'Count-in' : phase === 'paused' ? 'Paused' : 'Ready'}
+
+          {/* Session Phase Pill */}
+          <div className="flex items-center gap-1.5 rounded-full border border-surface-paper-edge bg-surface-paper px-2.5 py-0.5 text-xs text-ink-secondary">
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                isPlaying ? 'bg-brand animate-pulse' : phase === 'countin' ? 'bg-practice-current' : 'bg-ink-tertiary'
+              }`}
+            />
+            <span className="text-[11px] font-medium">
+              {isPlaying ? 'Playing' : phase === 'countin' ? 'Count-in' : phase === 'paused' ? 'Paused' : 'Ready'}
+            </span>
+          </div>
+
+          {/* Current Bar Badge */}
+          <span className="rounded-control bg-brand/10 px-2 py-0.5 text-xs font-semibold text-brand">
+            Bar {activeMeasure}
           </span>
-          <span className="hidden whitespace-nowrap type-body-small text-ink-secondary capitalize md:inline">{input === 'none' ? 'No input' : input}</span>
-          <span className="whitespace-nowrap rounded-control bg-practice-current/15 px-2 py-0.5 text-xs font-medium text-practice-current">
-            Measure {activeMeasure}
-          </span>
+
           <button
             onClick={() => setSettingsOpen(true)}
-            className="rounded-control border border-line-subtle p-1.5 text-ink-secondary hover:bg-accent"
-            aria-label="Session settings"
+            className="rounded-control border border-surface-paper-edge p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-ink-primary transition-colors"
+            aria-label="Practice settings"
           >
-            <Settings2 className="h-4 w-4" />
+            <Settings2 className="h-3.5 w-3.5" />
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* Score — the central surface */}
-      <div className="relative flex-1 overflow-auto px-3 py-4 md:px-6 md:py-6">
-        <div className="mx-auto w-full max-w-3xl">
+      {/* Main Score Canvas — The Musician's Music Stand */}
+      <main className="relative flex-1 overflow-auto p-3 sm:p-6 flex flex-col justify-center items-center">
+        <div className="w-full max-w-4xl">
+          {/* Section range selector notification bar */}
           {selecting && (
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-container border border-line-subtle bg-surface-panel px-3 py-2">
-              <p className="type-body-small text-ink-primary">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-container border border-surface-paper-edge bg-surface-panel p-3 shadow-xs">
+              <p className="text-xs text-ink-primary font-medium">
                 {sectionPhase === 'start'
-                  ? 'Choose where you want to start.'
-                  : 'Start selected. Choose where you want to stop.'}
+                  ? 'Choose starting measure on score.'
+                  : 'Starting measure selected. Click ending measure.'}
               </p>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setPickWindow((w) => Math.max(1, w - 4))}
                   disabled={pickWindow <= 1}
-                  className="rounded-control border border-line-subtle p-1.5 disabled:opacity-40"
+                  className="rounded-control border border-surface-paper-edge p-1 disabled:opacity-30"
                   aria-label="Previous measures"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-3.5 w-3.5" />
                 </button>
-                <span className="px-1 type-metadata text-ink-secondary">{pickWindow}–{Math.min(totalMeasures, pickWindow + 3)}</span>
+                <span className="px-1 text-xs text-ink-secondary">
+                  Bars {pickWindow}–{Math.min(totalMeasures, pickWindow + 3)}
+                </span>
                 <button
                   onClick={() => setPickWindow((w) => Math.min(measureWindowStart(totalMeasures), w + 4))}
                   disabled={pickWindow + 4 > totalMeasures}
-                  className="rounded-control border border-line-subtle p-1.5 disabled:opacity-40"
+                  className="rounded-control border border-surface-paper-edge p-1 disabled:opacity-30"
                   aria-label="Next measures"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => { setSectionPhase('idle'); setPendingStart(null); }} className="ml-1 rounded-control border border-line-subtle p-1.5" aria-label="Cancel section selection">
-                  <X className="h-4 w-4" />
+                <button
+                  onClick={() => { setSectionPhase('idle'); setPendingStart(null); }}
+                  className="ml-1 rounded-control border border-surface-paper-edge p-1 text-ink-secondary hover:text-ink-primary"
+                  aria-label="Cancel section"
+                >
+                  <X className="h-3.5 w-3.5" />
                 </button>
               </div>
             </div>
           )}
 
-          <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-raised md:p-6">
+          {/* Archival Music Paper Stand */}
+          <MusicPaper
+            tone="white"
+            elevation="paper"
+            className="p-4 sm:p-8 relative"
+          >
             <ScoreCanvas
               notes={notes}
               selectedIds={null}
               onSelect={selecting ? handleSectionClick : () => {}}
-              zoom={1.1}
+              zoom={1.15}
               activeMeasure={selecting || !highlightMeasure ? null : activeMeasure}
               activeMeasureVariant="practice"
               measureStart={canvasStart}
@@ -438,53 +474,64 @@ export default function PracticeSession() {
               showNoteNames={showNoteNames}
             />
 
-            <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 type-metadata text-ink-tertiary">
-              <span>Showing measures {canvasStart}–{Math.min(totalMeasures, canvasStart + 3)}</span>
+            {/* Position indicator & measure navigation */}
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-surface-paper-edge pt-3 text-[11px] text-ink-tertiary">
+              <span>Showing bars {canvasStart}–{Math.min(totalMeasures, canvasStart + 3)} of {totalMeasures}</span>
+
               {!selecting && phase === 'paused' && measureWindowStart(activeMeasure) !== visibleMeasureStart && (
-                <button onClick={() => setVisibleMeasureStart(measureWindowStart(activeMeasure))} className="text-brand hover:underline">
-                  Return to current position
+                <button
+                  onClick={() => setVisibleMeasureStart(measureWindowStart(activeMeasure))}
+                  className="text-brand font-semibold hover:underline"
+                >
+                  Return to current position (Bar {activeMeasure})
                 </button>
               )}
+
               {!selecting && phase !== 'running' && (
-                <span className="flex items-center gap-1">
+                <div className="flex items-center gap-1">
                   <button
                     onClick={() => setVisibleMeasureStart((w) => Math.max(1, w - 4))}
                     disabled={visibleMeasureStart <= 1}
-                    className="rounded p-0.5 disabled:opacity-40"
+                    className="rounded p-1 border border-surface-paper-edge hover:bg-surface-paper disabled:opacity-30"
                     aria-label="Browse previous measures"
                   >
-                    <ChevronLeft className="h-3.5 w-3.5" />
+                    <ChevronLeft className="h-3 w-3" />
                   </button>
                   <button
                     onClick={() => setVisibleMeasureStart((w) => Math.min(measureWindowStart(totalMeasures), w + 4))}
                     disabled={visibleMeasureStart + 4 > totalMeasures}
-                    className="rounded p-0.5 disabled:opacity-40"
+                    className="rounded p-1 border border-surface-paper-edge hover:bg-surface-paper disabled:opacity-30"
                     aria-label="Browse next measures"
                   >
-                    <ChevronRight className="h-3.5 w-3.5" />
+                    <ChevronRight className="h-3 w-3" />
                   </button>
-                </span>
+                </div>
               )}
             </div>
-          </div>
+          </MusicPaper>
 
           {virtualKeyboard && (
-            <VirtualKeyboard current={GROUPS[activeMeasure % GROUPS.length]} showNames={showNoteNames} />
+            <div className="mt-3">
+              <VirtualKeyboard current={GROUPS[activeMeasure % GROUPS.length]} showNames={showNoteNames} />
+            </div>
           )}
         </div>
 
+        {/* Count-in Overlay */}
         {phase === 'countin' && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-surface-canvas/70">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-surface-canvas/80 backdrop-blur-xs">
             <div className="text-center">
-              <p className="type-metric text-6xl text-ink-primary">{countBeat > 0 ? countBeat : '—'}</p>
-              <p className="mt-2 type-body-small text-ink-secondary">One measure count-in · ♩ = {bpm}</p>
+              <p className="font-display text-7xl font-medium text-ink-primary animate-pulse">
+                {countBeat > 0 ? countBeat : '—'}
+              </p>
+              <p className="mt-2 text-xs text-ink-secondary">One bar count-in · ♩ = {bpm}</p>
             </div>
           </div>
         )}
-      </div>
+      </main>
 
-      {/* Status band */}
-      <div className="border-t border-line-subtle bg-surface-panel px-4 py-2">
+      {/* Listening companion / Non-judgmental status band */}
+      <div className="border-t border-surface-paper-edge bg-surface-paper/90 px-4 py-2">
         {mode === 'follow' && phase !== 'ready' ? (
           <FollowFeedback
             current={GROUPS[activeMeasure % GROUPS.length]}
@@ -495,102 +542,158 @@ export default function PracticeSession() {
             onResolve={resolveCurrentGroup}
           />
         ) : (
-          <p className="text-center type-body-small text-ink-secondary">{hint}</p>
+          <p className="text-center text-xs text-ink-secondary">
+            {phase === 'ready'
+              ? mode === 'follow'
+                ? 'Set a range if you wish, then press Start or Spacebar. Yueora follows your tempo.'
+                : 'One bar of count-in, then the take runs continuously.'
+              : 'Press Space to Pause or Resume'}
+          </p>
         )}
       </div>
 
-      {/* Toolbar */}
-      <div className="border-t border-line-subtle bg-surface-panel px-3 py-3 md:px-5" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
-        <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-2">
-          {phase === 'ready' ? (
-            <Button onClick={startSession} className="px-5">
-              <Play className="mr-1.5 h-4 w-4" /> Start
-            </Button>
-          ) : mode === 'performance' ? (
-            <Button
-              onClick={() => setPhase((p) => (p === 'running' ? 'paused' : 'running'))}
-              className="px-5"
-              disabled={phase === 'countin'}
-            >
-              {phase === 'running' ? <><Pause className="mr-1.5 h-4 w-4" /> Pause</> : <><Play className="mr-1.5 h-4 w-4" /> Resume</>}
-            </Button>
-          ) : (
-            <span className="type-metadata text-ink-tertiary">Waiting for you…</span>
-          )}
-
-          <TempoPopover
-            triggerLabel={tempoLocked ? 'Tempo is locked while playing' : 'Tempo and metronome'}
-            trigger={
+      {/* Bottom Transport System */}
+      <footer
+        className="border-t border-surface-paper-edge bg-surface-panel px-4 py-3 md:px-6 shadow-overlay"
+        style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+      >
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3">
+          {/* Primary Transport Play / Pause */}
+          <div className="flex items-center gap-2">
+            {phase === 'ready' ? (
               <button
                 type="button"
-                className={`flex items-center gap-1.5 rounded-control border px-3 py-2 text-sm ${metronome ? 'border-line-strong text-ink-primary' : 'border-line-subtle text-ink-secondary'}`}
+                onClick={startSession}
+                className="flex items-center gap-2 rounded-control bg-brand px-5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover active:scale-95"
               >
-                <Timer className="h-4 w-4" aria-hidden="true" /> Tempo · {tempoLabel(tempoMode, bpm)}
-                {metronome && <span className="h-1.5 w-1.5 rounded-full bg-brand" aria-hidden="true" />}
+                <Play className="h-3.5 w-3.5 fill-current" />
+                <span>Start</span>
               </button>
-            }
-            scoreTempo={score.tempo}
-            hasTempoChanges={false}
-            tempoMode={tempoMode}
-            customBpm={customBpm}
-            bpm={bpm}
-            locked={tempoLocked}
-            metronome={metronome}
-            onTempoMode={setTempoMode}
-            onBpm={(v) => { setTempoMode('fixed'); setCustomBpm(v); }}
-            onMetronome={setMetronome}
-          />
+            ) : mode === 'performance' ? (
+              <button
+                type="button"
+                onClick={() => setPhase((p) => (p === 'running' ? 'paused' : 'running'))}
+                disabled={phase === 'countin'}
+                className="flex items-center gap-2 rounded-control bg-brand px-5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover active:scale-95 disabled:opacity-40"
+              >
+                {phase === 'running' ? (
+                  <>
+                    <Pause className="h-3.5 w-3.5 fill-current" />
+                    <span>Pause</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-3.5 w-3.5 fill-current" />
+                    <span>Resume</span>
+                  </>
+                )}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setPhase((p) => (p === 'running' ? 'paused' : 'running'))}
+                className="flex items-center gap-2 rounded-control border border-surface-paper-edge bg-surface-paper px-4 py-2 text-xs font-semibold text-ink-primary hover:bg-surface-paper-warm"
+              >
+                {phase === 'running' ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+                <span>{phase === 'running' ? 'Pause' : 'Resume'}</span>
+              </button>
+            )}
 
-          <button
-            type="button"
-            onClick={selecting ? () => { setSectionPhase('idle'); setPendingStart(null); } : startSectionPick}
-            className={`flex items-center gap-1.5 rounded-control border px-3 py-2 text-sm ${selectedRange.kind === 'section' ? 'border-brand text-brand' : 'border-line-subtle text-ink-secondary hover:bg-accent/50'}`}
-          >
-            Section{selectedRange.kind === 'section' ? ` ${selectedRange.startMeasure}–${selectedRange.endMeasure}` : ''}
-          </button>
+            <span className="text-xs tabular-nums text-ink-secondary ml-1">
+              {fmtClock(elapsed)}
+            </span>
+          </div>
 
-          {loopAllowed && (
+          {/* Tempo, section range, and looping */}
+          <div className="flex items-center gap-2">
+            <TempoPopover
+              triggerLabel={tempoLocked ? 'Tempo is locked during play' : 'Tempo and metronome'}
+              trigger={
+                <button
+                  type="button"
+                  className={`flex items-center gap-1.5 rounded-control border px-2.5 py-1.5 text-xs transition-colors ${
+                    metronome ? 'border-line-strong text-ink-primary' : 'border-surface-paper-edge text-ink-secondary hover:text-ink-primary'
+                  }`}
+                >
+                  <Timer className="h-3.5 w-3.5" />
+                  <span>♩ = {bpm}</span>
+                  {metronome && <span className="h-1.5 w-1.5 rounded-full bg-brand" />}
+                </button>
+              }
+              scoreTempo={score.tempo}
+              hasTempoChanges={false}
+              tempoMode={tempoMode}
+              customBpm={customBpm}
+              bpm={bpm}
+              locked={tempoLocked}
+              metronome={metronome}
+              onTempoMode={setTempoMode}
+              onBpm={(v) => { setTempoMode('fixed'); setCustomBpm(v); }}
+              onMetronome={setMetronome}
+            />
+
             <button
               type="button"
-              onClick={() => setLoop((l) => !l)}
-              aria-pressed={loop}
-              className={`hidden items-center gap-1.5 rounded-control border px-3 py-2 text-sm sm:flex ${loop ? 'border-brand text-brand' : 'border-line-subtle text-ink-secondary hover:bg-accent/50'}`}
+              onClick={selecting ? () => { setSectionPhase('idle'); setPendingStart(null); } : startSectionPick}
+              className={`flex items-center gap-1.5 rounded-control border px-2.5 py-1.5 text-xs transition-colors ${
+                selectedRange.kind === 'section'
+                  ? 'border-brand/40 bg-brand/10 font-semibold text-brand'
+                  : 'border-surface-paper-edge text-ink-secondary hover:bg-surface-paper'
+              }`}
             >
-              <Repeat className="h-4 w-4" aria-hidden="true" /> Loop
+              <span>Section{selectedRange.kind === 'section' ? ` ${selectedRange.startMeasure}–${selectedRange.endMeasure}` : ''}</span>
             </button>
-          )}
 
-          <div className="ml-auto flex items-center gap-2">
-            <span className="hidden type-metadata text-ink-tertiary sm:inline">
-              {fmtClock(elapsed)}{mode === 'follow' ? ` · ${matched} matched` : ''}{skipped > 0 ? ` · ${skipped} skipped` : ''}
-            </span>
+            {loopAllowed && (
+              <button
+                type="button"
+                onClick={() => setLoop((l) => !l)}
+                aria-pressed={loop}
+                className={`hidden items-center gap-1.5 rounded-control border px-2.5 py-1.5 text-xs sm:flex transition-colors ${
+                  loop ? 'border-brand/40 bg-brand/10 font-semibold text-brand' : 'border-surface-paper-edge text-ink-secondary hover:bg-surface-paper'
+                }`}
+              >
+                <Repeat className="h-3.5 w-3.5" />
+                <span>Loop</span>
+              </button>
+            )}
+          </div>
+
+          {/* Secondary Actions & Finish */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={finish}
+              disabled={!startedAt.current}
+              className="rounded-control bg-brand/10 px-3 py-1.5 text-xs font-semibold text-brand hover:bg-brand hover:text-white transition-all disabled:opacity-40"
+            >
+              Finish take
+            </button>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="rounded-control border border-line-subtle p-2 text-ink-secondary hover:bg-accent" aria-label="More session actions">
-                  <MoreHorizontal className="h-4 w-4" />
+                <button
+                  className="rounded-control border border-surface-paper-edge p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-ink-primary transition-colors"
+                  aria-label="More session actions"
+                >
+                  <MoreHorizontal className="h-3.5 w-3.5" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52">
-                {loopAllowed && (
-                  <DropdownMenuItem onClick={() => setLoop((l) => !l)} className="sm:hidden">
-                    <Repeat className="mr-2 h-4 w-4" /> {loop ? 'Turn loop off' : 'Loop section'}
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem onClick={() => setSettingsOpen(true)}>
-                  <Settings2 className="mr-2 h-4 w-4" /> Session settings
+              <DropdownMenuContent align="end" className="w-48 border-surface-paper-edge bg-surface-panel shadow-overlay">
+                <DropdownMenuItem onClick={() => setSettingsOpen(true)} className="text-xs">
+                  <Settings2 className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Session settings
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={restart}>
-                  <RotateCcw className="mr-2 h-4 w-4" /> Restart
+                <DropdownMenuItem onClick={restart} className="text-xs">
+                  <RotateCcw className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Restart from bar 1
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={finish} disabled={!startedAt.current}>
-                  <Flag className="mr-2 h-4 w-4" /> Finish
+                <DropdownMenuSeparator className="bg-line-subtle" />
+                <DropdownMenuItem onClick={finish} disabled={!startedAt.current} className="text-xs text-brand font-medium">
+                  <Flag className="mr-2 h-3.5 w-3.5" /> Finish &amp; preserve
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
-      </div>
+      </footer>
 
       <PracticeSettingsDialog
         open={settingsOpen}
@@ -613,16 +716,17 @@ export default function PracticeSession() {
         onSelfViewHidden={setSelfViewHidden}
       />
 
-      {/* Exit confirmation */}
+      {/* Exit confirmation dialog */}
       <Dialog open={exitOpen} onOpenChange={setExitOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Leave practice?</DialogTitle></DialogHeader>
-          <p className="text-sm text-ink-secondary">You can keep this practice in your history, or let it go.</p>
-          <DialogFooter>
-            <Button variant="ghost" onClick={() => setExitOpen(false)}>Keep playing</Button>
-            <Button variant="outline" onClick={() => { setExitOpen(false); finish(); }}>Finish &amp; save</Button>
+        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel shadow-overlay">
+          <DialogHeader><DialogTitle className="font-display text-lg">Leave practice?</DialogTitle></DialogHeader>
+          <p className="text-xs text-ink-secondary mt-1">You can preserve this session in your repertoire history, or discard it.</p>
+          <DialogFooter className="mt-4 gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setExitOpen(false)}>Keep playing</Button>
+            <Button variant="outline" size="sm" onClick={() => { setExitOpen(false); finish(); }}>Save &amp; finish</Button>
             <Button
               variant="destructive"
+              size="sm"
               onClick={() => { setExitOpen(false); recorder.cancel(); clearReport(); navigate(`/score/${scoreId}`); }}
             >
               Discard

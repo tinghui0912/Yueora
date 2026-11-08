@@ -35,6 +35,9 @@
     --surface-canvas: 44 19% 97%;
     --surface-panel: 0 0% 100%;
     --surface-raised: 0 0% 100%;
+    --surface-paper: 44 26% 96%;
+    --surface-paper-warm: 40 28% 95%;
+    --surface-paper-edge: 44 16% 87%;
 
     /* ---- Text hierarchy (ink) ---- */
     --ink-primary: 220 5% 13%;
@@ -62,7 +65,13 @@
     /* ---- Selection ---- */
     --selection: 148 36% 88%;
 
-    /* ---- Practice semantic colors ---- */
+    /* ---- Practice semantic colors (non-judgmental) ---- */
+    --practice-following: 148 35% 36%;
+    --practice-following-foreground: 0 0% 100%;
+    --practice-waiting: 40 18% 46%;
+    --practice-waiting-foreground: 0 0% 100%;
+    --practice-resyncing: 35 48% 45%;
+    --practice-resyncing-foreground: 0 0% 100%;
     --practice-current: 40 55% 48%;
     --practice-current-foreground: 0 0% 100%;
     --practice-correct: 148 35% 40%;
@@ -84,6 +93,8 @@
     /* ---- Elevation ---- */
     --shadow-raised: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.03);
     --shadow-overlay: 0 10px 38px -10px rgb(0 0 0 / 0.16), 0 8px 20px -12px rgb(0 0 0 / 0.10);
+    --shadow-paper: 0 1px 3px 0 rgb(44 38 28 / 0.06), 0 4px 12px -2px rgb(44 38 28 / 0.05);
+    --shadow-paper-hover: 0 2px 6px 0 rgb(44 38 28 / 0.08), 0 10px 24px -4px rgb(44 38 28 / 0.10);
   }
 }
 
@@ -162,6 +173,21 @@
   }
   .elevation-overlay {
     box-shadow: var(--shadow-overlay);
+  }
+  .music-paper {
+    background-color: hsl(var(--surface-paper));
+    border: 1px solid hsl(var(--surface-paper-edge));
+    box-shadow: var(--shadow-paper);
+  }
+  .music-paper-interactive {
+    background-color: hsl(var(--surface-paper));
+    border: 1px solid hsl(var(--surface-paper-edge));
+    box-shadow: var(--shadow-paper);
+    transition: transform var(--motion-fast) var(--motion-easing), box-shadow var(--motion-fast) var(--motion-easing);
+  }
+  .music-paper-interactive:hover {
+    box-shadow: var(--shadow-paper-hover);
+    transform: translateY(-2px);
   }
 
   /* ---- Staff background ---- */

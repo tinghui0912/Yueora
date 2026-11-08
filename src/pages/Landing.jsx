@@ -1,6 +1,17 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import { ArrowRight, Upload, ScanSearch, Music2, Play, Library as LibraryIcon, Share2 } from 'lucide-react';
+import {
+  ArrowRight,
+  Check,
+  Lock,
+  Heart,
+  ChevronRight,
+  BookOpen,
+  Sparkles,
+  ShieldCheck,
+  Music,
+} from 'lucide-react';
 import PublicShell from '@/components/public/PublicShell';
 import ScorePreview from '@/components/library/ScorePreview';
 import HeroProductVisual from '@/components/visuals/HeroProductVisual';
@@ -9,244 +20,737 @@ import ProgressVisual from '@/components/visuals/ProgressVisual';
 import SharingVisual from '@/components/visuals/SharingVisual';
 import PerformanceMemoryVisual from '@/components/visuals/PerformanceMemoryVisual';
 import MockScanPage from '@/components/visuals/MockScanPage';
+import MusicPaper from '@/components/patterns/MusicPaper';
+import {
+  ScoreSheetGlyph,
+  PracticeGlyph,
+  MemoryGlyph,
+  RepertoireGlyph,
+} from '@/components/brand/MusicalGlyphs';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { formatPrice } from '@/lib/commercial';
-
-const flow = [
-  { icon: Upload, title: 'Bring in music', body: 'Upload a PDF, photos, or MusicXML — the music you actually want to play.', visual: 'scan' },
-  { icon: ScanSearch, title: 'Recognize it', body: 'Yueora turns the pages into an interactive score, ready to review.', visual: 'highlight' },
-  { icon: Music2, title: 'Make it yours', body: 'Correct anything that’s off, then keep it in your personal library.', visual: 'score' },
-  { icon: Play, title: 'Play when you feel like it', body: 'Pick up where you left off, with calm feedback and no pressure.', visual: 'practice' },
-];
-
-const libraryViews = ['All music', 'Mine', 'Shared with me', 'Saved', 'Favorites', 'Folders'];
-const faqs = [
-  { q: 'Do I have to practice every day?', a: 'No. Yueora has no streaks, no assignments, and no overdue items. You come back when you feel like playing.' },
-  { q: 'Where does my music come from?', a: 'You bring it — scans, photos, or MusicXML. Yueora doesn’t hand you a curriculum; it helps you play what you love.' },
-  { q: 'Does Yueora grade my playing?', a: 'No. Yueora doesn’t measure accuracy at all. It keeps what you actually did — the piece, the section, how long you played — with no score, grade, or judgment.' },
-  { q: 'Can I share scores with others?', a: 'Yes. Invite people by email with view or edit access, or turn on a link with the permissions you choose.' },
-];
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
   const plans = usePrototypeStore((s) => s.plans);
   const primary = isAuthenticated ? '/library' : '/register';
 
+  // Active step in the continuous "Life of a Piece" journey
+  const [activeStep, setActiveStep] = useState(0);
+
+  const journeySteps = [
+    {
+      step: '01',
+      title: 'Arrives as Paper or PDF',
+      summary: 'A scan, photo, or digital file from your music stand.',
+      description:
+        'Bring the pieces you already care about. Whether it’s a dog-eared print of Debussy’s Clair de Lune, a phone photo of a score, or an exported MusicXML file, Yueora welcomes it without requiring proprietary sheet formats.',
+      tag: 'Capture & Input',
+      visual: 'scan',
+    },
+    {
+      step: '02',
+      title: 'Becomes an Interactive Score',
+      summary: 'Optical music recognition that understands musical phrasing.',
+      description:
+        'Yueora interprets the notes, staves, dynamics, and measure structures. You can adjust any nuance in the editor, customize fingering, or transpose keys—turning static ink into a living musical companion.',
+      tag: 'Interpretation',
+      visual: 'interactive',
+    },
+    {
+      step: '03',
+      title: 'Dwells in Your Repertoire',
+      summary: 'A curated folio that remembers your history with the piece.',
+      description:
+        'Your scores don’t sit in generic cloud folders. They live in a personal music folio that remembers where you stopped, which sections you love, and the history you have built together over weeks and years.',
+      tag: 'Repertoire Archive',
+      visual: 'repertoire',
+    },
+    {
+      step: '04',
+      title: 'Practiced Without Pressure',
+      summary: 'Calm acoustic listening that follows your natural rubato.',
+      description:
+        'Open your piano stand and play. Yueora listens through your microphone, turning pages at your tempo. There are no punitive red error flashes, no grading percentages, and no artificial streak pressure.',
+      tag: 'Practice Stand',
+      visual: 'practice',
+    },
+    {
+      step: '05',
+      title: 'Preserved as a Memory',
+      summary: 'Save the takes you cherish beside the sheet music.',
+      description:
+        'When an evening run of the piece feels warm and heartfelt, save the recording. Your performance sits forever alongside the score, complete with your personal practice journal notes.',
+      tag: 'Performance Archive',
+      visual: 'memory',
+    },
+    {
+      step: '06',
+      title: 'Shared When You Choose',
+      summary: 'A door you choose to open, private by default.',
+      description:
+        'Your musical journey remains entirely private. When you want to share a breakthrough take with your teacher or a loved one, open the door with one click—on your terms.',
+      tag: 'Private Sharing',
+      visual: 'sharing',
+    },
+  ];
+
+  const faqs = [
+    {
+      q: 'Do I have to practice every day?',
+      a: 'No. Yueora explicitly rejects streaks, daily notifications, and countdowns. We believe music should be an inviting sanctuary, not a chore. You return when you are inspired to play.',
+    },
+    {
+      q: 'Where does my music come from?',
+      a: 'You bring the music you already love. Scan sheet music on your piano stand, upload PDFs, take phone photos, or import MusicXML files. Yueora never restricts you to a pre-packaged corporate catalog.',
+    },
+    {
+      q: 'Does Yueora judge or grade my playing?',
+      a: 'Never. Yueora does not calculate accuracy percentages or flash red notes. The pitch-following engine is designed to turn pages and keep your place quietly, respecting your interpretive rubato.',
+    },
+    {
+      q: 'Is my practice private?',
+      a: 'Yes, completely private by default. Your practice takes, audio recordings, and notes are never published to any public feed. You choose if and when to share a specific take with a teacher or friend.',
+    },
+    {
+      q: 'Can I export my scores and recordings?',
+      a: 'Always. Your music is yours. You can export scores as high-resolution PDF or MusicXML, and download your uncompressed audio recordings whenever you want.',
+    },
+  ];
+
   return (
     <PublicShell>
-      {/* Hero */}
-      <section className="mx-auto max-w-6xl px-5 pt-10 pb-20 md:px-8 md:pt-20">
-        <div className="grid items-center gap-10 md:grid-cols-2">
+      {/* 1. HERO: "Play what you love." */}
+      <section className="relative mx-auto max-w-6xl px-5 pt-12 pb-24 md:px-8 md:pt-24 md:pb-32">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
           <div>
-            <h1 className="font-display text-[clamp(2.25rem,5vw,3.6rem)] font-medium leading-[1.05] text-ink-primary">
-              Play what<br />you love.
+            {/* Subtle brand eyebrow */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-line-subtle bg-surface-paper px-3 py-1 text-xs text-brand shadow-xs">
+              <Sparkles className="h-3 w-3" />
+              <span className="font-medium tracking-wide uppercase">A personal musical journey</span>
+            </div>
+
+            {/* Main Headline */}
+            <h1 className="mt-6 font-display text-[clamp(2.75rem,5.5vw,4.25rem)] font-medium leading-[1.04] tracking-tight text-ink-primary">
+              Play what<br />
+              <span className="italic font-normal">you love.</span>
             </h1>
-            <p className="mt-5 max-w-md text-base leading-relaxed text-ink-secondary">
-              Bring the sheet music you actually want to play. Keep it in your library, turn it interactive, and come back whenever you feel like playing.
+
+            {/* Supporting Copy */}
+            <p className="mt-6 max-w-lg text-lg leading-relaxed text-ink-secondary">
+              Bring the sheet music that already matters to you. Yueora turns physical pages into
+              living interactive scores, holds your personal repertoire, follows your playing without
+              judgment, and preserves the musical moments worth keeping.
             </p>
-            <div className="mt-7 flex flex-wrap items-center gap-3">
-              <Link to={primary} className="flex items-center gap-2 rounded-control bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90">
-                Start playing <ArrowRight className="h-4 w-4" />
+
+            {/* Tactile Actions */}
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              <Link
+                to={primary}
+                className="inline-flex items-center gap-2 rounded-control bg-brand px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand/90 hover:shadow-md"
+              >
+                <span>Start your journey</span>
+                <ArrowRight className="h-4 w-4" />
               </Link>
-              <a href="#how" className="rounded-control border border-line-subtle px-5 py-3 text-sm font-semibold text-ink-primary hover:bg-accent">
-                See how Yueora works
+              <a
+                href="#lifecycle"
+                className="inline-flex items-center gap-2 rounded-control border border-line-subtle bg-surface-paper px-5 py-3.5 text-sm font-medium text-ink-primary shadow-xs transition hover:bg-surface-canvas"
+              >
+                <span>See the lifecycle</span>
+                <ChevronRight className="h-4 w-4 text-ink-tertiary" />
               </a>
             </div>
+
+            {/* Reassurance pills */}
+            <div className="mt-8 flex flex-wrap items-center gap-y-2 gap-x-5 text-xs text-ink-tertiary">
+              <span className="flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5 text-brand" /> No forced curriculum
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5 text-brand" /> No streak pressure
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5 text-brand" /> Private by default
+              </span>
+            </div>
           </div>
-          <HeroProductVisual />
+
+          {/* Hero Visual: Clair de Lune from paper scan to living score */}
+          <div className="relative">
+            <HeroProductVisual />
+          </div>
         </div>
       </section>
 
-      {/* Your music, not ours */}
-      <section className="border-y border-line-subtle bg-surface-panel">
-        <div className="mx-auto max-w-6xl px-5 py-16 md:px-8">
-          <h2 className="font-display text-[clamp(1.5rem,3vw,2.25rem)] font-medium leading-tight text-ink-primary">Your music, not ours.</h2>
-          <p className="mt-3 max-w-2xl text-ink-secondary">
-            Yueora doesn’t hand you a curriculum or tell you what to practice. You bring the pieces you love — and decide what to play next.
-          </p>
-        </div>
-      </section>
+      {/* 2. PHILOSOPHY MOMENT: "Your music, not ours." */}
+      <section id="philosophy" className="border-t border-line-subtle bg-surface-panel/40 py-24 md:py-32">
+        <div className="mx-auto max-w-5xl px-5 md:px-8">
+          <div className="max-w-2xl">
+            <p className="type-caption font-semibold uppercase tracking-wider text-brand">
+              The Yueora Philosophy
+            </p>
+            <h2 className="mt-3 font-display text-[clamp(2rem,4vw,3.2rem)] font-medium leading-[1.1] text-ink-primary">
+              Your music, <br />
+              <span className="italic font-normal">not ours.</span>
+            </h2>
+            <p className="mt-6 text-lg leading-relaxed text-ink-secondary">
+              Most music platforms give you an algorithmically prescribed course, pressure you with
+              streaks, or judge every note against an unforgiving standard. Yueora is built on a
+              different belief:
+            </p>
+            <p className="mt-4 font-serif italic text-xl leading-relaxed text-ink-primary">
+              &ldquo;The music already on your piano stand is the music that deserves your devotion.
+              Yueora does not teach you what to love—it gives what you love a lasting home.&rdquo;
+            </p>
+          </div>
 
-      {/* From paper to playable */}
-      <section id="how" className="mx-auto max-w-6xl px-5 py-16 md:px-8">
-        <h2 className="font-display text-2xl font-medium text-ink-primary">From paper to playable</h2>
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {flow.map((s) => (
-            <div key={s.title} className="rounded-container border border-line-subtle bg-surface-panel p-5">
-              {s.visual === 'scan' && (
-                <div className="mb-3 overflow-hidden rounded border border-line-subtle">
-                  <MockScanPage seed="flow-scan" className="aspect-[3/4] w-full" />
-                </div>
-              )}
-              {s.visual === 'highlight' && (
-                <div className="mb-3 overflow-hidden rounded border border-line-subtle">
-                  <MockScanPage seed="flow-highlight" className="aspect-[3/4] w-full" showHighlight highlightMeasure={2} />
-                </div>
-              )}
-              {s.visual === 'score' && (
-                <div className="mb-3 aspect-[16/10] overflow-hidden rounded border border-line-subtle bg-white">
-                  <ScorePreview id="flow-score" className="h-full w-full" />
-                </div>
-              )}
-              {s.visual === 'practice' && (
-                <div className="mb-3 aspect-[16/10] overflow-hidden rounded border border-line-subtle bg-white">
-                  <ScorePreview id="flow-practice" className="h-full w-full" />
-                </div>
-              )}
-              <s.icon className="h-5 w-5 text-brand" />
-              <h3 className="mt-2 font-display text-lg font-medium text-ink-primary">{s.title}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-ink-secondary">{s.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Personal library */}
-      <section className="border-t border-line-subtle bg-surface-panel">
-        <div className="mx-auto max-w-6xl px-5 py-16 md:px-8">
-          <div className="grid gap-10 md:grid-cols-2 md:items-center">
+          {/* 4 Quiet Pillars — Unboxed, Editorial Hierarchy */}
+          <div className="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 border-t border-line-subtle pt-12">
             <div>
-              <h2 className="font-display text-2xl font-medium text-ink-primary">Your personal music library</h2>
-              <p className="mt-3 text-ink-secondary">Keep everything in one place, organized the way you think about it.</p>
-              <ul className="mt-5 space-y-2">
-                {libraryViews.map((v) => (
-                  <li key={v} className="flex items-center gap-2 text-sm text-ink-secondary">
-                    <LibraryIcon className="h-4 w-4 text-brand" /> {v}
-                  </li>
-                ))}
-              </ul>
+              <span className="font-display text-2xl font-normal text-brand">01</span>
+              <h3 className="mt-2 font-display text-lg font-medium text-ink-primary">
+                You Choose Repertoire
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
+                Upload scans, photos, PDFs, or MusicXML. You decide what piece deserves your practice
+                time today.
+              </p>
             </div>
-            <div className="rounded-container border border-line-subtle bg-surface-canvas p-5">
-              <div className="grid grid-cols-2 gap-3">
-                {['Moonlight Sonata', 'Clair de Lune', 'Interstellar', 'Prelude in C'].map((t) => (
-                  <div key={t} className="rounded-container border border-line-subtle bg-surface-panel p-3">
-                    <div className="aspect-[16/10]"><ScorePreview id={t} className="h-full w-full" /></div>
-                    <p className="mt-2 text-sm font-medium text-ink-primary">{t}</p>
+
+            <div>
+              <span className="font-display text-2xl font-normal text-brand">02</span>
+              <h3 className="mt-2 font-display text-lg font-medium text-ink-primary">
+                Zero Streak Guilt
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
+                No reminders shaming you for missing a day. Music is an art of patience. Return when
+                your heart wants to play.
+              </p>
+            </div>
+
+            <div>
+              <span className="font-display text-2xl font-normal text-brand">03</span>
+              <h3 className="mt-2 font-display text-lg font-medium text-ink-primary">
+                Non-Judgmental Listening
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
+                Our acoustic engine follows your tempo and rubato. It turns pages quietly instead of
+                flashing red error marks.
+              </p>
+            </div>
+
+            <div>
+              <span className="font-display text-2xl font-normal text-brand">04</span>
+              <h3 className="mt-2 font-display text-lg font-medium text-ink-primary">
+                Private Sanctuary
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
+                Your attempts, half-learned phrases, and recordings remain strictly yours until you
+                choose to share them.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. THE CONNECTED LIFECYCLE: "A piece has a life in Yueora." */}
+      <section id="lifecycle" className="border-t border-line-subtle py-24 md:py-32">
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand">
+              <RepertoireGlyph className="h-4 w-4" />
+              <span>The Musical Lifecycle</span>
+            </div>
+            <h2 className="mt-3 font-display text-[clamp(2rem,3.5vw,2.75rem)] font-medium text-ink-primary">
+              A piece has a life in Yueora.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-ink-secondary">
+              Follow how Claude Debussy’s <span className="font-serif italic font-medium text-ink-primary">Clair de Lune</span> journeys
+              through Yueora: from a wrinkled paper scan into a living performance memory.
+            </p>
+          </div>
+
+          {/* Interactive Life Continuum Bar */}
+          <div className="mt-12 grid gap-8 lg:grid-cols-[1.1fr_1.3fr] lg:items-center">
+            {/* Steps list */}
+            <div className="space-y-3">
+              {journeySteps.map((s, idx) => {
+                const isActive = activeStep === idx;
+                return (
+                  <button
+                    key={s.step}
+                    type="button"
+                    onClick={() => setActiveStep(idx)}
+                    className={`w-full text-left rounded-lg p-4 transition-all duration-fast ${
+                      isActive
+                        ? 'music-paper shadow-paper border-l-4 border-l-brand'
+                        : 'border border-transparent hover:bg-surface-panel/60'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="type-caption font-mono text-xs font-semibold text-brand">
+                        {s.step}
+                      </span>
+                      <span className="type-metadata rounded-full bg-surface-canvas px-2.5 py-0.5 text-ink-tertiary">
+                        {s.tag}
+                      </span>
+                    </div>
+                    <h3 className="mt-1.5 font-display text-base font-medium text-ink-primary">
+                      {s.title}
+                    </h3>
+                    <p className="mt-1 text-xs leading-relaxed text-ink-secondary">
+                      {s.summary}
+                    </p>
+                    {isActive && (
+                      <p className="mt-2.5 border-t border-line-subtle pt-2 text-xs leading-relaxed text-ink-secondary/90 font-serif">
+                        {s.description}
+                      </p>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Dynamic Stage Preview Visual */}
+            <div className="relative">
+              {activeStep === 0 && (
+                <div className="music-paper rounded-lg p-6 shadow-paper">
+                  <div className="flex items-center justify-between border-b border-line-subtle pb-3">
+                    <p className="type-caption text-ink-tertiary">Step 01 · Original Paper Scan</p>
+                    <span className="type-metadata text-ink-secondary">Debussy · Clair de Lune</span>
                   </div>
-                ))}
+                  <div className="mt-4 overflow-hidden rounded border border-line-subtle bg-surface-canvas/50">
+                    <MockScanPage seed="step-scan-original" className="aspect-[4/3] w-full" />
+                  </div>
+                  <p className="mt-3 text-center text-xs text-ink-tertiary italic">
+                    Physical sheet photographed at the piano stand
+                  </p>
+                </div>
+              )}
+
+              {activeStep === 1 && (
+                <div className="music-paper rounded-lg p-6 shadow-paper">
+                  <div className="flex items-center justify-between border-b border-line-subtle pb-3">
+                    <p className="type-caption text-ink-tertiary">Step 02 · Interactive Score Review</p>
+                    <span className="rounded-control bg-brand/10 px-2 py-0.5 text-xs font-medium text-brand">
+                      OMR Recognized
+                    </span>
+                  </div>
+                  <div className="mt-4 overflow-hidden rounded border border-line-subtle bg-white">
+                    <ScorePreview id="step-score-review" className="aspect-[4/3] w-full" />
+                  </div>
+                  <div className="mt-3 flex items-center justify-between text-xs text-ink-secondary">
+                    <span>Key: D♭ Major · 9/8 Time</span>
+                    <span className="text-brand font-medium">Ready to play</span>
+                  </div>
+                </div>
+              )}
+
+              {activeStep === 2 && (
+                <div className="music-paper rounded-lg p-6 shadow-paper">
+                  <div className="flex items-center justify-between border-b border-line-subtle pb-3">
+                    <p className="type-caption text-ink-tertiary">Step 03 · Personal Repertoire Folio</p>
+                    <span className="type-metadata text-ink-secondary">Curated Collection</span>
+                  </div>
+                  <div className="mt-4 rounded-control border border-line-subtle bg-surface-canvas/50 p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="font-display text-lg font-medium text-ink-primary">
+                          Clair de Lune
+                        </h4>
+                        <p className="type-metadata text-ink-secondary">Claude Debussy</p>
+                      </div>
+                      <span className="rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-semibold text-brand">
+                        Active Study
+                      </span>
+                    </div>
+                    <div className="mt-4 flex items-center gap-4 text-xs text-ink-tertiary">
+                      <span>Last played Sunday</span>
+                      <span>·</span>
+                      <span className="text-brand font-medium">Continue from bar 14</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 aspect-[16/7] overflow-hidden rounded border border-line-subtle bg-white">
+                    <ScorePreview id="step-folio-view" className="h-full w-full" />
+                  </div>
+                </div>
+              )}
+
+              {activeStep === 3 && <PracticeWorkspaceVisual />}
+              {activeStep === 4 && <PerformanceMemoryVisual />}
+              {activeStep === 5 && <SharingVisual />}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. DEEP DIVE: PERSONAL REPERTOIRE */}
+      <section id="repertoire" className="border-t border-line-subtle bg-surface-panel/30 py-24 md:py-32">
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand">
+                <BookOpen className="h-4 w-4" />
+                <span>Personal Repertoire</span>
+              </div>
+              <h2 className="mt-3 font-display text-[clamp(2rem,3.5vw,2.75rem)] font-medium text-ink-primary">
+                A music cabinet,<br />
+                not a cloud drive.
+              </h2>
+              <p className="mt-5 text-base leading-relaxed text-ink-secondary">
+                Yueora doesn’t treat your music like generic files or spreadsheets. Every piece is
+                bound into a tactile paper folio, complete with its practice timeline, saved takes, and
+                personal notes.
+              </p>
+
+              <div className="mt-8 space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
+                    <ScoreSheetGlyph className="h-3.5 w-3.5" />
+                  </div>
+                  <div>
+                    <h4 className="font-display text-sm font-medium text-ink-primary">
+                      Pick up where you left off
+                    </h4>
+                    <p className="mt-0.5 text-xs leading-relaxed text-ink-secondary">
+                      One-click continuation straight to the bar and tempo you were exploring last
+                      time.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
+                    <Heart className="h-3.5 w-3.5" />
+                  </div>
+                  <div>
+                    <h4 className="font-display text-sm font-medium text-ink-primary">
+                      Organized by affection, not algorithms
+                    </h4>
+                    <p className="mt-0.5 text-xs leading-relaxed text-ink-secondary">
+                      Group into folios like &ldquo;Sunday Morning Pieces&rdquo;, &ldquo;French Impressionism&rdquo;, or
+                      &ldquo;Currently Memorizing&rdquo;.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Practice without pressure */}
-      <section className="mx-auto max-w-6xl px-5 py-16 md:px-8">
-        <div className="grid gap-10 md:grid-cols-2 md:items-center">
-          <div>
-            <h2 className="font-display text-2xl font-medium text-ink-primary">Practice without pressure</h2>
-            <p className="mt-3 text-ink-secondary">Pick up where you left off. Yueora follows along as you play, stays quiet when you want it to, and never grades or judges what it hears.</p>
-            <ul className="mt-5 space-y-2 text-sm text-ink-secondary">
-              <li>• Continue playing from where you stopped</li>
-              <li>• Revisit a section that felt tricky</li>
-              <li>• Practice at your own pace, with no streaks</li>
-            </ul>
-          </div>
-          <PracticeWorkspaceVisual />
-        </div>
-      </section>
+            {/* Repertoire visual showcase */}
+            <div className="grid grid-cols-2 gap-4">
+              <MusicPaper tone="warm" elevation="paper" className="p-4 transition hover:shadow-paper-hover">
+                <div className="aspect-[4/3] overflow-hidden rounded border border-line-subtle bg-white">
+                  <ScorePreview id="rep-clair" className="h-full w-full" />
+                </div>
+                <div className="mt-3">
+                  <span className="type-caption text-brand">Continue from bar 14</span>
+                  <p className="font-display text-base font-medium text-ink-primary">Clair de Lune</p>
+                  <p className="type-metadata text-ink-tertiary">Debussy · 1 take kept</p>
+                </div>
+              </MusicPaper>
 
-      {/* Progress without judgment */}
-      <section className="border-t border-line-subtle bg-surface-panel">
-        <div className="mx-auto max-w-6xl px-5 py-16 md:px-8">
-          <div className="grid gap-10 md:grid-cols-2 md:items-center">
-            <ProgressVisual />
-            <div>
-              <h2 className="font-display text-2xl font-medium text-ink-primary">See progress without being judged</h2>
-              <p className="mt-3 text-ink-secondary">See how much you’ve played, and which pieces you keep coming back to — without scores, grades, or pressure.</p>
+              <MusicPaper tone="white" elevation="paper" className="p-4 transition hover:shadow-paper-hover">
+                <div className="aspect-[4/3] overflow-hidden rounded border border-line-subtle bg-white">
+                  <ScorePreview id="rep-gymno" className="h-full w-full" />
+                </div>
+                <div className="mt-3">
+                  <span className="type-caption text-ink-tertiary">Lent et douloureux</span>
+                  <p className="font-display text-base font-medium text-ink-primary">Gymnopédie No. 1</p>
+                  <p className="type-metadata text-ink-tertiary">Satie · 2 takes kept</p>
+                </div>
+              </MusicPaper>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Sharing */}
-      <section className="mx-auto max-w-6xl px-5 py-16 md:px-8">
-        <div className="grid gap-10 md:grid-cols-2 md:items-center">
-          <div>
-            <h2 className="font-display text-2xl font-medium text-ink-primary">Share music with people you trust</h2>
-            <p className="mt-3 text-ink-secondary">Invite people by email with view or edit access, or turn on a link with the permissions you choose.</p>
-            <ul className="mt-5 space-y-2 text-sm text-ink-secondary">
-              <li className="flex items-center gap-2"><Share2 className="h-4 w-4 text-brand" /> People — Can view or Can edit</li>
-              <li className="flex items-center gap-2"><Share2 className="h-4 w-4 text-brand" /> General access — link on or off</li>
-              <li className="flex items-center gap-2"><Share2 className="h-4 w-4 text-brand" /> Download &amp; practice permissions</li>
-            </ul>
-          </div>
-          <SharingVisual />
-        </div>
-      </section>
-
-      {/* Performances */}
-      <section className="border-t border-line-subtle bg-surface-panel">
-        <div className="mx-auto max-w-6xl px-5 py-16 md:px-8">
-          <div className="grid gap-10 md:grid-cols-2 md:items-center">
-            <PerformanceMemoryVisual />
+      {/* 5. DEEP DIVE: PRACTICE STAND & NON-JUDGMENTAL LISTENING */}
+      <section id="practice" className="border-t border-line-subtle py-24 md:py-32">
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
-              <h2 className="font-display text-2xl font-medium text-ink-primary">Keep the performances you choose</h2>
-              <p className="mt-3 text-ink-secondary">
-                Practice stays yours and private. When something feels worth keeping, save the original audio or video
-                and revisit it beside the sheet music it came from.
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand">
+                <PracticeGlyph className="h-4 w-4" />
+                <span>The Practice Stand</span>
+              </div>
+              <h2 className="mt-3 font-display text-[clamp(2rem,3.5vw,2.75rem)] font-medium text-ink-primary">
+                Following your phrasing,<br />
+                not policing your notes.
+              </h2>
+              <p className="mt-5 text-base leading-relaxed text-ink-secondary">
+                Traditional practice tools penalize every missed accidental with blaring red marks.
+                Yueora listens quietly to acoustic piano through your microphone, tracking where you
+                are on the page and turning pages seamlessly.
               </p>
-              <ul className="mt-5 space-y-2 text-sm text-ink-secondary">
-                <li>• Personal practice — private, never published</li>
-                <li>• Saved performances — the recordings you decided to keep</li>
-                <li>• Selective sharing — chosen people, and only the recording</li>
-                <li>• Optional comments and replies, which you can turn off</li>
+
+              <ul className="mt-8 space-y-3 text-sm text-ink-secondary">
+                <li className="flex items-start gap-2.5">
+                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-brand" />
+                  <span>
+                    <strong className="font-medium text-ink-primary">Natural Rubato:</strong> The
+                    following engine respects expressive phrasing, slowing down and accelerating with
+                    you.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-brand" />
+                  <span>
+                    <strong className="font-medium text-ink-primary">Targeted Phrase Looping:</strong>{' '}
+                    Select measures 14 to 22 with one tap to work through tricky transitions calmly.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-brand" />
+                  <span>
+                    <strong className="font-medium text-ink-primary">Zero Accuracy Scoring:</strong> No
+                    judgment, no stars, no grading—just a quiet, supportive companion at the keys.
+                  </span>
+                </li>
               </ul>
-              <p className="mt-4 text-sm text-ink-tertiary">
-                Share videos are generated on your device when you want one, and downloaded. Yueora keeps the
-                recording, not the export.
+            </div>
+
+            {/* Visual: Practice Stand Component */}
+            <div>
+              <PracticeWorkspaceVisual />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. DEEP DIVE: PRESERVED PERFORMANCES & TIME */}
+      <section id="performances" className="border-t border-line-subtle bg-surface-panel/30 py-24 md:py-32">
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand">
+              <MemoryGlyph className="h-4 w-4" />
+              <span>Preserved Moments &amp; Time</span>
+            </div>
+            <h2 className="mt-3 font-display text-[clamp(2rem,3.5vw,2.75rem)] font-medium text-ink-primary">
+              Reflective memories,<br />
+              never vanity metrics.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-ink-secondary">
+              Music is not a gym workout or a productivity sprint. Yueora preserves the takes you
+              love and reflects on the quiet time you spent immersed in sound.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-8 lg:grid-cols-2">
+            <div>
+              <p className="type-caption text-ink-tertiary mb-3">Reflective Immersion</p>
+              <ProgressVisual />
+            </div>
+            <div>
+              <p className="type-caption text-ink-tertiary mb-3">Preserved Take Archive</p>
+              <PerformanceMemoryVisual />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. DEEP DIVE: PRIVATE SHARING */}
+      <section className="border-t border-line-subtle py-24 md:py-32">
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand">
+                <Lock className="h-4 w-4" />
+                <span>Intimate Sharing</span>
+              </div>
+              <h2 className="mt-3 font-display text-[clamp(2rem,3.5vw,2.75rem)] font-medium text-ink-primary">
+                Sharing is a door<br />
+                you choose to open.
+              </h2>
+              <p className="mt-5 text-base leading-relaxed text-ink-secondary">
+                No public feeds. No follower counts. No social media pressure. When you complete a take
+                you want your piano teacher or a close friend to hear, you can invite them privately
+                with an accompanying personal note.
               </p>
+
+              <div className="mt-8 space-y-3">
+                <div className="flex items-center gap-3 text-sm text-ink-secondary">
+                  <ShieldCheck className="h-4 w-4 text-brand" />
+                  <span>Private by default — nothing is indexed or public</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-ink-secondary">
+                  <ShieldCheck className="h-4 w-4 text-brand" />
+                  <span>Granular permission: View only or view &amp; annotate</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-ink-secondary">
+                  <ShieldCheck className="h-4 w-4 text-brand" />
+                  <span>Revoke shared access anytime with one click</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <SharingVisual />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Pricing preview */}
-      <section className="border-t border-line-subtle bg-surface-panel">
-        <div className="mx-auto max-w-6xl px-5 py-16 md:px-8">
-          <h2 className="font-display text-2xl font-medium text-ink-primary">Simple pricing</h2>
-          <div className="mt-6 grid max-w-2xl gap-4 sm:grid-cols-2">
-            <div className="rounded-container border border-line-subtle bg-surface-canvas p-5">
-              <p className="font-display text-lg font-medium text-ink-primary">Free</p>
-              <p className="mt-1 text-sm text-ink-secondary">A small library to get started.</p>
-              <p className="mt-3 font-display text-2xl text-ink-primary">{formatPrice(plans.free.priceMonthly)}</p>
-            </div>
-            <div className="rounded-container border-2 border-primary bg-surface-canvas p-5">
-              <p className="font-display text-lg font-medium text-ink-primary">Pro</p>
-              <p className="mt-1 text-sm text-ink-secondary">Unlimited scores, analytics &amp; export.</p>
-              <p className="mt-3 font-display text-2xl text-ink-primary">{formatPrice(plans.pro.priceMonthly)}<span className="text-base text-ink-tertiary">/mo</span></p>
-            </div>
+      {/* 8. SIMPLE PRICING */}
+      <section id="pricing" className="border-t border-line-subtle bg-surface-panel/40 py-24 md:py-32">
+        <div className="mx-auto max-w-5xl px-5 md:px-8">
+          <div className="text-center max-w-2xl mx-auto">
+            <p className="type-caption font-semibold uppercase tracking-wider text-brand">
+              Durable &amp; Fair
+            </p>
+            <h2 className="mt-3 font-display text-[clamp(2rem,3.5vw,2.75rem)] font-medium text-ink-primary">
+              Simple, transparent pricing.
+            </h2>
+            <p className="mt-4 text-base text-ink-secondary">
+              Start for free with your favorite pieces. Upgrade to Pro when your repertoire expands.
+            </p>
           </div>
-          <Link to="/pricing" className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
-            Compare plans <ArrowRight className="h-4 w-4" />
-          </Link>
+
+          <div className="mt-14 grid gap-8 md:grid-cols-2 max-w-3xl mx-auto">
+            {/* Free Plan */}
+            <MusicPaper tone="white" elevation="paper" className="p-6 sm:p-8 flex flex-col justify-between">
+              <div>
+                <p className="font-display text-xl font-medium text-ink-primary">Free</p>
+                <p className="mt-1 text-sm text-ink-secondary">
+                  A personal starter library to begin your journey.
+                </p>
+                <div className="mt-6 flex items-baseline gap-1">
+                  <span className="font-display text-3xl font-medium text-ink-primary">
+                    {formatPrice(plans.free.priceMonthly)}
+                  </span>
+                  <span className="type-metadata text-ink-tertiary">/ forever</span>
+                </div>
+
+                <ul className="mt-8 space-y-3 border-t border-line-subtle pt-6 text-sm text-ink-secondary">
+                  <li className="flex items-center gap-2.5">
+                    <Check className="h-4 w-4 text-brand" /> Up to 5 interactive scores
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Check className="h-4 w-4 text-brand" /> Non-judgmental acoustic following
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Check className="h-4 w-4 text-brand" /> Audio take recording
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Check className="h-4 w-4 text-brand" /> Private notes and annotations
+                  </li>
+                </ul>
+              </div>
+
+              <Link
+                to={primary}
+                className="mt-8 block text-center rounded-control border border-line-subtle bg-surface-canvas py-3 text-sm font-medium text-ink-primary hover:bg-surface-paper transition shadow-xs"
+              >
+                Get Started Free
+              </Link>
+            </MusicPaper>
+
+            {/* Pro Plan */}
+            <MusicPaper tone="warm" elevation="paper" className="p-6 sm:p-8 flex flex-col justify-between border-2 border-brand/50">
+              <div>
+                <div className="flex items-center justify-between">
+                  <p className="font-display text-xl font-medium text-ink-primary">Pro Repertoire</p>
+                  <span className="rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-semibold text-white">
+                    Musician Choice
+                  </span>
+                </div>
+                <p className="mt-1 text-sm text-ink-secondary">
+                  Unlimited scores, high-res PDF exports, and deep practice archives.
+                </p>
+                <div className="mt-6 flex items-baseline gap-1">
+                  <span className="font-display text-3xl font-medium text-ink-primary">
+                    {formatPrice(plans.pro.priceMonthly)}
+                  </span>
+                  <span className="type-metadata text-ink-tertiary">/ month</span>
+                </div>
+
+                <ul className="mt-8 space-y-3 border-t border-line-subtle pt-6 text-sm text-ink-secondary">
+                  <li className="flex items-center gap-2.5">
+                    <Check className="h-4 w-4 text-brand" /> Unlimited interactive scores &amp; scans
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Check className="h-4 w-4 text-brand" /> Advanced phrase looping &amp; transposing
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Check className="h-4 w-4 text-brand" /> Uncompressed audio take archive
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Check className="h-4 w-4 text-brand" /> PDF &amp; MusicXML full export
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Check className="h-4 w-4 text-brand" /> Intimate sharing with teachers &amp; friends
+                  </li>
+                </ul>
+              </div>
+
+              <Link
+                to={primary}
+                className="mt-8 block text-center rounded-control bg-brand py-3 text-sm font-semibold text-white hover:bg-brand/90 transition shadow-sm"
+              >
+                Start Free Trial
+              </Link>
+            </MusicPaper>
+          </div>
+
+          <div className="mt-8 text-center text-xs text-ink-tertiary">
+            <span>Cancel anytime. Your music and recordings can always be exported.</span>
+          </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="mx-auto max-w-3xl px-5 py-16 md:px-8">
-        <h2 className="font-display text-2xl font-medium text-ink-primary">Frequently asked</h2>
-        <div className="mt-6 divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
+      {/* 9. EDITORIAL FAQ */}
+      <section className="mx-auto max-w-3xl px-5 py-24 md:px-8 md:py-32">
+        <div className="text-center">
+          <p className="type-caption font-semibold uppercase tracking-wider text-brand">
+            Clarity &amp; Questions
+          </p>
+          <h2 className="mt-3 font-display text-[clamp(1.75rem,3vw,2.5rem)] font-medium text-ink-primary">
+            Frequently asked questions
+          </h2>
+        </div>
+
+        <div className="mt-12 divide-y divide-line-subtle border-y border-line-subtle">
           {faqs.map((f) => (
-            <details key={f.q} className="group p-4">
-              <summary className="flex cursor-pointer items-center justify-between text-sm font-medium text-ink-primary">
-                {f.q}
-                <span className="text-ink-tertiary group-open:rotate-45 transition-transform">+</span>
+            <details key={f.q} className="group py-5 transition-colors">
+              <summary className="flex cursor-pointer items-center justify-between text-base font-medium text-ink-primary focus:outline-hidden">
+                <span>{f.q}</span>
+                <span className="ml-4 font-mono text-ink-tertiary group-open:rotate-45 transition-transform">
+                  +
+                </span>
               </summary>
-              <p className="mt-2 text-sm text-ink-secondary">{f.a}</p>
+              <p className="mt-3 text-sm leading-relaxed text-ink-secondary font-serif">
+                {f.a}
+              </p>
             </details>
           ))}
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="border-t border-line-subtle bg-surface-panel">
-        <div className="mx-auto max-w-3xl px-5 py-20 text-center md:px-8">
-          <h2 className="font-display text-[clamp(1.75rem,3vw,2.5rem)] font-medium leading-tight text-ink-primary">Play what you love.</h2>
-          <p className="mt-3 text-ink-secondary">喜欢，就弹。</p>
-          <Link to={primary} className="mt-8 inline-flex items-center gap-2 rounded-control bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90">
-            Start playing <ArrowRight className="h-4 w-4" />
-          </Link>
+      {/* 10. FINAL BRAND CLOSING: "Play what you love." */}
+      <section className="border-t border-line-subtle bg-surface-panel/40 py-24 text-center md:py-32">
+        <div className="mx-auto max-w-3xl px-5 md:px-8">
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand mb-4">
+            <Music className="h-5 w-5" />
+          </div>
+
+          <h2 className="font-display text-[clamp(2.25rem,4vw,3.5rem)] font-medium leading-tight text-ink-primary">
+            Play what you love.
+          </h2>
+          <p className="mt-3 font-serif italic text-xl text-brand">
+            喜欢，就弹。
+          </p>
+          <p className="mt-4 max-w-md mx-auto text-base text-ink-secondary">
+            Your music is waiting on your piano stand. Bring it into Yueora today.
+          </p>
+
+          <div className="mt-8 flex justify-center gap-4">
+            <Link
+              to={primary}
+              className="inline-flex items-center gap-2 rounded-control bg-brand px-7 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand/90 hover:shadow-md"
+            >
+              <span>Begin Your Repertoire</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </section>
     </PublicShell>

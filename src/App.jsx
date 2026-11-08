@@ -1,16 +1,17 @@
+import { lazy, Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
-import { Navigate } from 'react-router-dom';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AppShell from '@/components/app-shell/AppShell';
+import RouteLoading from '@/components/patterns/RouteLoading';
 
-// Public
+// Public (core paths eagerly loaded for fast first-paint)
 import Landing from '@/pages/Landing';
 import About from '@/pages/About';
 import Pricing from '@/pages/Pricing';
@@ -26,48 +27,50 @@ import Privacy from '@/pages/legal/Privacy';
 import AcceptableUse from '@/pages/legal/AcceptableUse';
 import Copyright from '@/pages/legal/Copyright';
 
-// App (in shell)
+// App Core (Library & Practice Hub eager)
 import Library from '@/pages/Library';
-import ScoreDetail from '@/pages/ScoreDetail';
+import PracticeHub from '@/pages/PracticeHub';
+import Performances from '@/pages/Performances';
 import AddScore from '@/pages/AddScore';
 import Imports from '@/pages/Imports';
 import ImportDetail from '@/pages/ImportDetail';
-import PracticeHub from '@/pages/PracticeHub';
 import PracticeHistory from '@/pages/PracticeHistory';
 import PracticeProgress from '@/pages/PracticeProgress';
-import Performances from '@/pages/Performances';
-import PerformanceDetail from '@/pages/PerformanceDetail';
 import Notifications from '@/pages/Notifications';
 import Help from '@/pages/Help';
 import HelpArticle from '@/pages/HelpArticle';
-import Settings from '@/pages/Settings';
-import AccountSettings from '@/pages/settings/AccountSettings';
-import SecuritySettings from '@/pages/settings/SecuritySettings';
-import PreferencesSettings from '@/pages/settings/PreferencesSettings';
-import NotificationSettings from '@/pages/settings/NotificationSettings';
-import PlanSettings from '@/pages/settings/PlanSettings';
-import PrivacySettings from '@/pages/settings/PrivacySettings';
 
-// Workspaces (full screen)
-import PracticeSetup from '@/pages/PracticeSetup';
-import Editor from '@/pages/Editor';
-import PracticeSession from '@/pages/PracticeSession';
-import PracticeSummary from '@/pages/PracticeSummary';
-import RecognitionReview from '@/pages/RecognitionReview';
+// Code-split heavy workspaces & secondary flows
+const ScoreDetail = lazy(() => import('@/pages/ScoreDetail'));
+const PracticeSetup = lazy(() => import('@/pages/PracticeSetup'));
+const PerformanceDetail = lazy(() => import('@/pages/PerformanceDetail'));
+const Editor = lazy(() => import('@/pages/Editor'));
+const PracticeSession = lazy(() => import('@/pages/PracticeSession'));
+const PracticeSummary = lazy(() => import('@/pages/PracticeSummary'));
+const RecognitionReview = lazy(() => import('@/pages/RecognitionReview'));
 
-// Commercial (focused shell)
+// Settings code-split
+const Settings = lazy(() => import('@/pages/Settings'));
+const AccountSettings = lazy(() => import('@/pages/settings/AccountSettings'));
+const SecuritySettings = lazy(() => import('@/pages/settings/SecuritySettings'));
+const PreferencesSettings = lazy(() => import('@/pages/settings/PreferencesSettings'));
+const NotificationSettings = lazy(() => import('@/pages/settings/NotificationSettings'));
+const PlanSettings = lazy(() => import('@/pages/settings/PlanSettings'));
+const PrivacySettings = lazy(() => import('@/pages/settings/PrivacySettings'));
+
+// Commercial code-split
 import CheckoutShell from '@/components/commercial/CheckoutShell';
-import Checkout from '@/pages/Checkout';
-import CheckoutSuccess from '@/pages/CheckoutSuccess';
-import CheckoutCancelled from '@/pages/CheckoutCancelled';
+const Checkout = lazy(() => import('@/pages/Checkout'));
+const CheckoutSuccess = lazy(() => import('@/pages/CheckoutSuccess'));
+const CheckoutCancelled = lazy(() => import('@/pages/CheckoutCancelled'));
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-muted border-t-primary rounded-full animate-spin"></div>
+      <div className="fixed inset-0 flex items-center justify-center bg-surface-canvas">
+        <RouteLoading message="Preparing your music space…" />
       </div>
     );
   }
@@ -82,67 +85,70 @@ const AuthenticatedApp = () => {
   }
 
   return (
-    <Routes>
-      {/* Public */}
-      <Route path="/" element={<Landing />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/pricing" element={<Pricing />} />
-      <Route path="/help" element={<Help />} />
-      <Route path="/help/:slug" element={<HelpArticle />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route path="/s/:shareToken" element={<SharedScore />} />
-      <Route path="/invite/:inviteToken" element={<InviteAcceptance />} />
-      <Route path="/legal/terms" element={<Terms />} />
-      <Route path="/legal/privacy" element={<Privacy />} />
-      <Route path="/legal/acceptable-use" element={<AcceptableUse />} />
-      <Route path="/legal/copyright" element={<Copyright />} />
+    <Suspense fallback={<RouteLoading />}>
+      <Routes>
+        {/* Public */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/help" element={<Help />} />
+        <Route path="/help/:slug" element={<HelpArticle />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/s/:shareToken" element={<SharedScore />} />
+        <Route path="/invite/:inviteToken" element={<InviteAcceptance />} />
+        <Route path="/legal/terms" element={<Terms />} />
+        <Route path="/legal/privacy" element={<Privacy />} />
+        <Route path="/legal/acceptable-use" element={<AcceptableUse />} />
+        <Route path="/legal/copyright" element={<Copyright />} />
 
-      {/* Authenticated */}
-      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-        {/* App shell pages */}
-        <Route element={<AppShell />}>
-          <Route path="/library" element={<Library />} />
-          <Route path="/score/:scoreId" element={<ScoreDetail />} />
-          <Route path="/score/:scoreId/setup" element={<PracticeSetup />} />
-          <Route path="/add-score" element={<AddScore />} />
-          <Route path="/imports" element={<Imports />} />
-          <Route path="/imports/:importId" element={<ImportDetail />} />
-          <Route path="/practice" element={<PracticeHub />} />
-          <Route path="/practice/history" element={<PracticeHistory />} />
-          <Route path="/practice/progress" element={<PracticeProgress />} />
-          <Route path="/performances" element={<Performances />} />
-          <Route path="/performances/:performanceId" element={<PerformanceDetail />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/settings" element={<Settings />}>
-            <Route index element={<Navigate to="/settings/account" replace />} />
-            <Route path="account" element={<AccountSettings />} />
-            <Route path="security" element={<SecuritySettings />} />
-            <Route path="preferences" element={<PreferencesSettings />} />
-            <Route path="notifications" element={<NotificationSettings />} />
-            <Route path="plan" element={<PlanSettings />} />
-            <Route path="privacy" element={<PrivacySettings />} />
+        {/* Authenticated */}
+        <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+          {/* App shell pages */}
+          <Route element={<AppShell />}>
+            <Route path="/library" element={<Library />} />
+            <Route path="/score/:scoreId" element={<ScoreDetail />} />
+            <Route path="/score/:scoreId/setup" element={<PracticeSetup />} />
+            <Route path="/add-score" element={<AddScore />} />
+            <Route path="/imports" element={<Imports />} />
+            <Route path="/imports/:importId" element={<ImportDetail />} />
+            <Route path="/practice" element={<PracticeHub />} />
+            <Route path="/practice/history" element={<PracticeHistory />} />
+            <Route path="/practice/progress" element={<PracticeProgress />} />
+            <Route path="/performances" element={<Performances />} />
+            <Route path="/performances/:performanceId" element={<PerformanceDetail />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/settings" element={<Settings />}>
+              <Route index element={<Navigate to="/settings/account" replace />} />
+              <Route path="account" element={<AccountSettings />} />
+              <Route path="security" element={<SecuritySettings />} />
+              <Route path="preferences" element={<PreferencesSettings />} />
+              <Route path="notifications" element={<NotificationSettings />} />
+              <Route path="plan" element={<PlanSettings />} />
+              <Route path="privacy" element={<PrivacySettings />} />
+            </Route>
+          </Route>
+
+          {/* Full-screen workspaces */}
+          <Route path="/score/:scoreId/edit" element={<Editor />} />
+          <Route path="/score/:scoreId/practice" element={<PracticeSession />} />
+          <Route path="/review/:importId" element={<RecognitionReview />} />
+          <Route path="/practice/:activityId/summary" element={<PracticeSummary />} />
+
+          {/* Checkout — focused shell, no app chrome */}
+          <Route element={<CheckoutShell />}>
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout/success" element={<CheckoutSuccess />} />
+            <Route path="/checkout/cancelled" element={<CheckoutCancelled />} />
           </Route>
         </Route>
-        {/* Full-screen workspaces */}
-        <Route path="/score/:scoreId/edit" element={<Editor />} />
-        <Route path="/score/:scoreId/practice" element={<PracticeSession />} />
-        <Route path="/review/:importId" element={<RecognitionReview />} />
-        <Route path="/practice/:activityId/summary" element={<PracticeSummary />} />
 
-        {/* Checkout — focused shell, no app chrome */}
-        <Route element={<CheckoutShell />}>
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/checkout/success" element={<CheckoutSuccess />} />
-          <Route path="/checkout/cancelled" element={<CheckoutCancelled />} />
-        </Route>
-      </Route>
-
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </Suspense>
   );
 };
 
@@ -157,7 +163,7 @@ function App() {
         <Toaster />
       </QueryClientProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;

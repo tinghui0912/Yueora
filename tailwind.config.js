@@ -53,6 +53,9 @@ module.exports = {
 					canvas: 'hsl(var(--surface-canvas))',
 					panel: 'hsl(var(--surface-panel))',
 					raised: 'hsl(var(--surface-raised))',
+					paper: 'hsl(var(--surface-paper))',
+					'paper-warm': 'hsl(var(--surface-paper-warm))',
+					'paper-edge': 'hsl(var(--surface-paper-edge))',
 				},
 				/* ---- Text hierarchy (ink) ---- */
 				ink: {
@@ -91,6 +94,9 @@ module.exports = {
 				/* ---- Practice semantic ---- */
 				practice: {
 					current: 'hsl(var(--practice-current))',
+					following: 'hsl(var(--practice-following))',
+					waiting: 'hsl(var(--practice-waiting))',
+					resyncing: 'hsl(var(--practice-resyncing))',
 					correct: 'hsl(var(--practice-correct))',
 					error: 'hsl(var(--practice-error))',
 				},
@@ -116,6 +122,8 @@ module.exports = {
 			boxShadow: {
 				raised: 'var(--shadow-raised)',
 				overlay: 'var(--shadow-overlay)',
+				paper: 'var(--shadow-paper)',
+				'paper-hover': 'var(--shadow-paper-hover)',
 			},
 			keyframes: {
 				'accordion-down': { from: { height: '0' }, to: { height: 'var(--radix-accordion-content-height)' } },

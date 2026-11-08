@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, Pencil, Share2, MoreHorizontal, Star, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download, Trash2, FolderInput, History, LogOut, BookmarkMinus, Lock, Headphones, FileImage, FileCode } from 'lucide-react';
+import {
+  ArrowLeft, Play, Pencil, Share2, MoreHorizontal, Star, ChevronLeft,
+  ChevronRight, ZoomIn, ZoomOut, Download, Trash2, FolderInput, History,
+  LogOut, BookmarkMinus, Lock, Headphones, FileImage, FileCode,
+} from 'lucide-react';
 import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
 import ScorePreview from '@/components/library/ScorePreview';
 import ListenControl from '@/components/score/ListenControl';
 import SharingDialog from '@/components/sharing/SharingDialog';
+import MusicPaper from '@/components/patterns/MusicPaper';
+import JourneyTimeline from '@/components/patterns/JourneyTimeline';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -14,8 +20,6 @@ import {
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import { dayLabel, minutesLabel } from '@/lib/practiceUtils';
-import { Badge } from '@/components/ui/badge';
-import SectionHeader from '@/components/patterns/SectionHeader';
 import StateMessage from '@/components/patterns/StateMessage';
 
 export default function ScoreDetail() {
@@ -45,24 +49,21 @@ export default function ScoreDetail() {
 
   if (!score) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
+      <div className="flex min-h-[60vh] items-center justify-center p-6">
         <StateMessage
           tone="neutral"
           title="Score not found"
-          description="This score may have been removed or the link is wrong."
-          primaryAction={<Button onClick={() => navigate('/library')}>Back to library</Button>}
+          description="This score may have been removed or the link is incorrect."
+          primaryAction={<Button onClick={() => navigate('/library')}>Back to Repertoire</Button>}
         />
       </div>
     );
   }
 
   const perms = getPermissions(score);
-  // Practice activity is private and belongs to its owner: sharing a score never
-  // exposes someone else's practice history here.
   const sessions = practiceActivities.filter((a) => a.scoreId === score.id && a.ownerId === 'you');
   const scorePerformances = savedPerformances.filter((p) => p.scoreId === score.id && p.ownerId === 'you');
 
-  // Only the formats Yueora actually produces — no placeholder options.
   const handleExport = (kind) => {
     setExporting(kind);
     setTimeout(() => {
@@ -80,172 +81,285 @@ export default function ScoreDetail() {
   const confirmRemoveFn = () => { removeSaved(score.id); setConfirmRemove(false); navigate('/library'); };
 
   return (
-    <div className="px-4 py-6 md:px-8">
-      <Link to="/library" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" /> Library
-      </Link>
+    <div className="mx-auto max-w-7xl px-4 py-6 md:px-8">
+      {/* Breadcrumb navigation */}
+      <div className="flex items-center justify-between">
+        <Link
+          to="/library"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-secondary hover:text-ink-primary transition-colors"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          <span>Back to Repertoire</span>
+        </Link>
 
-      <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="font-display text-3xl font-medium leading-tight">{score.title}</h1>
-            <button onClick={handleFavorite} className="text-muted-foreground hover:text-foreground" aria-label="Favorite">
-              {score.favorite ? <Star className="h-5 w-5 fill-gold text-gold" /> : <Star className="h-5 w-5" />}
+        {score.favorite && (
+          <span className="flex items-center gap-1 text-xs font-medium text-gold">
+            <Star className="h-3.5 w-3.5 fill-gold text-gold" />
+            <span>Favorited piece</span>
+          </span>
+        )}
+      </div>
+
+      {/* Piece Header / Hero */}
+      <div className="mt-5 flex flex-col gap-5 border-b border-line-subtle pb-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="min-w-0">
+          <div className="flex items-baseline gap-3">
+            <h1 className="font-display text-3xl font-medium leading-tight text-ink-primary sm:text-4xl">
+              {score.title}
+            </h1>
+            <button
+              onClick={handleFavorite}
+              className="text-ink-tertiary hover:text-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded p-0.5"
+              aria-label={score.favorite ? 'Remove favorite' : 'Add to favorites'}
+            >
+              {score.favorite ? (
+                <Star className="h-5 w-5 fill-gold text-gold" />
+              ) : (
+                <Star className="h-5 w-5" />
+              )}
             </button>
           </div>
-          <p className="mt-1 text-muted-foreground">{score.composer}</p>
-          <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
-            {score.ownership === 'mine' && <Badge variant="neutral">Mine</Badge>}
-            {score.ownership === 'shared' && <Badge variant="neutral">Shared by {score.sharedBy} · {score.permission}</Badge>}
-            {score.ownership === 'saved' && <Badge variant="neutral">Saved</Badge>}
+          <p className="mt-1 text-sm text-ink-secondary font-medium">{score.composer} · {score.instrument}</p>
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-ink-tertiary">
+            <span className="rounded-control bg-surface-paper px-2 py-0.5 border border-surface-paper-edge font-medium">
+              {score.source}
+            </span>
+            <span>·</span>
+            <span>Key of {score.key || 'C'}</span>
+            <span>·</span>
+            <span>♩ = {score.tempo || 80}</span>
+            <span>·</span>
+            {score.ownership === 'mine' && <span className="text-brand font-medium">Mine</span>}
+            {score.ownership === 'shared' && <span>Shared by {score.sharedBy}</span>}
+            {score.ownership === 'saved' && <span>Saved piece</span>}
           </div>
         </div>
+
+        {/* Action transport */}
         <div className="flex flex-wrap items-center gap-2">
           {perms.canPractice ? (
-            <Link to={`/score/${score.id}/setup`} className="flex items-center gap-2 rounded-control bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90">
-              <Play className="h-4 w-4" /> {score.lastMeasure > 1 ? 'Continue playing' : 'Practice'}
+            <Link
+              to={`/score/${score.id}/setup`}
+              className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover active:scale-95"
+            >
+              <Play className="h-3.5 w-3.5 fill-current" />
+              <span>{score.lastMeasure > 1 ? `Continue from bar ${score.lastMeasure}` : 'Start Practice'}</span>
             </Link>
           ) : (
-            <span className="flex items-center gap-2 rounded-control bg-muted px-4 py-2.5 text-sm font-semibold text-muted-foreground">
-              <Lock className="h-4 w-4" /> Practice unavailable
+            <span className="flex items-center gap-2 rounded-control bg-surface-paper border border-surface-paper-edge px-4 py-2.5 text-xs font-semibold text-ink-tertiary">
+              <Lock className="h-3.5 w-3.5" /> Practice unavailable
             </span>
           )}
+
           {score.source !== 'Photo' && (
-            <a href="#listen" className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
-              <Headphones className="h-4 w-4" /> Listen
+            <a
+              href="#listen"
+              className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2.5 text-xs font-medium text-ink-primary hover:bg-surface-paper-warm transition-colors"
+            >
+              <Headphones className="h-3.5 w-3.5 text-ink-secondary" />
+              <span>Listen</span>
             </a>
           )}
+
           {perms.canEdit && (
-            <Link to={`/score/${score.id}/edit`} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
-              <Pencil className="h-4 w-4" /> Edit
+            <Link
+              to={`/score/${score.id}/edit`}
+              className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2.5 text-xs font-medium text-ink-primary hover:bg-surface-paper-warm transition-colors"
+            >
+              <Pencil className="h-3.5 w-3.5 text-ink-secondary" />
+              <span>Studio Edit</span>
             </Link>
           )}
+
           {perms.canShare && (
-            <button onClick={() => setShareOpen(true)} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
-              <Share2 className="h-4 w-4" /> Share
+            <button
+              onClick={() => setShareOpen(true)}
+              className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2.5 text-xs font-medium text-ink-primary hover:bg-surface-paper-warm transition-colors"
+            >
+              <Share2 className="h-3.5 w-3.5 text-ink-secondary" />
+              <span>Share</span>
             </button>
           )}
+
           {perms.canDownload && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
-                  <Download className="h-4 w-4" /> {exporting ? 'Exporting…' : 'Export'}
+                <button className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2.5 text-xs font-medium text-ink-primary hover:bg-surface-paper-warm transition-colors">
+                  <Download className="h-3.5 w-3.5 text-ink-secondary" />
+                  <span>{exporting ? 'Exporting…' : 'Export'}</span>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44">
-                <DropdownMenuItem onClick={() => handleExport('PNG')} disabled={!!exporting}>
-                  <FileImage className="mr-2 h-4 w-4" /> Export PNG
+              <DropdownMenuContent align="end" className="w-44 border-surface-paper-edge bg-surface-panel shadow-overlay">
+                <DropdownMenuItem onClick={() => handleExport('PNG')} disabled={!!exporting} className="text-xs">
+                  <FileImage className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Export PNG
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleExport('MusicXML')} disabled={!!exporting}>
-                  <FileCode className="mr-2 h-4 w-4" /> Export MusicXML
+                <DropdownMenuItem onClick={() => handleExport('MusicXML')} disabled={!!exporting} className="text-xs">
+                  <FileCode className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Export MusicXML
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="rounded-control border border-line-subtle p-2.5 text-ink-secondary hover:bg-accent" aria-label="More"><MoreHorizontal className="h-4 w-4" /></button>
+              <button
+                className="rounded-control border border-surface-paper-edge bg-surface-paper p-2.5 text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm transition-colors"
+                aria-label="More score options"
+              >
+                <MoreHorizontal className="h-3.5 w-3.5" />
+              </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52">
-              <DropdownMenuItem onClick={handleFavorite}><Star className="mr-2 h-4 w-4" /> {score.favorite ? 'Remove favorite' : 'Add to favorites'}</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setMoveFolderOpen(true)}><FolderInput className="mr-2 h-4 w-4" /> Move to folder</DropdownMenuItem>
-              {score.ownership === 'mine' && <DropdownMenuItem onClick={() => setVersionsOpen(true)}><History className="mr-2 h-4 w-4" /> Version history</DropdownMenuItem>}
-              <DropdownMenuSeparator />
-              {score.ownership === 'mine' && <DropdownMenuItem className="text-destructive" onClick={() => setConfirmDelete(true)}><Trash2 className="mr-2 h-4 w-4" /> Move to trash</DropdownMenuItem>}
-              {score.ownership === 'shared' && <DropdownMenuItem className="text-destructive" onClick={() => setConfirmLeave(true)}><LogOut className="mr-2 h-4 w-4" /> Leave shared score</DropdownMenuItem>}
-              {score.ownership === 'saved' && <DropdownMenuItem className="text-destructive" onClick={() => setConfirmRemove(true)}><BookmarkMinus className="mr-2 h-4 w-4" /> Remove from library</DropdownMenuItem>}
+            <DropdownMenuContent align="end" className="w-52 border-surface-paper-edge bg-surface-panel shadow-overlay">
+              <DropdownMenuItem onClick={handleFavorite} className="text-xs">
+                <Star className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> {score.favorite ? 'Remove favorite' : 'Add to favorites'}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setMoveFolderOpen(true)} className="text-xs">
+                <FolderInput className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Move to folder
+              </DropdownMenuItem>
+              {score.ownership === 'mine' && (
+                <DropdownMenuItem onClick={() => setVersionsOpen(true)} className="text-xs">
+                  <History className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Version history
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator className="bg-line-subtle" />
+              {score.ownership === 'mine' && (
+                <DropdownMenuItem className="text-destructive text-xs" onClick={() => setConfirmDelete(true)}>
+                  <Trash2 className="mr-2 h-3.5 w-3.5" /> Move to trash
+                </DropdownMenuItem>
+              )}
+              {score.ownership === 'shared' && (
+                <DropdownMenuItem className="text-destructive text-xs" onClick={() => setConfirmLeave(true)}>
+                  <LogOut className="mr-2 h-3.5 w-3.5" /> Leave shared score
+                </DropdownMenuItem>
+              )}
+              {score.ownership === 'saved' && (
+                <DropdownMenuItem className="text-destructive text-xs" onClick={() => setConfirmRemove(true)}>
+                  <BookmarkMinus className="mr-2 h-3.5 w-3.5" /> Remove from library
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        {/* Score viewer */}
-        <div className="lg:col-span-2 rounded-container border border-line-subtle bg-surface-panel p-4">
-          <div className="flex justify-center overflow-auto bg-background p-2">
-            <div style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }} className="aspect-[16/10] w-full max-w-2xl">
-              <ScorePreview id={score.id} className="h-full w-full" />
+      {/* Main layout: Score Folio Surface + Journey Hub */}
+      <div className="mt-8 grid gap-8 lg:grid-cols-12">
+        {/* Left Column: Archival Score Reader Surface */}
+        <div className="lg:col-span-8 space-y-6">
+          <MusicPaper tone="white" elevation="paper" className="p-4 sm:p-6">
+            {/* Score folio viewer */}
+            <div className="flex justify-center overflow-auto rounded bg-surface-canvas/60 p-4">
+              <div
+                style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
+                className="aspect-[16/10] w-full max-w-2xl transition-transform duration-fast"
+              >
+                <ScorePreview id={score.id} className="h-full w-full object-cover shadow-xs" />
+              </div>
             </div>
-          </div>
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-line-subtle pt-3 type-body-small text-ink-secondary">
-            <span>Page {page} of {score.pages}</span>
-            <div className="flex items-center gap-1">
-              <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
-              <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
-              <div className="mx-1 h-5 w-px bg-border" />
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Previous page"><ChevronLeft className="h-4 w-4" /></button>
-              <button onClick={() => setPage((p) => Math.min(score.pages, p + 1))} className="rounded-control border border-line-subtle p-2 hover:bg-accent" aria-label="Next page"><ChevronRight className="h-4 w-4" /></button>
+
+            {/* Pagination & Zoom Controls */}
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-surface-paper-edge pt-3 text-xs text-ink-secondary">
+              <span>Page {page} of {score.pages}</span>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))}
+                  className="rounded-control border border-surface-paper-edge p-1.5 hover:bg-surface-paper"
+                  aria-label="Zoom out"
+                >
+                  <ZoomOut className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))}
+                  className="rounded-control border border-surface-paper-edge p-1.5 hover:bg-surface-paper"
+                  aria-label="Zoom in"
+                >
+                  <ZoomIn className="h-3.5 w-3.5" />
+                </button>
+                <div className="mx-1 h-4 w-px bg-surface-paper-edge" />
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className="rounded-control border border-surface-paper-edge p-1.5 hover:bg-surface-paper disabled:opacity-40"
+                  disabled={page <= 1}
+                  aria-label="Previous page"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() => setPage((p) => Math.min(score.pages, p + 1))}
+                  className="rounded-control border border-surface-paper-edge p-1.5 hover:bg-surface-paper disabled:opacity-40"
+                  disabled={page >= score.pages}
+                  aria-label="Next page"
+                >
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
-          </div>
-          <div id="listen" className="scroll-mt-24">
-            <ListenControl score={score} />
-          </div>
+
+            {/* Embedded audio playback */}
+            <div id="listen" className="mt-4 border-t border-surface-paper-edge pt-4">
+              <ListenControl score={score} />
+            </div>
+          </MusicPaper>
         </div>
 
-        {/* Side column */}
-        <div className="space-y-5">
-          {/* Practice — primary surface */}
-          <div className="rounded-container border border-line-subtle bg-surface-panel p-5">
-            <p className="type-caption text-ink-tertiary">Practice</p>
-            <p className="mt-3 type-body-small text-ink-primary">
-              {score.lastPlayed === 'never' || !score.lastPlayed ? 'You haven’t played this one yet.' : `Last played ${score.lastPlayed}.`}
+        {/* Right Column: Journey Hub & Musical Relationship */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Journey of this Piece */}
+          <MusicPaper tone="natural" className="p-5">
+            <h2 className="font-display text-base font-medium text-ink-primary">
+              The Journey of this Piece
+            </h2>
+            <p className="mt-1 text-xs text-ink-secondary leading-relaxed">
+              Every piece of music has an organic life in Yueora.
             </p>
-            {score.lastMeasure > 1 && <p className="mt-1 type-body-small text-brand">Continue from measure {score.lastMeasure}</p>}
-            {score.difficultSections.length > 0 && (
-              <p className="mt-1 type-body-small text-ink-secondary">{score.difficultSections[0].note}</p>
-            )}
-            {perms.canPractice ? (
-              <Link to={`/score/${score.id}/setup`} className="mt-4 block rounded-control bg-primary py-2 text-center text-sm font-semibold text-primary-foreground hover:opacity-90">
-                Continue playing
-              </Link>
-            ) : (
-              <p className="mt-4 rounded-control bg-muted py-2 text-center text-sm font-semibold text-muted-foreground">Practice unavailable</p>
-            )}
-          </div>
 
-          {/* Information — flat section */}
-          <div className="border-t border-line-subtle pt-5">
-            <SectionHeader title="Information" />
-            <dl className="mt-3 space-y-2 type-body-small">
-              <div className="flex justify-between"><dt className="text-ink-secondary">Composer</dt><dd className="text-ink-primary">{score.composer}</dd></div>
-              <div className="flex justify-between"><dt className="text-ink-secondary">Instrument</dt><dd className="text-ink-primary">{score.instrument}</dd></div>
-              <div className="flex justify-between gap-2"><dt className="text-ink-secondary">Tags</dt><dd className="flex flex-wrap justify-end gap-1">{score.tags.map((t) => <span key={t} className="rounded-control bg-muted px-1.5 py-0.5 type-metadata text-ink-secondary">{t}</span>)}</dd></div>
-              <div className="flex justify-between"><dt className="text-ink-secondary">Source</dt><dd className="text-ink-primary">{score.source}</dd></div>
-              <div className="flex justify-between"><dt className="text-ink-secondary">Added</dt><dd className="text-ink-primary">{score.created}</dd></div>
-            </dl>
-          </div>
+            <div className="mt-5">
+              <JourneyTimeline
+                score={score}
+                sessions={sessions}
+                performances={scorePerformances}
+              />
+            </div>
+          </MusicPaper>
 
-          {/* Recent practice — flat section */}
-          <div className="border-t border-line-subtle pt-5">
-            <SectionHeader title="Recent practice" />
+          {/* Recent practice & preserved moments */}
+          <div className="space-y-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-tertiary">
+              Recent Playing & Takes
+            </h3>
+
             {sessions.length === 0 ? (
-              <p className="mt-3 type-body-small text-ink-tertiary">No sessions yet. When you practice, they’ll show up here.</p>
+              <p className="text-xs text-ink-tertiary">
+                No practice recorded yet. When you play, your sessions will quietly appear here.
+              </p>
             ) : (
-              <div className="mt-3 divide-y divide-line-subtle">
-                {sessions.slice(0, 5).map((a) => {
+              <div className="divide-y divide-surface-paper-edge rounded-container border border-surface-paper-edge bg-surface-paper/70">
+                {sessions.slice(0, 4).map((a) => {
                   const saved = scorePerformances.find((p) => p.activityId === a.id);
                   return (
-                    <div key={a.id} className="flex items-center justify-between gap-2 py-2.5">
+                    <div key={a.id} className="flex items-center justify-between gap-3 p-3 text-xs">
                       <div className="min-w-0">
-                        <p className="type-body-small font-medium text-ink-primary">{dayLabel(a.completedAt)} · {minutesLabel(a.durationSeconds)}</p>
-                        <p className="type-metadata text-ink-tertiary">
-                          {a.rangeSummary}{saved ? ` · ${saved.mediaType === 'video' ? 'Video saved' : 'Audio saved'}` : ''}
+                        <p className="font-medium text-ink-primary">
+                          {dayLabel(a.completedAt)} · {minutesLabel(a.durationSeconds)}
+                        </p>
+                        <p className="text-[11px] text-ink-tertiary mt-0.5">
+                          {a.rangeSummary}
+                          {saved ? ` · ${saved.mediaType === 'video' ? 'Video preserved' : 'Audio preserved'}` : ''}
                         </p>
                       </div>
                       {saved && (
-                        <Link to={`/performances/${saved.id}`} className="flex shrink-0 items-center gap-1 rounded-control border border-line-subtle px-2 py-1 type-metadata font-medium text-ink-primary hover:bg-accent">
-                          <Play className="h-3 w-3" /> Play
+                        <Link
+                          to={`/performances/${saved.id}`}
+                          className="flex shrink-0 items-center gap-1 rounded-control border border-surface-paper-edge bg-surface-panel px-2 py-1 text-[11px] font-medium text-brand hover:bg-surface-paper-warm"
+                        >
+                          <Play className="h-3 w-3 fill-current" />
+                          <span>Play take</span>
                         </Link>
                       )}
                     </div>
                   );
                 })}
               </div>
-            )}
-            {scorePerformances.length > 0 && (
-              <Link to={`/performances?score=${score.id}`} className="mt-3 inline-flex items-center gap-1.5 type-body-small font-medium text-brand hover:underline">
-                View performances <ChevronRight className="h-3.5 w-3.5" />
-              </Link>
             )}
           </div>
         </div>
@@ -255,25 +369,30 @@ export default function ScoreDetail() {
 
       {/* Move to folder dialog */}
       <Dialog open={moveFolderOpen} onOpenChange={setMoveFolderOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Move to folder</DialogTitle></DialogHeader>
-          <div className="space-y-1">
+        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+          <DialogHeader><DialogTitle className="font-display text-lg">Move to folder</DialogTitle></DialogHeader>
+          <div className="space-y-1 mt-2">
             {folders.map((f) => (
-              <button key={f.id} onClick={() => { moveToFolder(score.id, f.id); setMoveFolderOpen(false); toast({ title: 'Moved', description: `${score.title} moved to ${f.name}.` }); }} className="flex w-full items-center gap-2 rounded-md border border-border px-3 py-2 text-left text-sm hover:bg-accent">
-                <FolderInput className="h-4 w-4 text-muted-foreground" /> {f.name}
+              <button
+                key={f.id}
+                onClick={() => { moveToFolder(score.id, f.id); setMoveFolderOpen(false); toast({ title: 'Moved', description: `${score.title} moved to ${f.name}.` }); }}
+                className="flex w-full items-center gap-2 rounded-control border border-surface-paper-edge px-3 py-2 text-left text-xs hover:bg-surface-paper"
+              >
+                <FolderInput className="h-3.5 w-3.5 text-ink-secondary" />
+                <span className="font-medium text-ink-primary">{f.name}</span>
               </button>
             ))}
-            {folders.length === 0 && <p className="py-4 text-center text-sm text-muted-foreground">No folders yet.</p>}
+            {folders.length === 0 && <p className="py-4 text-center text-xs text-ink-tertiary">No folders yet.</p>}
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setMoveFolderOpen(false)}>Cancel</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" size="sm" onClick={() => setMoveFolderOpen(false)}>Cancel</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Versions dialog */}
       <Dialog open={versionsOpen} onOpenChange={setVersionsOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Version history</DialogTitle></DialogHeader>
-          <div className="space-y-2">
+        <DialogContent className="max-w-md border-surface-paper-edge bg-surface-panel">
+          <DialogHeader><DialogTitle className="font-display text-lg">Version history</DialogTitle></DialogHeader>
+          <div className="space-y-2 mt-2">
             {(() => {
               const versions = [
                 { label: 'Current version', date: 'Sep 8, 2026', isCurrent: true },
@@ -285,13 +404,13 @@ export default function ScoreDetail() {
                 const isCurrent = v.isCurrent && !restoredLabel;
                 const isRestored = restoredLabel === v.label;
                 return (
-                  <div key={v.label} className={`flex items-center justify-between rounded-md border px-3 py-2 ${isCurrent || isRestored ? 'border-primary/40 bg-accent/40' : 'border-border'}`}>
+                  <div key={v.label} className={`flex items-center justify-between rounded-control border px-3 py-2 text-xs ${isCurrent || isRestored ? 'border-brand/40 bg-brand/5' : 'border-surface-paper-edge'}`}>
                     <div>
-                      <p className="text-sm font-medium">{v.label}{isRestored ? ' · Restored' : ''}</p>
-                      <p className="text-xs text-muted-foreground">{isRestored ? `Restored ${score.versionRestoredAt}` : v.date}</p>
+                      <p className="font-medium text-ink-primary">{v.label}{isRestored ? ' · Restored' : ''}</p>
+                      <p className="text-[11px] text-ink-tertiary">{isRestored ? `Restored ${score.versionRestoredAt}` : v.date}</p>
                     </div>
                     {isCurrent || isRestored ? (
-                      <span className="text-xs font-medium text-primary">{isRestored ? 'Restored' : 'Current'}</span>
+                      <span className="text-[11px] font-medium text-brand">{isRestored ? 'Restored' : 'Current'}</span>
                     ) : (
                       <Button variant="outline" size="sm" onClick={() => { restoreVersion(score.id, v.label); toast({ title: 'Version restored', description: `Restored to ${v.label}.` }); setVersionsOpen(false); }}>Restore</Button>
                     )}
@@ -300,42 +419,42 @@ export default function ScoreDetail() {
               });
             })()}
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setVersionsOpen(false)}>Close</Button></DialogFooter>
+          <DialogFooter><Button variant="outline" size="sm" onClick={() => setVersionsOpen(false)}>Close</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Delete confirm */}
       <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Move to trash?</DialogTitle></DialogHeader>
-          <p className="text-sm text-muted-foreground">{score.title} will move to Trash. You can restore it for 30 days, then it’s deleted for good.</p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmDelete(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={confirmTrash}>Move to trash</Button>
+        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+          <DialogHeader><DialogTitle className="font-display text-lg">Move to trash?</DialogTitle></DialogHeader>
+          <p className="text-xs text-ink-secondary mt-1">{score.title} will move to Trash for 30 days before permanent deletion.</p>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" size="sm" onClick={() => setConfirmDelete(false)}>Cancel</Button>
+            <Button variant="destructive" size="sm" onClick={confirmTrash}>Move to trash</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Leave confirm */}
       <Dialog open={confirmLeave} onOpenChange={setConfirmLeave}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Leave shared score?</DialogTitle></DialogHeader>
-          <p className="text-sm text-muted-foreground">You’ll lose access to {score.title}. You can ask {score.sharedBy} to share it again if you change your mind.</p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmLeave(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={confirmLeaveFn}>Leave</Button>
+        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+          <DialogHeader><DialogTitle className="font-display text-lg">Leave shared score?</DialogTitle></DialogHeader>
+          <p className="text-xs text-ink-secondary mt-1">You will lose access to {score.title}.</p>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" size="sm" onClick={() => setConfirmLeave(false)}>Cancel</Button>
+            <Button variant="destructive" size="sm" onClick={confirmLeaveFn}>Leave</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Remove saved confirm */}
       <Dialog open={confirmRemove} onOpenChange={setConfirmRemove}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Remove from library?</DialogTitle></DialogHeader>
-          <p className="text-sm text-muted-foreground">{score.title} will be removed from your library. The original shared link will still work.</p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmRemove(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={confirmRemoveFn}>Remove</Button>
+        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+          <DialogHeader><DialogTitle className="font-display text-lg">Remove from library?</DialogTitle></DialogHeader>
+          <p className="text-xs text-ink-secondary mt-1">{score.title} will be removed from your repertoire.</p>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" size="sm" onClick={() => setConfirmRemove(false)}>Cancel</Button>
+            <Button variant="destructive" size="sm" onClick={confirmRemoveFn}>Remove</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
