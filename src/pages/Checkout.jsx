@@ -62,7 +62,7 @@ export default function Checkout() {
   return (
     <div>
       <p className="type-caption text-ink-tertiary">Checkout</p>
-      <h1 className="mt-1 type-page-title text-3xl text-ink-primary">Review your plan</h1>
+      <h1 className="mt-1 type-page-title text-ink-primary">Review your plan</h1>
       <p className="mt-2 max-w-xl type-body-small text-ink-secondary">
         One small step before you continue. You can go back at any point, and nothing changes until you confirm.
       </p>

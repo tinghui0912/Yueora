@@ -39,6 +39,7 @@ import PracticeProgress from '@/pages/PracticeProgress';
 import Notifications from '@/pages/Notifications';
 import Help from '@/pages/Help';
 import HelpArticle from '@/pages/HelpArticle';
+import DesignSystemPreview from '@/pages/DesignSystemPreview';
 
 // Code-split heavy workspaces & secondary flows
 const ScoreDetail = lazy(() => import('@/pages/ScoreDetail'));
@@ -121,6 +122,7 @@ const AuthenticatedApp = () => {
             <Route path="/performances" element={<Performances />} />
             <Route path="/performances/:performanceId" element={<PerformanceDetail />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/design-system" element={<DesignSystemPreview />} />
             <Route path="/settings" element={<Settings />}>
               <Route index element={<Navigate to="/settings/account" replace />} />
               <Route path="account" element={<AccountSettings />} />

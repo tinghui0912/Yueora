@@ -96,6 +96,26 @@
     --shadow-overlay: 0 10px 38px -10px rgb(0 0 0 / 0.16), 0 8px 20px -12px rgb(0 0 0 / 0.10);
     --shadow-paper: 0 1px 3px 0 rgb(44 38 28 / 0.06), 0 4px 12px -2px rgb(44 38 28 / 0.05);
     --shadow-paper-hover: 0 2px 6px 0 rgb(44 38 28 / 0.08), 0 10px 24px -4px rgb(44 38 28 / 0.10);
+
+    /* ---- Control Heights ---- */
+    --control-height-xs: 1.75rem; /* 28px */
+    --control-height-sm: 2rem;    /* 32px */
+    --control-height-md: 2.375rem; /* 38px */
+    --control-height-lg: 2.625rem; /* 42px */
+
+    /* ---- Icon Sizes ---- */
+    --icon-size-xs: 0.875rem; /* 14px */
+    --icon-size-sm: 1rem;     /* 16px */
+    --icon-size-md: 1.125rem; /* 18px */
+    --icon-size-lg: 1.25rem;  /* 20px */
+    --icon-size-xl: 1.5rem;   /* 24px */
+
+    /* ---- Page Container Widths ---- */
+    --page-width-compact: 26rem;  /* 416px */
+    --page-width-form: 47rem;     /* ~752px */
+    --page-width-standard: 64rem; /* 1024px */
+    --page-width-wide: 80rem;     /* 1280px */
+    --page-width-full: 100%;
   }
 }
 
@@ -220,6 +240,28 @@
     box-shadow: var(--shadow-paper-hover);
     transform: translateY(-2px);
   }
+
+  /* ---- Control Heights ---- */
+  .h-control-xs { height: var(--control-height-xs); }
+  .h-control-sm { height: var(--control-height-sm); }
+  .h-control-md { height: var(--control-height-md); }
+  .h-control-lg { height: var(--control-height-lg); }
+  .min-h-control-sm { min-height: var(--control-height-sm); }
+  .min-h-control-md { min-height: var(--control-height-md); }
+  .min-h-control-lg { min-height: var(--control-height-lg); }
+
+  /* ---- Icon Sizing ---- */
+  .icon-xs { width: var(--icon-size-xs); height: var(--icon-size-xs); }
+  .icon-sm { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+  .icon-md { width: var(--icon-size-md); height: var(--icon-size-md); }
+  .icon-lg { width: var(--icon-size-lg); height: var(--icon-size-lg); }
+  .icon-xl { width: var(--icon-size-xl); height: var(--icon-size-xl); }
+
+  /* ---- Page Container Widths ---- */
+  .max-w-page-compact { max-width: var(--page-width-compact); }
+  .max-w-page-form { max-width: var(--page-width-form); }
+  .max-w-page-standard { max-width: var(--page-width-standard); }
+  .max-w-page-wide { max-width: var(--page-width-wide); }
 
   /* ---- Staff background ---- */
   .staff-bg {

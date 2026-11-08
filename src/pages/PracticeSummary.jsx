@@ -55,7 +55,7 @@ export default function PracticeSummary() {
   if (!live) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center md:px-8">
-        <h1 className="type-section-title text-2xl text-ink-primary">This practice report is no longer available.</h1>
+        <h1 className="type-section-title text-ink-primary">This practice report is no longer available.</h1>
         <p className="mt-3 type-body text-ink-secondary">
           Practice reports are temporary. Only saved performances remain available.
         </p>

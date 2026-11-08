@@ -1,10 +1,31 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Upload, Camera, FileMusic, RotateCw, X, Plus, Check, Music2, ChevronUp, ChevronDown, AlertCircle } from 'lucide-react';
+import {
+  ArrowLeft,
+  Upload,
+  Camera,
+  FileMusic,
+  RotateCw,
+  X,
+  Plus,
+  Check,
+  Music2,
+  ChevronUp,
+  ChevronDown,
+  AlertCircle,
+} from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
-import { Button } from '@/components/ui/button';
+import { AppPage } from '@/components/patterns/AppPage';
+import { PageHeader } from '@/components/patterns/PageHeader';
+import { SectionHeader } from '@/components/patterns/SectionHeader';
+import { Stepper } from '@/components/patterns/Stepper';
+import { ChoiceCard } from '@/components/patterns/ChoiceCard';
+import { Surface } from '@/components/patterns/Surface';
+import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { NativeSelect } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 import FileThumbnail from '@/components/visuals/FileThumbnail';
 
 const sources = [
@@ -37,14 +58,31 @@ export default function AddScore() {
   const addFile = () => setFiles((f) => [...f, { id: Date.now(), name: `Page ${f.length + 1}.pdf` }]);
   const removeFile = (id) => setFiles((f) => f.filter((x) => x.id !== id));
   const rotate = (id) => setFiles((f) => f.map((x) => (x.id === id ? { ...x, rotated: !x.rotated } : x)));
-  const moveUp = (id) => setFiles((f) => { const i = f.findIndex((x) => x.id === id); if (i <= 0) return f; const arr = [...f]; [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; return arr; });
-  const moveDown = (id) => setFiles((f) => { const i = f.findIndex((x) => x.id === id); if (i < 0 || i >= f.length - 1) return f; const arr = [...f]; [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]]; return arr; });
+  const moveUp = (id) =>
+    setFiles((f) => {
+      const i = f.findIndex((x) => x.id === id);
+      if (i <= 0) return f;
+      const arr = [...f];
+      [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]];
+      return arr;
+    });
+  const moveDown = (id) =>
+    setFiles((f) => {
+      const i = f.findIndex((x) => x.id === id);
+      if (i < 0 || i >= f.length - 1) return f;
+      const arr = [...f];
+      [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]];
+      return arr;
+    });
 
   const simulateError = (type) => setFileError(type);
   const clearFileError = () => setFileError(null);
 
   const startRecognition = () => {
-    if (!details.title.trim()) { setError('Add a title so you can find this score later.'); return; }
+    if (!details.title.trim()) {
+      setError('Add a title so you can find this score later.');
+      return;
+    }
     createImport({
       title: details.title,
       composer: details.composer,
@@ -53,166 +91,380 @@ export default function AddScore() {
       source: sources.find((s) => s.id === source)?.label || 'PDF',
       folder: details.folder,
     });
-    // Get the most recent import — it was just unshifted to the front
     const store = usePrototypeStore.getState();
     setCreatedImportId(store.imports[0]?.id);
     setStep(5);
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-6 md:px-8">
-      <button onClick={() => navigate('/library')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" /> Back to library
+    <AppPage size="form">
+      {/* Back link navigation */}
+      <button
+        type="button"
+        onClick={() => navigate('/library')}
+        className="group inline-flex items-center gap-1.5 type-label text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded"
+      >
+        <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+        <span>Back to library</span>
       </button>
-      <h1 className="mt-4 font-display text-2xl font-medium">Add a score</h1>
 
-      {/* Stepper */}
-      <div className="mt-4 flex items-center gap-1.5 text-xs">
-        {['Source', 'Files', 'Details', 'Confirm'].map((s, i) => (
-          <div key={s} className="flex items-center gap-1.5">
-            <span className={`flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold ${step >= i + 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>{i + 1}</span>
-            <span className={step >= i + 2 ? 'text-foreground' : 'text-muted-foreground'}>{s}</span>
-            {i < 3 && <span className="h-px w-4 bg-border" />}
-          </div>
-        ))}
-      </div>
+      {/* Main Page Title */}
+      <PageHeader title="Add a score" className="mt-4" />
 
-      <div className="mt-6">
-        {/* Step 1 — source */}
+      {/* Progress Stepper */}
+      <Stepper
+        current={step}
+        steps={['Source', 'Files', 'Details', 'Confirm']}
+        onStepClick={(s) => s < step && setStep(s)}
+        className="mt-6"
+      />
+
+      <div className="mt-8">
+        {/* Step 1 — Choose Source */}
         {step === 1 && (
-          <div>
-            <p className="text-sm text-muted-foreground">How would you like to add it?</p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="space-y-4">
+            <div>
+              <h2 className="type-subsection text-ink-primary">How would you like to add it?</h2>
+              <p className="mt-1 type-body-small text-ink-secondary">
+                Upload sheets from your device or import an existing digital music file.
+              </p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
               {sources.map((s) => (
-                <button key={s.id} onClick={() => { setSource(s.id); setStep(2); }} className={`flex flex-col items-start gap-2 rounded-md border p-5 text-left hover:bg-accent ${source === s.id ? 'border-primary' : 'border-border'}`}>
-                  <s.icon className="h-5 w-5 text-primary" />
-                  <span className="font-medium">{s.label}</span>
-                  <span className="text-sm text-muted-foreground">{s.desc}</span>
-                </button>
+                <ChoiceCard
+                  key={s.id}
+                  icon={s.icon}
+                  title={s.label}
+                  description={s.desc}
+                  selected={source === s.id}
+                  onClick={() => {
+                    setSource(s.id);
+                    setStep(2);
+                  }}
+                />
               ))}
             </div>
           </div>
         )}
 
-        {/* Step 2 — files */}
+        {/* Step 2 — Manage Files */}
         {step === 2 && (
-          <div className="space-y-5">
-            <div>
-              <h2 className="font-display text-lg font-medium">Your files</h2>
-              <p className="text-sm text-muted-foreground">Preview, reorder, rotate, or remove pages.</p>
+          <div className="space-y-6">
+            <SectionHeader
+              title="Your files"
+              description="Preview, reorder, rotate, or remove pages before processing."
+            />
 
-              {/* Error state demo */}
-              {fileError && (
-                <div className="mt-3 flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3">
-                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
-                  <div className="flex-1">
-                    <p className="text-sm text-danger">{errorTypes[fileError].msg}</p>
-                    <button onClick={clearFileError} className="mt-1 text-xs font-medium text-danger underline">{errorTypes[fileError].action}</button>
-                  </div>
-                  <button onClick={clearFileError} className="rounded p-0.5 text-muted-foreground hover:bg-accent"><X className="h-3.5 w-3.5" /></button>
+            {/* Simulated file error banner */}
+            {fileError && (
+              <div
+                role="alert"
+                className="flex items-start gap-2.5 rounded-container border border-danger/30 bg-danger/10 p-4"
+              >
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger" />
+                <div className="flex-1">
+                  <p className="type-body-small font-medium text-danger">{errorTypes[fileError].msg}</p>
+                  <button
+                    type="button"
+                    onClick={clearFileError}
+                    className="mt-1 type-metadata font-semibold text-danger underline hover:opacity-85"
+                  >
+                    {errorTypes[fileError].action}
+                  </button>
                 </div>
-              )}
-
-              <div className="mt-3 space-y-2">
-                {files.map((f, i) => (
-                  <div key={f.id} className="flex items-center gap-3 rounded-container border border-line-subtle bg-surface-panel p-3">
-                    <FileThumbnail seed={f.id} className="h-14 w-12" />
-                    <span className="flex-1 text-sm">{f.name}{f.rotated && ' (rotated)'}</span>
-                    <div className="flex items-center gap-0.5">
-                      <button onClick={() => moveUp(f.id)} disabled={i === 0} className="rounded p-1.5 text-muted-foreground hover:bg-accent disabled:opacity-30" aria-label="Move up"><ChevronUp className="h-4 w-4" /></button>
-                      <button onClick={() => moveDown(f.id)} disabled={i === files.length - 1} className="rounded p-1.5 text-muted-foreground hover:bg-accent disabled:opacity-30" aria-label="Move down"><ChevronDown className="h-4 w-4" /></button>
-                      <button onClick={() => rotate(f.id)} className="rounded p-1.5 text-muted-foreground hover:bg-accent" aria-label="Rotate"><RotateCw className="h-4 w-4" /></button>
-                      {files.length > 1 && <button onClick={() => removeFile(f.id)} className="rounded p-1.5 text-muted-foreground hover:bg-accent" aria-label="Remove"><X className="h-4 w-4" /></button>}
-                    </div>
-                  </div>
-                ))}
+                <IconButton
+                  icon={X}
+                  size="xs"
+                  tone="quiet"
+                  label="Dismiss error"
+                  onClick={clearFileError}
+                />
               </div>
-              <button onClick={addFile} className="mt-3 flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"><Plus className="h-4 w-4" /> Add more</button>
+            )}
 
-              {/* Error demo triggers */}
-              <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-3">
-                <span className="text-xs text-muted-foreground">Simulate:</span>
+            {/* Uploaded File List */}
+            <div className="space-y-2">
+              {files.map((f, i) => (
+                <Surface
+                  key={f.id}
+                  tone="panel"
+                  border
+                  padding="sm"
+                  className="flex items-center gap-3"
+                >
+                  <FileThumbnail seed={f.id} className="h-14 w-12 shrink-0 rounded" />
+                  <div className="flex-1 min-w-0">
+                    <p className="type-body-small font-medium text-ink-primary truncate">
+                      {f.name}
+                      {f.rotated && (
+                        <span className="ml-2 type-metadata text-ink-secondary font-normal">
+                          (rotated 90°)
+                        </span>
+                      )}
+                    </p>
+                    <p className="type-metadata text-ink-secondary">Page {i + 1} of {files.length}</p>
+                  </div>
+
+                  <div className="flex items-center gap-1 shrink-0">
+                    <IconButton
+                      icon={ChevronUp}
+                      size="sm"
+                      tone="quiet"
+                      label={`Move ${f.name} up`}
+                      disabled={i === 0}
+                      onClick={() => moveUp(f.id)}
+                    />
+                    <IconButton
+                      icon={ChevronDown}
+                      size="sm"
+                      tone="quiet"
+                      label={`Move ${f.name} down`}
+                      disabled={i === files.length - 1}
+                      onClick={() => moveDown(f.id)}
+                    />
+                    <IconButton
+                      icon={RotateCw}
+                      size="sm"
+                      tone="quiet"
+                      label={`Rotate ${f.name}`}
+                      onClick={() => rotate(f.id)}
+                    />
+                    {files.length > 1 && (
+                      <IconButton
+                        icon={X}
+                        size="sm"
+                        tone="danger"
+                        label={`Remove ${f.name}`}
+                        onClick={() => removeFile(f.id)}
+                      />
+                    )}
+                  </div>
+                </Surface>
+              ))}
+            </div>
+
+            <div>
+              <Button intent="quiet" size="sm" onClick={addFile} className="gap-1.5 text-brand">
+                <Plus className="h-4 w-4" />
+                <span>Add another page</span>
+              </Button>
+            </div>
+
+            {/* QA Testing Triggers (development-only) */}
+            {import.meta.env.DEV && (
+              <div className="flex flex-wrap items-center gap-2 rounded-control border border-line-subtle bg-surface-canvas/50 px-3 py-2">
+                <span className="type-caption text-ink-secondary">DEV QA:</span>
                 {Object.entries(errorTypes).map(([k, v]) => (
-                  <button key={k} onClick={() => simulateError(k)} className="rounded border border-border px-2 py-1 text-xs text-muted-foreground hover:bg-accent">{v.msg.split('.')[0]}</button>
+                  <button
+                    key={k}
+                    type="button"
+                    onClick={() => simulateError(k)}
+                    className="type-metadata text-ink-secondary hover:text-ink-primary underline"
+                  >
+                    {v.msg.split('.')[0]}
+                  </button>
                 ))}
               </div>
-            </div>
-            <div className="flex justify-between">
-              <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
-              <Button onClick={() => setStep(3)}>Continue</Button>
+            )}
+
+            <div className="flex items-center justify-between border-t border-line-subtle pt-4">
+              <Button intent="secondary" onClick={() => setStep(1)}>
+                Back
+              </Button>
+              <Button intent="primary" onClick={() => setStep(3)}>
+                Continue
+              </Button>
             </div>
           </div>
         )}
 
-        {/* Step 3 — metadata */}
+        {/* Step 3 — Score Details */}
         {step === 3 && (
-          <div className="space-y-5">
-            <div>
-              <h2 className="font-display text-lg font-medium">Score details</h2>
-              <p className="text-sm text-muted-foreground">We’ll try to fill these in from recognition — you can edit anything.</p>
-              <div className="mt-3 grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="title">Title</Label>
-                  <Input id="title" value={details.title} onChange={(e) => { setDetails({ ...details, title: e.target.value }); setError(''); }} placeholder="Moonlight Sonata" />
-                  {error && <p className="text-xs text-danger">{error}</p>}
+          <div className="space-y-6">
+            <SectionHeader
+              title="Score details"
+              description="Recognition will pre-fill these nuances — you can customize them anytime."
+            />
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                label="Title"
+                htmlFor="title"
+                required
+                error={error}
+                className="sm:col-span-2"
+              >
+                <Input
+                  id="title"
+                  value={details.title}
+                  hasError={Boolean(error)}
+                  onChange={(e) => {
+                    setDetails({ ...details, title: e.target.value });
+                    setError('');
+                  }}
+                  placeholder="e.g. Clair de Lune, Moonlight Sonata"
+                />
+              </Field>
+
+              <Field label="Composer (optional)" htmlFor="composer">
+                <Input
+                  id="composer"
+                  value={details.composer}
+                  onChange={(e) => setDetails({ ...details, composer: e.target.value })}
+                  placeholder="e.g. Claude Debussy"
+                />
+              </Field>
+
+              <Field label="Instrument" htmlFor="instrument">
+                <Input
+                  id="instrument"
+                  value={details.instrument}
+                  onChange={(e) => setDetails({ ...details, instrument: e.target.value })}
+                  placeholder="Piano"
+                />
+              </Field>
+
+              <Field label="Tags (optional)" htmlFor="tags">
+                <Input
+                  id="tags"
+                  value={details.tags}
+                  onChange={(e) => setDetails({ ...details, tags: e.target.value })}
+                  placeholder="Classical, Recital, Étude"
+                />
+              </Field>
+
+              <Field label="Collection / Folder (optional)" htmlFor="folder">
+                <NativeSelect
+                  id="folder"
+                  value={details.folder}
+                  onChange={(e) => setDetails({ ...details, folder: e.target.value })}
+                >
+                  <option value="">No folder</option>
+                  {folders.map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.name}
+                    </option>
+                  ))}
+                </NativeSelect>
+              </Field>
+            </div>
+
+            <div className="flex items-center justify-between border-t border-line-subtle pt-4">
+              <Button intent="secondary" onClick={() => setStep(2)}>
+                Back
+              </Button>
+              <Button
+                intent="primary"
+                onClick={() => {
+                  if (!details.title.trim()) {
+                    setError('Add a title so you can find this score later.');
+                    return;
+                  }
+                  setStep(4);
+                }}
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 4 — Confirmation */}
+        {step === 4 && (
+          <div className="space-y-6">
+            <Surface tone="panel" elevation="paper" padding="md" className="space-y-4">
+              <SectionHeader
+                title="Confirm and begin"
+                description="Review summary before optical recognition begins."
+              />
+
+              <dl className="divide-y divide-line-subtle type-body-small">
+                <div className="flex items-center justify-between py-2.5">
+                  <dt className="text-ink-secondary">Title</dt>
+                  <dd className="font-medium text-ink-primary">{details.title || 'Untitled'}</dd>
                 </div>
-                <div className="space-y-1.5"><Label htmlFor="composer">Composer (optional)</Label><Input id="composer" value={details.composer} onChange={(e) => setDetails({ ...details, composer: e.target.value })} placeholder="Beethoven" /></div>
-                <div className="space-y-1.5"><Label htmlFor="instrument">Instrument</Label><Input id="instrument" value={details.instrument} onChange={(e) => setDetails({ ...details, instrument: e.target.value })} /></div>
-                <div className="space-y-1.5"><Label htmlFor="tags">Tags (optional)</Label><Input id="tags" value={details.tags} onChange={(e) => setDetails({ ...details, tags: e.target.value })} placeholder="Classical, Recital" /></div>
-                <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="folder">Folder (optional)</Label>
-                  <select id="folder" value={details.folder} onChange={(e) => setDetails({ ...details, folder: e.target.value })} className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm">
-                    <option value="">No folder</option>
-                    {folders.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
-                  </select>
+                <div className="flex items-center justify-between py-2.5">
+                  <dt className="text-ink-secondary">Composer</dt>
+                  <dd className="font-medium text-ink-primary">{details.composer || '—'}</dd>
                 </div>
+                <div className="flex items-center justify-between py-2.5">
+                  <dt className="text-ink-secondary">Instrument</dt>
+                  <dd className="font-medium text-ink-primary">{details.instrument}</dd>
+                </div>
+                <div className="flex items-center justify-between py-2.5">
+                  <dt className="text-ink-secondary">Pages</dt>
+                  <dd className="font-medium text-ink-primary">{files.length} {files.length === 1 ? 'page' : 'pages'}</dd>
+                </div>
+                <div className="flex items-center justify-between py-2.5">
+                  <dt className="text-ink-secondary">Source</dt>
+                  <dd className="font-medium text-ink-primary">
+                    {sources.find((s) => s.id === source)?.label}
+                  </dd>
+                </div>
+              </dl>
+
+              <p className="type-metadata text-ink-secondary pt-2">
+                Recognition runs in the background. You can navigate away anytime and return once your active score is prepared.
+              </p>
+            </Surface>
+
+            <div className="flex items-center justify-between border-t border-line-subtle pt-4">
+              <Button intent="secondary" onClick={() => setStep(3)}>
+                Back
+              </Button>
+              <Button intent="primary" onClick={startRecognition}>
+                Start recognition
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 5 — Recognition Started */}
+        {step === 5 && (
+          <Surface tone="panel" elevation="paper" padding="lg" className="space-y-5 text-center sm:text-left">
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand">
+                <Check className="h-5 w-5" />
+              </span>
+              <div>
+                <h2 className="type-section-title text-ink-primary">Recognition has started</h2>
+                <p className="type-body-small text-ink-secondary">
+                  {details.title || 'Untitled score'} · {files.length} {files.length === 1 ? 'page' : 'pages'}
+                </p>
               </div>
             </div>
-            <div className="flex justify-between">
-              <Button variant="outline" onClick={() => setStep(2)}>Back</Button>
-              <Button onClick={() => { if (!details.title.trim()) { setError('Add a title so you can find this score later.'); return; } setStep(4); }}>Continue</Button>
-            </div>
-          </div>
-        )}
 
-        {/* Step 4 — confirm */}
-        {step === 4 && (
-          <div className="space-y-5">
-            <div className="rounded-container border border-line-subtle bg-surface-panel p-5">
-              <h2 className="font-display text-lg font-medium">Confirm</h2>
-              <dl className="mt-3 space-y-2 text-sm">
-                <div className="flex justify-between"><dt className="text-muted-foreground">Title</dt><dd>{details.title || 'Untitled'}</dd></div>
-                <div className="flex justify-between"><dt className="text-muted-foreground">Composer</dt><dd>{details.composer || '—'}</dd></div>
-                <div className="flex justify-between"><dt className="text-muted-foreground">Instrument</dt><dd>{details.instrument}</dd></div>
-                <div className="flex justify-between"><dt className="text-muted-foreground">Pages</dt><dd>{files.length}</dd></div>
-                <div className="flex justify-between"><dt className="text-muted-foreground">Source</dt><dd>{sources.find((s) => s.id === source)?.label}</dd></div>
-              </dl>
-              <p className="mt-3 text-sm text-muted-foreground">Recognition will run after you confirm. You can leave the page — we’ll let you know when it’s ready.</p>
+            <div className="space-y-1.5">
+              <div className="flex justify-between type-metadata text-ink-secondary">
+                <span>Interpreting notes and staves…</span>
+                <span>Active</span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-surface-canvas">
+                <div className="h-full w-1/3 rounded-full bg-brand animate-pulse" />
+              </div>
             </div>
-            <div className="flex justify-between">
-              <Button variant="outline" onClick={() => setStep(3)}>Back</Button>
-              <Button onClick={startRecognition}>Start recognition</Button>
-            </div>
-          </div>
-        )}
 
-        {/* Step 5 — recognition begins */}
-        {step === 5 && (
-          <div className="rounded-container border border-line-subtle bg-surface-panel p-6">
-            <div className="flex items-center gap-2 text-primary"><Check className="h-5 w-5" /></div>
-            <h2 className="mt-2 font-display text-xl font-medium">Recognition has started</h2>
-            <p className="mt-1 text-sm text-muted-foreground">{details.title || 'Untitled score'} · {files.length} {files.length === 1 ? 'page' : 'pages'}</p>
-            <div className="mt-4">
-              <div className="mb-1 flex justify-between text-xs text-muted-foreground"><span>Recognizing music…</span><span>0%</span></div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-muted"><div className="h-full w-1/4 rounded-full bg-primary" /></div>
+            <p className="type-body-small text-ink-secondary">
+              Your score is dwelling into your personal collection. We’ll notify you when it’s ready for the practice stand.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <Button intent="secondary" onClick={() => navigate('/library')}>
+                Back to library
+              </Button>
+              <Button
+                intent="primary"
+                onClick={() =>
+                  navigate(createdImportId ? `/imports/${createdImportId}` : '/imports')
+                }
+              >
+                View import queue
+              </Button>
             </div>
-            <p className="mt-4 text-sm text-muted-foreground">You can leave this page. We’ll let you know when it’s ready.</p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Button variant="outline" onClick={() => navigate('/library')}>Back to library</Button>
-              <Button onClick={() => navigate(createdImportId ? `/imports/${createdImportId}` : '/imports')}>View import</Button>
-            </div>
-          </div>
+          </Surface>
         )}
       </div>
-    </div>
+    </AppPage>
   );
 }

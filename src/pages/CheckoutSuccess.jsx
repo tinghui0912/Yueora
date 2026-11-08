@@ -36,7 +36,7 @@ export default function CheckoutSuccess() {
         </span>
         <div>
           <p className="type-caption text-ink-tertiary">Demo checkout complete</p>
-          <h1 className="type-page-title text-2xl text-ink-primary">You're on {plan.name}</h1>
+          <h1 className="type-page-title text-ink-primary">You're on {plan.name}</h1>
         </div>
       </div>
 

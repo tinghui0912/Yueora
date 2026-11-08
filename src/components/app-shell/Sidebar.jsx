@@ -3,8 +3,9 @@ import { Plus, Inbox } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import Logo from '@/components/brand/Logo';
 import { RepertoireGlyph, PracticeGlyph, MemoryGlyph } from '@/components/brand/MusicalGlyphs';
-
-const navItemBase = 'group relative flex items-center gap-3 rounded-control px-3 py-2 text-sm font-medium transition-[background-color,color] duration-fast';
+import { SidebarNavItem } from './SidebarNavItem';
+import { SidebarSectionLabel } from './SidebarSectionLabel';
+import { Button } from '@/components/ui/button';
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -22,88 +23,58 @@ export default function Sidebar() {
 
       {/* Add score - refined paper action */}
       <div className="mt-6 px-1">
-        <button
+        <Button
+          intent="secondary"
+          size="md"
+          className="w-full justify-center gap-2 border-surface-paper-edge bg-surface-paper text-ink-primary shadow-paper hover:bg-surface-paper-warm hover:border-line-strong active:translate-y-px"
           onClick={() => navigate('/add-score')}
-          className="flex w-full items-center justify-center gap-2 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2 text-sm font-medium text-ink-primary shadow-paper transition-all hover:border-line-strong hover:bg-surface-paper-warm active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
         >
           <Plus className="h-4 w-4 text-brand" />
           <span>Add sheet or file</span>
-        </button>
+        </Button>
       </div>
 
       {/* Primary musical spaces */}
       <div className="mt-6">
-        <p className="px-3 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Spaces</p>
+        <SidebarSectionLabel>Spaces</SidebarSectionLabel>
         <nav className="mt-2 space-y-1">
-          <NavLink
+          <SidebarNavItem
             to="/library"
-            className={({ isActive }) =>
-              `${navItemBase} ${
-                isActive
-                  ? 'bg-brand/10 text-brand font-semibold'
-                  : 'text-ink-secondary hover:bg-surface-paper hover:text-ink-primary'
-              }`
-            }
-          >
-            <RepertoireGlyph className="h-4 w-4 shrink-0 transition-transform group-hover:scale-105" />
-            <span>Repertoire</span>
-          </NavLink>
-          <NavLink
+            icon={RepertoireGlyph}
+            label="Repertoire"
+          />
+          <SidebarNavItem
             to="/practice"
-            className={({ isActive }) =>
-              `${navItemBase} ${
-                isActive
-                  ? 'bg-brand/10 text-brand font-semibold'
-                  : 'text-ink-secondary hover:bg-surface-paper hover:text-ink-primary'
-              }`
-            }
-          >
-            <PracticeGlyph className="h-4 w-4 shrink-0 transition-transform group-hover:scale-105" />
-            <span>Practice</span>
-          </NavLink>
-          <NavLink
+            icon={PracticeGlyph}
+            label="Practice"
+          />
+          <SidebarNavItem
             to="/performances"
-            className={({ isActive }) =>
-              `${navItemBase} ${
-                isActive
-                  ? 'bg-brand/10 text-brand font-semibold'
-                  : 'text-ink-secondary hover:bg-surface-paper hover:text-ink-primary'
-              }`
-            }
-          >
-            <MemoryGlyph className="h-4 w-4 shrink-0 transition-transform group-hover:scale-105" />
-            <span>Preserved Takes</span>
-          </NavLink>
+            icon={MemoryGlyph}
+            label="Preserved Takes"
+          />
         </nav>
       </div>
 
       {/* Studio / Preparation */}
       <div className="mt-6 border-t border-line-subtle pt-4">
-        <p className="px-3 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Studio</p>
+        <SidebarSectionLabel>Studio</SidebarSectionLabel>
         <div className="mt-2 space-y-1">
-          <NavLink
+          <SidebarNavItem
             to="/imports"
-            className={({ isActive }) =>
-              `${navItemBase} ${
-                isActive
-                  ? 'bg-brand/10 text-brand font-semibold'
-                  : 'text-ink-secondary hover:bg-surface-paper hover:text-ink-primary'
-              }`
+            icon={Inbox}
+            label="Recognition Queue"
+            badge={
+              activeImports > 0 ? (
+                <span className="h-2 w-2 rounded-full bg-brand" aria-label={`${activeImports} active imports`} />
+              ) : null
             }
-          >
-            <div className="relative">
-              <Inbox className="h-4 w-4 shrink-0" />
-              {activeImports > 0 && (
-                <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-brand" />
-              )}
-            </div>
-            <span>Recognition Queue</span>
-          </NavLink>
+          />
         </div>
       </div>
 
       {/* Brand motto / warmth */}
-      <div className="mt-auto px-3 text-xs text-ink-secondary/80">
+      <div className="mt-auto px-3 type-metadata text-ink-secondary/80">
         <p className="font-display italic">A personal musical journey.</p>
       </div>
     </div>

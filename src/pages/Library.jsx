@@ -9,8 +9,10 @@ import { usePrototypeStore } from '@/stores/prototypeStore';
 import ScoreCard from '@/components/library/ScoreCard';
 import ScorePreview from '@/components/library/ScorePreview';
 import LibrarySubRail from '@/components/library/LibrarySubRail';
+import RepertoireGrid from '@/components/library/RepertoireGrid';
 import MusicPaper from '@/components/patterns/MusicPaper';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -234,7 +236,7 @@ export default function Library() {
                   <h2 className="truncate font-display text-lg font-medium text-ink-primary mt-0.5 sm:text-xl">
                     {continueScore.title}
                   </h2>
-                  <p className="truncate text-[13px] text-ink-secondary mt-0.5">
+                  <p className="truncate type-metadata text-ink-secondary mt-0.5">
                     {continueScore.composer} · Continue from bar {continueScore.lastMeasure} · Played {continueScore.lastPlayed}
                   </p>
                 </div>
@@ -287,7 +289,7 @@ export default function Library() {
               <div className="relative">
                 <button
                   onClick={() => { setShowFilters((s) => !s); setShowSort(false); }}
-                  className={`flex h-9 items-center gap-1.5 rounded-control border px-3 text-[13px] font-medium transition-colors ${
+                  className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
                     filterFav || filterInstrument !== 'all' || filterPlayed !== 'any'
                       ? 'border-brand/40 bg-brand/10 text-brand'
                       : 'border-surface-paper-edge bg-surface-paper text-ink-secondary hover:text-ink-primary'
@@ -327,7 +329,7 @@ export default function Library() {
                         </button>
                       ))}
                     </div>
-                    <label className="mt-3 flex items-center gap-2 text-[13px] text-ink-primary cursor-pointer select-none">
+                    <label className="mt-3 flex items-center gap-2 type-label text-ink-primary cursor-pointer select-none">
                       <input
                         type="checkbox"
                         checked={filterFav}
@@ -344,7 +346,7 @@ export default function Library() {
               <div className="relative">
                 <button
                   onClick={() => { setShowSort((s) => !s); setShowFilters(false); }}
-                  className="flex h-9 items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 text-[13px] font-medium text-ink-secondary hover:text-ink-primary"
+                  className="flex h-9 items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 type-label font-medium text-ink-secondary hover:text-ink-primary"
                   aria-label="Sort repertoire"
                 >
                   <ArrowUpDown className="h-3.5 w-3.5" />
@@ -397,31 +399,37 @@ export default function Library() {
             <div className="mt-3 flex flex-wrap items-center gap-2 rounded-control border border-brand/30 bg-brand/5 px-3 py-2">
               <span className="text-sm font-semibold text-brand">{selected.length} piece{selected.length > 1 ? 's' : ''} selected</span>
               <div className="ml-auto flex flex-wrap items-center gap-1.5">
-                <button
+                <Button
+                  intent="secondary"
+                  size="sm"
                   onClick={favSelected}
-                  className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-1.5 text-[13px] font-medium hover:bg-surface-paper-warm"
+                  className="gap-1.5"
                 >
                   <Heart className="h-3.5 w-3.5" /> Favorite
-                </button>
-                <button
+                </Button>
+                <Button
+                  intent="secondary"
+                  size="sm"
                   onClick={() => setMoveOpen(true)}
-                  className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-1.5 text-[13px] font-medium hover:bg-surface-paper-warm"
+                  className="gap-1.5"
                 >
                   <FolderInput className="h-3.5 w-3.5" /> Move to folder
-                </button>
-                <button
+                </Button>
+                <Button
+                  intent="danger"
+                  size="sm"
                   onClick={() => setTrashConfirm({ selected: [...selected] })}
-                  className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-1.5 text-[13px] font-medium text-destructive hover:bg-destructive/10"
+                  className="gap-1.5"
                 >
                   <RemoveIcon className="h-3.5 w-3.5" /> {removeLabel}
-                </button>
-                <button
+                </Button>
+                <IconButton
+                  icon={X}
+                  size="xs"
+                  tone="quiet"
+                  label="Clear selection"
                   onClick={clearSelect}
-                  className="flex h-7 w-7 items-center justify-center rounded text-ink-secondary hover:text-ink-primary hover:bg-surface-paper"
-                  aria-label="Clear selection"
-                >
-                  <X className="h-4 w-4" />
-                </button>
+                />
               </div>
             </div>
           )}
@@ -468,7 +476,7 @@ export default function Library() {
               </div>
             </div>
           ) : view === 'grid' ? (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <RepertoireGrid>
               {filtered.map((s) => (
                 <ScoreCard
                   key={s.id}
@@ -477,7 +485,7 @@ export default function Library() {
                   onToggleSelect={toggleSelect}
                 />
               ))}
-            </div>
+            </RepertoireGrid>
           ) : (
             <div className="divide-y divide-surface-paper-edge rounded-container border border-surface-paper-edge bg-surface-paper shadow-paper">
               {filtered.map((s) => (

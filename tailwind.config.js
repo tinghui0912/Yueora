@@ -126,6 +126,12 @@ module.exports = {
 				paper: 'var(--shadow-paper)',
 				'paper-hover': 'var(--shadow-paper-hover)',
 			},
+			maxWidth: {
+				'page-compact': 'var(--page-width-compact)',
+				'page-form': 'var(--page-width-form)',
+				'page-standard': 'var(--page-width-standard)',
+				'page-wide': 'var(--page-width-wide)',
+			},
 			keyframes: {
 				'accordion-down': { from: { height: '0' }, to: { height: 'var(--radix-accordion-content-height)' } },
 				'accordion-up': { from: { height: 'var(--radix-accordion-content-height)' }, to: { height: '0' } }

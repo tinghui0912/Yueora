@@ -380,7 +380,7 @@ export default function PracticeSession() {
             >
               <Video className="h-3.5 w-3.5 text-ink-secondary" aria-hidden="true" />
               {isPlaying && (
-                <span className="absolute left-1 top-1 flex items-center gap-1 rounded bg-danger px-1 py-px text-[7px] font-bold uppercase tracking-wider text-white">
+                <span className="absolute left-1 top-1 flex items-center gap-1 rounded bg-danger px-1 py-px text-[7px] font-bold uppercase tracking-wider text-white"> {/* ds-allow: miniature simulation badge */}
                   REC
                 </span>
               )}
@@ -611,7 +611,7 @@ export default function PracticeSession() {
               trigger={
                 <button
                   type="button"
-                  className={`flex items-center gap-1.5 rounded-control border px-3 py-2 text-[13px] font-medium transition-colors ${
+                  className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
                     metronome ? 'border-line-strong text-ink-primary' : 'border-surface-paper-edge text-ink-secondary hover:text-ink-primary'
                   }`}
                 >
@@ -635,7 +635,7 @@ export default function PracticeSession() {
             <button
               type="button"
               onClick={selecting ? () => { setSectionPhase('idle'); setPendingStart(null); } : startSectionPick}
-              className={`flex items-center gap-1.5 rounded-control border px-3 py-2 text-[13px] font-medium transition-colors ${
+              className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
                 selectedRange.kind === 'section'
                   ? 'border-brand/40 bg-brand/10 font-semibold text-brand'
                   : 'border-surface-paper-edge text-ink-secondary hover:bg-surface-paper'
@@ -649,7 +649,7 @@ export default function PracticeSession() {
                 type="button"
                 onClick={() => setLoop((l) => !l)}
                 aria-pressed={loop}
-                className={`hidden items-center gap-1.5 rounded-control border px-3 py-2 text-[13px] font-medium sm:flex transition-colors ${
+                className={`hidden h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium sm:flex transition-colors ${
                   loop ? 'border-brand/40 bg-brand/10 font-semibold text-brand' : 'border-surface-paper-edge text-ink-secondary hover:bg-surface-paper'
                 }`}
               >

@@ -68,10 +68,10 @@ export default function PracticeHub() {
                   <h2 className="font-display text-xl font-medium text-ink-primary truncate">
                     {continueScore.title}
                   </h2>
-                  <p className="text-[13px] text-ink-secondary mt-0.5">
+                  <p className="type-metadata text-ink-secondary mt-0.5">
                     {continueScore.composer} · played {continueScore.lastPlayed}
                   </p>
-                  <p className="mt-1 text-[13px] font-medium text-brand">
+                  <p className="mt-1 type-metadata font-medium text-brand">
                     Continue from bar {continueScore.lastMeasure}
                   </p>
                 </div>
@@ -103,7 +103,7 @@ export default function PracticeHub() {
                   </div>
                   <div className="min-w-0">
                     <p className="truncate font-display font-medium text-ink-primary">{r.title}</p>
-                    <p className="truncate text-[13px] text-ink-secondary mt-0.5">{r.composer}</p>
+                    <p className="truncate type-metadata text-ink-secondary mt-0.5">{r.composer}</p>
                     <span className="inline-block mt-1 text-xs font-medium text-brand">Revisit piece →</span>
                   </div>
                 </MusicPaper>
@@ -125,7 +125,7 @@ export default function PracticeHub() {
                 <MusicPaper interactive tone="natural" className="flex items-center justify-between p-4">
                   <div className="min-w-0">
                     <p className="font-display font-medium text-ink-primary">{r.title}</p>
-                    <p className="text-[13px] text-ink-secondary mt-0.5">{r.composer} · last played {r.lastPlayed}</p>
+                    <p className="type-metadata text-ink-secondary mt-0.5">{r.composer} · last played {r.lastPlayed}</p>
                     <p className="mt-1 text-sm text-brand font-medium">Feel like revisiting this one?</p>
                   </div>
                   <ChevronRight className="h-4 w-4 text-ink-tertiary" />
@@ -165,14 +165,14 @@ export default function PracticeHub() {
             <p className="font-display text-2xl font-medium text-ink-primary">
               {thisWeekMinutes} <span className="text-sm font-normal text-ink-secondary">min</span>
             </p>
-            <p className="text-[13px] text-ink-secondary mt-1">across {thisWeekSessions} calm sessions</p>
+            <p className="type-metadata text-ink-secondary mt-1">across {thisWeekSessions} calm sessions</p>
           </MusicPaper>
 
           <MusicPaper tone="natural" className="p-4">
             <p className="font-display text-2xl font-medium text-ink-primary">
               {thisWeekPieces}
             </p>
-            <p className="text-[13px] text-ink-secondary mt-1">pieces brought to life</p>
+            <p className="type-metadata text-ink-secondary mt-1">pieces brought to life</p>
           </MusicPaper>
 
           <MusicPaper tone="natural" className="p-4 flex flex-col justify-between">
@@ -186,7 +186,7 @@ export default function PracticeHub() {
                 </div>
               ))}
             </div>
-            <p className="text-[13px] text-ink-secondary mt-2">
+            <p className="type-metadata text-ink-secondary mt-2">
               {thisWeekMarks.filter(Boolean).length} days of music
             </p>
           </MusicPaper>

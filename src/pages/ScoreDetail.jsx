@@ -120,7 +120,7 @@ export default function ScoreDetail() {
             </button>
           </div>
           <p className="mt-1 text-sm text-ink-secondary font-medium">{score.composer} · {score.instrument}</p>
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-[13px] text-ink-secondary/80">
+          <div className="mt-2 flex flex-wrap items-center gap-2 type-metadata text-ink-secondary/80">
             <span className="rounded-control bg-surface-paper px-2 py-0.5 border border-surface-paper-edge font-medium">
               {score.source}
             </span>
