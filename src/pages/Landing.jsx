@@ -53,25 +53,25 @@ export default function Landing() {
       title: 'Becomes an Interactive Score',
       summary: 'Optical music recognition that understands musical phrasing.',
       description:
-        'Yueora interprets the notes, staves, dynamics, and measure structures. You can adjust any nuance in the editor, customize fingering, or transpose keys—turning static ink into a living musical companion.',
+        'Yueora interprets notes, staves, dynamics, and measure structures. You can refine pitches, durations, and fingering in the editor—turning static scans into an active musical score.',
       tag: 'Interpretation',
       visual: 'interactive',
     },
     {
       step: '03',
       title: 'Dwells in Your Repertoire',
-      summary: 'A curated folio that remembers your history with the piece.',
+      summary: 'A personal collection that remembers your history with the piece.',
       description:
-        'Your scores don’t sit in generic cloud folders. They live in a personal music folio that remembers where you stopped, which sections you love, and the history you have built together over weeks and years.',
+        'Your scores don’t sit in generic cloud folders. They live in a personal music collection that remembers where you stopped, which sections you love, and the history you have built together over weeks and years.',
       tag: 'Repertoire Archive',
       visual: 'repertoire',
     },
     {
       step: '04',
       title: 'Practiced Without Pressure',
-      summary: 'Calm acoustic listening that follows your natural rubato.',
+      summary: 'Calm acoustic listening that follows your playing.',
       description:
-        'Open your piano stand and play. Yueora listens through your microphone, turning pages at your tempo. There are no punitive red error flashes, no grading percentages, and no artificial streak pressure.',
+        'Open your piano stand and play. Yueora listens through your microphone, tracking where you are on the score and following your phrase. There are no punitive red error flashes, no grading percentages, and no artificial streak pressure.',
       tag: 'Practice Stand',
       visual: 'practice',
     },
@@ -106,7 +106,7 @@ export default function Landing() {
     },
     {
       q: 'Does Yueora judge or grade my playing?',
-      a: 'Never. Yueora does not calculate accuracy percentages or flash red notes. The pitch-following engine is designed to turn pages and keep your place quietly, respecting your interpretive rubato.',
+      a: 'Never. Yueora does not calculate accuracy percentages or flash red notes. The pitch-following engine is designed to turn pages and keep your place quietly, giving you space to express yourself without judgment.',
     },
     {
       q: 'Is my practice private?',
@@ -114,7 +114,7 @@ export default function Landing() {
     },
     {
       q: 'Can I export my scores and recordings?',
-      a: 'Always. Your music is yours. You can export scores as high-resolution PDF or MusicXML, and download your uncompressed audio recordings whenever you want.',
+      a: 'Always. Your music is yours. You can export scores as high-resolution PDF or MusicXML, and download your preserved audio recordings whenever you want.',
     },
   ];
 
@@ -234,7 +234,7 @@ export default function Landing() {
                 Non-Judgmental Listening
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
-                Our acoustic engine follows your tempo and rubato. It turns pages quietly instead of
+                Our acoustic engine follows your phrase and keeps your place quietly instead of
                 flashing red error marks.
               </p>
             </div>
@@ -349,7 +349,7 @@ export default function Landing() {
               {activeStep === 2 && (
                 <div className="music-paper rounded-lg p-6 shadow-paper">
                   <div className="flex items-center justify-between border-b border-line-subtle pb-3">
-                    <p className="type-caption text-ink-tertiary">Step 03 · Personal Repertoire Folio</p>
+                    <p className="type-caption text-ink-tertiary">Step 03 · Living Repertoire</p>
                     <span className="type-metadata text-ink-secondary">Curated Collection</span>
                   </div>
                   <div className="mt-4 rounded-control border border-line-subtle bg-surface-canvas/50 p-4">
@@ -371,7 +371,7 @@ export default function Landing() {
                     </div>
                   </div>
                   <div className="mt-3 aspect-[16/7] overflow-hidden rounded border border-line-subtle bg-white">
-                    <ScorePreview id="step-folio-view" className="h-full w-full" />
+                    <ScorePreview id="step-score-view" className="h-full w-full" />
                   </div>
                 </div>
               )}
@@ -399,7 +399,7 @@ export default function Landing() {
               </h2>
               <p className="mt-5 text-base leading-relaxed text-ink-secondary">
                 Yueora doesn’t treat your music like generic files or spreadsheets. Every piece is
-                bound into a tactile paper folio, complete with its practice timeline, saved takes, and
+                bound into tactile paper, complete with its practice timeline, saved takes, and
                 personal notes.
               </p>
 
@@ -428,7 +428,7 @@ export default function Landing() {
                       Organized by affection, not algorithms
                     </h4>
                     <p className="mt-0.5 text-xs leading-relaxed text-ink-secondary">
-                      Group into folios like &ldquo;Sunday Morning Pieces&rdquo;, &ldquo;French Impressionism&rdquo;, or
+                      Group into collections like &ldquo;Sunday Morning Pieces&rdquo;, &ldquo;French Impressionism&rdquo;, or
                       &ldquo;Currently Memorizing&rdquo;.
                     </p>
                   </div>
@@ -465,7 +465,7 @@ export default function Landing() {
       </section>
 
       {/* 5. DEEP DIVE: PRACTICE STAND & NON-JUDGMENTAL LISTENING */}
-      <section id="practice" className="border-t border-line-subtle py-24 md:py-32">
+      <section id="practice" className="relative border-y border-line-subtle/50 bg-surface-paper/40 py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -480,14 +480,14 @@ export default function Landing() {
               <p className="mt-5 text-base leading-relaxed text-ink-secondary">
                 Traditional practice tools penalize every missed accidental with blaring red marks.
                 Yueora listens quietly to acoustic piano through your microphone, tracking where you
-                are on the page and turning pages seamlessly.
+                are on the score and following your phrase.
               </p>
 
               <ul className="mt-8 space-y-3 text-sm text-ink-secondary">
                 <li className="flex items-start gap-2.5">
                   <span className="mt-1 h-1.5 w-1.5 rounded-full bg-brand" />
                   <span>
-                    <strong className="font-medium text-ink-primary">Natural Rubato:</strong> The
+                    <strong className="font-medium text-ink-primary">Paced Following:</strong> The
                     following engine respects expressive phrasing, slowing down and accelerating with
                     you.
                   </span>
@@ -631,7 +631,7 @@ export default function Landing() {
                     <Check className="h-4 w-4 text-brand" /> Audio take recording
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="h-4 w-4 text-brand" /> Private notes and annotations
+                    <Check className="h-4 w-4 text-brand" /> Practice history and session journal
                   </li>
                 </ul>
               </div>
@@ -649,7 +649,7 @@ export default function Landing() {
               <div>
                 <div className="flex items-center justify-between">
                   <p className="font-display text-xl font-medium text-ink-primary">Pro Repertoire</p>
-                  <span className="rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-semibold text-white">
+                  <span className="rounded-full bg-brand px-2.5 py-0.5 text-xs font-semibold text-white">
                     Musician Choice
                   </span>
                 </div>
@@ -668,10 +668,10 @@ export default function Landing() {
                     <Check className="h-4 w-4 text-brand" /> Unlimited interactive scores &amp; scans
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="h-4 w-4 text-brand" /> Advanced phrase looping &amp; transposing
+                    <Check className="h-4 w-4 text-brand" /> Phrase looping &amp; custom tempo control
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="h-4 w-4 text-brand" /> Uncompressed audio take archive
+                    <Check className="h-4 w-4 text-brand" /> High-fidelity audio &amp; video take archive
                   </li>
                   <li className="flex items-center gap-2.5">
                     <Check className="h-4 w-4 text-brand" /> PDF &amp; MusicXML full export

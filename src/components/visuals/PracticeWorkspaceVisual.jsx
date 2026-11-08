@@ -40,7 +40,7 @@ export default function PracticeWorkspaceVisual() {
         <div 
           className="absolute left-[42%] top-[18%] h-[64%] w-[26%] rounded border border-practice-current/40 bg-practice-current/15 transition-all"
         >
-          <div className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-surface-paper px-2 py-0.5 text-[11px] font-medium text-ink-secondary shadow-sm border border-line-subtle">
+          <div className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-surface-paper px-2 py-0.5 text-xs font-medium text-ink-secondary shadow-sm border border-line-subtle">
             Bar 14 · Andante très expressif
           </div>
         </div>
@@ -51,7 +51,7 @@ export default function PracticeWorkspaceVisual() {
         <div>
           <p className="type-caption text-ink-tertiary">Pacing</p>
           <p className="mt-0.5 font-display text-base font-medium text-ink-primary">♩ = 66</p>
-          <p className="type-metadata text-ink-tertiary">natural rubato</p>
+          <p className="type-metadata text-ink-tertiary">unforced pace</p>
         </div>
         <div className="border-x border-line-subtle px-2">
           <p className="type-caption text-ink-tertiary">Current Note</p>

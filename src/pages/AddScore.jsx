@@ -70,7 +70,7 @@ export default function AddScore() {
       <div className="mt-4 flex items-center gap-1.5 text-xs">
         {['Source', 'Files', 'Details', 'Confirm'].map((s, i) => (
           <div key={s} className="flex items-center gap-1.5">
-            <span className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] ${step >= i + 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>{i + 1}</span>
+            <span className={`flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold ${step >= i + 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>{i + 1}</span>
             <span className={step >= i + 2 ? 'text-foreground' : 'text-muted-foreground'}>{s}</span>
             {i < 3 && <span className="h-px w-4 bg-border" />}
           </div>

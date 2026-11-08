@@ -12,14 +12,14 @@ export default function HeroProductVisual() {
     <div aria-hidden="true" className="relative select-none">
       {/* 1. Scanned paper page — tilted archival sheet */}
       <div className="absolute -left-2 top-6 w-[45%] rotate-[-4deg] rounded-md border border-surface-paper-edge bg-surface-paper p-2.5 shadow-paper transition-transform duration-slow hover:rotate-[-2deg] z-10 sm:left-2">
-        <div className="flex items-center justify-between pb-1.5 px-0.5 border-b border-surface-paper-edge text-[10px] text-ink-tertiary">
+        <div className="flex items-center justify-between pb-1.5 px-0.5 border-b border-surface-paper-edge text-xs text-ink-secondary/70">
           <span>Physical scan</span>
           <span>PDF / Photo</span>
         </div>
         <div className="mt-1.5 overflow-hidden rounded">
           <MockScanPage seed="clair-de-lune-scan" className="aspect-[3/4] w-full" />
         </div>
-        <p className="mt-1.5 text-center font-display italic text-[11px] text-ink-secondary">
+        <p className="mt-1.5 text-center font-display italic text-xs text-ink-secondary">
           Clair de Lune · Debussy
         </p>
       </div>
@@ -37,8 +37,8 @@ export default function HeroProductVisual() {
             </span>
             <span className="font-medium text-ink-primary">In your Repertoire</span>
           </div>
-          <span className="rounded-control bg-brand/10 px-2 py-0.5 text-[10px] font-semibold text-brand">
-            Interactive Folio
+          <span className="rounded-control bg-brand/10 px-2 py-0.5 text-xs font-semibold text-brand">
+            Interactive Score
           </span>
         </div>
 
@@ -58,12 +58,12 @@ export default function HeroProductVisual() {
         </div>
 
         {/* Organic relationship metadata */}
-        <div className="mt-2.5 flex flex-wrap items-center gap-3 rounded-control bg-surface-canvas/60 px-2.5 py-1.5 text-[11px] text-ink-secondary">
+        <div className="mt-2.5 flex flex-wrap items-center gap-3 rounded-control bg-surface-canvas/60 px-2.5 py-1.5 text-xs text-ink-secondary">
           <span className="flex items-center gap-1 text-brand font-medium">
             <PracticeGlyph className="h-3 w-3" /> Continue from bar 14
           </span>
           <span className="text-ink-tertiary">·</span>
-          <span className="flex items-center gap-1 text-ink-tertiary">
+          <span className="flex items-center gap-1 text-ink-secondary/70">
             <MemoryGlyph className="h-3 w-3" /> 1 take kept
           </span>
         </div>

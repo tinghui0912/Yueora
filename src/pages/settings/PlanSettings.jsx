@@ -158,7 +158,7 @@ export default function PlanSettings() {
                   <p className="font-medium text-ink-primary">{b.date} · {b.amount}</p>
                   <p className="type-metadata text-ink-tertiary">
                     {b.plan} · {b.invoice}
-                    {b.demo && <span className="ml-2 rounded-control bg-accent px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-accent-foreground">Demo</span>}
+                    {b.demo && <span className="ml-2 rounded-control bg-accent px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-accent-foreground">Demo</span>}
                   </p>
                 </div>
                 <span className="type-metadata text-ink-tertiary">No invoice file in this prototype</span>

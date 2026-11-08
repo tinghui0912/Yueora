@@ -31,13 +31,15 @@ const STATUS_PRESENTATION = {
 /**
  * FollowFeedback: Non-judgmental practice companion.
  * Follows the musician's pace without evaluation, grading, or red/green correction cues.
+ * Internal recognition telemetry is kept out of normal musician UI.
  */
 export default function FollowFeedback({
   current,
   status,
-  matched = 0,
-  skipped = 0,
+  matched: _matched = 0,
+  skipped: _skipped = 0,
   paused = false,
+  showSimulator = false,
   onResolve,
 }) {
   const currentPresentation = STATUS_PRESENTATION[status] || STATUS_PRESENTATION.waiting;
@@ -45,57 +47,57 @@ export default function FollowFeedback({
   return (
     <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-left">
       {/* Current note & calm state */}
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-container border border-surface-paper-edge bg-surface-paper shadow-xs">
-          <span className="font-display text-xl font-medium text-ink-primary">{current}</span>
+      <div className="flex items-center gap-3.5">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-container border border-surface-paper-edge bg-surface-paper shadow-xs">
+          <span className="font-display text-2xl font-medium text-ink-primary">{current}</span>
         </div>
         <div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <span
-              className={`h-2 w-2 rounded-full ${paused ? 'bg-ink-tertiary' : currentPresentation.dot}`}
+              className={`h-2.5 w-2.5 rounded-full ${paused ? 'bg-ink-tertiary' : currentPresentation.dot}`}
               aria-hidden="true"
             />
-            <p className={`text-xs font-medium ${paused ? 'text-ink-tertiary' : currentPresentation.tone}`}>
+            <p className={`text-sm font-medium ${paused ? 'text-ink-secondary' : currentPresentation.tone}`}>
               {paused ? 'Session paused' : currentPresentation.label}
             </p>
           </div>
-          <p className="mt-0.5 text-[11px] text-ink-tertiary">
-            {matched > 0 ? `${matched} notes in flow` : 'Ready when you are'}
-            {skipped > 0 ? ` · ${skipped} skipped forward` : ''}
+          <p className="mt-0.5 text-xs text-ink-secondary">
+            {paused ? 'Press Space or Resume when ready' : 'Listening quietly at your natural tempo'}
           </p>
         </div>
       </div>
 
-      {/* Interactive listening simulator for prototype verification */}
-      <div className="flex flex-wrap items-center justify-center gap-1.5">
-        <button
-          type="button"
-          onClick={() => onResolve('matched')}
-          disabled={paused}
-          className="rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs font-medium text-ink-primary shadow-xs transition-colors hover:bg-surface-paper-warm disabled:opacity-40"
-        >
-          Play note ({current})
-        </button>
-        <button
-          type="button"
-          onClick={() => onResolve('wrong')}
-          disabled={paused}
-          className="rounded-control border border-surface-paper-edge bg-surface-paper px-2 py-1 text-xs text-ink-secondary transition-colors hover:bg-surface-paper-warm hover:text-ink-primary disabled:opacity-40"
-          title="Simulate pausing or playing another pitch"
-        >
-          Different pitch
-        </button>
-        <button
-          type="button"
-          onClick={() => onResolve('skipped')}
-          disabled={paused}
-          className="flex items-center gap-1 rounded-control border border-transparent px-2 py-1 text-xs text-ink-tertiary transition-colors hover:bg-surface-paper hover:text-ink-secondary disabled:opacity-40"
-          title="Advance to next note"
-        >
-          <SkipForward className="h-3 w-3" />
-          <span>Advance</span>
-        </button>
-      </div>
+      {/* Developer / verification controls — hidden in normal musician view */}
+      {showSimulator && onResolve && (
+        <div className="flex flex-wrap items-center justify-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+          <span className="text-xs uppercase tracking-wider text-ink-tertiary mr-1 font-mono">Dev:</span>
+          <button
+            type="button"
+            onClick={() => onResolve('matched')}
+            disabled={paused}
+            className="rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs font-medium text-ink-primary shadow-xs transition-colors hover:bg-surface-paper-warm disabled:opacity-40"
+          >
+            Play ({current})
+          </button>
+          <button
+            type="button"
+            onClick={() => onResolve('wrong')}
+            disabled={paused}
+            className="rounded-control border border-surface-paper-edge bg-surface-paper px-2 py-1 text-xs text-ink-secondary transition-colors hover:bg-surface-paper-warm disabled:opacity-40"
+          >
+            Different pitch
+          </button>
+          <button
+            type="button"
+            onClick={() => onResolve('skipped')}
+            disabled={paused}
+            className="flex items-center gap-1 rounded-control border border-transparent px-2 py-1 text-xs text-ink-tertiary transition-colors hover:bg-surface-paper disabled:opacity-40"
+          >
+            <SkipForward className="h-3 w-3" />
+            <span>Advance</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

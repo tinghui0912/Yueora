@@ -168,24 +168,24 @@ export default function Editor() {
   return (
     <div className="flex h-dvh flex-col">
       {/* Top bar */}
-      <div className="flex items-center justify-between border-b border-line-subtle px-3 py-2">
+      <div className="flex items-center justify-between border-b border-line-subtle bg-surface-panel px-3 py-2">
         <div className="flex items-center gap-3">
-          <Link to={score._pending && importId ? `/imports/${importId}` : `/score/${scoreId}`} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">{score.title}</span>
+          <Link to={score._pending && importId ? `/imports/${importId}` : `/score/${scoreId}`} className="flex items-center gap-1.5 text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors">
+            <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline font-display text-ink-primary">{score.title}</span>
           </Link>
           {activeIssue && (
-            <span className="hidden items-center gap-1.5 rounded-md bg-gold/10 px-2 py-1 text-xs font-medium text-gold sm:flex">
+            <span className="hidden items-center gap-1.5 rounded-control bg-gold/10 px-2.5 py-1 text-xs font-semibold text-gold sm:flex">
               <AlertCircle className="h-3.5 w-3.5" /> Issue {issueIdx + 1} of {issues.length} · Measure {activeIssue.measure} · {activeIssue.type}
             </span>
           )}
         </div>
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 text-sm text-ink-secondary">
           <SaveIndicator state={saveState} onRetry={() => { setSaveState('saving'); clearTimeout(saveTimer.current); saveTimer.current = setTimeout(() => setSaveState('saved'), 900); }} onFail={() => setSaveState('failed')} />
-          <button onClick={undo} disabled={past.length === 0} className="rounded p-1.5 hover:bg-accent disabled:opacity-40" aria-label="Undo"><Undo2 className="h-4 w-4" /></button>
-          <button onClick={redo} disabled={future.length === 0} className="rounded p-1.5 hover:bg-accent disabled:opacity-40" aria-label="Redo"><Redo2 className="h-4 w-4" /></button>
-          <button onClick={copySelected} disabled={selectedIds.size === 0} className="rounded p-1.5 hover:bg-accent disabled:opacity-40" aria-label="Copy"><Copy className="h-4 w-4" /></button>
-          <button onClick={paste} disabled={clipboard.length === 0} className="rounded p-1.5 hover:bg-accent disabled:opacity-40" aria-label="Paste"><Clipboard className="h-4 w-4" /></button>
-          {!score._pending && <button onClick={() => setSharingOpen(true)} className="flex items-center gap-1.5 rounded-md border border-line-subtle px-2.5 py-1.5 hover:bg-accent"><Share2 className="h-4 w-4" /> Share</button>}
+          <button onClick={undo} disabled={past.length === 0} className="flex h-8 w-8 items-center justify-center rounded-control hover:bg-surface-paper hover:text-ink-primary disabled:opacity-30 transition-colors" aria-label="Undo"><Undo2 className="h-4 w-4" /></button>
+          <button onClick={redo} disabled={future.length === 0} className="flex h-8 w-8 items-center justify-center rounded-control hover:bg-surface-paper hover:text-ink-primary disabled:opacity-30 transition-colors" aria-label="Redo"><Redo2 className="h-4 w-4" /></button>
+          <button onClick={copySelected} disabled={selectedIds.size === 0} className="flex h-8 w-8 items-center justify-center rounded-control hover:bg-surface-paper hover:text-ink-primary disabled:opacity-30 transition-colors" aria-label="Copy"><Copy className="h-4 w-4" /></button>
+          <button onClick={paste} disabled={clipboard.length === 0} className="flex h-8 w-8 items-center justify-center rounded-control hover:bg-surface-paper hover:text-ink-primary disabled:opacity-30 transition-colors" aria-label="Paste"><Clipboard className="h-4 w-4" /></button>
+          {!score._pending && <button onClick={() => setSharingOpen(true)} className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-1.5 text-xs font-medium text-ink-primary hover:bg-surface-paper-warm transition-colors"><Share2 className="h-3.5 w-3.5" /> Share</button>}
         </div>
       </div>
 
@@ -213,21 +213,21 @@ export default function Editor() {
       )}
 
       {/* Mobile tool bar */}
-      <div className="flex items-center gap-1 overflow-x-auto border-b border-line-subtle px-2 py-1.5 md:hidden no-scrollbar">
+      <div className="flex items-center gap-1 overflow-x-auto border-b border-line-subtle bg-surface-panel px-2 py-1.5 md:hidden no-scrollbar">
         {tools.map((t) => (
-          <button key={t.id} onClick={() => setTool(t.id)} className={`flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs ${tool === t.id ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent'}`}>
+          <button key={t.id} onClick={() => setTool(t.id)} className={`flex shrink-0 items-center gap-1.5 rounded-control px-2.5 py-1.5 text-xs font-medium ${tool === t.id ? 'bg-brand/10 font-semibold text-brand' : 'text-ink-secondary hover:bg-surface-paper'}`}>
             <t.icon className="h-4 w-4" /> {t.label}
           </button>
         ))}
         <div className="ml-auto flex items-center gap-1">
-          <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="rounded p-1.5 text-muted-foreground hover:bg-accent" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
-          <span className="text-xs text-muted-foreground">{Math.round(zoom * 100)}%</span>
-          <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="rounded p-1.5 text-muted-foreground hover:bg-accent" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
+          <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="flex h-7 w-7 items-center justify-center rounded-control text-ink-secondary hover:bg-surface-paper" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
+          <span className="text-xs font-medium text-ink-secondary">{Math.round(zoom * 100)}%</span>
+          <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="flex h-7 w-7 items-center justify-center rounded-control text-ink-secondary hover:bg-surface-paper" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
         </div>
       </div>
 
       {/* View toggle */}
-      <div className="flex items-center gap-1 border-b border-line-subtle px-4 py-1.5">
+      <div className="flex items-center gap-1 border-b border-line-subtle bg-surface-canvas/60 px-4 py-1.5">
         <ViewTab active={view === 'score'} onClick={() => setView('score')} icon={Music2} label="Score" />
         <ViewTab active={view === 'original'} onClick={() => setView('original')} icon={ScanLine} label="Original" />
         <ViewTab active={view === 'split'} onClick={() => setView('split')} icon={ChevronLeft} label="Side by side" />
@@ -235,61 +235,61 @@ export default function Editor() {
 
       <div className="flex min-h-0 flex-1">
         {/* Tool rail */}
-        <div className="hidden w-14 shrink-0 flex-col items-center gap-1 border-r border-line-subtle py-3 md:flex">
+        <div className="hidden w-16 shrink-0 flex-col items-center gap-1.5 border-r border-line-subtle bg-surface-panel py-3 md:flex">
           {tools.map((t) => (
-            <button key={t.id} onClick={() => setTool(t.id)} className={`flex h-11 w-11 flex-col items-center justify-center gap-0.5 rounded-md transition-colors ${tool === t.id ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:bg-accent'}`}>
+            <button key={t.id} onClick={() => setTool(t.id)} className={`flex h-12 w-12 flex-col items-center justify-center gap-0.5 rounded-control transition-colors ${tool === t.id ? 'bg-brand/10 font-semibold text-brand' : 'text-ink-secondary hover:bg-surface-paper hover:text-ink-primary'}`}>
               <t.icon className="h-4 w-4" />
-              <span className="text-[10px]">{t.label}</span>
+              <span className="text-xs font-medium">{t.label}</span>
             </button>
           ))}
           <div className="mt-auto flex flex-col items-center gap-1">
-            <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-accent" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
-            <span className="text-[10px] text-muted-foreground">{Math.round(zoom * 100)}%</span>
-            <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-accent" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
+            <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="flex h-8 w-8 items-center justify-center rounded-control text-ink-secondary hover:bg-surface-paper" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
+            <span className="text-xs font-medium text-ink-secondary">{Math.round(zoom * 100)}%</span>
+            <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="flex h-8 w-8 items-center justify-center rounded-control text-ink-secondary hover:bg-surface-paper" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
           </div>
         </div>
 
         {/* Canvas area */}
         <div className="min-w-0 flex-1 overflow-auto bg-surface-canvas p-6">
           {view === 'original' ? (
-            <div className="mx-auto max-w-sm rounded-md border border-line-subtle bg-surface-panel p-4">
+            <div className="mx-auto max-w-sm rounded-container border border-surface-paper-edge bg-surface-panel p-4 shadow-paper">
               <div className="staff-bg aspect-[3/4] w-full rounded border border-line-subtle opacity-60" />
-              <p className="mt-2 text-center text-xs text-muted-foreground">Original scan · Page 1</p>
+              <p className="mt-2 text-center text-xs text-ink-secondary">Original scan · Page 1</p>
             </div>
           ) : view === 'split' ? (
             <div className="flex gap-4">
               <div className="flex-1">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Original</p>
-                <div className="rounded-md border border-line-subtle bg-surface-panel p-4">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Original</p>
+                <div className="rounded-container border border-surface-paper-edge bg-surface-panel p-4 shadow-paper">
                   <div className="staff-bg aspect-[3/4] w-full rounded border border-line-subtle opacity-60" />
                 </div>
               </div>
               <div className="flex-1">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Score</p>
-                <div className="mx-auto max-w-3xl rounded-md border border-line-subtle bg-surface-panel p-6 shadow-sm">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Score</p>
+                <div className="mx-auto max-w-3xl rounded-container border border-surface-paper-edge bg-surface-panel p-6 shadow-paper">
                   <ScoreCanvas notes={notes} selectedIds={selectedIds} onSelect={handleSelect} onAddNote={addNote} onDelete={deleteNote} tool={tool} zoom={zoom} activeIssueMeasure={activeIssue?.measure} />
                 </div>
               </div>
             </div>
           ) : (
-            <div className="mx-auto max-w-3xl rounded-md border border-line-subtle bg-surface-panel p-6 shadow-sm">
+            <div className="mx-auto max-w-3xl rounded-container border border-surface-paper-edge bg-surface-panel p-6 shadow-paper">
               <ScoreCanvas notes={notes} selectedIds={selectedIds} onSelect={handleSelect} onAddNote={addNote} onDelete={deleteNote} tool={tool} zoom={zoom} activeIssueMeasure={activeIssue?.measure} />
-              <p className="mt-4 text-center text-sm text-muted-foreground">Page 1 of {score.pages}</p>
+              <p className="mt-4 text-center text-sm text-ink-secondary">Page 1 of {score.pages}</p>
             </div>
           )}
         </div>
 
         {/* Inspector — desktop */}
-        <div className="hidden w-60 shrink-0 overflow-y-auto border-l border-line-subtle p-4 lg:block">
+        <div className="hidden w-64 shrink-0 overflow-y-auto border-l border-line-subtle bg-surface-panel p-4 lg:block">
           <EditorInspector note={firstSelected} onChange={updateNote} />
           {selectedIds.size > 1 && (
-            <div className="mt-4 space-y-2 border-t border-line-subtle pt-3">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{selectedIds.size} notes selected</p>
-              <Button variant="outline" size="sm" className="w-full" onClick={deleteSelected}><Trash2 className="mr-1.5 h-3.5 w-3.5" /> Delete selected</Button>
-              <Button variant="outline" size="sm" className="w-full" onClick={copySelected}><Copy className="mr-1.5 h-3.5 w-3.5" /> Copy selected</Button>
-              <div className="flex gap-1">
+            <div className="mt-4 space-y-2.5 border-t border-line-subtle pt-3.5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">{selectedIds.size} notes selected</p>
+              <Button variant="outline" size="sm" className="w-full text-xs font-medium" onClick={deleteSelected}><Trash2 className="mr-1.5 h-3.5 w-3.5" /> Delete selected</Button>
+              <Button variant="outline" size="sm" className="w-full text-xs font-medium" onClick={copySelected}><Copy className="mr-1.5 h-3.5 w-3.5" /> Copy selected</Button>
+              <div className="flex gap-1.5">
                 {['1', '2', '4', '8'].map((d) => (
-                  <button key={d} onClick={() => changeDurationSelected(d)} className="flex-1 rounded border border-line-subtle py-1 text-xs hover:bg-accent">{d}</button>
+                  <button key={d} onClick={() => changeDurationSelected(d)} className="flex-1 rounded-control border border-surface-paper-edge py-1 text-xs font-medium text-ink-primary hover:bg-surface-paper">{d}</button>
                 ))}
               </div>
             </div>
@@ -299,22 +299,22 @@ export default function Editor() {
 
       {/* Mobile inspector trigger */}
       {firstSelected && (
-        <button onClick={() => setMobileInspectorOpen(true)} className="flex items-center justify-between border-t border-line-subtle px-4 py-2.5 lg:hidden">
-          <span className="text-sm font-medium">Edit note · {firstSelected.type === 'rest' ? 'Rest' : 'Note'} {firstSelected.measure + 1}</span>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        <button onClick={() => setMobileInspectorOpen(true)} className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 lg:hidden">
+          <span className="text-sm font-medium text-ink-primary">Edit note · {firstSelected.type === 'rest' ? 'Rest' : 'Note'} {firstSelected.measure + 1}</span>
+          <ChevronRight className="h-4 w-4 text-ink-secondary" />
         </button>
       )}
 
       {/* Playback bar */}
-      <div className="flex items-center justify-between border-t border-line-subtle px-4 py-2 text-sm text-muted-foreground">
+      <div className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 text-sm text-ink-secondary">
         <div className="flex items-center gap-2">
-          <button className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90" aria-label="Play"><Play className="h-3.5 w-3.5" /></button>
-          <span>Playback</span>
+          <button className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-white shadow-xs hover:bg-brand-hover transition-colors" aria-label="Play"><Play className="h-4 w-4 fill-current" /></button>
+          <span className="font-medium text-ink-primary">Playback</span>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => setMeasure((m) => Math.max(1, m - 1))} className="rounded border border-line-subtle px-2 py-1 hover:bg-accent" aria-label="Previous measure"><ChevronLeft className="h-3.5 w-3.5" /></button>
-          <span>Measure {measure} / {score.measures || 16}</span>
-          <button onClick={() => setMeasure((m) => Math.min(score.measures || 16, m + 1))} className="rounded border border-line-subtle px-2 py-1 hover:bg-accent" aria-label="Next measure"><ChevronRight className="h-3.5 w-3.5" /></button>
+          <button onClick={() => setMeasure((m) => Math.max(1, m - 1))} className="flex h-7 w-7 items-center justify-center rounded-control border border-surface-paper-edge hover:bg-surface-paper" aria-label="Previous measure"><ChevronLeft className="h-3.5 w-3.5" /></button>
+          <span className="text-xs font-medium text-ink-secondary">Measure {measure} / {score.measures || 16}</span>
+          <button onClick={() => setMeasure((m) => Math.min(score.measures || 16, m + 1))} className="flex h-7 w-7 items-center justify-center rounded-control border border-surface-paper-edge hover:bg-surface-paper" aria-label="Next measure"><ChevronRight className="h-3.5 w-3.5" /></button>
         </div>
       </div>
 
@@ -337,24 +337,24 @@ export default function Editor() {
 
 function ViewTab({ active, onClick, icon: Icon, label }) {
   return (
-    <button onClick={onClick} className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-sm ${active ? 'bg-accent font-medium text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}>
-      <Icon className="h-3.5 w-3.5" /> {label}
+    <button onClick={onClick} className={`flex items-center gap-1.5 rounded-control px-3.5 py-1.5 text-sm transition-colors ${active ? 'bg-surface-panel font-semibold text-brand shadow-xs' : 'text-ink-secondary hover:text-ink-primary hover:bg-surface-paper'}`}>
+      <Icon className="h-4 w-4" /> {label}
     </button>
   );
 }
 
 function SaveIndicator({ state, onRetry, onFail }) {
-  if (state === 'saving') return <span className="hidden items-center gap-1 text-muted-foreground sm:flex"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Saving…</span>;
+  if (state === 'saving') return <span className="hidden items-center gap-1 text-sm text-ink-secondary sm:flex"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Saving…</span>;
   if (state === 'failed') return (
     <span className="hidden items-center gap-2 sm:flex">
-      <button onClick={onRetry} className="text-danger">Save failed — Retry</button>
-      <button onClick={onFail} className="text-xs text-muted-foreground underline" title="Demo: simulate save failure">Demo fail</button>
+      <button onClick={onRetry} className="text-sm text-danger font-medium">Save failed — Retry</button>
+      <button onClick={onFail} className="text-xs text-ink-tertiary underline" title="Demo: simulate save failure">Demo fail</button>
     </span>
   );
   return (
-    <span className="hidden items-center gap-2 text-primary sm:flex">
-      <Check className="h-3.5 w-3.5" /> Saved
-      <button onClick={onFail} className="text-xs text-muted-foreground underline" title="Demo: simulate save failure">Demo fail</button>
+    <span className="hidden items-center gap-2 text-sm text-brand font-medium sm:flex">
+      <Check className="h-4 w-4" /> Saved
+      <button onClick={onFail} className="text-xs text-ink-tertiary underline" title="Demo: simulate save failure">Demo fail</button>
     </span>
   );
 }

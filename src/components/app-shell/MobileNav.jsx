@@ -2,14 +2,14 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { RepertoireGlyph, PracticeGlyph, MemoryGlyph } from '@/components/brand/MusicalGlyphs';
 
-const navTabBase = 'flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium transition-colors select-none';
+const navTabBase = 'flex flex-1 flex-col items-center justify-center gap-1 min-h-[50px] py-1.5 text-xs font-medium transition-colors select-none';
 
 export default function MobileNav() {
   const navigate = useNavigate();
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-surface-paper-edge bg-surface-panel/95 backdrop-blur-md md:hidden shadow-overlay"
+      className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-surface-paper-edge bg-surface-panel/95 backdrop-blur-md lg:hidden shadow-overlay"
       style={{ paddingBottom: 'max(0.35rem, env(safe-area-inset-bottom))' }}
       aria-label="Mobile navigation"
     >
@@ -39,7 +39,7 @@ export default function MobileNav() {
         className="flex flex-col items-center justify-center py-1 select-none"
         aria-label="Add sheet or file"
       >
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand text-white shadow-paper transition-transform active:scale-95">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand text-white shadow-paper transition-transform active:scale-[0.98]">
           <Plus className="h-4 w-4" />
         </span>
       </button>

@@ -365,10 +365,10 @@ export default function PracticeSession() {
       >
         <button
           onClick={() => (phase === 'ready' ? navigate(`/score/${scoreId}`) : setExitOpen(true))}
-          className="flex min-w-0 items-center gap-2 text-xs font-medium text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
+          className="flex min-w-0 items-center gap-2 text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
         >
           <ArrowLeft className="h-4 w-4 shrink-0" />
-          <span className="truncate font-display text-sm font-medium text-ink-primary">{score.title}</span>
+          <span className="truncate font-display text-base font-medium text-ink-primary">{score.title}</span>
         </button>
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -388,19 +388,19 @@ export default function PracticeSession() {
           )}
 
           {/* Session Phase Pill */}
-          <div className="flex items-center gap-1.5 rounded-full border border-surface-paper-edge bg-surface-paper px-2.5 py-0.5 text-xs text-ink-secondary">
+          <div className="flex items-center gap-1.5 rounded-full border border-surface-paper-edge bg-surface-paper px-3 py-1 text-xs text-ink-secondary">
             <span
-              className={`h-1.5 w-1.5 rounded-full ${
+              className={`h-2 w-2 rounded-full ${
                 isPlaying ? 'bg-brand animate-pulse' : phase === 'countin' ? 'bg-practice-current' : 'bg-ink-tertiary'
               }`}
             />
-            <span className="text-[11px] font-medium">
+            <span className="text-xs font-medium">
               {isPlaying ? 'Playing' : phase === 'countin' ? 'Count-in' : phase === 'paused' ? 'Paused' : 'Ready'}
             </span>
           </div>
 
           {/* Current Bar Badge */}
-          <span className="rounded-control bg-brand/10 px-2 py-0.5 text-xs font-semibold text-brand">
+          <span className="rounded-control bg-brand/10 px-2.5 py-1 text-xs font-semibold text-brand">
             Bar {activeMeasure}
           </span>
 
@@ -475,7 +475,7 @@ export default function PracticeSession() {
             />
 
             {/* Position indicator & measure navigation */}
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-surface-paper-edge pt-3 text-[11px] text-ink-tertiary">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-surface-paper-edge pt-3 text-xs text-ink-secondary">
               <span>Showing bars {canvasStart}–{Math.min(totalMeasures, canvasStart + 3)} of {totalMeasures}</span>
 
               {!selecting && phase === 'paused' && measureWindowStart(activeMeasure) !== visibleMeasureStart && (
@@ -492,18 +492,18 @@ export default function PracticeSession() {
                   <button
                     onClick={() => setVisibleMeasureStart((w) => Math.max(1, w - 4))}
                     disabled={visibleMeasureStart <= 1}
-                    className="rounded p-1 border border-surface-paper-edge hover:bg-surface-paper disabled:opacity-30"
+                    className="flex h-7 w-7 items-center justify-center rounded border border-surface-paper-edge hover:bg-surface-paper disabled:opacity-30 transition-colors"
                     aria-label="Browse previous measures"
                   >
-                    <ChevronLeft className="h-3 w-3" />
+                    <ChevronLeft className="h-3.5 w-3.5" />
                   </button>
                   <button
                     onClick={() => setVisibleMeasureStart((w) => Math.min(measureWindowStart(totalMeasures), w + 4))}
                     disabled={visibleMeasureStart + 4 > totalMeasures}
-                    className="rounded p-1 border border-surface-paper-edge hover:bg-surface-paper disabled:opacity-30"
+                    className="flex h-7 w-7 items-center justify-center rounded border border-surface-paper-edge hover:bg-surface-paper disabled:opacity-30 transition-colors"
                     aria-label="Browse next measures"
                   >
-                    <ChevronRight className="h-3 w-3" />
+                    <ChevronRight className="h-3.5 w-3.5" />
                   </button>
                 </div>
               )}
@@ -564,9 +564,9 @@ export default function PracticeSession() {
               <button
                 type="button"
                 onClick={startSession}
-                className="flex items-center gap-2 rounded-control bg-brand px-5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover active:scale-95"
+                className="flex items-center gap-2 rounded-control bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98]"
               >
-                <Play className="h-3.5 w-3.5 fill-current" />
+                <Play className="h-4 w-4 fill-current" />
                 <span>Start</span>
               </button>
             ) : mode === 'performance' ? (
@@ -574,16 +574,16 @@ export default function PracticeSession() {
                 type="button"
                 onClick={() => setPhase((p) => (p === 'running' ? 'paused' : 'running'))}
                 disabled={phase === 'countin'}
-                className="flex items-center gap-2 rounded-control bg-brand px-5 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover active:scale-95 disabled:opacity-40"
+                className="flex items-center gap-2 rounded-control bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98] disabled:opacity-40"
               >
                 {phase === 'running' ? (
                   <>
-                    <Pause className="h-3.5 w-3.5 fill-current" />
+                    <Pause className="h-4 w-4 fill-current" />
                     <span>Pause</span>
                   </>
                 ) : (
                   <>
-                    <Play className="h-3.5 w-3.5 fill-current" />
+                    <Play className="h-4 w-4 fill-current" />
                     <span>Resume</span>
                   </>
                 )}
@@ -592,14 +592,14 @@ export default function PracticeSession() {
               <button
                 type="button"
                 onClick={() => setPhase((p) => (p === 'running' ? 'paused' : 'running'))}
-                className="flex items-center gap-2 rounded-control border border-surface-paper-edge bg-surface-paper px-4 py-2 text-xs font-semibold text-ink-primary hover:bg-surface-paper-warm"
+                className="flex items-center gap-2 rounded-control border border-surface-paper-edge bg-surface-paper px-4 py-2.5 text-sm font-semibold text-ink-primary hover:bg-surface-paper-warm transition-colors"
               >
-                {phase === 'running' ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+                {phase === 'running' ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                 <span>{phase === 'running' ? 'Pause' : 'Resume'}</span>
               </button>
             )}
 
-            <span className="text-xs tabular-nums text-ink-secondary ml-1">
+            <span className="text-sm tabular-nums font-mono text-ink-secondary ml-1.5">
               {fmtClock(elapsed)}
             </span>
           </div>
@@ -611,11 +611,11 @@ export default function PracticeSession() {
               trigger={
                 <button
                   type="button"
-                  className={`flex items-center gap-1.5 rounded-control border px-2.5 py-1.5 text-xs transition-colors ${
+                  className={`flex items-center gap-1.5 rounded-control border px-3 py-2 text-[13px] font-medium transition-colors ${
                     metronome ? 'border-line-strong text-ink-primary' : 'border-surface-paper-edge text-ink-secondary hover:text-ink-primary'
                   }`}
                 >
-                  <Timer className="h-3.5 w-3.5" />
+                  <Timer className="h-4 w-4" />
                   <span>♩ = {bpm}</span>
                   {metronome && <span className="h-1.5 w-1.5 rounded-full bg-brand" />}
                 </button>
@@ -635,7 +635,7 @@ export default function PracticeSession() {
             <button
               type="button"
               onClick={selecting ? () => { setSectionPhase('idle'); setPendingStart(null); } : startSectionPick}
-              className={`flex items-center gap-1.5 rounded-control border px-2.5 py-1.5 text-xs transition-colors ${
+              className={`flex items-center gap-1.5 rounded-control border px-3 py-2 text-[13px] font-medium transition-colors ${
                 selectedRange.kind === 'section'
                   ? 'border-brand/40 bg-brand/10 font-semibold text-brand'
                   : 'border-surface-paper-edge text-ink-secondary hover:bg-surface-paper'
@@ -649,11 +649,11 @@ export default function PracticeSession() {
                 type="button"
                 onClick={() => setLoop((l) => !l)}
                 aria-pressed={loop}
-                className={`hidden items-center gap-1.5 rounded-control border px-2.5 py-1.5 text-xs sm:flex transition-colors ${
+                className={`hidden items-center gap-1.5 rounded-control border px-3 py-2 text-[13px] font-medium sm:flex transition-colors ${
                   loop ? 'border-brand/40 bg-brand/10 font-semibold text-brand' : 'border-surface-paper-edge text-ink-secondary hover:bg-surface-paper'
                 }`}
               >
-                <Repeat className="h-3.5 w-3.5" />
+                <Repeat className="h-4 w-4" />
                 <span>Loop</span>
               </button>
             )}
@@ -664,7 +664,7 @@ export default function PracticeSession() {
             <button
               onClick={finish}
               disabled={!startedAt.current}
-              className="rounded-control bg-brand/10 px-3 py-1.5 text-xs font-semibold text-brand hover:bg-brand hover:text-white transition-all disabled:opacity-40"
+              className="rounded-control bg-brand/10 px-3.5 py-2 text-sm font-semibold text-brand hover:bg-brand hover:text-white transition-colors disabled:opacity-40"
             >
               Finish take
             </button>
@@ -672,21 +672,21 @@ export default function PracticeSession() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="rounded-control border border-surface-paper-edge p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-ink-primary transition-colors"
+                  className="flex h-9 w-9 items-center justify-center rounded-control border border-surface-paper-edge text-ink-secondary hover:bg-surface-paper hover:text-ink-primary transition-colors"
                   aria-label="More session actions"
                 >
-                  <MoreHorizontal className="h-3.5 w-3.5" />
+                  <MoreHorizontal className="h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 border-surface-paper-edge bg-surface-panel shadow-overlay">
-                <DropdownMenuItem onClick={() => setSettingsOpen(true)} className="text-xs">
+                <DropdownMenuItem onClick={() => setSettingsOpen(true)} className="text-sm">
                   <Settings2 className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Session settings
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={restart} className="text-xs">
+                <DropdownMenuItem onClick={restart} className="text-sm">
                   <RotateCcw className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Restart from bar 1
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-line-subtle" />
-                <DropdownMenuItem onClick={finish} disabled={!startedAt.current} className="text-xs text-brand font-medium">
+                <DropdownMenuItem onClick={finish} disabled={!startedAt.current} className="text-sm text-brand font-medium">
                   <Flag className="mr-2 h-3.5 w-3.5" /> Finish &amp; preserve
                 </DropdownMenuItem>
               </DropdownMenuContent>

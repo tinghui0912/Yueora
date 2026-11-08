@@ -43,25 +43,25 @@ export default function PublicHeader() {
         </Link>
 
         {/* Primary Navigation — Focused on understanding the product */}
-        <nav className="flex items-center gap-1 sm:gap-2">
-          <div className="hidden items-center gap-1 sm:flex md:gap-2">
+        <nav className="flex items-center gap-2 sm:gap-3">
+          <div className="hidden items-center gap-2 md:flex lg:gap-4">
             {isHome ? (
               <>
                 <a
                   href="#lifecycle"
-                  className="rounded-control px-3 py-1.5 text-xs font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                  className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
                 >
                   How it works
                 </a>
                 <a
                   href="#practice"
-                  className="rounded-control px-3 py-1.5 text-xs font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                  className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
                 >
                   Practice
                 </a>
                 <a
                   href="#performances"
-                  className="rounded-control px-3 py-1.5 text-xs font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                  className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
                 >
                   Performances
                 </a>
@@ -70,19 +70,19 @@ export default function PublicHeader() {
               <>
                 <Link
                   to="/#lifecycle"
-                  className="rounded-control px-3 py-1.5 text-xs font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                  className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
                 >
                   How it works
                 </Link>
                 <Link
                   to="/#practice"
-                  className="rounded-control px-3 py-1.5 text-xs font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                  className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
                 >
                   Practice
                 </Link>
                 <Link
                   to="/#performances"
-                  className="rounded-control px-3 py-1.5 text-xs font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                  className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
                 >
                   Performances
                 </Link>
@@ -91,20 +91,20 @@ export default function PublicHeader() {
 
             <Link
               to="/pricing"
-              className="rounded-control px-3 py-1.5 text-xs font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+              className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
             >
               Pricing
             </Link>
           </div>
 
-          <div className="mx-1 hidden h-4 w-px bg-surface-paper-edge sm:block" aria-hidden="true" />
+          <div className="mx-1 hidden h-4 w-px bg-surface-paper-edge md:block" aria-hidden="true" />
 
           {/* Action Area */}
           <div className="flex items-center gap-2">
             {isAuthenticated ? (
               <Link
                 to="/library"
-                className="rounded-control bg-brand px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                className="rounded-control bg-brand px-4 py-2 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
               >
                 Go to Yueora
               </Link>
@@ -112,13 +112,13 @@ export default function PublicHeader() {
               <>
                 <Link
                   to="/login"
-                  className="hidden rounded-control px-3 py-2 text-xs font-medium text-ink-secondary transition-colors hover:text-ink-primary sm:inline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                  className="hidden rounded-control px-3 py-2 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary md:inline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
                 >
                   Log in
                 </Link>
                 <Link
                   to="/register"
-                  className="rounded-control bg-brand px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                  className="rounded-control bg-brand px-4 py-2 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
                 >
                   Start playing
                 </Link>

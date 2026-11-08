@@ -71,12 +71,12 @@ export default function PracticeProgress() {
               <div className="flex h-40 items-end justify-between gap-2">
                 {days.map((d, i) => (
                   <div key={i} className="flex flex-1 flex-col items-center gap-1">
-                    <span className="text-[10px] tabular-nums text-ink-tertiary">{d.minutes > 0 ? d.minutes : ''}</span>
+                    <span className="text-xs tabular-nums text-ink-secondary/70">{d.minutes > 0 ? d.minutes : ''}</span>
                     <div
                       className={`w-full rounded-t ${d.isToday ? 'bg-primary' : 'bg-primary/50'}`}
                       style={{ height: `${(d.minutes / max) * 100}%`, minHeight: d.minutes > 0 ? 3 : 0 }}
                     />
-                    <span className="text-[10px] text-ink-tertiary">{d.label}</span>
+                    <span className="text-xs font-medium text-ink-secondary/80">{d.label}</span>
                   </div>
                 ))}
               </div>

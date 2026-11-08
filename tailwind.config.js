@@ -62,6 +62,7 @@ module.exports = {
 					primary: 'hsl(var(--ink-primary))',
 					secondary: 'hsl(var(--ink-secondary))',
 					tertiary: 'hsl(var(--ink-tertiary))',
+					subtle: 'hsl(var(--ink-subtle))',
 				},
 				/* ---- Border hierarchy (line) ---- */
 				line: {

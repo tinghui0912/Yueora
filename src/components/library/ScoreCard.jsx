@@ -37,7 +37,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
         {/* Status badges overlay */}
         <div className="absolute top-2.5 left-3 flex flex-wrap gap-1.5 z-10">
           {sharedText && (
-            <span className="rounded-control bg-surface-panel/90 backdrop-blur-xs px-2 py-0.5 text-[10px] font-medium text-ink-secondary shadow-xs">
+            <span className="rounded-control bg-surface-panel/90 backdrop-blur-xs px-2 py-0.5 text-xs font-medium text-ink-secondary shadow-xs">
               {sharedText}
             </span>
           )}
@@ -60,10 +60,10 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
               to={`/score/${score.id}`}
               className="min-w-0 flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
             >
-              <h3 className="truncate font-display text-base font-medium leading-snug text-ink-primary transition-colors group-hover:text-brand">
+              <h3 className="truncate font-display text-base sm:text-[17px] font-medium leading-snug text-ink-primary transition-colors group-hover:text-brand">
                 {score.title}
               </h3>
-              <p className="truncate text-xs text-ink-secondary mt-0.5">{score.composer}</p>
+              <p className="truncate text-[13px] text-ink-secondary mt-0.5">{score.composer}</p>
             </Link>
 
             {onToggleSelect && (
@@ -73,20 +73,20 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
                   e.preventDefault();
                   onToggleSelect(score.id);
                 }}
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-colors ${
+                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded border transition-colors ${
                   selected
                     ? 'border-brand bg-brand text-white'
                     : 'border-surface-paper-edge text-transparent hover:border-line-strong'
                 }`}
                 aria-label={`Select ${score.title}`}
               >
-                <Check className="h-3 w-3 stroke-[3]" />
+                <Check className="h-3.5 w-3.5 stroke-[2.5]" />
               </button>
             )}
           </div>
 
           {/* Relationship with this piece */}
-          <p className="mt-2 text-[11px] text-ink-tertiary">
+          <p className="mt-2 text-xs text-ink-secondary/80">
             {isPlayed ? (
               <span>
                 Played {score.lastPlayed}
@@ -102,16 +102,16 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
         <div className="mt-1 flex items-center justify-between border-t border-surface-paper-edge/70 pt-2.5">
           <Link
             to={`/score/${score.id}/setup`}
-            className="inline-flex items-center gap-1.5 rounded-control bg-brand/10 px-2.5 py-1.5 text-xs font-semibold text-brand transition-all hover:bg-brand hover:text-white active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+            className="inline-flex items-center gap-1.5 rounded-control bg-brand/10 px-3 py-1.5 text-[13px] font-semibold text-brand transition-colors hover:bg-brand hover:text-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
             aria-label={`Practice ${score.title}`}
           >
-            <Play className="h-3 w-3 fill-current" />
+            <Play className="h-3.5 w-3.5 fill-current" />
             <span>Practice</span>
           </Link>
 
           <Link
             to={`/score/${score.id}`}
-            className="text-xs text-ink-tertiary hover:text-ink-primary transition-colors"
+            className="text-xs text-ink-secondary hover:text-ink-primary transition-colors"
           >
             View score →
           </Link>

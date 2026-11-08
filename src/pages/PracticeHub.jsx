@@ -21,7 +21,7 @@ export default function PracticeHub() {
 
   // Recently loved — favorites
   const recentlyLoved = scores.filter((s) => s.ownership !== 'trash' && s.favorite).slice(0, 3).map((s) => ({
-    scoreId: s.id, title: s.title, composer: s.composer, reason: 'Favorited folio',
+    scoreId: s.id, title: s.title, composer: s.composer, reason: 'Favorited score',
   }));
 
   // Haven't played in a while
@@ -51,7 +51,7 @@ export default function PracticeHub() {
       {/* Pick up where you left off */}
       {continueScore && (
         <section className="mt-8">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-tertiary">
+          <p className="text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">
             Pick up where you left off
           </p>
           <div className="mt-3">
@@ -68,19 +68,19 @@ export default function PracticeHub() {
                   <h2 className="font-display text-xl font-medium text-ink-primary truncate">
                     {continueScore.title}
                   </h2>
-                  <p className="text-xs text-ink-secondary mt-0.5">
+                  <p className="text-[13px] text-ink-secondary mt-0.5">
                     {continueScore.composer} · played {continueScore.lastPlayed}
                   </p>
-                  <p className="mt-1 text-xs font-medium text-brand">
+                  <p className="mt-1 text-[13px] font-medium text-brand">
                     Continue from bar {continueScore.lastMeasure}
                   </p>
                 </div>
               </div>
               <Link
                 to={`/score/${continueScore.id}/setup`}
-                className="flex shrink-0 items-center gap-2 self-start rounded-control bg-brand px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover active:scale-95 sm:self-center"
+                className="flex shrink-0 items-center gap-2 self-start rounded-control bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98] sm:self-center"
               >
-                <Play className="h-3.5 w-3.5 fill-current" />
+                <Play className="h-4 w-4 fill-current" />
                 <span>Continue playing</span>
               </Link>
             </MusicPaper>
@@ -91,7 +91,7 @@ export default function PracticeHub() {
       {/* Recently loved */}
       {recentlyLoved.length > 0 && (
         <section className="mt-10">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-tertiary">
+          <p className="text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">
             Recently loved
           </p>
           <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -103,8 +103,8 @@ export default function PracticeHub() {
                   </div>
                   <div className="min-w-0">
                     <p className="truncate font-display font-medium text-ink-primary">{r.title}</p>
-                    <p className="truncate text-xs text-ink-secondary mt-0.5">{r.composer}</p>
-                    <span className="inline-block mt-1 text-[11px] font-medium text-brand">Revisit piece →</span>
+                    <p className="truncate text-[13px] text-ink-secondary mt-0.5">{r.composer}</p>
+                    <span className="inline-block mt-1 text-xs font-medium text-brand">Revisit piece →</span>
                   </div>
                 </MusicPaper>
               </Link>
@@ -116,7 +116,7 @@ export default function PracticeHub() {
       {/* Haven't played in a while */}
       {havenPlayed.length > 0 && (
         <section className="mt-10">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-tertiary">
+          <p className="text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">
             Haven't played in a while
           </p>
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
@@ -125,8 +125,8 @@ export default function PracticeHub() {
                 <MusicPaper interactive tone="natural" className="flex items-center justify-between p-4">
                   <div className="min-w-0">
                     <p className="font-display font-medium text-ink-primary">{r.title}</p>
-                    <p className="text-xs text-ink-secondary mt-0.5">{r.composer} · last played {r.lastPlayed}</p>
-                    <p className="mt-1 text-xs text-brand font-medium">Feel like revisiting this one?</p>
+                    <p className="text-[13px] text-ink-secondary mt-0.5">{r.composer} · last played {r.lastPlayed}</p>
+                    <p className="mt-1 text-sm text-brand font-medium">Feel like revisiting this one?</p>
                   </div>
                   <ChevronRight className="h-4 w-4 text-ink-tertiary" />
                 </MusicPaper>
@@ -147,7 +147,7 @@ export default function PracticeHub() {
             </p>
             <Link
               to="/library"
-              className="mt-3 rounded-control bg-brand px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-brand-hover transition-colors"
+              className="mt-3 rounded-control bg-brand px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-brand-hover transition-colors"
             >
               Browse your Repertoire
             </Link>
@@ -157,7 +157,7 @@ export default function PracticeHub() {
 
       {/* Reflective Time Spent Playing */}
       <section className="mt-12 pt-8 border-t border-line-subtle">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-tertiary">
+        <p className="text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">
           This Week in Music
         </p>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">
@@ -165,14 +165,14 @@ export default function PracticeHub() {
             <p className="font-display text-2xl font-medium text-ink-primary">
               {thisWeekMinutes} <span className="text-sm font-normal text-ink-secondary">min</span>
             </p>
-            <p className="text-xs text-ink-secondary mt-1">across {thisWeekSessions} calm sessions</p>
+            <p className="text-[13px] text-ink-secondary mt-1">across {thisWeekSessions} calm sessions</p>
           </MusicPaper>
 
           <MusicPaper tone="natural" className="p-4">
             <p className="font-display text-2xl font-medium text-ink-primary">
               {thisWeekPieces}
             </p>
-            <p className="text-xs text-ink-secondary mt-1">pieces brought to life</p>
+            <p className="text-[13px] text-ink-secondary mt-1">pieces brought to life</p>
           </MusicPaper>
 
           <MusicPaper tone="natural" className="p-4 flex flex-col justify-between">
@@ -180,13 +180,13 @@ export default function PracticeHub() {
               {week.days.map((d, i) => (
                 <div key={d.key} className="flex flex-col items-center gap-1.5">
                   <span
-                    className={`h-2 w-2 rounded-full ${thisWeekMarks[i] ? 'bg-brand' : 'bg-surface-paper-edge'}`}
+                    className={`h-2.5 w-2.5 rounded-full ${thisWeekMarks[i] ? 'bg-brand' : 'bg-surface-paper-edge'}`}
                   />
-                  <span className="text-[10px] text-ink-tertiary">{d.label}</span>
+                  <span className="text-xs font-medium text-ink-secondary">{d.label}</span>
                 </div>
               ))}
             </div>
-            <p className="text-xs text-ink-secondary mt-2">
+            <p className="text-[13px] text-ink-secondary mt-2">
               {thisWeekMarks.filter(Boolean).length} days of music
             </p>
           </MusicPaper>
@@ -195,9 +195,9 @@ export default function PracticeHub() {
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             to="/practice/history"
-            className="inline-flex items-center gap-2 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2 text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm transition-colors"
+            className="inline-flex items-center gap-2 rounded-control border border-surface-paper-edge bg-surface-paper px-3.5 py-2 text-sm font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm transition-colors"
           >
-            <Clock className="h-3.5 w-3.5" />
+            <Clock className="h-4 w-4" />
             <span>Practice history</span>
           </Link>
         </div>

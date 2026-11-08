@@ -43,7 +43,7 @@ export default function PerformanceRow({
           </p>
 
           {!scoreExists && (
-            <p className="mt-1 text-[11px] text-ink-tertiary">Original score folio no longer in library</p>
+            <p className="mt-1 text-xs text-ink-secondary/70">Original score no longer in library</p>
           )}
         </div>
 
@@ -51,9 +51,9 @@ export default function PerformanceRow({
           {scoreExists && (
             <Link
               to={`/score/${performance.scoreId}`}
-              className="hidden rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm sm:inline-block transition-colors"
+              className="hidden rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm sm:inline-block transition-colors"
             >
-              Score folio
+              View score
             </Link>
           )}
 
@@ -67,7 +67,7 @@ export default function PerformanceRow({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52 border-surface-paper-edge bg-surface-panel shadow-overlay">
-              <DropdownMenuItem onClick={onDownload} disabled={!canPlay} className="text-xs">
+              <DropdownMenuItem onClick={onDownload} disabled={!canPlay} className="text-sm">
                 <Download className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Download recording
               </DropdownMenuItem>
               <DropdownMenuItem onClick={onOpen} className="text-xs">
@@ -123,7 +123,7 @@ export default function PerformanceRow({
               className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
             />
           </div>
-          <div className="mt-1 flex justify-between text-[11px] tabular-nums text-ink-tertiary">
+          <div className="mt-1 flex justify-between text-xs tabular-nums text-ink-secondary">
             <span>{fmtClock(position)}</span>
             <span>{fmtClock(durationSeconds)}</span>
           </div>

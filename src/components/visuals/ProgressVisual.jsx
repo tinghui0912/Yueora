@@ -43,7 +43,7 @@ export default function ProgressVisual() {
             const heightPercent = d.mins > 0 ? Math.max(20, (d.mins / 60) * 100) : 4;
             return (
               <div key={d.label} className="flex flex-col items-center gap-1.5 h-full justify-end group">
-                <span className="text-[10px] text-ink-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-xs text-ink-secondary/70 opacity-0 group-hover:opacity-100 transition-opacity">
                   {d.mins > 0 ? `${d.mins}m` : '—'}
                 </span>
                 <div 
@@ -52,7 +52,7 @@ export default function ProgressVisual() {
                   }`}
                   style={{ height: `${heightPercent}%` }}
                 />
-                <span className="text-[11px] font-medium text-ink-tertiary">{d.label}</span>
+                <span className="text-xs font-medium text-ink-secondary/80">{d.label}</span>
               </div>
             );
           })}

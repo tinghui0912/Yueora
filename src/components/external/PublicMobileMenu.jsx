@@ -17,7 +17,7 @@ export default function PublicMobileMenu() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="rounded-control p-2 text-ink-secondary hover:bg-surface-paper hover:text-ink-primary sm:hidden transition-colors"
+        className="rounded-control p-2 text-ink-secondary hover:bg-surface-paper hover:text-ink-primary md:hidden transition-colors"
         aria-label="Open navigation menu"
       >
         <Menu className="h-5 w-5" />
@@ -30,14 +30,14 @@ export default function PublicMobileMenu() {
               <SheetTitle>
                 <Logo variant="full" size="md" />
               </SheetTitle>
-              <p className="mt-1 font-display italic text-xs text-ink-tertiary">
+              <p className="mt-1 font-display italic text-xs text-ink-secondary/70">
                 A personal musical journey.
               </p>
             </SheetHeader>
 
             {/* Primary Product Navigation */}
             <nav className="mt-6 flex flex-col space-y-1" onClick={() => setOpen(false)}>
-              <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-ink-tertiary mb-1">
+              <p className="px-3 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70 mb-1">
                 Explore Yueora
               </p>
               <a
@@ -68,16 +68,16 @@ export default function PublicMobileMenu() {
 
             {/* Secondary Destinations */}
             <div className="mt-8 border-t border-surface-paper-edge pt-4 space-y-1" onClick={() => setOpen(false)}>
-              <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-ink-tertiary mb-1">
+              <p className="px-3 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70 mb-1">
                 About &amp; Support
               </p>
-              <Link to="/about" className="block rounded-control px-3 py-1.5 text-xs text-ink-secondary hover:text-ink-primary">
+              <Link to="/about" className="block rounded-control px-3 py-2 text-[13px] text-ink-secondary hover:text-ink-primary">
                 About Yueora
               </Link>
-              <Link to="/help" className="block rounded-control px-3 py-1.5 text-xs text-ink-secondary hover:text-ink-primary">
+              <Link to="/help" className="block rounded-control px-3 py-2 text-[13px] text-ink-secondary hover:text-ink-primary">
                 Help &amp; Guides
               </Link>
-              <Link to="/legal/privacy" className="block rounded-control px-3 py-1.5 text-xs text-ink-secondary hover:text-ink-primary">
+              <Link to="/legal/privacy" className="block rounded-control px-3 py-2 text-[13px] text-ink-secondary hover:text-ink-primary">
                 Privacy policy
               </Link>
             </div>

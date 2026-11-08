@@ -88,7 +88,7 @@ export default function Login() {
 
       <Button
         variant="outline"
-        className="w-full h-11 text-xs font-medium mb-5 border-surface-paper-edge hover:bg-surface-paper"
+        className="w-full h-11 text-sm font-medium mb-5 border-surface-paper-edge hover:bg-surface-paper"
         onClick={handleGoogle}
       >
         <GoogleIcon className="w-4 h-4 mr-2" />
@@ -99,8 +99,8 @@ export default function Login() {
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-line-subtle" />
         </div>
-        <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
-          <span className="bg-surface-panel px-3 text-ink-tertiary">or email</span>
+        <div className="relative flex justify-center text-xs font-semibold uppercase tracking-wider">
+          <span className="bg-surface-panel px-3 text-ink-secondary/70">or email</span>
         </div>
       </div>
 
@@ -112,7 +112,7 @@ export default function Login() {
 
       <form onSubmit={handleSubmit} className="space-y-4 text-left">
         <div className="space-y-1.5">
-          <Label htmlFor="email" className="text-xs font-medium text-ink-primary">Email</Label>
+          <Label htmlFor="email" className="text-[13px] font-medium text-ink-primary">Email</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-tertiary" aria-hidden="true" />
             <Input
@@ -123,7 +123,7 @@ export default function Login() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="pl-9 h-10 text-xs border-surface-paper-edge focus:border-brand"
+              className="pl-9 h-10 text-sm border-surface-paper-edge focus:border-brand"
               required
             />
           </div>

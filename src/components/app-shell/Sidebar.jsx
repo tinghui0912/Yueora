@@ -4,7 +4,7 @@ import { usePrototypeStore } from '@/stores/prototypeStore';
 import Logo from '@/components/brand/Logo';
 import { RepertoireGlyph, PracticeGlyph, MemoryGlyph } from '@/components/brand/MusicalGlyphs';
 
-const navItemBase = 'group relative flex items-center gap-3 rounded-control px-3 py-2.5 text-xs font-medium transition-[background-color,color] duration-fast';
+const navItemBase = 'group relative flex items-center gap-3 rounded-control px-3 py-2 text-sm font-medium transition-[background-color,color] duration-fast';
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -24,16 +24,16 @@ export default function Sidebar() {
       <div className="mt-6 px-1">
         <button
           onClick={() => navigate('/add-score')}
-          className="flex w-full items-center justify-center gap-2 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2 text-xs font-semibold text-ink-primary shadow-paper transition-all hover:border-line-strong hover:bg-surface-paper-warm active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+          className="flex w-full items-center justify-center gap-2 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2 text-sm font-medium text-ink-primary shadow-paper transition-all hover:border-line-strong hover:bg-surface-paper-warm active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
         >
-          <Plus className="h-3.5 w-3.5 text-brand" />
+          <Plus className="h-4 w-4 text-brand" />
           <span>Add sheet or file</span>
         </button>
       </div>
 
       {/* Primary musical spaces */}
       <div className="mt-6">
-        <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-ink-tertiary">Spaces</p>
+        <p className="px-3 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Spaces</p>
         <nav className="mt-2 space-y-1">
           <NavLink
             to="/library"
@@ -79,7 +79,7 @@ export default function Sidebar() {
 
       {/* Studio / Preparation */}
       <div className="mt-6 border-t border-line-subtle pt-4">
-        <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-ink-tertiary">Studio</p>
+        <p className="px-3 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Studio</p>
         <div className="mt-2 space-y-1">
           <NavLink
             to="/imports"
@@ -103,8 +103,8 @@ export default function Sidebar() {
       </div>
 
       {/* Brand motto / warmth */}
-      <div className="mt-auto px-3 text-xs text-ink-tertiary">
-        <p className="font-display italic text-ink-secondary/70">A personal musical journey.</p>
+      <div className="mt-auto px-3 text-xs text-ink-secondary/80">
+        <p className="font-display italic">A personal musical journey.</p>
       </div>
     </div>
   );

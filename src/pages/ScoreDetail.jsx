@@ -86,15 +86,15 @@ export default function ScoreDetail() {
       <div className="flex items-center justify-between">
         <Link
           to="/library"
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-secondary hover:text-ink-primary transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
+          <ArrowLeft className="h-4 w-4" />
           <span>Back to Repertoire</span>
         </Link>
 
         {score.favorite && (
-          <span className="flex items-center gap-1 text-xs font-medium text-gold">
-            <Star className="h-3.5 w-3.5 fill-gold text-gold" />
+          <span className="flex items-center gap-1 text-sm font-medium text-gold">
+            <Star className="h-4 w-4 fill-gold text-gold" />
             <span>Favorited piece</span>
           </span>
         )}
@@ -120,7 +120,7 @@ export default function ScoreDetail() {
             </button>
           </div>
           <p className="mt-1 text-sm text-ink-secondary font-medium">{score.composer} · {score.instrument}</p>
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-ink-tertiary">
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-[13px] text-ink-secondary/80">
             <span className="rounded-control bg-surface-paper px-2 py-0.5 border border-surface-paper-edge font-medium">
               {score.source}
             </span>
@@ -140,23 +140,23 @@ export default function ScoreDetail() {
           {perms.canPractice ? (
             <Link
               to={`/score/${score.id}/setup`}
-              className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover active:scale-95"
+              className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98]"
             >
-              <Play className="h-3.5 w-3.5 fill-current" />
+              <Play className="h-4 w-4 fill-current" />
               <span>{score.lastMeasure > 1 ? `Continue from bar ${score.lastMeasure}` : 'Start Practice'}</span>
             </Link>
           ) : (
-            <span className="flex items-center gap-2 rounded-control bg-surface-paper border border-surface-paper-edge px-4 py-2.5 text-xs font-semibold text-ink-tertiary">
-              <Lock className="h-3.5 w-3.5" /> Practice unavailable
+            <span className="flex items-center gap-2 rounded-control bg-surface-paper border border-surface-paper-edge px-4 py-2.5 text-sm font-semibold text-ink-secondary/70">
+              <Lock className="h-4 w-4" /> Practice unavailable
             </span>
           )}
 
           {score.source !== 'Photo' && (
             <a
               href="#listen"
-              className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2.5 text-xs font-medium text-ink-primary hover:bg-surface-paper-warm transition-colors"
+              className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2.5 text-sm font-medium text-ink-primary hover:bg-surface-paper-warm transition-colors"
             >
-              <Headphones className="h-3.5 w-3.5 text-ink-secondary" />
+              <Headphones className="h-4 w-4 text-ink-secondary" />
               <span>Listen</span>
             </a>
           )}
@@ -324,12 +324,12 @@ export default function ScoreDetail() {
 
           {/* Recent practice & preserved moments */}
           <div className="space-y-4">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-tertiary">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">
               Recent Playing & Takes
             </h3>
 
             {sessions.length === 0 ? (
-              <p className="text-xs text-ink-tertiary">
+              <p className="text-xs text-ink-secondary/70">
                 No practice recorded yet. When you play, your sessions will quietly appear here.
               </p>
             ) : (
@@ -342,7 +342,7 @@ export default function ScoreDetail() {
                         <p className="font-medium text-ink-primary">
                           {dayLabel(a.completedAt)} · {minutesLabel(a.durationSeconds)}
                         </p>
-                        <p className="text-[11px] text-ink-tertiary mt-0.5">
+                        <p className="text-xs text-ink-secondary/70 mt-0.5">
                           {a.rangeSummary}
                           {saved ? ` · ${saved.mediaType === 'video' ? 'Video preserved' : 'Audio preserved'}` : ''}
                         </p>
@@ -350,7 +350,7 @@ export default function ScoreDetail() {
                       {saved && (
                         <Link
                           to={`/performances/${saved.id}`}
-                          className="flex shrink-0 items-center gap-1 rounded-control border border-surface-paper-edge bg-surface-panel px-2 py-1 text-[11px] font-medium text-brand hover:bg-surface-paper-warm"
+                          className="flex shrink-0 items-center gap-1 rounded-control border border-surface-paper-edge bg-surface-panel px-2.5 py-1 text-xs font-medium text-brand hover:bg-surface-paper-warm"
                         >
                           <Play className="h-3 w-3 fill-current" />
                           <span>Play take</span>
@@ -376,9 +376,9 @@ export default function ScoreDetail() {
               <button
                 key={f.id}
                 onClick={() => { moveToFolder(score.id, f.id); setMoveFolderOpen(false); toast({ title: 'Moved', description: `${score.title} moved to ${f.name}.` }); }}
-                className="flex w-full items-center gap-2 rounded-control border border-surface-paper-edge px-3 py-2 text-left text-xs hover:bg-surface-paper"
+                className="flex w-full items-center gap-2 rounded-control border border-surface-paper-edge px-3 py-2 text-left text-sm hover:bg-surface-paper"
               >
-                <FolderInput className="h-3.5 w-3.5 text-ink-secondary" />
+                <FolderInput className="h-4 w-4 text-ink-secondary" />
                 <span className="font-medium text-ink-primary">{f.name}</span>
               </button>
             ))}
@@ -407,10 +407,10 @@ export default function ScoreDetail() {
                   <div key={v.label} className={`flex items-center justify-between rounded-control border px-3 py-2 text-xs ${isCurrent || isRestored ? 'border-brand/40 bg-brand/5' : 'border-surface-paper-edge'}`}>
                     <div>
                       <p className="font-medium text-ink-primary">{v.label}{isRestored ? ' · Restored' : ''}</p>
-                      <p className="text-[11px] text-ink-tertiary">{isRestored ? `Restored ${score.versionRestoredAt}` : v.date}</p>
+                      <p className="text-xs text-ink-secondary/70">{isRestored ? `Restored ${score.versionRestoredAt}` : v.date}</p>
                     </div>
                     {isCurrent || isRestored ? (
-                      <span className="text-[11px] font-medium text-brand">{isRestored ? 'Restored' : 'Current'}</span>
+                      <span className="text-xs font-semibold text-brand">{isRestored ? 'Restored' : 'Current'}</span>
                     ) : (
                       <Button variant="outline" size="sm" onClick={() => { restoreVersion(score.id, v.label); toast({ title: 'Version restored', description: `Restored to ${v.label}.` }); setVersionsOpen(false); }}>Restore</Button>
                     )}

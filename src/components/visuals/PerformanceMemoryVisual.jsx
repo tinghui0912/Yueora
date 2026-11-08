@@ -75,7 +75,7 @@ export default function PerformanceMemoryVisual() {
       {/* Footer metadata */}
       <div className="mt-4 flex items-center justify-between border-t border-line-subtle pt-3 text-xs text-ink-tertiary">
         <span>Recorded directly on Living Room Piano</span>
-        <span className="text-ink-secondary font-medium">Original audio preserved uncompressed</span>
+        <span className="text-ink-secondary font-medium">Original take preserved in high fidelity</span>
       </div>
     </div>
   );

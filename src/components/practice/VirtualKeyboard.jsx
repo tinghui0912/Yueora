@@ -14,7 +14,7 @@ export default function VirtualKeyboard({ current, showNames }) {
             className={`relative flex h-16 flex-1 items-end justify-center border-r border-line-subtle pb-1 last:border-r-0 ${k === current ? 'bg-accent' : ''}`}
           >
             {(showNames || k === current) && (
-              <span className={`text-[10px] ${k === current ? 'font-semibold text-brand' : 'text-ink-tertiary'}`}>{k}</span>
+              <span className={`text-xs ${k === current ? 'font-semibold text-brand' : 'text-ink-secondary/70'}`}>{k}</span>
             )}
           </div>
         ))}

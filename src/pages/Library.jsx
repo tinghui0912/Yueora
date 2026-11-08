@@ -227,14 +227,14 @@ export default function Library() {
                   <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
                 </div>
                 <div className="min-w-0">
-                  <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-brand">
-                    <Sparkles className="h-3 w-3" />
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-brand">
+                    <Sparkles className="h-3.5 w-3.5" />
                     <span>Pick up where you left off</span>
                   </span>
                   <h2 className="truncate font-display text-lg font-medium text-ink-primary mt-0.5 sm:text-xl">
                     {continueScore.title}
                   </h2>
-                  <p className="truncate text-xs text-ink-secondary mt-0.5">
+                  <p className="truncate text-[13px] text-ink-secondary mt-0.5">
                     {continueScore.composer} · Continue from bar {continueScore.lastMeasure} · Played {continueScore.lastPlayed}
                   </p>
                 </div>
@@ -243,16 +243,16 @@ export default function Library() {
               <div className="flex shrink-0 items-center gap-2">
                 <Link
                   to={`/score/${continueScore.id}/setup`}
-                  className="flex items-center gap-2 rounded-control bg-brand px-4 py-2 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover active:scale-95"
+                  className="flex items-center gap-2 rounded-control bg-brand px-4 py-2 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98]"
                 >
-                  <Play className="h-3.5 w-3.5 fill-current" />
+                  <Play className="h-4 w-4 fill-current" />
                   <span>Resume playing</span>
                 </Link>
                 <Link
                   to={`/score/${continueScore.id}`}
-                  className="rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2 text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm"
+                  className="rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2 text-sm font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm transition-colors"
                 >
-                  Score folio
+                  Score details
                 </Link>
               </div>
             </MusicPaper>
@@ -264,9 +264,9 @@ export default function Library() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h1 className="font-display text-2xl font-medium tracking-tight text-ink-primary sm:text-3xl">
-                {isTrash ? 'Trash Folios' : activeFolderId ? folders.find((f) => f.id === activeFolderId)?.name : 'Repertoire'}
+                {isTrash ? 'Trash' : activeFolderId ? folders.find((f) => f.id === activeFolderId)?.name : 'Repertoire'}
               </h1>
-              <p className="mt-0.5 text-xs text-ink-secondary">
+              <p className="mt-0.5 text-sm text-ink-secondary">
                 {isTrash ? `${filtered.length} in trash` : `${liveCount} pieces in your personal collection`}
               </p>
             </div>
@@ -279,7 +279,7 @@ export default function Library() {
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && setParam('search', searchInput.trim())}
                   placeholder="Filter by title, composer…"
-                  className="h-8 w-40 rounded-control border border-surface-paper-edge bg-surface-paper/70 px-2.5 text-xs text-ink-primary outline-none placeholder:text-ink-tertiary focus:border-brand focus:bg-surface-paper md:w-56"
+                  className="h-9 w-44 rounded-control border border-surface-paper-edge bg-surface-paper/70 px-3 text-sm text-ink-primary outline-none placeholder:text-ink-tertiary focus:border-brand focus:bg-surface-paper md:w-56"
                 />
               </div>
 
@@ -287,9 +287,9 @@ export default function Library() {
               <div className="relative">
                 <button
                   onClick={() => { setShowFilters((s) => !s); setShowSort(false); }}
-                  className={`flex h-8 items-center gap-1.5 rounded-control border px-2.5 text-xs transition-colors ${
+                  className={`flex h-9 items-center gap-1.5 rounded-control border px-3 text-[13px] font-medium transition-colors ${
                     filterFav || filterInstrument !== 'all' || filterPlayed !== 'any'
-                      ? 'border-brand/40 bg-brand/10 font-semibold text-brand'
+                      ? 'border-brand/40 bg-brand/10 text-brand'
                       : 'border-surface-paper-edge bg-surface-paper text-ink-secondary hover:text-ink-primary'
                   }`}
                   aria-label="Filter repertoire"
@@ -299,13 +299,13 @@ export default function Library() {
                 </button>
                 {showFilters && (
                   <div className="absolute right-0 z-20 mt-1 w-56 rounded-container border border-surface-paper-edge bg-surface-panel p-3 shadow-overlay">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-tertiary">Instrument</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Instrument</p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {instruments.map((ins) => (
                         <button
                           key={ins}
                           onClick={() => setFilterInstrument(ins)}
-                          className={`rounded px-2 py-0.5 text-xs ${
+                          className={`rounded px-2 py-1 text-xs ${
                             filterInstrument === ins ? 'bg-brand/10 font-semibold text-brand' : 'text-ink-secondary hover:bg-surface-paper'
                           }`}
                         >
@@ -313,13 +313,13 @@ export default function Library() {
                         </button>
                       ))}
                     </div>
-                    <p className="mt-3 text-[10px] font-semibold uppercase tracking-wider text-ink-tertiary">Practice history</p>
+                    <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Practice history</p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {[['any', 'Any'], ['recent', 'Played recently'], ['notplayed', 'Not played yet']].map(([k, l]) => (
                         <button
                           key={k}
                           onClick={() => setFilterPlayed(k)}
-                          className={`rounded px-2 py-0.5 text-xs ${
+                          className={`rounded px-2 py-1 text-xs ${
                             filterPlayed === k ? 'bg-brand/10 font-semibold text-brand' : 'text-ink-secondary hover:bg-surface-paper'
                           }`}
                         >
@@ -327,7 +327,7 @@ export default function Library() {
                         </button>
                       ))}
                     </div>
-                    <label className="mt-3 flex items-center gap-2 text-xs text-ink-primary cursor-pointer select-none">
+                    <label className="mt-3 flex items-center gap-2 text-[13px] text-ink-primary cursor-pointer select-none">
                       <input
                         type="checkbox"
                         checked={filterFav}
@@ -344,7 +344,7 @@ export default function Library() {
               <div className="relative">
                 <button
                   onClick={() => { setShowSort((s) => !s); setShowFilters(false); }}
-                  className="flex h-8 items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 text-xs text-ink-secondary hover:text-ink-primary"
+                  className="flex h-9 items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 text-[13px] font-medium text-ink-secondary hover:text-ink-primary"
                   aria-label="Sort repertoire"
                 >
                   <ArrowUpDown className="h-3.5 w-3.5" />
@@ -356,7 +356,7 @@ export default function Library() {
                       <button
                         key={o.key}
                         onClick={() => { setParam('sort', o.key); setShowSort(false); }}
-                        className={`flex w-full items-center justify-between rounded px-2.5 py-1.5 text-left text-xs ${
+                        className={`flex w-full items-center justify-between rounded px-2.5 py-2 text-left text-xs ${
                           sort === o.key ? 'bg-brand/10 font-medium text-brand' : 'text-ink-secondary hover:bg-surface-paper'
                         }`}
                       >
@@ -369,24 +369,24 @@ export default function Library() {
               </div>
 
               {/* Grid / List switch */}
-              <div className="flex h-8 items-center rounded-control border border-surface-paper-edge bg-surface-paper p-0.5">
+              <div className="flex h-9 items-center rounded-control border border-surface-paper-edge bg-surface-paper p-0.5">
                 <button
                   onClick={() => setParam('layout', 'grid')}
-                  className={`flex h-7 w-7 items-center justify-center rounded ${
+                  className={`flex h-8 w-8 items-center justify-center rounded ${
                     view === 'grid' ? 'bg-surface-panel text-brand shadow-xs' : 'text-ink-tertiary hover:text-ink-primary'
                   }`}
                   aria-label="Grid view"
                 >
-                  <LayoutGrid className="h-3.5 w-3.5" />
+                  <LayoutGrid className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setParam('layout', 'list')}
-                  className={`flex h-7 w-7 items-center justify-center rounded ${
+                  className={`flex h-8 w-8 items-center justify-center rounded ${
                     view === 'list' ? 'bg-surface-panel text-brand shadow-xs' : 'text-ink-tertiary hover:text-ink-primary'
                   }`}
                   aria-label="List view"
                 >
-                  <List className="h-3.5 w-3.5" />
+                  <List className="h-4 w-4" />
                 </button>
               </div>
             </div>
@@ -395,32 +395,32 @@ export default function Library() {
           {/* Multi-select bar */}
           {selected.length > 0 && !isTrash && (
             <div className="mt-3 flex flex-wrap items-center gap-2 rounded-control border border-brand/30 bg-brand/5 px-3 py-2">
-              <span className="text-xs font-semibold text-brand">{selected.length} piece{selected.length > 1 ? 's' : ''} selected</span>
+              <span className="text-sm font-semibold text-brand">{selected.length} piece{selected.length > 1 ? 's' : ''} selected</span>
               <div className="ml-auto flex flex-wrap items-center gap-1.5">
                 <button
                   onClick={favSelected}
-                  className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs font-medium hover:bg-surface-paper-warm"
+                  className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-1.5 text-[13px] font-medium hover:bg-surface-paper-warm"
                 >
-                  <Heart className="h-3 w-3" /> Favorite
+                  <Heart className="h-3.5 w-3.5" /> Favorite
                 </button>
                 <button
                   onClick={() => setMoveOpen(true)}
-                  className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs font-medium hover:bg-surface-paper-warm"
+                  className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-1.5 text-[13px] font-medium hover:bg-surface-paper-warm"
                 >
-                  <FolderInput className="h-3 w-3" /> Move to folder
+                  <FolderInput className="h-3.5 w-3.5" /> Move to folder
                 </button>
                 <button
                   onClick={() => setTrashConfirm({ selected: [...selected] })}
-                  className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs font-medium text-destructive hover:bg-destructive/10"
+                  className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-1.5 text-[13px] font-medium text-destructive hover:bg-destructive/10"
                 >
-                  <RemoveIcon className="h-3 w-3" /> {removeLabel}
+                  <RemoveIcon className="h-3.5 w-3.5" /> {removeLabel}
                 </button>
                 <button
                   onClick={clearSelect}
-                  className="rounded p-1 text-ink-tertiary hover:text-ink-primary"
+                  className="flex h-7 w-7 items-center justify-center rounded text-ink-secondary hover:text-ink-primary hover:bg-surface-paper"
                   aria-label="Clear selection"
                 >
-                  <X className="h-3.5 w-3.5" />
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             </div>
@@ -468,7 +468,7 @@ export default function Library() {
               </div>
             </div>
           ) : view === 'grid' ? (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {filtered.map((s) => (
                 <ScoreCard
                   key={s.id}
