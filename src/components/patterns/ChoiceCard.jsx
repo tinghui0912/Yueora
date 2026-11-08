@@ -2,8 +2,26 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 /**
+ * @typedef {'toggle' | 'radio' | 'action'} ChoiceCardMode
+ */
+
+/**
  * ChoiceCard — Interactive selection card for source choices, options, and modes.
  * Owns border, selected highlight, icon sizing, typography, hover, and focus ring.
+ *
+ * @param {{
+ *   icon?: any;
+ *   title: React.ReactNode;
+ *   description?: React.ReactNode;
+ *   selected?: boolean;
+ *   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+ *   badge?: React.ReactNode;
+ *   disabled?: boolean;
+ *   mode?: ChoiceCardMode;
+ *   role?: string;
+ *   className?: string;
+ *   [key: string]: any;
+ * }} props
  */
 export function ChoiceCard({
   icon: Icon = undefined,
@@ -13,17 +31,24 @@ export function ChoiceCard({
   onClick = undefined,
   badge = null,
   disabled = false,
+  mode = 'toggle',
   role = undefined,
   className = '',
   ...props
 }) {
-  const isRadio = role === 'radio';
+  const resolvedRole = role || (mode === 'radio' ? 'radio' : undefined);
+  const isRadio = resolvedRole === 'radio' || mode === 'radio';
+  const isAction = mode === 'action';
+
+  const ariaChecked = isRadio ? selected : undefined;
+  const ariaPressed = !isRadio && !isAction ? selected : undefined;
+
   return (
     <button
       type="button"
-      role={role}
-      aria-checked={isRadio ? selected : undefined}
-      aria-pressed={!isRadio ? selected : undefined}
+      role={resolvedRole}
+      aria-checked={ariaChecked}
+      aria-pressed={ariaPressed}
       disabled={disabled}
       onClick={onClick}
       className={cn(

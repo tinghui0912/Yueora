@@ -14,6 +14,11 @@ const SheetClose = SheetPrimitive.Close
 
 const SheetPortal = SheetPrimitive.Portal
 
+/**
+ * @type {React.ForwardRefExoticComponent<
+ *   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay> & React.RefAttributes<HTMLDivElement>
+ * >}
+ */
 const SheetOverlay = React.forwardRef(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
     className={cn(
@@ -44,6 +49,11 @@ const sheetVariants = cva(
   }
 )
 
+/**
+ * @type {React.ForwardRefExoticComponent<
+ *   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> & { side?: 'top' | 'bottom' | 'left' | 'right' } & React.RefAttributes<HTMLDivElement>
+ * >}
+ */
 const SheetContent = React.forwardRef(({ side = "right", className, children, style, ...props }, ref) => (
   <SheetPortal>
     <SheetOverlay />
@@ -53,8 +63,8 @@ const SheetContent = React.forwardRef(({ side = "right", className, children, st
       style={side === "bottom" ? { paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))", ...style } : style}
       {...props}>
       <SheetPrimitive.Close
-        className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-        <X className="h-4 w-4" />
+        className="absolute right-4 top-4 rounded-control opacity-70 ring-offset-surface-canvas transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 disabled:pointer-events-none text-ink-secondary hover:text-ink-primary">
+        <X className="icon-sm" />
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close>
       {children}
@@ -89,7 +99,12 @@ const SheetFooter = ({
 )
 SheetFooter.displayName = "SheetFooter"
 
-const SheetTitle = React.forwardRef(({ className, ...props }, ref) => (
+/**
+ * @type {React.ForwardRefExoticComponent<
+ *   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title> & React.RefAttributes<HTMLHeadingElement>
+ * >}
+ */
+const SheetTitle = React.forwardRef(({ className = '', ...props }, ref) => (
   <SheetPrimitive.Title
     ref={ref}
     className={cn("text-lg font-semibold text-foreground", className)}
@@ -97,7 +112,12 @@ const SheetTitle = React.forwardRef(({ className, ...props }, ref) => (
 ))
 SheetTitle.displayName = SheetPrimitive.Title.displayName
 
-const SheetDescription = React.forwardRef(({ className, ...props }, ref) => (
+/**
+ * @type {React.ForwardRefExoticComponent<
+ *   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description> & React.RefAttributes<HTMLParagraphElement>
+ * >}
+ */
+const SheetDescription = React.forwardRef(({ className = '', ...props }, ref) => (
   <SheetPrimitive.Description
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}

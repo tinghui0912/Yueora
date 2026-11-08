@@ -29,14 +29,15 @@ export function AppPage({
 }) {
   const resolvedWidth = sizeMap[size] || sizeMap.standard;
   const resolvedPadding = paddingMap[padding] || paddingMap.normal;
+  const Comp = /** @type {any} */ (Component);
 
   return (
-    <Component
+    <Comp
       className={cn('mx-auto w-full min-w-0', resolvedWidth, resolvedPadding, className)}
       {...props}
     >
       {children}
-    </Component>
+    </Comp>
   );
 }
 

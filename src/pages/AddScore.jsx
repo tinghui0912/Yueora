@@ -130,6 +130,7 @@ export default function AddScore() {
                   icon={s.icon}
                   title={s.label}
                   description={s.desc}
+                  mode="action"
                   selected={source === s.id}
                   onClick={() => {
                     setSource(s.id);

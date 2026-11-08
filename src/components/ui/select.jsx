@@ -10,7 +10,12 @@ const SelectGroup = SelectPrimitive.Group
 
 const SelectValue = SelectPrimitive.Value
 
-const SelectTrigger = React.forwardRef(({ className, children, hasError = false, ...props }, ref) => (
+/**
+ * @type {React.ForwardRefExoticComponent<
+ *   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & { hasError?: boolean } & React.RefAttributes<HTMLButtonElement>
+ * >}
+ */
+const SelectTrigger = React.forwardRef(({ className = '', children = null, hasError = false, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
@@ -27,6 +32,11 @@ const SelectTrigger = React.forwardRef(({ className, children, hasError = false,
 ))
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
 
+/**
+ * @type {React.ForwardRefExoticComponent<
+ *   React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton> & React.RefAttributes<HTMLDivElement>
+ * >}
+ */
 const SelectScrollUpButton = React.forwardRef(({ className = '', ...props }, ref) => (
   <SelectPrimitive.ScrollUpButton
     ref={ref}
@@ -37,6 +47,11 @@ const SelectScrollUpButton = React.forwardRef(({ className = '', ...props }, ref
 ))
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName
 
+/**
+ * @type {React.ForwardRefExoticComponent<
+ *   React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton> & React.RefAttributes<HTMLDivElement>
+ * >}
+ */
 const SelectScrollDownButton = React.forwardRef(({ className = '', ...props }, ref) => (
   <SelectPrimitive.ScrollDownButton
     ref={ref}
@@ -48,7 +63,12 @@ const SelectScrollDownButton = React.forwardRef(({ className = '', ...props }, r
 SelectScrollDownButton.displayName =
   SelectPrimitive.ScrollDownButton.displayName
 
-const SelectContent = React.forwardRef(({ className, children, position = "popper", ...props }, ref) => (
+/**
+ * @type {React.ForwardRefExoticComponent<
+ *   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> & React.RefAttributes<HTMLDivElement>
+ * >}
+ */
+const SelectContent = React.forwardRef(({ className = '', children = null, position = "popper", ...props }, ref) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
@@ -72,6 +92,11 @@ const SelectContent = React.forwardRef(({ className, children, position = "poppe
 ))
 SelectContent.displayName = SelectPrimitive.Content.displayName
 
+/**
+ * @type {React.ForwardRefExoticComponent<
+ *   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label> & React.RefAttributes<HTMLDivElement>
+ * >}
+ */
 const SelectLabel = React.forwardRef(({ className = '', ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
@@ -80,7 +105,12 @@ const SelectLabel = React.forwardRef(({ className = '', ...props }, ref) => (
 ))
 SelectLabel.displayName = SelectPrimitive.Label.displayName
 
-const SelectItem = React.forwardRef(({ className = '', children, ...props }, ref) => (
+/**
+ * @type {React.ForwardRefExoticComponent<
+ *   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> & React.RefAttributes<HTMLDivElement>
+ * >}
+ */
+const SelectItem = React.forwardRef(({ className = '', children = null, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
@@ -98,7 +128,12 @@ const SelectItem = React.forwardRef(({ className = '', children, ...props }, ref
 ))
 SelectItem.displayName = SelectPrimitive.Item.displayName
 
-const SelectSeparator = React.forwardRef(({ className, ...props }, ref) => (
+/**
+ * @type {React.ForwardRefExoticComponent<
+ *   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator> & React.RefAttributes<HTMLDivElement>
+ * >}
+ */
+const SelectSeparator = React.forwardRef(({ className = '', ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
     className={cn("-mx-1 my-1 h-px bg-line-subtle", className)}
@@ -108,8 +143,11 @@ SelectSeparator.displayName = SelectPrimitive.Separator.displayName
 
 /**
  * NativeSelect — standard HTML select styled to perfectly match Yueora Input and SelectTrigger.
+ * @type {React.ForwardRefExoticComponent<
+ *   React.SelectHTMLAttributes<HTMLSelectElement> & { hasError?: boolean } & React.RefAttributes<HTMLSelectElement>
+ * >}
  */
-const NativeSelect = React.forwardRef(({ className, hasError = false, children, ...props }, ref) => (
+const NativeSelect = React.forwardRef(({ className = '', hasError = false, children = null, ...props }, ref) => (
   <div className="relative">
     <select
       ref={ref}

@@ -19,5 +19,33 @@
     "types": ["vite/client", "node"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "src/vite-plugins", "src/api", "src/components/ui"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/vite-plugins",
+    "src/api",
+    "src/components/ui/accordion.jsx",
+    "src/components/ui/alert-dialog.jsx",
+    "src/components/ui/alert.jsx",
+    "src/components/ui/aspect-ratio.jsx",
+    "src/components/ui/breadcrumb.jsx",
+    "src/components/ui/calendar.jsx",
+    "src/components/ui/card.jsx",
+    "src/components/ui/carousel.jsx",
+    "src/components/ui/chart.jsx",
+    "src/components/ui/collapsible.jsx",
+    "src/components/ui/context-menu.jsx",
+    "src/components/ui/drawer.jsx",
+    "src/components/ui/form.jsx",
+    "src/components/ui/hover-card.jsx",
+    "src/components/ui/menubar.jsx",
+    "src/components/ui/navigation-menu.jsx",
+    "src/components/ui/pagination.jsx",
+    "src/components/ui/resizable.jsx",
+    "src/components/ui/scroll-area.jsx",
+    "src/components/ui/sidebar.jsx",
+    "src/components/ui/table.jsx",
+    "src/components/ui/toggle-group.jsx",
+    "src/components/ui/toggle.jsx"
+  ]
 }

@@ -13,6 +13,142 @@ import {
 } from '@/lib/mockData';
 import { addBillingPeriod, demoReference, formatDate, planPrice } from '@/lib/commercial';
 
+/**
+ * @typedef {Object} DifficultSection
+ * @property {number} from
+ * @property {number} to
+ * @property {string} label
+ * @property {string} note
+ */
+
+/**
+ * @typedef {Object} Score
+ * @property {string} id
+ * @property {string} title
+ * @property {string} composer
+ * @property {string} instrument
+ * @property {string[]} tags
+ * @property {'mine' | 'shared' | 'saved' | 'trash'} ownership
+ * @property {boolean} favorite
+ * @property {string[]} folderIds
+ * @property {string | null} [lastPlayed]
+ * @property {number} lastMeasure
+ * @property {number} tempo
+ * @property {number} pages
+ * @property {number} measures
+ * @property {DifficultSection[]} difficultSections
+ * @property {string} created
+ * @property {string} source
+ * @property {string} [sharedBy]
+ * @property {'Can view' | 'Can edit'} [permission]
+ * @property {{ practice: boolean; download: boolean }} [permissions]
+ * @property {{ canPractice: boolean; canDownload: boolean }} [savedPermission]
+ * @property {string} [deletedAt]
+ * @property {string} [currentVersion]
+ * @property {string | null} [versionRestoredAt]
+ */
+
+/**
+ * @typedef {Object} Folder
+ * @property {string} id
+ * @property {string} name
+ */
+
+/**
+ * @typedef {Object} RecognitionIssue
+ * @property {string} id
+ * @property {number} measure
+ * @property {string} type
+ * @property {string} detail
+ * @property {'low' | 'medium' | 'high'} confidence
+ * @property {boolean} resolved
+ */
+
+/**
+ * @typedef {Object} Import
+ * @property {string} id
+ * @property {string} scoreId
+ * @property {string} title
+ * @property {'processing' | 'needs_review' | 'completed' | 'failed'} status
+ * @property {number} progress
+ * @property {string} started
+ * @property {number} pages
+ * @property {string} source
+ * @property {number} issues
+ * @property {string} [failure]
+ * @property {Partial<Score>} [pendingScore]
+ */
+
+/**
+ * @typedef {Object} PracticeActivity
+ * @property {string} id
+ * @property {string} ownerId
+ * @property {string} scoreId
+ * @property {string} scoreTitleSnapshot
+ * @property {'follow' | 'performance' | 'free'} mode
+ * @property {string} startedAt
+ * @property {string} completedAt
+ * @property {number} durationSeconds
+ * @property {number | null} tempoBpm
+ * @property {string} rangeSummary
+ */
+
+/**
+ * @typedef {Object} SavedPerformance
+ * @property {string} id
+ * @property {string} [ownerId]
+ * @property {string} [scoreId]
+ * @property {string} [scoreTitleSnapshot]
+ * @property {string} [audioBlobUrl]
+ * @property {number} [duration]
+ * @property {string} [createdAt]
+ * @property {'private' | 'shared' | 'public'} [visibility]
+ * @property {string[]} [sharedWith]
+ * @property {string[]} [sharedCommenters]
+ * @property {boolean} [allowComments]
+ * @property {any} [positionTimeline]
+ */
+
+/**
+ * @typedef {Object} SharePerson
+ * @property {string} id
+ * @property {string} name
+ * @property {string} email
+ * @property {string} role
+ */
+
+/**
+ * @typedef {Object} ShareLink
+ * @property {string} access
+ * @property {boolean} download
+ * @property {boolean} practice
+ * @property {string} expiration
+ * @property {boolean} enabled
+ * @property {string | null} [token]
+ * @property {string | null} [createdAt]
+ * @property {string | null} [expiresAt]
+ */
+
+/**
+ * @typedef {Object} SharePermission
+ * @property {string | null} scoreId
+ * @property {string} title
+ * @property {SharePerson[]} people
+ * @property {ShareLink} link
+ */
+
+/**
+ * @typedef {Object} Notification
+ * @property {string} id
+ * @property {'imports' | 'sharing' | 'security' | 'billing' | 'practice' | 'performances'} category
+ * @property {string} title
+ * @property {string} body
+ * @property {string} time
+ * @property {boolean} unread
+ * @property {string} href
+ * @property {string} [recipientId]
+ */
+
 const clone = (obj) => JSON.parse(JSON.stringify(obj));
 
 // ---- Recognition issues seed (per import) ----
