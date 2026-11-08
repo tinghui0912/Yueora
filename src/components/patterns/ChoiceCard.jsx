@@ -36,13 +36,13 @@ export function ChoiceCard({
         {Icon && (
           <div
             className={cn(
-              'flex h-9 w-9 shrink-0 items-center justify-center rounded-control transition-colors duration-base',
+              'flex h-control-md w-control-md shrink-0 items-center justify-center rounded-control transition-colors duration-base',
               selected
                 ? 'bg-brand text-white shadow-xs'
                 : 'border border-line-subtle bg-surface-canvas text-brand group-hover:bg-brand/10'
             )}
           >
-            <Icon className="h-4.5 w-4.5" aria-hidden="true" />
+            <Icon className="icon-md" aria-hidden="true" />
           </div>
         )}
 

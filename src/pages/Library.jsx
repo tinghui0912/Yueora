@@ -243,19 +243,17 @@ export default function Library() {
               </div>
 
               <div className="flex shrink-0 items-center gap-2">
-                <Link
-                  to={`/score/${continueScore.id}/setup`}
-                  className="flex items-center gap-2 rounded-control bg-brand px-4 py-2 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98]"
-                >
-                  <Play className="h-4 w-4 fill-current" />
-                  <span>Resume playing</span>
-                </Link>
-                <Link
-                  to={`/score/${continueScore.id}`}
-                  className="rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2 text-sm font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm transition-colors"
-                >
-                  Score details
-                </Link>
+                <Button intent="primary" size="md" asChild>
+                  <Link to={`/score/${continueScore.id}/setup`}>
+                    <Play className="icon-sm fill-current" />
+                    <span>Resume playing</span>
+                  </Link>
+                </Button>
+                <Button intent="secondary" size="md" asChild>
+                  <Link to={`/score/${continueScore.id}`}>
+                    Score details
+                  </Link>
+                </Button>
               </div>
             </MusicPaper>
           </div>
@@ -281,7 +279,7 @@ export default function Library() {
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && setParam('search', searchInput.trim())}
                   placeholder="Filter by title, composer…"
-                  className="h-9 w-44 rounded-control border border-surface-paper-edge bg-surface-paper/70 px-3 text-sm text-ink-primary outline-none placeholder:text-ink-tertiary focus:border-brand focus:bg-surface-paper md:w-56"
+                  className="h-control-md w-44 rounded-control border border-surface-paper-edge bg-surface-paper/70 px-3 type-body-small text-ink-primary outline-none placeholder:text-ink-tertiary focus:border-brand focus:bg-surface-paper md:w-56 shadow-xs"
                 />
               </div>
 
@@ -668,19 +666,18 @@ function EmptyState({ active, isTrash }) {
           Add sheet music you have always wanted to play — whether scan, photo, or MusicXML.
         </p>
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">
-          <Link
-            to="/add-score"
-            className="flex items-center gap-2 rounded-control bg-brand px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-brand-hover transition-colors"
-          >
-            <Plus className="h-3.5 w-3.5" /> Add sheet music
-          </Link>
-          <span className="text-xs text-ink-tertiary">or</span>
-          <Link
-            to="/score/moonlight"
-            className="rounded-control border border-surface-paper-edge bg-surface-paper px-4 py-2 text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm transition-colors"
-          >
-            Explore Moonlight Sonata
-          </Link>
+          <Button intent="primary" size="md" asChild>
+            <Link to="/add-score">
+              <Plus className="icon-sm" />
+              <span>Add sheet music</span>
+            </Link>
+          </Button>
+          <span className="type-caption text-ink-tertiary">or</span>
+          <Button intent="secondary" size="md" asChild>
+            <Link to="/score/moonlight">
+              Explore Moonlight Sonata
+            </Link>
+          </Button>
         </div>
       </div>
     );
@@ -688,14 +685,14 @@ function EmptyState({ active, isTrash }) {
   const labels = { mine: 'your own scores', shared: 'scores shared with you', saved: 'saved scores', favorites: 'favorites' };
   return (
     <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-surface-paper-edge py-20 text-center">
-      <h2 className="font-display text-xl font-medium text-ink-primary">Nothing here yet</h2>
-      <p className="mt-1.5 max-w-sm text-xs text-ink-secondary">This is where {labels[active] || 'these scores'} will appear.</p>
-      <Link
-        to="/add-score"
-        className="mt-5 flex items-center gap-2 rounded-control bg-brand px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-brand-hover transition-colors"
-      >
-        <Plus className="h-3.5 w-3.5" /> Add a score
-      </Link>
+      <h2 className="type-section-title text-ink-primary">Nothing here yet</h2>
+      <p className="mt-1.5 max-w-sm type-body-small text-ink-secondary">This is where {labels[active] || 'these scores'} will appear.</p>
+      <Button intent="primary" size="md" className="mt-5" asChild>
+        <Link to="/add-score">
+          <Plus className="icon-sm" />
+          <span>Add a score</span>
+        </Link>
+      </Button>
     </div>
   );
 }

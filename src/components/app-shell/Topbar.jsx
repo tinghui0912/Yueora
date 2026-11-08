@@ -44,7 +44,7 @@ export default function Topbar() {
             <div className="relative inline-flex">
               <IconButton
                 icon={Bell}
-                size="sm"
+                size="md"
                 tone="quiet"
                 label={unreadCount > 0 ? `${unreadCount} unread notifications` : 'Notifications'}
               />
@@ -79,7 +79,7 @@ export default function Topbar() {
         {/* Help */}
         <IconButton
           icon={HelpCircle}
-          size="sm"
+          size="md"
           tone="quiet"
           label="Help & Knowledge Base"
           onClick={() => navigate('/help')}
@@ -91,11 +91,11 @@ export default function Topbar() {
         {/* User profile */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-1.5 rounded-control p-1 transition-colors hover:bg-surface-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40">
+            <button className="flex h-control-md items-center gap-1.5 rounded-control px-1.5 transition-colors hover:bg-surface-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40">
               <Avatar className="h-8 w-8 border border-surface-paper-edge">
                 <AvatarFallback className="bg-brand text-xs font-semibold text-white">{initials}</AvatarFallback>
               </Avatar>
-              <ChevronDown className="h-3.5 w-3.5 text-ink-tertiary" />
+              <ChevronDown className="icon-sm text-ink-tertiary" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 border-surface-paper-edge bg-surface-panel shadow-overlay">

@@ -20,10 +20,10 @@ const iconButtonVariants = cva(
           'text-danger hover:bg-destructive/10 hover:text-danger active:scale-[0.98]',
       },
       size: {
-        xs: 'h-7 w-7 min-h-[28px] min-w-[28px] p-1.5 [&_svg]:h-3.5 [&_svg]:w-3.5',
-        sm: 'h-8 w-8 min-h-[32px] min-w-[32px] p-2 [&_svg]:h-4 [&_svg]:w-4',
-        md: 'h-9 w-9 min-h-[36px] min-w-[36px] p-2.5 [&_svg]:h-4.5 [&_svg]:w-4.5',
-        lg: 'h-10 w-10 min-h-[40px] min-w-[40px] p-2.5 [&_svg]:h-5 [&_svg]:w-5',
+        xs: 'h-control-xs w-control-xs min-h-control-xs min-w-control-xs p-1 [&_svg]:icon-xs',
+        sm: 'h-control-sm w-control-sm min-h-control-sm min-w-control-sm p-1.5 [&_svg]:icon-sm',
+        md: 'h-control-md w-control-md min-h-control-md min-w-control-md p-2 [&_svg]:icon-md',
+        lg: 'h-control-lg w-control-lg min-h-control-lg min-w-control-lg p-2.5 [&_svg]:icon-lg',
       },
       active: {
         true: 'bg-brand/10 text-brand font-semibold shadow-xs',

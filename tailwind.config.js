@@ -132,6 +132,34 @@ module.exports = {
 				'page-standard': 'var(--page-width-standard)',
 				'page-wide': 'var(--page-width-wide)',
 			},
+			height: {
+				'control-xs': 'var(--control-height-xs)',
+				'control-sm': 'var(--control-height-sm)',
+				'control-md': 'var(--control-height-md)',
+				'control-lg': 'var(--control-height-lg)',
+				'control-xl': 'var(--control-height-xl)',
+			},
+			minHeight: {
+				'control-xs': 'var(--control-height-xs)',
+				'control-sm': 'var(--control-height-sm)',
+				'control-md': 'var(--control-height-md)',
+				'control-lg': 'var(--control-height-lg)',
+				'control-xl': 'var(--control-height-xl)',
+			},
+			width: {
+				'control-xs': 'var(--control-height-xs)',
+				'control-sm': 'var(--control-height-sm)',
+				'control-md': 'var(--control-height-md)',
+				'control-lg': 'var(--control-height-lg)',
+				'control-xl': 'var(--control-height-xl)',
+			},
+			minWidth: {
+				'control-xs': 'var(--control-height-xs)',
+				'control-sm': 'var(--control-height-sm)',
+				'control-md': 'var(--control-height-md)',
+				'control-lg': 'var(--control-height-lg)',
+				'control-xl': 'var(--control-height-xl)',
+			},
 			keyframes: {
 				'accordion-down': { from: { height: '0' }, to: { height: 'var(--radix-accordion-content-height)' } },
 				'accordion-up': { from: { height: 'var(--radix-accordion-content-height)' }, to: { height: '0' } }

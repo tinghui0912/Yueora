@@ -85,7 +85,7 @@ export default function EditorInspector({ note, onChange }) {
           </Select>
         </Field>
         <div className="flex items-center justify-between rounded-control border border-surface-paper-edge bg-surface-paper/40 px-3 py-2">
-          <Label className="text-[13px] font-medium text-ink-secondary">Dotted</Label>
+          <Label className="type-label font-medium text-ink-secondary">Dotted</Label>
           <Switch checked={!!note.dotted} onCheckedChange={(v) => onChange({ ...note, dotted: v || undefined })} />
         </div>
         <Field label="Voice">
@@ -111,19 +111,19 @@ export default function EditorInspector({ note, onChange }) {
         {!isRest && (
           <div className="rounded-control border border-surface-paper-edge bg-surface-paper/40 px-3 py-2.5">
             <div className="flex items-center justify-between">
-              <Label className="text-[13px] font-medium text-ink-secondary">Tie</Label>
-              <span className={`text-xs ${note.tieTo ? 'text-brand font-medium' : 'text-ink-secondary/70'}`}>{note.tieTo ? 'Connected' : 'Not set'}</span>
+              <Label className="type-label font-medium text-ink-secondary">Tie</Label>
+              <span className={`type-metadata ${note.tieTo ? 'text-brand font-medium' : 'text-ink-secondary/70'}`}>{note.tieTo ? 'Connected' : 'Not set'}</span>
             </div>
-            <p className="mt-1 text-xs text-ink-secondary/70">Select the Tie tool, then click this note and the next note.</p>
+            <p className="mt-1 type-metadata text-ink-secondary/70">Select the Tie tool, then click this note and the next note.</p>
           </div>
         )}
         {!isRest && (
           <div className="rounded-control border border-surface-paper-edge bg-surface-paper/40 px-3 py-2.5">
             <div className="flex items-center justify-between">
-              <Label className="text-[13px] font-medium text-ink-secondary">Slur</Label>
-              <span className={`text-xs ${note.slurTo ? 'text-brand font-medium' : 'text-ink-secondary/70'}`}>{note.slurTo ? 'Connected' : 'Not set'}</span>
+              <Label className="type-label font-medium text-ink-secondary">Slur</Label>
+              <span className={`type-metadata ${note.slurTo ? 'text-brand font-medium' : 'text-ink-secondary/70'}`}>{note.slurTo ? 'Connected' : 'Not set'}</span>
             </div>
-            <p className="mt-1 text-xs text-ink-secondary/70">Select the Slur tool, then click this note and the next note.</p>
+            <p className="mt-1 type-metadata text-ink-secondary/70">Select the Slur tool, then click this note and the next note.</p>
           </div>
         )}
       </div>
@@ -134,7 +134,7 @@ export default function EditorInspector({ note, onChange }) {
 function Field({ label, children }) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-[13px] font-medium text-ink-secondary">{label}</Label>
+      <Label className="type-label font-medium text-ink-secondary">{label}</Label>
       {children}
     </div>
   );

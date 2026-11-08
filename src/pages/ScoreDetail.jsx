@@ -12,6 +12,7 @@ import SharingDialog from '@/components/sharing/SharingDialog';
 import MusicPaper from '@/components/patterns/MusicPaper';
 import JourneyTimeline from '@/components/patterns/JourneyTimeline';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -134,63 +135,61 @@ export default function ScoreDetail() {
         {/* Action transport */}
         <div className="flex flex-wrap items-center gap-2">
           {perms.canPractice ? (
-            <Link
-              to={`/score/${score.id}/setup`}
-              className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98]"
-            >
-              <Play className="h-4 w-4 fill-current" />
-              <span>{score.lastMeasure > 1 ? `Continue from bar ${score.lastMeasure}` : 'Start Practice'}</span>
-            </Link>
+            <Button intent="primary" size="md" asChild>
+              <Link to={`/score/${score.id}/setup`}>
+                <Play className="icon-sm fill-current" />
+                <span>{score.lastMeasure > 1 ? `Continue from bar ${score.lastMeasure}` : 'Start Practice'}</span>
+              </Link>
+            </Button>
           ) : (
-            <span className="flex items-center gap-2 rounded-control bg-surface-paper border border-surface-paper-edge px-4 py-2.5 text-sm font-semibold text-ink-secondary/70">
-              <Lock className="h-4 w-4" /> Practice unavailable
+            <span className="flex h-control-md items-center gap-2 rounded-control bg-surface-paper border border-surface-paper-edge px-4 type-body-small font-semibold text-ink-secondary/70">
+              <Lock className="icon-sm" /> Practice unavailable
             </span>
           )}
 
           {score.source !== 'Photo' && (
-            <a
-              href="#listen"
-              className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2.5 text-sm font-medium text-ink-primary hover:bg-surface-paper-warm transition-colors"
-            >
-              <Headphones className="h-4 w-4 text-ink-secondary" />
-              <span>Listen</span>
-            </a>
+            <Button intent="secondary" size="md" asChild>
+              <a href="#listen">
+                <Headphones className="icon-sm text-ink-secondary" />
+                <span>Listen</span>
+              </a>
+            </Button>
           )}
 
           {perms.canEdit && (
-            <Link
-              to={`/score/${score.id}/edit`}
-              className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2.5 text-xs font-medium text-ink-primary hover:bg-surface-paper-warm transition-colors"
-            >
-              <Pencil className="h-3.5 w-3.5 text-ink-secondary" />
-              <span>Studio Edit</span>
-            </Link>
+            <Button intent="secondary" size="md" asChild>
+              <Link to={`/score/${score.id}/edit`}>
+                <Pencil className="icon-sm text-ink-secondary" />
+                <span>Studio Edit</span>
+              </Link>
+            </Button>
           )}
 
           {perms.canShare && (
-            <button
+            <Button
+              intent="secondary"
+              size="md"
               onClick={() => setShareOpen(true)}
-              className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2.5 text-xs font-medium text-ink-primary hover:bg-surface-paper-warm transition-colors"
             >
-              <Share2 className="h-3.5 w-3.5 text-ink-secondary" />
+              <Share2 className="icon-sm text-ink-secondary" />
               <span>Share</span>
-            </button>
+            </Button>
           )}
 
           {perms.canDownload && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-2.5 text-xs font-medium text-ink-primary hover:bg-surface-paper-warm transition-colors">
-                  <Download className="h-3.5 w-3.5 text-ink-secondary" />
+                <Button intent="secondary" size="md">
+                  <Download className="icon-sm text-ink-secondary" />
                   <span>{exporting ? 'Exporting…' : 'Export'}</span>
-                </button>
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44 border-surface-paper-edge bg-surface-panel shadow-overlay">
-                <DropdownMenuItem onClick={() => handleExport('PNG')} disabled={!!exporting} className="text-xs">
-                  <FileImage className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Export PNG
+                <DropdownMenuItem onClick={() => handleExport('PNG')} disabled={!!exporting} className="type-body-small">
+                  <FileImage className="mr-2 icon-sm text-ink-secondary" /> Export PNG
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleExport('MusicXML')} disabled={!!exporting} className="text-xs">
-                  <FileCode className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Export MusicXML
+                <DropdownMenuItem onClick={() => handleExport('MusicXML')} disabled={!!exporting} className="type-body-small">
+                  <FileCode className="mr-2 icon-sm text-ink-secondary" /> Export MusicXML
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -198,12 +197,12 @@ export default function ScoreDetail() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
-                className="rounded-control border border-surface-paper-edge bg-surface-paper p-2.5 text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm transition-colors"
-                aria-label="More score options"
-              >
-                <MoreHorizontal className="h-3.5 w-3.5" />
-              </button>
+              <IconButton
+                icon={MoreHorizontal}
+                size="md"
+                tone="surface"
+                label="More score options"
+              />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52 border-surface-paper-edge bg-surface-panel shadow-overlay">
               <DropdownMenuItem onClick={handleFavorite} className="text-xs">

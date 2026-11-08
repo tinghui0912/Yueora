@@ -5,6 +5,7 @@ import { practiceWeek } from '@/lib/practiceStats';
 import ScorePreview from '@/components/library/ScorePreview';
 import MusicPaper from '@/components/patterns/MusicPaper';
 import AppPage from '@/components/patterns/AppPage';
+import { Button } from '@/components/ui/button';
 import { PracticeGlyph } from '@/components/brand/MusicalGlyphs';
 
 export default function PracticeHub() {
@@ -77,13 +78,12 @@ export default function PracticeHub() {
                   </p>
                 </div>
               </div>
-              <Link
-                to={`/score/${continueScore.id}/setup`}
-                className="flex shrink-0 items-center gap-2 self-start rounded-control bg-brand px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98] sm:self-center"
-              >
-                <Play className="h-4 w-4 fill-current" />
-                <span>Continue playing</span>
-              </Link>
+              <Button intent="primary" size="md" className="shrink-0 self-start sm:self-center" asChild>
+                <Link to={`/score/${continueScore.id}/setup`}>
+                  <Play className="icon-sm fill-current" />
+                  <span>Continue playing</span>
+                </Link>
+              </Button>
             </MusicPaper>
           </div>
         </section>
@@ -142,16 +142,15 @@ export default function PracticeHub() {
         <section className="mt-8">
           <MusicPaper tone="natural" className="flex flex-col items-center gap-3 p-12 text-center">
             <PracticeGlyph className="h-8 w-8 text-brand" />
-            <h2 className="font-display text-xl font-medium text-ink-primary">Welcome to Practice</h2>
-            <p className="max-w-sm text-xs leading-relaxed text-ink-secondary">
+            <h2 className="type-section-title text-ink-primary">Welcome to Practice</h2>
+            <p className="max-w-sm type-body-small leading-relaxed text-ink-secondary">
               When you practice, you will find your music here — where you left off, pieces you love, and musical moments to revisit.
             </p>
-            <Link
-              to="/library"
-              className="mt-3 rounded-control bg-brand px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-brand-hover transition-colors"
-            >
-              Browse your Repertoire
-            </Link>
+            <Button intent="primary" size="md" className="mt-3" asChild>
+              <Link to="/library">
+                Browse your Repertoire
+              </Link>
+            </Button>
           </MusicPaper>
         </section>
       )}
@@ -194,13 +193,12 @@ export default function PracticeHub() {
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            to="/practice/history"
-            className="inline-flex items-center gap-2 rounded-control border border-surface-paper-edge bg-surface-paper px-3.5 py-2 text-sm font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm transition-colors"
-          >
-            <Clock className="h-4 w-4" />
-            <span>Practice history</span>
-          </Link>
+          <Button intent="secondary" size="md" asChild>
+            <Link to="/practice/history">
+              <Clock className="icon-sm" />
+              <span>Practice history</span>
+            </Link>
+          </Button>
         </div>
       </section>
     </AppPage>

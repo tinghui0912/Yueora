@@ -1,7 +1,7 @@
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { Link, useParams, useLocation, useSearchParams } from 'react-router-dom';
 import {
-  ArrowLeft, Undo2, Redo2, Share2, MousePointer2, Music2, Trash2,
+  Undo2, Redo2, Share2, MousePointer2, Music2, Trash2,
   ZoomIn, ZoomOut, Play, ChevronLeft, ChevronRight, Check, Loader2, AlertCircle,
   Minus, Hash, Waves, Link2, Copy, Clipboard, ScanLine, X,
 } from 'lucide-react';
@@ -11,6 +11,8 @@ import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import EditorInspector from '@/components/editor/EditorInspector';
 import SharingDialog from '@/components/sharing/SharingDialog';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
+import BackLink from '@/components/patterns/BackLink';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 const tools = [
@@ -170,22 +172,24 @@ export default function Editor() {
       {/* Top bar */}
       <div className="flex items-center justify-between border-b border-line-subtle bg-surface-panel px-3 py-2">
         <div className="flex items-center gap-3">
-          <Link to={score._pending && importId ? `/imports/${importId}` : `/score/${scoreId}`} className="flex items-center gap-1.5 text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors">
-            <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline font-display text-ink-primary">{score.title}</span>
-          </Link>
+          <BackLink to={score._pending && importId ? `/imports/${importId}` : `/score/${scoreId}`} label={score.title} />
           {activeIssue && (
-            <span className="hidden items-center gap-1.5 rounded-control bg-gold/10 px-2.5 py-1 text-xs font-semibold text-gold sm:flex">
-              <AlertCircle className="h-3.5 w-3.5" /> Issue {issueIdx + 1} of {issues.length} · Measure {activeIssue.measure} · {activeIssue.type}
+            <span className="hidden items-center gap-1.5 rounded-control bg-gold/10 px-2.5 py-1 type-caption font-semibold text-gold sm:flex">
+              <AlertCircle className="icon-xs" /> Issue {issueIdx + 1} of {issues.length} · Measure {activeIssue.measure} · {activeIssue.type}
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2 text-sm text-ink-secondary">
+        <div className="flex items-center gap-1.5 type-body-small text-ink-secondary">
           <SaveIndicator state={saveState} onRetry={() => { setSaveState('saving'); clearTimeout(saveTimer.current); saveTimer.current = setTimeout(() => setSaveState('saved'), 900); }} onFail={() => setSaveState('failed')} />
-          <button onClick={undo} disabled={past.length === 0} className="flex h-8 w-8 items-center justify-center rounded-control hover:bg-surface-paper hover:text-ink-primary disabled:opacity-30 transition-colors" aria-label="Undo"><Undo2 className="h-4 w-4" /></button>
-          <button onClick={redo} disabled={future.length === 0} className="flex h-8 w-8 items-center justify-center rounded-control hover:bg-surface-paper hover:text-ink-primary disabled:opacity-30 transition-colors" aria-label="Redo"><Redo2 className="h-4 w-4" /></button>
-          <button onClick={copySelected} disabled={selectedIds.size === 0} className="flex h-8 w-8 items-center justify-center rounded-control hover:bg-surface-paper hover:text-ink-primary disabled:opacity-30 transition-colors" aria-label="Copy"><Copy className="h-4 w-4" /></button>
-          <button onClick={paste} disabled={clipboard.length === 0} className="flex h-8 w-8 items-center justify-center rounded-control hover:bg-surface-paper hover:text-ink-primary disabled:opacity-30 transition-colors" aria-label="Paste"><Clipboard className="h-4 w-4" /></button>
-          {!score._pending && <button onClick={() => setSharingOpen(true)} className="flex items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 py-1.5 text-xs font-medium text-ink-primary hover:bg-surface-paper-warm transition-colors"><Share2 className="h-3.5 w-3.5" /> Share</button>}
+          <IconButton icon={Undo2} size="sm" tone="quiet" label="Undo" onClick={undo} disabled={past.length === 0} />
+          <IconButton icon={Redo2} size="sm" tone="quiet" label="Redo" onClick={redo} disabled={future.length === 0} />
+          <IconButton icon={Copy} size="sm" tone="quiet" label="Copy" onClick={copySelected} disabled={selectedIds.size === 0} />
+          <IconButton icon={Clipboard} size="sm" tone="quiet" label="Paste" onClick={paste} disabled={clipboard.length === 0} />
+          {!score._pending && (
+            <Button intent="secondary" size="xs" onClick={() => setSharingOpen(true)}>
+              <Share2 className="icon-xs" /> Share
+            </Button>
+          )}
         </div>
       </div>
 

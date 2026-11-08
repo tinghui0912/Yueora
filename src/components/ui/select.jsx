@@ -14,14 +14,14 @@ const SelectTrigger = React.forwardRef(({ className, children, hasError = false,
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-10 w-full items-center justify-between whitespace-nowrap rounded-control border border-surface-paper-edge bg-surface-panel px-3.5 py-2 text-sm text-ink-primary shadow-xs ring-offset-background transition-colors placeholder:text-ink-tertiary focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+      "flex h-control-lg min-h-control-lg w-full items-center justify-between whitespace-nowrap rounded-control border border-surface-paper-edge bg-surface-panel px-3.5 py-2 type-body-small text-ink-primary shadow-xs ring-offset-background transition-colors placeholder:text-ink-tertiary focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
       hasError && "border-danger focus:border-danger focus:ring-danger/20",
       className
     )}
     {...props}>
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 text-ink-secondary opacity-70" />
+      <ChevronDown className="icon-sm text-ink-secondary opacity-70" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ))
@@ -114,7 +114,7 @@ const NativeSelect = React.forwardRef(({ className, hasError = false, children, 
     <select
       ref={ref}
       className={cn(
-        "flex h-10 w-full appearance-none rounded-control border border-surface-paper-edge bg-surface-panel px-3.5 py-2 pr-9 text-sm text-ink-primary shadow-xs transition-colors focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex h-control-lg min-h-control-lg w-full appearance-none rounded-control border border-surface-paper-edge bg-surface-panel px-3.5 py-2 pr-9 type-body-small text-ink-primary shadow-xs transition-colors focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:cursor-not-allowed disabled:opacity-50",
         hasError && "border-danger focus:border-danger focus:ring-danger/20",
         className
       )}
@@ -122,7 +122,7 @@ const NativeSelect = React.forwardRef(({ className, hasError = false, children, 
     >
       {children}
     </select>
-    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-secondary opacity-70" />
+    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 icon-sm text-ink-secondary opacity-70" />
   </div>
 ))
 NativeSelect.displayName = "NativeSelect"

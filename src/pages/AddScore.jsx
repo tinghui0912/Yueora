@@ -48,7 +48,7 @@ export default function AddScore() {
   const folders = usePrototypeStore((s) => s.folders);
 
   const [step, setStep] = useState(1);
-  const [source, setSource] = useState('pdf');
+  const [source, setSource] = useState(null);
   const [files, setFiles] = useState([{ id: 1, name: 'Page 1.pdf' }]);
   const [details, setDetails] = useState({ title: '', composer: '', instrument: 'Piano', tags: '', folder: '' });
   const [error, setError] = useState('');

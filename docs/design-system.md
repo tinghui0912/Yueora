@@ -32,17 +32,17 @@ All typography in application pages must use semantic typography roles. **Do not
 
 | Semantic Class | Target Role | Baseline Size | Line Height | Tracking | Font Family |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `.type-display` | Hero titles & brand headlines | `clamp(2rem, 4vw, 3rem)` | `1.15` | `-0.02em` | Newsreader |
-| `.type-experience-title` | Core musical space titles (Repertoire, Practice, Preserved Takes) | Mobile `32px`, Desktop `38px` | `1.15` | `-0.02em` | Newsreader |
-| `.type-page-title` | Application page headings | Mobile `28px`, Desktop `34px` | `1.2` | `-0.015em` | Newsreader |
-| `.type-section-title` | Section headings | Mobile `20px`, Desktop `22px` | `1.3` | `-0.01em` | Newsreader |
-| `.type-subsection` | Subsections & card titles | `16px` | `1.4` | Normal | Plus Jakarta Sans (600) |
-| `.type-body` | Primary editorial reading text | `16px` | `1.6` | Normal | Plus Jakarta Sans (400) |
-| `.type-body-small` | Secondary UI copy & descriptions | `14px` | `1.55` | Normal | Plus Jakarta Sans (400) |
-| `.type-label` | Form labels & navigation items | `14px` | `1.4` | Normal | Plus Jakarta Sans (500) |
-| `.type-caption` | Micro-labels, step badges & tags | `12px` | `1.4` | `0.06em` | Plus Jakarta Sans (600, uppercase) |
-| `.type-metadata` | Timestamps, counters & helper text | `13px` | `1.45` | Normal | Plus Jakarta Sans (400) |
-| `.type-metric` | Large reflective numbers & hours | Mobile `28px`, Desktop `32px` | `1.0` | Tabular | Newsreader |
+| `.type-display` | Hero titles & brand headlines | `clamp(2rem, 4vw, 3rem)` | `1.1` | `-0.02em` | Newsreader |
+| `.type-experience-title` | Core musical space titles (Repertoire, Practice Hub, Preserved Moments) | Mobile `32px` (`2rem`), Desktop `38px` (`2.375rem`) | `1.15` | `-0.02em` | Newsreader |
+| `.type-page-title` | Application page headings | Mobile `28px` (`1.75rem`), Desktop `34px` (`2.125rem`) | `1.2` | `-0.015em` | Newsreader |
+| `.type-section-title` | Major section headings | Mobile `20px` (`1.25rem`), Desktop `22px` (`1.375rem`) | `1.25–1.3` | `-0.01em` | Newsreader |
+| `.type-subsection` | Subsections & card titles | `16px` (`1rem`) | `1.4` | Normal | Plus Jakarta Sans (600) |
+| `.type-body` | Primary editorial reading text | `16px` (`1rem`) | `1.6` | Normal | Plus Jakarta Sans (400) |
+| `.type-body-small` | Secondary UI copy & descriptions | `14px` (`0.875rem`) | `1.55` | Normal | Plus Jakarta Sans (400) |
+| `.type-label` | Form labels & navigation items | `14px` (`0.875rem`) | `1.4` | Normal | Plus Jakarta Sans (500) |
+| `.type-caption` | Micro-labels, step badges & tags | `12px` (`0.75rem`) | `1.4` | `0.06em` | Plus Jakarta Sans (600, uppercase) |
+| `.type-metadata` | Timestamps, counters & helper text | `13px` (`0.8125rem`) | `1.45` | Normal | Plus Jakarta Sans (400) |
+| `.type-metric` | Large reflective numbers & hours | Mobile `28px` (`1.75rem`), Desktop `32px` (`2rem`) | `1.0` | Tabular | Newsreader |
 
 ### 2.2 Color Vocabulary (WCAG 2.2 AA)
 
@@ -64,23 +64,23 @@ All typography in application pages must use semantic typography roles. **Do not
   - `text-danger` / `bg-danger`: Non-punitive alert red.
   - Practice states: `following`, `waiting`, `resyncing`, `current`.
 
-### 2.3 Canonical Control Heights & Icon Sizing
+### 2.3 Canonical Control Scale & Icon Sizing
 
-One visual decision has one owner. All interactive controls and icon elements consume these canonical dimensions:
+One visual decision has one owner. All interactive controls, inputs, and icon elements consume these exact dimensions:
 
-| Size Key | Control Height | CSS Variable / Utility | Icon Size | Utility Class | Typical Usage |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `xs` | `28px` (`1.75rem`) | `h-control-xs` | `14px` (`0.875rem`) | `icon-xs` | Compact filter chips, measure steppers, miniature buttons |
-| `sm` | `32px` (`2.0rem`) | `h-control-sm` | `16px` (`1.0rem`) | `icon-sm` | Compact buttons, secondary actions, avatar triggers |
-| `md` | `36px` (`2.25rem`) | `h-control-md` | `18px` (`1.125rem`) | `icon-md` | Standard buttons, search trigger, topbar action utilities |
-| `lg` | `40px` (`2.5rem`) | `h-control-lg` | `20px` (`1.25rem`) | `icon-lg` | Standard text inputs, native selects, primary modal CTAs |
-| `xl` | `44px` (`2.75rem`) | `h-control-xl` | `24px` (`1.5rem`) | `icon-xl` | Large hero inputs, tall standalone touch buttons |
+| Size Key | Control Dimension | CSS Height Variable | Height & Min-Height Utilities | Width & Min-Width Utilities | Icon Size | Icon Utility |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `xs` | `28px` (`1.75rem`) | `--control-height-xs` | `.h-control-xs` / `.min-h-control-xs` | `.w-control-xs` / `.min-w-control-xs` | `14px` (`0.875rem`) | `.icon-xs` |
+| `sm` | `32px` (`2.0rem`) | `--control-height-sm` | `.h-control-sm` / `.min-h-control-sm` | `.w-control-sm` / `.min-w-control-sm` | `16px` (`1.0rem`) | `.icon-sm` |
+| `md` | `36px` (`2.25rem`) | `--control-height-md` | `.h-control-md` / `.min-h-control-md` | `.w-control-md` / `.min-w-control-md` | `18px` (`1.125rem`) | `.icon-md` |
+| `lg` | `40px` (`2.5rem`) | `--control-height-lg` | `.h-control-lg` / `.min-h-control-lg` | `.w-control-lg` / `.min-w-control-lg` | `20px` (`1.25rem`) | `.icon-lg` |
+| `xl` | `44px` (`2.75rem`) | `--control-height-xl` | `.h-control-xl` / `.min-h-control-xl` | `.w-control-xl` / `.min-w-control-xl` | `24px` (`1.5rem`) | `.icon-xl` |
 
 ---
 
 ## 3. Page Layout & Container System
 
-Pages must use `<AppPage size="...">` rather than arbitrary `max-w-*` strings:
+Pages compose using `<AppPage size="...">` rather than arbitrary `max-w-*` strings:
 
 | Size | Max Width | Semantic Purpose | Example Views |
 | :--- | :--- | :--- | :--- |
@@ -95,6 +95,16 @@ Pages must use `<AppPage size="...">` rather than arbitrary `max-w-*` strings:
 ## 4. Component Primitives Guide
 
 ### 4.1 Button
+
+All variants own their typography and consume canonical control/icon tokens:
+
+| Variant Key | Height Token | Typography Token | Icon Token | Usage |
+| :--- | :--- | :--- | :--- | :--- |
+| `xs` | `h-control-xs` (`28px`) | `.type-caption` | `icon-xs` (`14px`) | Miniature inline action chips |
+| `sm` | `h-control-sm` (`32px`) | `.type-body-small font-medium` | `icon-sm` (`16px`) | Compact secondary actions |
+| `md` / `default` | `h-control-md` (`36px`) | `.type-body-small font-medium` | `icon-sm` (`16px`) | Standard buttons, dialog actions |
+| `lg` | `h-control-xl` (`44px`) | `.type-body-small font-semibold`| `icon-md` (`18px`) | Hero CTAs, large stand buttons |
+| `icon` | `h-control-md w-control-md` (`36×36px`) | — | `icon-sm` (`16px`) | Square icon trigger |
 
 ```jsx
 import { Button } from '@/components/ui/button';
@@ -114,6 +124,15 @@ import { Button } from '@/components/ui/button';
 
 ### 4.2 IconButton
 
+Owns touch target dimensions and child icon scaling:
+
+| Variant Key | Dimensions | Icon Token |
+| :--- | :--- | :--- |
+| `xs` | `h-control-xs w-control-xs` (`28×28px`) | `icon-xs` (`14px`) |
+| `sm` | `h-control-sm w-control-sm` (`32×32px`) | `icon-sm` (`16px`) |
+| `md` | `h-control-md w-control-md` (`36×36px`) | `icon-md` (`18px`) |
+| `lg` | `h-control-lg w-control-lg` (`40×40px`) | `icon-lg` (`20px`) |
+
 ```jsx
 import { IconButton } from '@/components/ui/icon-button';
 import { Bell, Heart, X } from 'lucide-react';
@@ -131,7 +150,21 @@ import BackLink from '@/components/patterns/BackLink';
 <BackLink to="/library" label="Back to Repertoire" />
 ```
 
-### 4.4 Form Field & Input
+### 4.4 SearchTrigger & Topbar Specifications
+
+- **Topbar Height**: `56px` (`h-14`)
+- **SearchTrigger**:
+  - Height: `h-control-md min-h-control-md` (`36px`)
+  - Width: `w-52` (`208px` laptop), `xl:w-56` (`224px` desktop), `2xl:w-60` (`240px` very wide desktop)
+  - Icon: `icon-md` (`18px`)
+  - Shortcut badge: `.type-caption`
+- **Notification Utility**: `IconButton size="md"` (`36×36px` target, `icon-md` / `18px`)
+- **Help Utility**: `IconButton size="md"` (`36×36px` target, `icon-md` / `18px`)
+- **Account Trigger**: `h-control-md` (`36px` touch height), `32×32px` avatar, `icon-sm` (`16px`) ChevronDown
+
+### 4.5 Form Field, Input & Select
+
+Inputs and Selects consume `h-control-lg` (`40px`) and `.type-body-small`:
 
 ```jsx
 import { Field } from '@/components/ui/field';
@@ -156,7 +189,10 @@ import { NativeSelect } from '@/components/ui/select';
 </Field>
 ```
 
-### 4.5 Flow Components: Stepper & ChoiceCard
+### 4.6 Flow Components: Stepper & ChoiceCard
+
+- `<Stepper>`: Step completion checkmark consumes `icon-xs` (`14px`), label consumes `.type-label`.
+- `<ChoiceCard>`: Icon badge container consumes `h-control-md w-control-md` (`36×36px`) with `icon-md` (`18px`).
 
 ```jsx
 import { Stepper } from '@/components/patterns/Stepper';
@@ -178,7 +214,7 @@ import { Upload } from 'lucide-react';
 />
 ```
 
-### 4.6 Surfaces: Surface & MusicPaper
+### 4.7 Surfaces: Surface & MusicPaper
 
 - Use `<MusicPaper>` when representing an **actual physical or living musical score**.
 - Use `<Surface tone="panel" elevation="paper">` for general application containers, dialogs, summaries, and cards.
@@ -186,31 +222,22 @@ import { Upload } from 'lucide-react';
 
 ---
 
-## 5. Responsive & Tablet Rules
-
-1. **Tablet on Piano Stand (768px–820px):**
-   - Must receive full score width with compact bottom navigation.
-   - The 220px desktop sidebar mounts only at 1024px+ (`lg:`).
-2. **Repertoire Grid:**
-   - Always use `<RepertoireGrid>` to ensure score cards never become narrow tiles at 1024px or 1280px.
-3. **Touch Targets:**
-   - Interactive targets must never be smaller than 28x28px (preferably 36x36px).
-
----
-
-## 6. Verification & Automated Guardrails
+## 5. Verification & Automated Guardrails
 
 To verify Design System compliance:
 
 ```bash
-# Automated Design System linter & token enforcement
+# Automated Design System linter & token integrity validator
 npm run check:design-system
 
-# Codebase linter
+# Codebase ESLint verification
 npm run lint
+
+# TypeScript / JSDoc typecheck
+npm run typecheck
 
 # Production build check
 npm run build
 ```
 
-The Design System interactive preview is accessible in development mode at `/design-system` (gated behind `import.meta.env.DEV`).
+The Design System interactive preview is accessible in development mode at `/design-system` (strictly gated behind `import.meta.env.DEV`).

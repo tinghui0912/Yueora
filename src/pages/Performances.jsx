@@ -236,7 +236,7 @@ export default function Performances() {
             }
             primaryAction={
               tab === 'mine'
-                ? <Button asChild size="sm" className="bg-brand text-white hover:bg-brand-hover"><Link to="/practice">Choose a piece to play</Link></Button>
+                ? <Button intent="primary" size="md" asChild><Link to="/practice">Choose a piece to play</Link></Button>
                 : undefined
             }
           />

@@ -16,6 +16,7 @@ import VirtualKeyboard from '@/components/practice/VirtualKeyboard';
 import PracticeSettingsDialog from '@/components/practice/PracticeSettingsDialog';
 import MusicPaper from '@/components/patterns/MusicPaper';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -404,13 +405,13 @@ export default function PracticeSession() {
             Bar {activeMeasure}
           </span>
 
-          <button
+          <IconButton
+            icon={Settings2}
+            size="sm"
+            tone="outline"
+            label="Practice settings"
             onClick={() => setSettingsOpen(true)}
-            className="rounded-control border border-surface-paper-edge p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-ink-primary transition-colors"
-            aria-label="Practice settings"
-          >
-            <Settings2 className="h-3.5 w-3.5" />
-          </button>
+          />
         </div>
       </header>
 
@@ -489,22 +490,22 @@ export default function PracticeSession() {
 
               {!selecting && phase !== 'running' && (
                 <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => setVisibleMeasureStart((w) => Math.max(1, w - 4))}
+                  <IconButton
+                    icon={ChevronLeft}
+                    size="xs"
+                    tone="outline"
+                    label="Browse previous measures"
                     disabled={visibleMeasureStart <= 1}
-                    className="flex h-7 w-7 items-center justify-center rounded border border-surface-paper-edge hover:bg-surface-paper disabled:opacity-30 transition-colors"
-                    aria-label="Browse previous measures"
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    onClick={() => setVisibleMeasureStart((w) => Math.min(measureWindowStart(totalMeasures), w + 4))}
+                    onClick={() => setVisibleMeasureStart((w) => Math.max(1, w - 4))}
+                  />
+                  <IconButton
+                    icon={ChevronRight}
+                    size="xs"
+                    tone="outline"
+                    label="Browse next measures"
                     disabled={visibleMeasureStart + 4 > totalMeasures}
-                    className="flex h-7 w-7 items-center justify-center rounded border border-surface-paper-edge hover:bg-surface-paper disabled:opacity-30 transition-colors"
-                    aria-label="Browse next measures"
-                  >
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </button>
+                    onClick={() => setVisibleMeasureStart((w) => Math.min(measureWindowStart(totalMeasures), w + 4))}
+                  />
                 </div>
               )}
             </div>
@@ -561,42 +562,42 @@ export default function PracticeSession() {
           {/* Primary Transport Play / Pause */}
           <div className="flex items-center gap-2">
             {phase === 'ready' ? (
-              <button
-                type="button"
+              <Button
+                intent="primary"
+                size="md"
                 onClick={startSession}
-                className="flex items-center gap-2 rounded-control bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98]"
               >
-                <Play className="h-4 w-4 fill-current" />
+                <Play className="icon-sm fill-current" />
                 <span>Start</span>
-              </button>
+              </Button>
             ) : mode === 'performance' ? (
-              <button
-                type="button"
+              <Button
+                intent="primary"
+                size="md"
                 onClick={() => setPhase((p) => (p === 'running' ? 'paused' : 'running'))}
                 disabled={phase === 'countin'}
-                className="flex items-center gap-2 rounded-control bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98] disabled:opacity-40"
               >
                 {phase === 'running' ? (
                   <>
-                    <Pause className="h-4 w-4 fill-current" />
+                    <Pause className="icon-sm fill-current" />
                     <span>Pause</span>
                   </>
                 ) : (
                   <>
-                    <Play className="h-4 w-4 fill-current" />
+                    <Play className="icon-sm fill-current" />
                     <span>Resume</span>
                   </>
                 )}
-              </button>
+              </Button>
             ) : (
-              <button
-                type="button"
+              <Button
+                intent="secondary"
+                size="md"
                 onClick={() => setPhase((p) => (p === 'running' ? 'paused' : 'running'))}
-                className="flex items-center gap-2 rounded-control border border-surface-paper-edge bg-surface-paper px-4 py-2.5 text-sm font-semibold text-ink-primary hover:bg-surface-paper-warm transition-colors"
               >
-                {phase === 'running' ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                {phase === 'running' ? <Pause className="icon-sm" /> : <Play className="icon-sm" />}
                 <span>{phase === 'running' ? 'Pause' : 'Resume'}</span>
-              </button>
+              </Button>
             )}
 
             <span className="text-sm tabular-nums font-mono text-ink-secondary ml-1.5">

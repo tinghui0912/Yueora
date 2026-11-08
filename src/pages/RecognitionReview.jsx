@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Check, Pencil, AlertTriangle, ChevronUp, ChevronDown, ScanLine } from 'lucide-react';
+import { Check, Pencil, AlertTriangle, ChevronUp, ChevronDown, ScanLine } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { generateNotes } from '@/lib/mockData';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import MockScanPage from '@/components/visuals/MockScanPage';
 import { Button } from '@/components/ui/button';
+import BackLink from '@/components/patterns/BackLink';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import StateMessage from '@/components/patterns/StateMessage';
 import { useToast } from '@/components/ui/use-toast';
@@ -53,25 +54,23 @@ export default function RecognitionReview() {
   return (
     <div className="flex h-dvh flex-col">
       {/* Top bar */}
-      <div className="flex items-center justify-between border-b border-line-subtle px-4 py-2.5">
-        <Link to={`/imports/${importId}`} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" /> {imp.title}
-        </Link>
+      <div className="flex items-center justify-between border-b border-line-subtle px-4 py-2.5 bg-surface-panel">
+        <BackLink to={`/imports/${importId}`} label={imp.title} />
         <div className="flex items-center gap-3">
           {active && (
             <div className="hidden items-center gap-1 sm:flex">
-              <button onClick={goPrev} disabled={issues.findIndex((i) => i.id === active.id) === 0} className="rounded p-1 text-muted-foreground hover:bg-accent disabled:opacity-30" aria-label="Previous issue"><ChevronUp className="h-4 w-4" /></button>
-              <button onClick={goNext} disabled={issues.findIndex((i) => i.id === active.id) === issues.length - 1} className="rounded p-1 text-muted-foreground hover:bg-accent disabled:opacity-30" aria-label="Next issue"><ChevronDown className="h-4 w-4" /></button>
+              <button onClick={goPrev} disabled={issues.findIndex((i) => i.id === active.id) === 0} className="rounded-control p-1 text-ink-secondary hover:bg-surface-paper disabled:opacity-30" aria-label="Previous issue"><ChevronUp className="icon-sm" /></button>
+              <button onClick={goNext} disabled={issues.findIndex((i) => i.id === active.id) === issues.length - 1} className="rounded-control p-1 text-ink-secondary hover:bg-surface-paper disabled:opacity-30" aria-label="Next issue"><ChevronDown className="icon-sm" /></button>
             </div>
           )}
-          <span className="text-sm text-muted-foreground">Recognition review</span>
+          <span className="type-body-small text-ink-secondary">Recognition review</span>
         </div>
       </div>
 
       {/* Mobile view toggle */}
-      <div className="flex border-b border-line-subtle md:hidden">
-        <button onClick={() => setMobileView('original')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 text-sm font-medium ${mobileView === 'original' ? 'border-b-2 border-brand text-brand' : 'text-muted-foreground'}`}><ScanLine className="h-4 w-4" /> Original</button>
-        <button onClick={() => setMobileView('recognized')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 text-sm font-medium ${mobileView === 'recognized' ? 'border-b-2 border-brand text-brand' : 'text-muted-foreground'}`}><Pencil className="h-4 w-4" /> Recognized</button>
+      <div className="flex border-b border-line-subtle md:hidden bg-surface-panel">
+        <button onClick={() => setMobileView('original')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 type-body-small font-medium ${mobileView === 'original' ? 'border-b-2 border-brand text-brand' : 'text-ink-secondary'}`}><ScanLine className="icon-sm" /> Original</button>
+        <button onClick={() => setMobileView('recognized')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 type-body-small font-medium ${mobileView === 'recognized' ? 'border-b-2 border-brand text-brand' : 'text-ink-secondary'}`}><Pencil className="icon-sm" /> Recognized</button>
       </div>
 
       <div className="flex min-h-0 flex-1">
@@ -151,22 +150,22 @@ export default function RecognitionReview() {
       </Sheet>
 
       {/* Bottom actions — desktop */}
-      <div className="hidden items-center justify-between border-t border-line-subtle px-4 py-3 md:flex">
-        <span className="text-sm text-muted-foreground">{reviewed} of {issues.length} reviewed</span>
+      <div className="hidden items-center justify-between border-t border-line-subtle px-4 py-3 md:flex bg-surface-panel">
+        <span className="type-body-small text-ink-secondary">{reviewed} of {issues.length} reviewed</span>
         <div className="flex gap-2">
           <Link to={`/score/${imp.scoreId}/edit`} state={{ importId, activeIssueId: active?.id }}>
-            <Button variant="outline"><Pencil className="mr-1.5 h-4 w-4" /> Fix in editor</Button>
+            <Button intent="secondary"><Pencil className="mr-1.5 icon-sm" /> Fix in editor</Button>
           </Link>
-          <Button onClick={handleLooksGood}><Check className="mr-1.5 h-4 w-4" /> Looks good</Button>
+          <Button intent="primary" onClick={handleLooksGood}><Check className="mr-1.5 icon-sm" /> Looks good</Button>
         </div>
       </div>
 
       {/* Mobile bottom actions */}
-      <div className="flex items-center justify-between border-t border-line-subtle px-4 py-3 md:hidden" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
-        <span className="text-sm text-muted-foreground">{reviewed}/{issues.length}</span>
+      <div className="flex items-center justify-between border-t border-line-subtle px-4 py-3 md:hidden bg-surface-panel" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
+        <span className="type-body-small text-ink-secondary">{reviewed}/{issues.length}</span>
         <div className="flex gap-2">
-          <Link to={`/score/${imp.scoreId}/edit`} state={{ importId, activeIssueId: active?.id }}><Button variant="outline" size="sm"><Pencil className="mr-1 h-3.5 w-3.5" /> Editor</Button></Link>
-          <Button size="sm" onClick={handleLooksGood}><Check className="mr-1 h-3.5 w-3.5" /> Looks good</Button>
+          <Link to={`/score/${imp.scoreId}/edit`} state={{ importId, activeIssueId: active?.id }}><Button intent="secondary" size="sm"><Pencil className="mr-1 icon-xs" /> Editor</Button></Link>
+          <Button intent="primary" size="sm" onClick={handleLooksGood}><Check className="mr-1 icon-xs" /> Looks good</Button>
         </div>
       </div>
     </div>
@@ -178,27 +177,27 @@ function IssuesPanel({ issues, activeIssue, setActiveIssue, active, onMarkFixed,
     <>
       <p className="type-caption text-ink-tertiary">Issues to review</p>
       <div className="mt-3 space-y-2">
-        {issues.length === 0 && <p className="text-sm text-muted-foreground">No issues detected.</p>}
+        {issues.length === 0 && <p className="type-body-small text-ink-secondary">No issues detected.</p>}
         {issues.map((iss) => (
           <button
             key={iss.id}
             onClick={() => setActiveIssue(iss.id)}
-            className={`w-full rounded-md border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-accent/40' : 'border-line-subtle hover:bg-accent/40'} ${iss.resolved ? 'opacity-50' : ''}`}
+            className={`w-full rounded-container border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-brand/5 shadow-xs' : 'border-line-subtle bg-surface-panel hover:bg-surface-paper'} ${iss.resolved ? 'opacity-50' : ''}`}
           >
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-sm font-medium"><AlertTriangle className="h-3.5 w-3.5 text-warning" /> Measure {iss.measure}</span>
-              {iss.resolved && <Check className="h-3.5 w-3.5 text-success" />}
+              <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="icon-xs text-warning" /> Measure {iss.measure}</span>
+              {iss.resolved && <Check className="icon-xs text-success" />}
             </div>
-            <p className="mt-0.5 text-xs text-muted-foreground">{iss.type}</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">{iss.detail}</p>
-            <p className="mt-1 text-xs text-muted-foreground">Confidence: {iss.confidence}</p>
+            <p className="mt-0.5 type-metadata text-ink-secondary">{iss.type}</p>
+            <p className="mt-0.5 type-metadata text-ink-secondary">{iss.detail}</p>
+            <p className="mt-1 type-metadata text-ink-tertiary">Confidence: {iss.confidence}</p>
           </button>
         ))}
       </div>
       {active && (
-        <div className="mt-4 border-t border-line-subtle pt-3">
-          <Button variant="outline" size="sm" className="w-full" onClick={onMarkFixed}>{active.resolved ? 'Mark as unresolved' : 'Mark as fixed'}</Button>
-          <Button variant="outline" size="sm" className="mt-2 w-full" onClick={onFixInEditor}><Pencil className="mr-1.5 h-3.5 w-3.5" /> Fix in editor</Button>
+        <div className="mt-4 border-t border-line-subtle pt-3 space-y-2">
+          <Button intent="secondary" size="sm" className="w-full" onClick={onMarkFixed}>{active.resolved ? 'Mark as unresolved' : 'Mark as fixed'}</Button>
+          <Button intent="secondary" size="sm" className="w-full" onClick={onFixInEditor}><Pencil className="mr-1.5 icon-xs" /> Fix in editor</Button>
         </div>
       )}
     </>

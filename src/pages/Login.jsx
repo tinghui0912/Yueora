@@ -77,13 +77,14 @@ export default function Login() {
         <p className="mt-1 text-xs text-ink-secondary leading-relaxed">
           本地未连接云端 Base44 账户时，可直接一键免登录进入完整曲库，体验本次重构的乐谱纸张质感、演奏工作区与记忆留存。
         </p>
-        <button
-          type="button"
+        <Button
+          intent="primary"
+          size="md"
+          className="mt-3 w-full"
           onClick={handleDemoLogin}
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-control bg-brand px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-brand-hover active:scale-[0.99]"
         >
           <span>进入本地演示曲库 (直接预览) →</span>
-        </button>
+        </Button>
       </div>
 
       <Button

@@ -37,7 +37,7 @@ export function Stepper({ steps = [], current = 1, onStepClick, className }) {
                     isUpcoming && 'border border-line-subtle bg-surface-canvas/80 text-ink-tertiary'
                   )}
                 >
-                  {isCompleted ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : stepNum}
+                  {isCompleted ? <Check className="icon-xs stroke-[2.5]" aria-hidden="true" /> : stepNum}
                 </span>
 
                 {/* Step Label */}
