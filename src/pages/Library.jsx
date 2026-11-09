@@ -388,8 +388,11 @@ export default function Library() {
 
           {/* Multi-select bar */}
           {selected.length > 0 && !isTrash && (
-            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-control border border-line-strong bg-brand-soft px-3 py-2">
-              <span className="text-sm font-semibold text-brand-soft-foreground">{selected.length} piece{selected.length > 1 ? 's' : ''} selected</span>
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-control border border-line-subtle bg-neutral-muted px-3 py-2 shadow-xs">
+              <span className="text-sm font-semibold text-ink-primary">
+                <span className="text-brand font-bold mr-1.5">●</span>
+                {selected.length} piece{selected.length > 1 ? 's' : ''} selected
+              </span>
               <div className="ml-auto flex flex-wrap items-center gap-1.5">
                 <Button
                   intent="secondary"
@@ -484,7 +487,7 @@ export default function Library() {
                 <div
                   key={s.id}
                   className={`flex items-center gap-4 p-3.5 transition-colors hover:bg-surface-paper-warm ${
-                    selected.includes(s.id) ? 'bg-brand-soft' : ''
+                    selected.includes(s.id) ? 'bg-neutral-muted/70' : ''
                   }`}
                 >
                   <button

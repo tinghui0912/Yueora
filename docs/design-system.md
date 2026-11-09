@@ -73,7 +73,12 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
 - **Brand & Active States:**
   - `bg-brand` (`hsl(148 36% 27%)`): Deep forest green for primary CTA buttons, strong emphasis, and checkmark indicators. Brand is an accent, never a full-width background system.
   - `bg-brand-hover` (`hsl(148 36% 22%)`): Darker forest green for primary CTA hover.
-  - `bg-brand-soft` (`hsl(148 36% 93%)`): **Selected CONTENT state only.** Pale green is strictly reserved for selected content objects (selected ChoiceCard, selected option, active measure looping range, selected table row). It is **BANNED** on navigation active items, ordinary hovers, buttons/actions, status/verification icons, popular badges, chart bars, and decorative icon circles.
+  - `bg-brand-soft` (`hsl(148 36% 93%)`): **Compact Selected Content State Only.** Pale green is strictly reserved for compact selected content items (filter badges, small tags, compact ChoiceCard badges) where the small surface area keeps it visually subordinate.
+    - **Large Selection Contract:** Wide horizontal rows, large selectable options (e.g. Practice Setup option rows), and full-width list items are **banned** from `bg-brand-soft`. They must use neutral selected surface (`bg-neutral-hover` or `bg-surface-panel`) paired with a brand indicator (`border-brand`, green radio dot, or `text-brand` checkmark).
+    - **Maximum 2 Brand Signals per selection state:** Never stack green background + green border + green text + green icon. Selection should be understood, not painted.
+    - **Drag Targets:** Dragging state is not selection; use `border-brand bg-surface-canvas text-brand`, never `bg-brand-soft`.
+    - **Control Toggles:** Loop/toggle buttons use `border-brand bg-neutral-muted text-ink-primary shadow-xs` with `text-brand` icon, not `bg-brand-soft`.
+    - It remains **BANNED** on navigation active items, ordinary hovers, buttons/actions, status/verification icons, popular badges, chart bars, and decorative icon circles.
   - `text-brand-soft-foreground` (`hsl(148 36% 27%)`): Contrast foreground text on pale green surfaces.
   - `bg-brand-wash` (`hsl(148 24% 96%)`): **Featured brand surface for contained modules.** Used for Priority 1 re-engagement ("Pick up where you left off"), returning-user recommendations, and contained highlight modules. NEVER used as a full-width page section background.
   - `border-brand-wash-border` (`hsl(148 26% 88%)`): Boundary for featured brand surfaces.

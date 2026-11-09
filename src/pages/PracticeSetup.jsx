@@ -197,44 +197,52 @@ export default function PracticeSetup() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-6 md:px-8 md:py-10">
+    <div className="mx-auto max-w-3xl px-4 py-6 md:px-8 md:py-8">
       <Link to={`/score/${scoreId}`} className="flex items-center gap-1.5 type-body-small text-ink-secondary hover:text-ink-primary">
         <ArrowLeft className="h-4 w-4" /> {score.title}
       </Link>
 
-      <h1 className="mt-4 type-page-title text-ink-primary">Practice setup</h1>
-      <p className="mt-1.5 type-body-small text-ink-secondary">
+      <h1 className="mt-3 type-page-title text-ink-primary">Practice setup</h1>
+      <p className="mt-1 type-body-small text-ink-secondary">
         Yueora gets the technical parts ready first, so pressing Start only means the music begins.
       </p>
 
-      <section className="mt-7">
-        <h2 className="type-caption text-ink-tertiary">Mode</h2>
+      <section className="mt-6">
+        <h2 className="type-caption uppercase tracking-wider text-ink-tertiary">1. Practice Mode</h2>
         <OptionGroup ariaLabel="Practice mode" value={mode} onChange={setMode} options={MODES} />
       </section>
 
-      <section className="mt-7">
-        <h2 className="type-caption text-ink-tertiary">Input</h2>
-        <p className="mt-1 type-body-small text-ink-secondary">
-          {mode === 'follow' ? 'How Yueora listens to your playing.' : 'Optional — used only for real-time feedback.'}
-        </p>
+      <section className="mt-6">
+        <div className="flex items-baseline justify-between">
+          <h2 className="type-caption uppercase tracking-wider text-ink-tertiary">2. Audio &amp; Note Input</h2>
+          <span className="type-metadata text-ink-secondary">
+            {mode === 'follow' ? 'How Yueora follows you' : 'Optional real-time feedback'}
+          </span>
+        </div>
         <OptionGroup ariaLabel="Input source" value={input} onChange={setInput} options={inputOptions} />
       </section>
 
       {mode === 'performance' && (
-        <section className="mt-7">
-          <h2 className="type-caption text-ink-tertiary">Recording</h2>
-          <p className="mt-1 type-body-small text-ink-secondary">Keep a recording of this performance.</p>
+        <section className="mt-6">
+          <div className="flex items-baseline justify-between">
+            <h2 className="type-caption uppercase tracking-wider text-ink-tertiary">3. Performance Recording</h2>
+            <span className="type-metadata text-ink-tertiary">Private by default</span>
+          </div>
           <OptionGroup ariaLabel="Recording" value={recording} onChange={setRecording} options={RECORDINGS} />
-          <p className="mt-2 type-metadata text-ink-tertiary">
-            Recording is optional. Nothing is uploaded unless you choose to save it.
-          </p>
         </section>
       )}
 
-      <section className="mt-8 border-t border-line-subtle pt-5">
-        <h2 className="type-caption text-ink-tertiary">Ready to play</h2>
+      <section className="mt-6 border-t border-line-subtle pt-5">
+        <div className="flex items-baseline justify-between">
+          <h2 className="type-caption uppercase tracking-wider text-ink-tertiary">
+            {mode === 'performance' ? '4. Ready to play' : '3. Ready to play'}
+          </h2>
+          <span className="type-metadata font-medium text-ink-secondary">
+            {allReady ? 'Everything is ready' : 'Preparing environment…'}
+          </span>
+        </div>
 
-        <div className="mt-1 divide-y divide-line-subtle">
+        <div className="mt-2 divide-y divide-line-subtle">
           {needsMidi && (
             <ReadinessRow
               label="MIDI keyboard"
@@ -253,10 +261,17 @@ export default function PracticeSetup() {
                 )
               }
             >
-              <div className="flex flex-wrap gap-3">
-                <button type="button" className={demoBtn} onClick={() => setMidiStatus('unsupported')}>Demo: unsupported</button>
-                <button type="button" className={demoBtn} onClick={() => setMidiStatus('disconnected')}>Demo: disconnect</button>
-              </div>
+              {import.meta.env.DEV && (
+                <details className="mt-2 text-xs text-ink-tertiary">
+                  <summary className="cursor-pointer select-none font-medium hover:text-ink-secondary">
+                    Developer simulation ▸
+                  </summary>
+                  <div className="mt-2 flex flex-wrap gap-3 border-t border-line-subtle pt-2">
+                    <button type="button" className={demoBtn} onClick={() => setMidiStatus('unsupported')}>Demo: unsupported</button>
+                    <button type="button" className={demoBtn} onClick={() => setMidiStatus('disconnected')}>Demo: disconnect</button>
+                  </div>
+                </details>
+              )}
             </ReadinessRow>
           )}
 
@@ -278,11 +293,18 @@ export default function PracticeSetup() {
                 )
               }
             >
-              <div className="flex flex-wrap gap-3">
-                <button type="button" className={demoBtn} onClick={() => setMicStatus('no-input')}>Demo: no input</button>
-                <button type="button" className={demoBtn} onClick={() => setMicStatus('denied')}>Demo: deny permission</button>
-                <button type="button" className={demoBtn} onClick={() => setMicStatus('unavailable')}>Demo: unavailable</button>
-              </div>
+              {import.meta.env.DEV && (
+                <details className="mt-2 text-xs text-ink-tertiary">
+                  <summary className="cursor-pointer select-none font-medium hover:text-ink-secondary">
+                    Developer simulation ▸
+                  </summary>
+                  <div className="mt-2 flex flex-wrap gap-3 border-t border-line-subtle pt-2">
+                    <button type="button" className={demoBtn} onClick={() => setMicStatus('no-input')}>Demo: no input</button>
+                    <button type="button" className={demoBtn} onClick={() => setMicStatus('denied')}>Demo: deny permission</button>
+                    <button type="button" className={demoBtn} onClick={() => setMicStatus('unavailable')}>Demo: unavailable</button>
+                  </div>
+                </details>
+              )}
             </ReadinessRow>
           )}
 
@@ -307,9 +329,11 @@ export default function PracticeSetup() {
                 status={modelStatus === 'ready' ? 'ready' : 'progress'}
                 statusText={modelStatus === 'ready' ? 'Ready' : 'Preparing'}
               />
-              <p className="py-2 type-metadata text-ink-tertiary">
-                Prototype: the recognition model is simulated here — nothing is actually downloaded to this device.
-              </p>
+              {import.meta.env.DEV && (
+                <p className="py-1 type-metadata text-ink-tertiary">
+                  Prototype: the recognition model is simulated here — nothing is actually downloaded to this device.
+                </p>
+              )}
             </>
           )}
 
@@ -335,10 +359,17 @@ export default function PracticeSetup() {
                 )
               }
             >
-              <div className="flex flex-wrap items-center gap-3">
-                <button type="button" className={demoBtn} onClick={() => setCameraStatus('denied')}>Demo: deny camera</button>
-                <button type="button" className={demoBtn} onClick={() => setCameraStatus('unavailable')}>Demo: unavailable</button>
-              </div>
+              {import.meta.env.DEV && (
+                <details className="mt-2 text-xs text-ink-tertiary">
+                  <summary className="cursor-pointer select-none font-medium hover:text-ink-secondary">
+                    Developer simulation ▸
+                  </summary>
+                  <div className="mt-2 flex flex-wrap items-center gap-3 border-t border-line-subtle pt-2">
+                    <button type="button" className={demoBtn} onClick={() => setCameraStatus('denied')}>Demo: deny camera</button>
+                    <button type="button" className={demoBtn} onClick={() => setCameraStatus('unavailable')}>Demo: unavailable</button>
+                  </div>
+                </details>
+              )}
               {cameraStatus === 'ready' && (
                 <div className="mt-2 flex items-center gap-3">
                   <video
@@ -355,21 +386,27 @@ export default function PracticeSetup() {
             </ReadinessRow>
           )}
 
-          <ReadinessRow label="Score" status="ready" statusText="Ready" />
+          <ReadinessRow label="Score sheet" status="ready" statusText="Ready" />
         </div>
 
-        <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-line-subtle pt-4">
           <p className="type-body-small text-ink-secondary">
-            {allReady ? 'Everything is ready.' : 'Yueora is getting things ready.'}
+            {allReady ? 'Everything required is ready to go.' : 'Awaiting required device permissions…'}
           </p>
-          <Button onClick={start} disabled={!allReady} className="sm:min-w-[180px]">
-            {preparing && !allReady ? 'Preparing…' : 'Continue to practice'}
+          <Button
+            intent="primary"
+            size="lg"
+            onClick={start}
+            disabled={!allReady}
+            className="w-full sm:w-auto sm:min-w-[200px] shadow-sm"
+          >
+            {preparing && !allReady ? 'Preparing…' : 'Start practice'}
           </Button>
         </div>
       </section>
 
       {recording === 'video' && mode === 'performance' && (
-        <p className="mt-6 flex items-center gap-2 type-metadata text-ink-tertiary">
+        <p className="mt-5 flex items-center gap-2 type-metadata text-ink-tertiary">
           <Video className="h-3.5 w-3.5" aria-hidden="true" />
           Video keeps both the camera and the microphone. You can hide your self-view while you play.
         </p>

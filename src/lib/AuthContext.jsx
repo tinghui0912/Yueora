@@ -39,7 +39,10 @@ export const AuthProvider = ({ children }) => {
 
   const checkUserAuth = useCallback(async () => {
     // If local demo mode is active
-    if (typeof window !== 'undefined' && localStorage.getItem('yueora_demo_auth') === 'true') {
+    if (typeof window !== 'undefined' && (localStorage.getItem('yueora_demo_auth') === 'true' || new URLSearchParams(window.location.search).get('demo') === 'true')) {
+      try {
+        localStorage.setItem('yueora_demo_auth', 'true');
+      } catch (_) {}
       setUser(DEMO_USER);
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
@@ -71,7 +74,10 @@ export const AuthProvider = ({ children }) => {
 
   const checkAppState = useCallback(async () => {
     // Check if demo bypass is already active
-    if (typeof window !== 'undefined' && localStorage.getItem('yueora_demo_auth') === 'true') {
+    if (typeof window !== 'undefined' && (localStorage.getItem('yueora_demo_auth') === 'true' || new URLSearchParams(window.location.search).get('demo') === 'true')) {
+      try {
+        localStorage.setItem('yueora_demo_auth', 'true');
+      } catch (_) {}
       setUser(DEMO_USER);
       setIsAuthenticated(true);
       setIsLoadingPublicSettings(false);

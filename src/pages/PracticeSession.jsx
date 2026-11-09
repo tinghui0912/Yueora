@@ -638,7 +638,7 @@ export default function PracticeSession() {
               onClick={selecting ? () => { setSectionPhase('idle'); setPendingStart(null); } : startSectionPick}
               className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
                 selectedRange.kind === 'section'
-                  ? 'border-brand/40 bg-brand-soft font-semibold text-brand-soft-foreground'
+                  ? 'border-brand bg-neutral-muted font-semibold text-ink-primary shadow-xs'
                   : 'border-surface-paper-edge text-ink-secondary hover:bg-neutral-hover'
               }`}
             >
@@ -651,10 +651,10 @@ export default function PracticeSession() {
                 onClick={() => setLoop((l) => !l)}
                 aria-pressed={loop}
                 className={`hidden h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium sm:flex transition-colors ${
-                  loop ? 'border-brand/40 bg-brand-soft font-semibold text-brand-soft-foreground' : 'border-surface-paper-edge text-ink-secondary hover:bg-neutral-hover'
+                  loop ? 'border-brand bg-neutral-muted font-semibold text-ink-primary shadow-xs' : 'border-surface-paper-edge text-ink-secondary hover:bg-neutral-hover'
                 }`}
               >
-                <Repeat className="h-4 w-4" />
+                <Repeat className={`h-4 w-4 ${loop ? 'text-brand' : ''}`} />
                 <span>Loop</span>
               </button>
             )}

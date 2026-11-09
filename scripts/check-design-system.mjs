@@ -520,7 +520,7 @@ function verifyBrandSoftVsWashIntegrity(issues = []) {
 }
 verifyBrandSoftVsWashIntegrity(totalViolations);
 
-// Phase 7: Semantic Navigation & Landing Surface Contract Verification
+// Phase 7: Semantic Navigation, Selection & Surface Contract Verification
 function verifyNavigationAndSurfaceContracts(issues = []) {
   // 1. SidebarNavItem: assert NO bg-brand-soft
   const sidebarNavItemPath = path.resolve('src/components/app-shell/SidebarNavItem.jsx');
@@ -564,7 +564,63 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   }
 
-  // 4. Landing.jsx top-level sections: assert NO banned full-width section surfaces
+  // 4. ImportDropzone.jsx: assert NO bg-brand-soft (drag target is not selection)
+  const importDropzonePath = path.resolve('src/components/imports/ImportDropzone.jsx');
+  if (fs.existsSync(importDropzonePath)) {
+    const code = fs.readFileSync(importDropzonePath, 'utf8');
+    if (code.includes('bg-brand-soft')) {
+      issues.push({
+        file: 'src/components/imports/ImportDropzone.jsx',
+        line: 1,
+        matched: 'bg-brand-soft in ImportDropzone',
+        message: 'ImportDropzone active drag target must not use bg-brand-soft; use bg-surface-canvas or bg-neutral-hover with border-brand.',
+      });
+    }
+  }
+
+  // 5. OptionGroup.jsx: assert NO bg-brand-soft (large selection rows use neutral hover + brand indicator)
+  const optionGroupPath = path.resolve('src/components/practice/OptionGroup.jsx');
+  if (fs.existsSync(optionGroupPath)) {
+    const code = fs.readFileSync(optionGroupPath, 'utf8');
+    if (code.includes('bg-brand-soft')) {
+      issues.push({
+        file: 'src/components/practice/OptionGroup.jsx',
+        line: 1,
+        matched: 'bg-brand-soft in OptionGroup',
+        message: 'OptionGroup large selectable rows must not use bg-brand-soft; use neutral selection (bg-neutral-hover) + brand indicator.',
+      });
+    }
+  }
+
+  // 6. TransportControl.jsx: assert NO bg-brand-soft (loop is a toggle, not selection)
+  const transportControlPath = path.resolve('src/components/patterns/TransportControl.jsx');
+  if (fs.existsSync(transportControlPath)) {
+    const code = fs.readFileSync(transportControlPath, 'utf8');
+    if (code.includes('bg-brand-soft')) {
+      issues.push({
+        file: 'src/components/patterns/TransportControl.jsx',
+        line: 1,
+        matched: 'bg-brand-soft in TransportControl',
+        message: 'TransportControl loop toggle must not use bg-brand-soft; use neutral active control state.',
+      });
+    }
+  }
+
+  // 7. VirtualKeyboard.jsx: assert NO bg-brand-soft (sounding key is playback state)
+  const virtualKeyboardPath = path.resolve('src/components/practice/VirtualKeyboard.jsx');
+  if (fs.existsSync(virtualKeyboardPath)) {
+    const code = fs.readFileSync(virtualKeyboardPath, 'utf8');
+    if (code.includes('bg-brand-soft')) {
+      issues.push({
+        file: 'src/components/practice/VirtualKeyboard.jsx',
+        line: 1,
+        matched: 'bg-brand-soft in VirtualKeyboard',
+        message: 'VirtualKeyboard sounding keys must not use bg-brand-soft; use playback state token (e.g. bg-practice-current/20).',
+      });
+    }
+  }
+
+  // 8. Landing.jsx top-level sections: assert NO banned full-width section surfaces
   const landingPath = path.resolve('src/pages/Landing.jsx');
   if (fs.existsSync(landingPath)) {
     const code = fs.readFileSync(landingPath, 'utf8');
@@ -607,7 +663,7 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified jsconfig exclusion integrity (zero excluded UI primitives imported by application)`);
   console.log(`   - Verified legacy color token retirement (zero legacy tokens in application pages or active primitives)`);
   console.log(`   - Verified brand-soft vs brand-wash integrity (zero arbitrary bg-brand/opacity in application code)`);
-  console.log(`   - Verified navigation active contract (SidebarNavItem, LibrarySubRail, Settings strictly use neutral active)`);
+  console.log(`   - Verified prohibited brand-soft contexts in named shared components (ImportDropzone, OptionGroup, TransportControl, VirtualKeyboard, SidebarNavItem, LibrarySubRail, Settings)`);
   console.log(`   - Verified landing page surface rhythm (zero banned surfaces on full-width sections; strict canvas/panel alternating rhythm)`);
   console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} root directories\n`);
   process.exit(0);

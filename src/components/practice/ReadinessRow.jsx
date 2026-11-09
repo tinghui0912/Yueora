@@ -24,16 +24,26 @@ export default function ReadinessRow({
   children = null,
 }) {
   const t = tone[status] || tone.idle;
+  const isReady = status === 'ready';
   const text = statusText || t.label;
+
   return (
-    <div className="py-3">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <span className={`flex items-center gap-2 type-body-small ${t.text}`}>
-          <StatusIcon status={status} />
-          <span>{text}</span>
-        </span>
-        <span className="type-body-small text-ink-primary">{label}</span>
-        {action && <span className="ml-auto shrink-0">{action}</span>}
+    <div className="py-2.5">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className={`flex shrink-0 items-center justify-center ${isReady ? 'text-brand' : t.text}`}>
+            <StatusIcon status={status} />
+          </span>
+          <span className="type-body-small text-ink-primary font-medium">{label}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          {!isReady && (
+            <span className={`type-metadata ${t.text}`}>
+              {text}
+            </span>
+          )}
+          {action && <span className="shrink-0">{action}</span>}
+        </div>
       </div>
       {detail && <p className="mt-1 pl-6 type-metadata text-ink-tertiary">{detail}</p>}
       {children && <div className="mt-2 pl-6">{children}</div>}

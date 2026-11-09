@@ -65,7 +65,12 @@ Before creating or styling any UI element:
      - Overlays / Popovers: `bg-surface-raised` with `shadow-overlay`
    - Lines: `border-line-subtle`, `border-surface-paper-edge`, `border-line-subrail`
    - Navigation Active Contract: Strictly neutral active: `bg-neutral-muted font-semibold text-ink-primary shadow-xs` with subtle `text-brand` icon cue. Inactive is `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`. NEVER use `bg-brand-soft` for navigation items.
-   - Brand active context: `bg-brand-soft` (pale green, strictly for selected CONTENT objects: ChoiceCard, selected row in table, measure range loop, selected option), `text-brand-soft-foreground`
+   - Selection Contract (Large vs Compact):
+     - **Compact Selection:** `bg-brand-soft text-brand-soft-foreground` (strictly for small chips, filter badges, compact tags, ChoiceCard badges where small surface area keeps it subordinate).
+     - **Large Selection:** Wide rows, large selectable options, and full-width list items are **banned** from `bg-brand-soft`. Must use neutral selected surface (`bg-neutral-hover` or `bg-surface-panel`) paired with a brand indicator (`border-brand`, green radio dot, or `text-brand` checkmark).
+     - **Maximum 2 Brand Signals per selection state:** Never stack green background + green border + green text + green icon. Selection should be understood, not painted.
+     - **Drag Targets:** Dragging state is not selection; use `border-brand bg-surface-canvas text-brand`, never `bg-brand-soft`.
+     - **Control Toggles:** Loop/toggle buttons use `border-brand bg-neutral-muted text-ink-primary shadow-xs` with `text-brand` icon, not `bg-brand-soft`.
    - Featured Brand Surface: `bg-brand-wash` (subtle brand tint for recommendations, NOT selected state)
    - Primary CTA: `bg-brand` (deep forest green), `text-white`, `hover:bg-brand-hover`
    - Neutral hovers & muted items: `bg-neutral-muted`, `hover:bg-neutral-hover` (warm ivory-gray, NEVER green)

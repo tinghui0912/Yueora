@@ -36,7 +36,7 @@ export default function ImportDropzone({ onImport }) {
         onDrop={onDrop}
         onClick={() => fileRef.current?.click()}
         className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-control border-2 border-dashed py-10 text-center transition-colors ${
-          dragging ? 'border-brand bg-brand-soft' : 'border-line-subtle hover:bg-neutral-hover'
+          dragging ? 'border-brand bg-surface-canvas text-brand' : 'border-line-subtle hover:bg-neutral-hover text-ink-secondary'
         }`}
       >
         <UploadCloud className="h-7 w-7 text-ink-secondary" />

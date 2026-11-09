@@ -122,7 +122,7 @@ export default function DesignSystemPreview() {
       <section className="space-y-4">
         <SectionHeader
           title="Color System & Interaction Matrix"
-          description="One canonical visual language. Pale green (brand-soft) is strictly selected context; warm neutral is hover/muted."
+          description="One canonical visual language. Brand is an accent; compact selection uses brand-soft, large selection uses neutral selection."
         />
         <Surface tone="panel" elevation="paper" padding="md" className="space-y-6">
           {/* Swatches */}
@@ -151,7 +151,7 @@ export default function DesignSystemPreview() {
               </div>
               <div className="rounded-control border border-brand bg-brand-soft p-3 text-center">
                 <span className="type-caption text-brand-soft-foreground">Brand Soft</span>
-                <p className="type-metadata text-brand-soft-foreground/80">Selected Content State</p>
+                <p className="type-metadata text-brand-soft-foreground/80">Compact Selection</p>
               </div>
               <div className="rounded-control border border-brand-washBorder bg-brand-wash p-3 text-center">
                 <span className="type-caption text-brand font-semibold">Brand Wash</span>
@@ -175,7 +175,7 @@ export default function DesignSystemPreview() {
           {/* State Matrix */}
           <div className="space-y-3 border-t border-line-subtle pt-4">
             <span className="type-caption text-ink-secondary/70">Component State Matrix</span>
-            <div className="grid gap-3 sm:grid-cols-5">
+            <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
                 <p className="type-caption text-ink-tertiary uppercase">Default</p>
                 <div className="mt-2 rounded-control border border-line-subtle bg-surface-panel px-3 py-1.5 type-body-small text-ink-primary">
@@ -183,22 +183,29 @@ export default function DesignSystemPreview() {
                 </div>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
-                <p className="type-caption text-ink-tertiary uppercase">Hover (Neutral Hover)</p>
+                <p className="type-caption text-ink-tertiary uppercase">Hover (Neutral)</p>
                 <div className="mt-2 rounded-control border border-line-subtle bg-neutral-hover px-3 py-1.5 type-body-small text-ink-primary">
                   Item Hovered
                 </div>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
-                <p className="type-caption text-ink-primary uppercase font-semibold">Nav Active (Neutral)</p>
+                <p className="type-caption text-ink-primary uppercase font-semibold">Nav Active</p>
                 <div className="mt-2 flex items-center justify-center gap-1.5 rounded-control bg-neutral-muted px-3 py-1.5 type-body-small font-semibold text-ink-primary shadow-xs">
                   <span className="h-1.5 w-1.5 rounded-full bg-brand" />
                   Nav Active
                 </div>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
-                <p className="type-caption text-brand uppercase font-semibold">Selected (Content)</p>
+                <p className="type-caption text-brand uppercase font-semibold">Compact Selected</p>
                 <div className="mt-2 rounded-control border border-brand bg-brand-soft px-3 py-1.5 type-body-small font-medium text-brand-soft-foreground">
-                  Content Selected
+                  Badge / Chip
+                </div>
+              </div>
+              <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
+                <p className="type-caption text-ink-primary uppercase font-semibold">Large Selected</p>
+                <div className="mt-2 flex items-center justify-between rounded-control border border-brand bg-neutral-hover px-3 py-1.5 type-body-small font-medium text-ink-primary">
+                  <span>Row / Option</span>
+                  <span className="h-2 w-2 rounded-full bg-brand" />
                 </div>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">

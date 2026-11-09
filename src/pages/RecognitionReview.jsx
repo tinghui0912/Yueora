@@ -131,7 +131,7 @@ export default function RecognitionReview() {
           <SheetHeader><SheetTitle>Issues to review</SheetTitle></SheetHeader>
           <div className="mt-3 space-y-2">
             {issues.map((iss) => (
-              <button key={iss.id} onClick={() => { setActiveIssue(iss.id); setMobileIssuesOpen(false); }} className={`w-full rounded-control border p-3 text-left ${activeIssue === iss.id ? 'border-brand bg-brand-soft' : 'border-line-subtle'} ${iss.resolved ? 'opacity-50' : ''}`}>
+              <button key={iss.id} onClick={() => { setActiveIssue(iss.id); setMobileIssuesOpen(false); }} className={`w-full rounded-control border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-neutral-hover shadow-xs' : 'border-line-subtle'} ${iss.resolved ? 'opacity-50' : ''}`}>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5 text-sm font-medium"><AlertTriangle className="h-3.5 w-3.5 text-warning" /> Measure {iss.measure}</span>
                   {iss.resolved && <Check className="h-3.5 w-3.5 text-success" />}
@@ -182,7 +182,7 @@ function IssuesPanel({ issues, activeIssue, setActiveIssue, active, onMarkFixed,
           <button
             key={iss.id}
             onClick={() => setActiveIssue(iss.id)}
-            className={`w-full rounded-container border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-brand-soft shadow-xs' : 'border-line-subtle bg-surface-panel hover:bg-surface-paper'} ${iss.resolved ? 'opacity-50' : ''}`}
+            className={`w-full rounded-container border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-neutral-hover shadow-xs' : 'border-line-subtle bg-surface-panel hover:bg-surface-paper'} ${iss.resolved ? 'opacity-50' : ''}`}
           >
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="icon-xs text-warning" /> Measure {iss.measure}</span>

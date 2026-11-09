@@ -78,12 +78,12 @@ export default function TransportControl({
             onClick={onToggleLoop}
             className={`flex items-center gap-1.5 rounded-control border px-2.5 py-2 text-xs font-medium transition-colors ${
               loop
-                ? 'border-brand/40 bg-brand-soft font-semibold text-brand-soft-foreground'
+                ? 'border-brand bg-neutral-muted font-semibold text-ink-primary shadow-xs'
                 : 'border-surface-paper-edge bg-surface-paper text-ink-secondary hover:text-ink-primary'
             }`}
             title="Loop selected section"
           >
-            <Repeat className="h-3.5 w-3.5" />
+            <Repeat className={`h-3.5 w-3.5 ${loop ? 'text-brand' : ''}`} />
             <span className="hidden sm:inline">Loop</span>
           </button>
         )}
