@@ -12,11 +12,11 @@ import { forwardRef } from 'react';
  *   tone?: 'natural' | 'warm' | 'white';
  *   elevation?: 'flat' | 'paper' | 'raised';
  *   bordered?: boolean;
- *   as?: any;
+ *   as?: React.ElementType;
  * }} MusicPaperProps
  */
 
-/** @type {React.ForwardRefExoticComponent<MusicPaperProps & React.RefAttributes<any>>} */
+/** @type {React.ForwardRefExoticComponent<MusicPaperProps & React.RefAttributes<HTMLDivElement>>} */
 const MusicPaper = forwardRef(function MusicPaper(
   {
     children = null,

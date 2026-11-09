@@ -28,7 +28,7 @@ export default function TransportControl({
           <button
             type="button"
             onClick={onTogglePlay}
-            className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 text-sm font-medium text-white shadow-xs transition-all hover:bg-brand-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+            className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 text-sm font-medium text-white shadow-xs transition-[color,background-color,box-shadow,transform] duration-base hover:bg-brand-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
           >
             <Play className="h-4 w-4 fill-current" />
             <span>Start</span>
@@ -38,7 +38,7 @@ export default function TransportControl({
             type="button"
             onClick={onTogglePlay}
             disabled={phase === 'countin'}
-            className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 text-sm font-medium text-white shadow-xs transition-all hover:bg-brand-hover active:scale-[0.98] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+            className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 text-sm font-medium text-white shadow-xs transition-[color,background-color,box-shadow,transform] duration-base hover:bg-brand-hover active:scale-[0.98] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
           >
             {isPlaying ? (
               <>

@@ -5,6 +5,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { usePrototypeStore } from '@/stores/prototypeStore';
+import { downloadBlob } from '@/lib/media';
 import SettingsSection from '@/components/patterns/SettingsSection';
 import { useAuth } from '@/lib/AuthContext';
 import {
@@ -24,7 +25,21 @@ export default function PrivacySettings() {
 
   const exportData = () => {
     setExporting(true);
-    setTimeout(() => { setExporting(false); setExported(true); }, 1500);
+    setTimeout(() => {
+      const state = usePrototypeStore.getState();
+      const exportPayload = {
+        exportedAt: new Date().toISOString(),
+        version: '1.0',
+        scores: state.scores,
+        folders: state.folders,
+        practiceActivities: state.practiceActivities,
+        savedPerformances: state.savedPerformances,
+      };
+      const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+      downloadBlob(blob, `yueora-data-${new Date().toISOString().slice(0, 10)}.json`);
+      setExporting(false);
+      setExported(true);
+    }, 600);
   };
 
   const doDelete = () => {

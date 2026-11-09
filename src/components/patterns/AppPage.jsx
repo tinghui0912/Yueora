@@ -16,28 +16,39 @@ const paddingMap = {
 };
 
 /**
+ * @typedef {React.HTMLAttributes<HTMLDivElement> & {
+ *   size?: 'compact' | 'form' | 'standard' | 'wide' | 'full';
+ *   padding?: 'normal' | 'compact' | 'none';
+ *   className?: string;
+ *   children?: React.ReactNode;
+ * }} AppPageProps
+ */
+
+/**
  * AppPage — Standard application surface container.
  * Enforces unified semantic max-widths, responsive gutters, and vertical flow.
+ * Note: Renders as a neutral <div> container because the outer Shell (AppShell / PublicShell)
+ * already owns the document's single <main> landmark.
+ *
+ * @param {AppPageProps} props
  */
 export function AppPage({
   size = 'standard',
   padding = 'normal',
-  as: Component = 'main',
   className = '',
   children = null,
   ...props
 }) {
   const resolvedWidth = sizeMap[size] || sizeMap.standard;
   const resolvedPadding = paddingMap[padding] || paddingMap.normal;
-  const Comp = /** @type {any} */ (Component);
 
   return (
-    <Comp
+    <div
       className={cn('mx-auto w-full min-w-0', resolvedWidth, resolvedPadding, className)}
       {...props}
     >
       {children}
-    </Comp>
+    </div>
   );
 }
 

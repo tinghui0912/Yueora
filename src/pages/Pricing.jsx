@@ -14,7 +14,7 @@ const features = [
   { label: 'Practice insights', key: 'analytics' },
   { label: 'Storage', key: 'storage' },
   { label: 'Sharing', key: 'sharing' },
-  { label: 'Export / download', key: 'export' },
+  { label: 'Recording downloads', key: 'export' },
 ];
 
 export default function Pricing() {
@@ -45,13 +45,13 @@ export default function Pricing() {
           <div className="mt-6 inline-flex items-center gap-1 rounded-control border border-line-subtle bg-surface-panel p-0.5">
             <button
               onClick={() => setYearly(false)}
-              className={`rounded-control px-3 py-1.5 text-sm transition-colors ${!yearly ? 'bg-accent font-medium text-accent-foreground' : 'text-ink-secondary hover:text-ink-primary'}`}
+              className={`rounded-control px-3 py-1.5 text-sm transition-colors ${!yearly ? 'bg-surface-paper font-semibold text-ink-primary shadow-xs border border-surface-paper-edge' : 'text-ink-secondary hover:text-ink-primary'}`}
             >
               Monthly
             </button>
             <button
               onClick={() => setYearly(true)}
-              className={`rounded-control px-3 py-1.5 text-sm transition-colors ${yearly ? 'bg-accent font-medium text-accent-foreground' : 'text-ink-secondary hover:text-ink-primary'}`}
+              className={`rounded-control px-3 py-1.5 text-sm transition-colors ${yearly ? 'bg-surface-paper font-semibold text-ink-primary shadow-xs border border-surface-paper-edge' : 'text-ink-secondary hover:text-ink-primary'}`}
             >
               Yearly <span className="ml-1 text-xs text-brand">save {saving}%</span>
             </button>
@@ -72,7 +72,7 @@ export default function Pricing() {
                 <div className="flex items-center justify-between">
                   <p className="font-display text-xl font-medium text-ink-primary">{p.name}</p>
                   {isPro && (
-                    <span className="rounded-control bg-accent px-2.5 py-0.5 type-caption text-accent-foreground">Popular</span>
+                    <span className="rounded-control bg-brand/10 px-2.5 py-0.5 type-caption font-semibold text-brand">Popular</span>
                   )}
                 </div>
 
@@ -92,7 +92,7 @@ export default function Pricing() {
                   <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> {p.scores} in your library</li>
                   <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> {p.imports}</li>
                   <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> {p.storage} storage · {p.sharing.toLowerCase()} sharing</li>
-                  {isPro && <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> Practice insights and export</li>}
+                  {isPro && <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> Practice insights and recording downloads</li>}
                 </ul>
 
                 <div className="mt-6">

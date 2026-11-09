@@ -38,7 +38,7 @@ const iconButtonVariants = cva(
 
 /**
  * @typedef {React.ButtonHTMLAttributes<HTMLButtonElement> & {
- *   icon?: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }> | any;
+ *   icon?: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
  *   label: string;
  *   tone?: 'quiet' | 'outline' | 'surface' | 'primary' | 'danger';
  *   size?: 'xs' | 'sm' | 'md' | 'lg';

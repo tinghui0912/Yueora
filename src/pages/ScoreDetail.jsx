@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import {
   Play, Pencil, Share2, MoreHorizontal, Star, ChevronLeft,
-  ChevronRight, ZoomIn, ZoomOut, Download, Trash2, FolderInput, History,
-  LogOut, BookmarkMinus, Lock, Headphones, FileImage, FileCode,
+  ChevronRight, ZoomIn, ZoomOut, Trash2, FolderInput, History,
+  LogOut, BookmarkMinus, Lock, Headphones,
 } from 'lucide-react';
 import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
 import ScorePreview from '@/components/library/ScorePreview';
@@ -48,7 +48,6 @@ export default function ScoreDetail() {
   const [confirmLeave, setConfirmLeave] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [moveFolderOpen, setMoveFolderOpen] = useState(false);
-  const [exporting, setExporting] = useState(null);
 
   if (!score) {
     return (
@@ -66,14 +65,6 @@ export default function ScoreDetail() {
   const perms = getPermissions(score);
   const sessions = practiceActivities.filter((a) => a.scoreId === score.id && a.ownerId === 'you');
   const scorePerformances = savedPerformances.filter((p) => p.scoreId === score.id && p.ownerId === 'you');
-
-  const handleExport = (kind) => {
-    setExporting(kind);
-    setTimeout(() => {
-      setExporting(null);
-      toast({ title: 'Export ready', description: `${score.title} exported as ${kind}.` });
-    }, 1200);
-  };
 
   const handleFavorite = () => {
     toggleFavorite(score.id);
@@ -174,25 +165,6 @@ export default function ScoreDetail() {
               <Share2 className="icon-sm text-ink-secondary" />
               <span>Share</span>
             </Button>
-          )}
-
-          {perms.canDownload && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button intent="secondary" size="md">
-                  <Download className="icon-sm text-ink-secondary" />
-                  <span>{exporting ? 'Exporting…' : 'Export'}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44 border-surface-paper-edge bg-surface-panel shadow-overlay">
-                <DropdownMenuItem onClick={() => handleExport('PNG')} disabled={!!exporting} className="type-body-small">
-                  <FileImage className="mr-2 icon-sm text-ink-secondary" /> Export PNG
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleExport('MusicXML')} disabled={!!exporting} className="type-body-small">
-                  <FileCode className="mr-2 icon-sm text-ink-secondary" /> Export MusicXML
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           )}
 
           <DropdownMenu>

@@ -1,5 +1,5 @@
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Play, Pause, Download, Bookmark, ChevronLeft, ChevronRight, Flag, Clock, Ban, FileX, ShieldOff, Check, Lock, Pencil } from 'lucide-react';
+import { Play, Pause, Bookmark, ChevronLeft, ChevronRight, Flag, Clock, Ban, FileX, ShieldOff, Check, Lock, Pencil } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { useAuth } from '@/lib/AuthContext';
 import ExternalShell from '@/components/external/ExternalShell';
@@ -146,15 +146,6 @@ export default function SharedScore() {
           ) : (
             <Button intent="subtle" disabled>
               <Lock className="mr-1.5 icon-sm" aria-hidden="true" /> Practice unavailable
-            </Button>
-          )}
-          {canDownload ? (
-            <Button intent="secondary" onClick={() => toast({ title: 'Download started', description: `${score.title}.pdf` })}>
-              <Download className="mr-1.5 icon-sm" aria-hidden="true" /> Download
-            </Button>
-          ) : (
-            <Button intent="secondary" disabled>
-              <Lock className="mr-1.5 icon-sm" aria-hidden="true" /> Download unavailable
             </Button>
           )}
           {isAuthenticated ? (

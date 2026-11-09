@@ -285,21 +285,19 @@ export default function Library() {
 
               {/* Filter dropdown */}
               <div className="relative">
-                <button
+                <Button
+                  intent={filterFav || filterInstrument !== 'all' || filterPlayed !== 'any' ? 'subtle' : 'secondary'}
+                  size="md"
                   onClick={() => { setShowFilters((s) => !s); setShowSort(false); }}
-                  className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
-                    filterFav || filterInstrument !== 'all' || filterPlayed !== 'any'
-                      ? 'border-brand/40 bg-brand/10 text-brand'
-                      : 'border-surface-paper-edge bg-surface-paper text-ink-secondary hover:text-ink-primary'
-                  }`}
                   aria-label="Filter repertoire"
+                  className={filterFav || filterInstrument !== 'all' || filterPlayed !== 'any' ? 'border-brand/40 bg-brand/10 text-brand font-semibold' : ''}
                 >
-                  <SlidersHorizontal className="h-3.5 w-3.5" />
+                  <SlidersHorizontal className="icon-sm" />
                   <span className="hidden sm:inline">Filter</span>
-                </button>
+                </Button>
                 {showFilters && (
                   <div className="absolute right-0 z-20 mt-1 w-56 rounded-container border border-surface-paper-edge bg-surface-panel p-3 shadow-overlay">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Instrument</p>
+                    <p className="type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Instrument</p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {instruments.map((ins) => (
                         <button
@@ -313,7 +311,7 @@ export default function Library() {
                         </button>
                       ))}
                     </div>
-                    <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Practice history</p>
+                    <p className="mt-3 type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Practice history</p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {[['any', 'Any'], ['recent', 'Played recently'], ['notplayed', 'Not played yet']].map(([k, l]) => (
                         <button
@@ -342,14 +340,15 @@ export default function Library() {
 
               {/* Sort dropdown */}
               <div className="relative">
-                <button
+                <Button
+                  intent="secondary"
+                  size="md"
                   onClick={() => { setShowSort((s) => !s); setShowFilters(false); }}
-                  className="flex h-9 items-center gap-1.5 rounded-control border border-surface-paper-edge bg-surface-paper px-3 type-label font-medium text-ink-secondary hover:text-ink-primary"
                   aria-label="Sort repertoire"
                 >
-                  <ArrowUpDown className="h-3.5 w-3.5" />
+                  <ArrowUpDown className="icon-sm" />
                   <span className="hidden sm:inline">Sort</span>
-                </button>
+                </Button>
                 {showSort && (
                   <div className="absolute right-0 z-20 mt-1 w-44 rounded-container border border-surface-paper-edge bg-surface-panel p-1 shadow-overlay">
                     {sortOptions.map((o) => (
@@ -369,25 +368,23 @@ export default function Library() {
               </div>
 
               {/* Grid / List switch */}
-              <div className="flex h-9 items-center rounded-control border border-surface-paper-edge bg-surface-paper p-0.5">
-                <button
+              <div className="flex h-control-md items-center rounded-control border border-surface-paper-edge bg-surface-paper p-0.5">
+                <IconButton
+                  icon={LayoutGrid}
+                  size="xs"
+                  tone={view === 'grid' ? 'surface' : 'quiet'}
+                  label="Grid view"
                   onClick={() => setParam('layout', 'grid')}
-                  className={`flex h-8 w-8 items-center justify-center rounded ${
-                    view === 'grid' ? 'bg-surface-panel text-brand shadow-xs' : 'text-ink-tertiary hover:text-ink-primary'
-                  }`}
-                  aria-label="Grid view"
-                >
-                  <LayoutGrid className="h-4 w-4" />
-                </button>
-                <button
+                  className={view === 'grid' ? 'text-brand shadow-xs' : 'text-ink-tertiary hover:text-ink-primary'}
+                />
+                <IconButton
+                  icon={List}
+                  size="xs"
+                  tone={view === 'list' ? 'surface' : 'quiet'}
+                  label="List view"
                   onClick={() => setParam('layout', 'list')}
-                  className={`flex h-8 w-8 items-center justify-center rounded ${
-                    view === 'list' ? 'bg-surface-panel text-brand shadow-xs' : 'text-ink-tertiary hover:text-ink-primary'
-                  }`}
-                  aria-label="List view"
-                >
-                  <List className="h-4 w-4" />
-                </button>
+                  className={view === 'list' ? 'text-brand shadow-xs' : 'text-ink-tertiary hover:text-ink-primary'}
+                />
               </div>
             </div>
           </div>

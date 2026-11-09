@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Trash2, FolderPlus, Folder, Pencil, Check, X } from 'lucide-react';
+import { IconButton } from '@/components/ui/icon-button';
 
 const librarySections = [
   { key: 'all', label: 'All music' },
@@ -27,92 +28,121 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
 
   return (
     <div className="hidden w-[200px] shrink-0 border-r border-line-subtle bg-surface-canvas/50 lg:block">
-      <div className="sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto px-3 py-5">
-        <p className="px-2.5 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Collections</p>
+      <div className="sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto overflow-x-hidden px-3 py-5">
+        <p className="px-2.5 type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Collections</p>
         <div className="mt-2 space-y-0.5">
           {librarySections.map((item) => (
             <button
               key={item.key}
               onClick={() => onSelect(item.key)}
-              className={`flex w-full items-center rounded-control px-2.5 py-1.5 text-left text-sm transition-colors ${
+              className={`flex w-full min-w-0 items-center rounded-control px-2.5 py-1.5 text-left type-body-small transition-colors ${
                 active === item.key
                   ? 'bg-brand/10 font-semibold text-brand'
                   : 'text-ink-secondary hover:bg-surface-paper hover:text-ink-primary'
               }`}
             >
-              {item.label}
+              <span className="truncate">{item.label}</span>
             </button>
           ))}
         </div>
 
         <div className="mt-6 flex items-center justify-between px-2.5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Folders</p>
-          <button
+          <p className="type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Folders</p>
+          <IconButton
+            icon={FolderPlus}
+            size="xs"
+            tone="quiet"
+            label="New folder"
             onClick={() => setCreating((c) => !c)}
-            className="flex h-7 w-7 items-center justify-center rounded text-ink-secondary hover:text-ink-primary hover:bg-surface-paper transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-            aria-label="New folder"
-          >
-            <FolderPlus className="h-4 w-4" />
-          </button>
+          />
         </div>
 
         <div className="mt-2 space-y-0.5">
           {creating && (
-            <div className="flex items-center gap-1 px-1">
+            <div className="grid grid-cols-[minmax(0,1fr)_28px_28px] items-center gap-1 px-1 py-0.5">
               <input
                 autoFocus
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && submitCreate()}
                 placeholder="Folder name"
-                className="h-8 w-full rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 text-sm outline-none focus:border-brand"
+                className="h-control-xs w-full min-w-0 rounded-control border border-surface-paper-edge bg-surface-paper px-2 type-caption text-ink-primary outline-none focus:border-brand"
               />
-              <button onClick={submitCreate} className="flex h-7 w-7 items-center justify-center rounded text-brand hover:bg-brand/10" aria-label="Confirm folder"><Check className="h-3.5 w-3.5" /></button>
-              <button onClick={() => setCreating(false)} className="flex h-7 w-7 items-center justify-center rounded text-ink-secondary hover:bg-surface-paper" aria-label="Cancel"><X className="h-3.5 w-3.5" /></button>
+              <IconButton
+                icon={Check}
+                size="xs"
+                tone="quiet"
+                className="text-brand hover:bg-brand/10"
+                label="Confirm folder"
+                onClick={submitCreate}
+              />
+              <IconButton
+                icon={X}
+                size="xs"
+                tone="quiet"
+                className="text-ink-secondary hover:bg-surface-paper"
+                label="Cancel"
+                onClick={() => setCreating(false)}
+              />
             </div>
           )}
           {folders.map((f) => (
-            <div key={f.id} className="group flex items-center">
+            <div key={f.id} className="group relative flex min-w-0 items-center rounded-control">
               {editingId === f.id ? (
-                <div className="flex w-full items-center gap-1 px-1">
+                <div className="grid grid-cols-[minmax(0,1fr)_28px_28px] items-center gap-1 px-1 py-0.5 w-full">
                   <input
                     autoFocus
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && submitRename(f.id)}
-                    className="h-8 w-full rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 text-sm outline-none focus:border-brand"
+                    className="h-control-xs w-full min-w-0 rounded-control border border-surface-paper-edge bg-surface-paper px-2 type-caption text-ink-primary outline-none focus:border-brand"
                   />
-                  <button onClick={() => submitRename(f.id)} className="flex h-7 w-7 items-center justify-center rounded text-brand hover:bg-brand/10" aria-label="Confirm rename"><Check className="h-3.5 w-3.5" /></button>
-                  <button onClick={() => setEditingId(null)} className="flex h-7 w-7 items-center justify-center rounded text-ink-secondary hover:bg-surface-paper" aria-label="Cancel"><X className="h-3.5 w-3.5" /></button>
+                  <IconButton
+                    icon={Check}
+                    size="xs"
+                    tone="quiet"
+                    className="text-brand hover:bg-brand/10"
+                    label="Confirm rename"
+                    onClick={() => submitRename(f.id)}
+                  />
+                  <IconButton
+                    icon={X}
+                    size="xs"
+                    tone="quiet"
+                    className="text-ink-secondary hover:bg-surface-paper"
+                    label="Cancel"
+                    onClick={() => setEditingId(null)}
+                  />
                 </div>
               ) : (
                 <>
                   <button
                     onClick={() => onSelect(`folder:${f.id}`)}
-                    className={`flex flex-1 items-center gap-2 rounded-control px-2.5 py-1.5 text-left text-sm transition-colors ${
+                    className={`flex w-full min-w-0 items-center gap-2 rounded-control px-2.5 py-1.5 pr-14 text-left type-body-small transition-colors ${
                       active === `folder:${f.id}`
                         ? 'bg-brand/10 font-semibold text-brand'
                         : 'text-ink-secondary hover:bg-surface-paper hover:text-ink-primary'
                     }`}
                   >
-                    <Folder className="h-4 w-4 opacity-70" />
-                    <span className="truncate">{f.name}</span>
+                    <Folder className="icon-sm shrink-0 opacity-70" />
+                    <span className="truncate min-w-0">{f.name}</span>
                   </button>
-                  <div className="flex shrink-0 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
-                    <button
+                  <div className="absolute right-1 flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 bg-surface-canvas/90 backdrop-blur-xs rounded-control">
+                    <IconButton
+                      icon={Pencil}
+                      size="xs"
+                      tone="quiet"
+                      label="Rename folder"
                       onClick={() => { setEditingId(f.id); setEditName(f.name); }}
-                      className="flex h-7 w-7 items-center justify-center rounded text-ink-secondary hover:text-ink-primary hover:bg-surface-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand/40"
-                      aria-label="Rename folder"
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                    </button>
-                    <button
+                    />
+                    <IconButton
+                      icon={Trash2}
+                      size="xs"
+                      tone="quiet"
+                      className="hover:text-destructive"
+                      label="Delete folder"
                       onClick={() => onDeleteFolder(f.id)}
-                      className="flex h-7 w-7 items-center justify-center rounded text-ink-secondary hover:text-destructive hover:bg-surface-paper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand/40"
-                      aria-label="Delete folder"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                    />
                   </div>
                 </>
               )}

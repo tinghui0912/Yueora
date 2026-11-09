@@ -94,6 +94,12 @@ import { addBillingPeriod, demoReference, formatDate, planPrice } from '@/lib/co
  */
 
 /**
+ * @typedef {Object} TimelinePoint
+ * @property {number} t - Time in seconds from start of performance
+ * @property {number} measure - 1-based measure index reached
+ */
+
+/**
  * @typedef {Object} SavedPerformance
  * @property {string} id
  * @property {string} [ownerId]
@@ -106,7 +112,7 @@ import { addBillingPeriod, demoReference, formatDate, planPrice } from '@/lib/co
  * @property {string[]} [sharedWith]
  * @property {string[]} [sharedCommenters]
  * @property {boolean} [allowComments]
- * @property {any} [positionTimeline]
+ * @property {TimelinePoint[] | null} [positionTimeline]
  */
 
 /**

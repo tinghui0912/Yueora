@@ -102,7 +102,7 @@ export default function PlanSettings() {
       )}
 
       {!isPro && (
-        <SettingsSection title="Pro plan" desc="Unlimited scores, insights, and export.">
+        <SettingsSection title="Pro plan" desc="Unlimited scores, insights, and recording downloads.">
           <div className="rounded-container border border-line-subtle p-5">
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -117,7 +117,7 @@ export default function PlanSettings() {
               </div>
             </div>
             <ul className="mt-4 space-y-2 type-body-small text-ink-secondary">
-              {[`${plans.pro.scores} scores`, plans.pro.imports, 'Practice insights', `${plans.pro.storage} storage`, `${plans.pro.sharing} sharing`, 'Export / download'].map((f) => (
+              {[`${plans.pro.scores} scores`, plans.pro.imports, 'Practice insights', `${plans.pro.storage} storage`, `${plans.pro.sharing} sharing`, 'Recording downloads'].map((f) => (
                 <li key={f} className="flex items-center gap-2"><Check className="h-4 w-4 text-brand" /> {f}</li>
               ))}
             </ul>

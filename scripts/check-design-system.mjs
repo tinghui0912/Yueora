@@ -297,7 +297,104 @@ let totalViolations = [];
 // Phase 1: Verify Foundations & Primitives
 verifyFoundations(totalViolations);
 
-// Phase 2: Scan Codebase
+// Phase 2: Verify Semantic Landmark Structure
+function verifyLandmarkStructure(issues = []) {
+  const appShellPath = path.resolve('src/components/app-shell/AppShell.jsx');
+  const publicShellPath = path.resolve('src/components/public/PublicShell.jsx');
+  const appPagePath = path.resolve('src/components/patterns/AppPage.jsx');
+
+  if (fs.existsSync(appShellPath)) {
+    const code = fs.readFileSync(appShellPath, 'utf8').replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '');
+    if (!/<main\b/.test(code)) {
+      issues.push({
+        file: 'src/components/app-shell/AppShell.jsx',
+        line: 1,
+        matched: 'Missing <main>',
+        message: 'AppShell must own the document <main> landmark for authenticated application routes.',
+      });
+    }
+  }
+
+  if (fs.existsSync(publicShellPath)) {
+    const code = fs.readFileSync(publicShellPath, 'utf8').replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '');
+    if (!/<main\b/.test(code)) {
+      issues.push({
+        file: 'src/components/public/PublicShell.jsx',
+        line: 1,
+        matched: 'Missing <main>',
+        message: 'PublicShell must own the document <main> landmark for public routes.',
+      });
+    }
+  }
+
+  if (fs.existsSync(appPagePath)) {
+    const code = fs.readFileSync(appPagePath, 'utf8').replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '');
+    if (/<main\b|Component\s*=\s*['"]main['"]/.test(code)) {
+      issues.push({
+        file: 'src/components/patterns/AppPage.jsx',
+        line: 1,
+        matched: 'Nested <main> landmark',
+        message: 'AppPage must not default to <main> because outer Shells already own the <main> landmark.',
+      });
+    }
+  }
+
+  return issues;
+}
+verifyLandmarkStructure(totalViolations);
+
+// Phase 3: Verify jsconfig Exclusions Integrity
+function verifyExclusionIntegrity(issues = []) {
+  const jsconfigPath = path.resolve('jsconfig.json');
+  if (!fs.existsSync(jsconfigPath)) return issues;
+
+  const jsconfig = JSON.parse(fs.readFileSync(jsconfigPath, 'utf8'));
+  const excluded = (jsconfig.exclude || []).filter((p) => p.startsWith('src/components/ui/'));
+  if (excluded.length === 0) return issues;
+
+  // Build a map of excluded base names
+  const excludedMap = new Map();
+  excluded.forEach((exPath) => {
+    const base = path.basename(exPath, path.extname(exPath));
+    excludedMap.set(base, exPath);
+  });
+
+  function scanImportsInDir(dir) {
+    if (!fs.existsSync(dir)) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanImportsInDir(full);
+      } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.js') || entry.name.endsWith('.tsx') || entry.name.endsWith('.ts'))) {
+        const normPath = full.replace(/\\/g, '/');
+        // Skip files that are themselves in the exclude list
+        if (excluded.some((ex) => normPath.endsWith(ex))) continue;
+
+        const code = fs.readFileSync(full, 'utf8');
+        for (const [baseName, exPath] of excludedMap.entries()) {
+          const importPattern = new RegExp(`from\\s+['"][^'"]*components/ui/${baseName}(?:\\.jsx?)?['"]`);
+          if (importPattern.test(code)) {
+            const relFile = path.relative(process.cwd(), full);
+            issues.push({
+              file: relFile,
+              line: 1,
+              matched: `Imported excluded primitive: ${baseName}`,
+              message: `Design System / Type Safety violation: ${exPath} is excluded from typecheck but imported by ${relFile}. Migrate or type the component before importing it.`,
+            });
+          }
+        }
+      }
+    }
+  }
+
+  scanImportsInDir(path.resolve('src'));
+  return issues;
+}
+verifyExclusionIntegrity(totalViolations);
+
+// Phase 4: Scan Codebase
 for (const dir of SCAN_DIRECTORIES) {
   scanDirectory(dir, totalViolations);
 }
@@ -308,6 +405,8 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified ${CANONICAL_CONTROL_TOKENS.length} canonical control tokens & ${REQUIRED_CONTROL_UTILITIES.length} utilities`);
   console.log(`   - Verified ${CANONICAL_ICON_TOKENS.length} canonical icon tokens & ${REQUIRED_ICON_UTILITIES.length} utilities`);
   console.log(`   - Verified primitive token consumption contracts (Button, IconButton, Input, SearchTrigger, ChoiceCard)`);
+  console.log(`   - Verified document landmark integrity (AppShell/PublicShell own main, AppPage does not nest main)`);
+  console.log(`   - Verified jsconfig exclusion integrity (zero excluded UI primitives imported by application)`);
   console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} root directories\n`);
   process.exit(0);
 } else {

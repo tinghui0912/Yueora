@@ -6,22 +6,24 @@ import { cn } from '@/lib/utils';
  */
 
 /**
+ * @typedef {Object} ChoiceCardSemanticProps
+ * @property {React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>} [icon]
+ * @property {React.ReactNode} title
+ * @property {React.ReactNode} [description]
+ * @property {boolean} [selected]
+ * @property {React.ReactNode} [badge]
+ * @property {ChoiceCardMode} [mode]
+ * @property {string} [role]
+ * @property {string} [className]
+ *
+ * @typedef {Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'title'> & ChoiceCardSemanticProps} ChoiceCardProps
+ */
+
+/**
  * ChoiceCard — Interactive selection card for source choices, options, and modes.
  * Owns border, selected highlight, icon sizing, typography, hover, and focus ring.
  *
- * @param {{
- *   icon?: any;
- *   title: React.ReactNode;
- *   description?: React.ReactNode;
- *   selected?: boolean;
- *   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
- *   badge?: React.ReactNode;
- *   disabled?: boolean;
- *   mode?: ChoiceCardMode;
- *   role?: string;
- *   className?: string;
- *   [key: string]: any;
- * }} props
+ * @param {ChoiceCardProps} props
  */
 export function ChoiceCard({
   icon: Icon = undefined,
@@ -40,6 +42,10 @@ export function ChoiceCard({
   const isRadio = resolvedRole === 'radio' || mode === 'radio';
   const isAction = mode === 'action';
 
+  // Semantics:
+  // action: normal button, no aria-pressed, no aria-checked
+  // toggle: aria-pressed={selected}, no aria-checked
+  // radio: role="radio", aria-checked={selected}, no aria-pressed
   const ariaChecked = isRadio ? selected : undefined;
   const ariaPressed = !isRadio && !isAction ? selected : undefined;
 

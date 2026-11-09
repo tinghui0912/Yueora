@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { Play, Star, Check } from 'lucide-react';
 import ScorePreview from './ScorePreview';
 import MusicPaper from '@/components/patterns/MusicPaper';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const ownershipLabel = {
   shared: (s) => `Shared by ${s.sharedBy}`,
@@ -19,9 +21,10 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
     <MusicPaper
       interactive
       tone="natural"
-      className={`group relative flex flex-col overflow-hidden transition-all duration-base ${
-        selected ? 'ring-2 ring-brand border-brand' : ''
-      }`}
+      className={cn(
+        'group relative flex flex-col overflow-hidden transition-[box-shadow,border-color,transform] duration-base',
+        selected && 'ring-2 ring-brand border-brand'
+      )}
     >
       {/* Miniature score folio header */}
       <Link
@@ -37,7 +40,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
         {/* Status badges overlay */}
         <div className="absolute top-2.5 left-3 flex flex-wrap gap-1.5 z-10">
           {sharedText && (
-            <span className="rounded-control bg-surface-panel/90 backdrop-blur-xs px-2 py-0.5 text-xs font-medium text-ink-secondary shadow-xs">
+            <span className="rounded-control bg-surface-panel/90 backdrop-blur-xs px-2 py-0.5 type-caption font-medium text-ink-secondary shadow-xs">
               {sharedText}
             </span>
           )}
@@ -45,8 +48,8 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
 
         {score.favorite && (
           <div className="absolute top-2.5 right-2.5 z-10">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-panel/90 backdrop-blur-xs shadow-xs">
-              <Star className="h-3.5 w-3.5 fill-gold text-gold" />
+            <span className="flex h-control-xs w-control-xs items-center justify-center rounded-full bg-surface-panel/90 backdrop-blur-xs shadow-xs">
+              <Star className="icon-xs fill-gold text-gold" />
             </span>
           </div>
         )}
@@ -69,24 +72,27 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
             {onToggleSelect && (
               <button
                 type="button"
+                role="checkbox"
+                aria-checked={selected}
                 onClick={(e) => {
                   e.preventDefault();
                   onToggleSelect(score.id);
                 }}
-                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded border transition-colors ${
+                className={cn(
+                  'flex h-control-xs w-control-xs shrink-0 items-center justify-center rounded-control border transition-[color,background-color,border-color] duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:ring-offset-surface-panel',
                   selected
-                    ? 'border-brand bg-brand text-white'
-                    : 'border-surface-paper-edge text-transparent hover:border-line-strong'
-                }`}
+                    ? 'border-brand bg-brand text-white shadow-xs'
+                    : 'border-surface-paper-edge bg-surface-canvas/50 text-transparent hover:border-line-strong'
+                )}
                 aria-label={`Select ${score.title}`}
               >
-                <Check className="h-3.5 w-3.5 stroke-[2.5]" />
+                <Check className="icon-xs stroke-[2.5]" />
               </button>
             )}
           </div>
 
           {/* Relationship with this piece */}
-          <p className="mt-2 text-xs text-ink-secondary/80">
+          <p className="mt-2 type-caption text-ink-tertiary">
             {isPlayed ? (
               <span>
                 Played {score.lastPlayed}
@@ -98,23 +104,33 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
           </p>
         </div>
 
-        {/* Primary practice action — always discoverable on touch & desktop! */}
+        {/* Primary practice action & View score link */}
         <div className="mt-1 flex items-center justify-between border-t border-surface-paper-edge/70 pt-2.5">
-          <Link
-            to={`/score/${score.id}/setup`}
-            className="inline-flex items-center gap-1.5 rounded-control bg-brand/10 px-3 py-1.5 type-metadata font-semibold text-brand transition-colors hover:bg-brand hover:text-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-            aria-label={`Practice ${score.title}`}
+          <Button
+            asChild
+            intent="subtle"
+            size="xs"
+            className="font-semibold text-brand hover:text-brand"
           >
-            <Play className="h-3.5 w-3.5 fill-current" />
-            <span>Practice</span>
-          </Link>
+            <Link
+              to={`/score/${score.id}/setup`}
+              aria-label={`Practice ${score.title}`}
+            >
+              <Play className="fill-current" />
+              <span>Practice</span>
+            </Link>
+          </Button>
 
-          <Link
-            to={`/score/${score.id}`}
-            className="text-xs text-ink-secondary hover:text-ink-primary transition-colors"
+          <Button
+            asChild
+            intent="quiet"
+            size="xs"
+            className="type-caption text-ink-secondary hover:text-ink-primary"
           >
-            View score →
-          </Link>
+            <Link to={`/score/${score.id}`}>
+              View score →
+            </Link>
+          </Button>
         </div>
       </div>
     </MusicPaper>

@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import PublicMobileMenu from '@/components/external/PublicMobileMenu';
 import Logo from '@/components/brand/Logo';
+import { Button } from '@/components/ui/button';
 
 /**
  * PublicHeader — Editorial, calm, product-led navigation.
@@ -102,26 +103,23 @@ export default function PublicHeader() {
           {/* Action Area */}
           <div className="flex items-center gap-2">
             {isAuthenticated ? (
-              <Link
-                to="/library"
-                className="rounded-control bg-brand px-4 py-2 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-              >
-                Go to Yueora
-              </Link>
+              <Button asChild intent="primary" size="sm" className="shadow-xs font-semibold">
+                <Link to="/library">
+                  Go to Yueora
+                </Link>
+              </Button>
             ) : (
               <>
-                <Link
-                  to="/login"
-                  className="hidden rounded-control px-3 py-2 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary md:inline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-                >
-                  Log in
-                </Link>
-                <Link
-                  to="/register"
-                  className="rounded-control bg-brand px-4 py-2 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-brand-hover active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-                >
-                  Start playing
-                </Link>
+                <Button asChild intent="quiet" size="sm" className="hidden md:inline-flex font-medium text-ink-secondary hover:text-ink-primary">
+                  <Link to="/login">
+                    Log in
+                  </Link>
+                </Button>
+                <Button asChild intent="primary" size="sm" className="shadow-xs font-semibold">
+                  <Link to="/register">
+                    Start playing
+                  </Link>
+                </Button>
               </>
             )}
             <PublicMobileMenu />

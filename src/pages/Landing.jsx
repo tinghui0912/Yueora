@@ -28,6 +28,7 @@ import {
   RepertoireGlyph,
 } from '@/components/brand/MusicalGlyphs';
 import { usePrototypeStore } from '@/stores/prototypeStore';
+import { Button } from '@/components/ui/button';
 import { formatPrice } from '@/lib/commercial';
 
 export default function Landing() {
@@ -80,7 +81,7 @@ export default function Landing() {
       title: 'Preserved as a Memory',
       summary: 'Save the takes you cherish beside the sheet music.',
       description:
-        'When an evening run of the piece feels warm and heartfelt, save the recording. Your performance sits forever alongside the score, complete with your personal practice journal notes.',
+        'When an evening run of the piece feels warm and heartfelt, save the recording. Saved performances stay alongside your score, complete with your personal practice journal notes.',
       tag: 'Performance Archive',
       visual: 'memory',
     },
@@ -106,22 +107,22 @@ export default function Landing() {
     },
     {
       q: 'Does Yueora judge or grade my playing?',
-      a: 'Never. Yueora does not calculate accuracy percentages or flash red notes. The pitch-following engine is designed to turn pages and keep your place quietly, giving you space to express yourself without judgment.',
+      a: 'Never. Yueora does not calculate accuracy percentages or flash red notes. The pitch-following engine is designed to follow where you are in the score quietly, giving you space to express yourself without judgment.',
     },
     {
       q: 'Is my practice private?',
       a: 'Yes, completely private by default. Your practice takes, audio recordings, and notes are never published to any public feed. You choose if and when to share a specific take with a teacher or friend.',
     },
     {
-      q: 'Can I export my scores and recordings?',
-      a: 'Always. Your music is yours. You can export scores as high-resolution PDF or MusicXML, and download your preserved audio recordings whenever you want.',
+      q: 'Can I download my recordings and personal data?',
+      a: 'Always. Your music and takes are yours. You can download original audio and video takes from your practice history and saved performances, and export your personal data anytime from Settings.',
     },
   ];
 
   return (
     <PublicShell>
       {/* 1. HERO: "Play what you love." */}
-      <section className="relative mx-auto max-w-6xl px-5 pt-12 pb-24 md:px-8 md:pt-24 md:pb-32">
+      <section className="relative mx-auto max-w-6xl px-5 pt-12 pb-20 md:px-8 md:pt-20 md:pb-24">
         <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
           <div>
             {/* Subtle brand eyebrow */}
@@ -145,20 +146,18 @@ export default function Landing() {
 
             {/* Tactile Actions */}
             <div className="mt-9 flex flex-wrap items-center gap-4">
-              <Link
-                to={primary}
-                className="inline-flex items-center gap-2 rounded-control bg-brand px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand/90 hover:shadow-md"
-              >
-                <span>Start your journey</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href="#lifecycle"
-                className="inline-flex items-center gap-2 rounded-control border border-line-subtle bg-surface-paper px-5 py-3.5 text-sm font-medium text-ink-primary shadow-xs transition hover:bg-surface-canvas"
-              >
-                <span>See the lifecycle</span>
-                <ChevronRight className="h-4 w-4 text-ink-tertiary" />
-              </a>
+              <Button asChild intent="primary" size="lg" className="shadow-sm hover:shadow-md">
+                <Link to={primary}>
+                  <span>Start your journey</span>
+                  <ArrowRight className="icon-sm" />
+                </Link>
+              </Button>
+              <Button asChild intent="secondary" size="lg" className="shadow-xs">
+                <a href="#lifecycle">
+                  <span>See the lifecycle</span>
+                  <ChevronRight className="icon-sm text-ink-tertiary" />
+                </a>
+              </Button>
             </div>
 
             {/* Reassurance pills */}
@@ -183,7 +182,7 @@ export default function Landing() {
       </section>
 
       {/* 2. PHILOSOPHY MOMENT: "Your music, not ours." */}
-      <section id="philosophy" className="border-t border-line-subtle bg-surface-panel/40 py-24 md:py-32">
+      <section id="philosophy" className="border-t border-line-subtle bg-surface-panel/40 py-16 md:py-24">
         <div className="mx-auto max-w-5xl px-5 md:px-8">
           <div className="max-w-2xl">
             <p className="type-caption font-semibold uppercase tracking-wider text-brand">
@@ -254,7 +253,7 @@ export default function Landing() {
       </section>
 
       {/* 3. THE CONNECTED LIFECYCLE: "A piece has a life in Yueora." */}
-      <section id="lifecycle" className="border-t border-line-subtle py-24 md:py-32">
+      <section id="lifecycle" className="border-t border-line-subtle py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand">
@@ -281,7 +280,7 @@ export default function Landing() {
                     key={s.step}
                     type="button"
                     onClick={() => setActiveStep(idx)}
-                    className={`w-full text-left rounded-lg p-4 transition-all duration-fast ${
+                    className={`w-full text-left rounded-lg p-4 transition-[color,background-color,border-color,box-shadow] duration-fast ${
                       isActive
                         ? 'music-paper shadow-paper border-l-4 border-l-brand'
                         : 'border border-transparent hover:bg-surface-panel/60'
@@ -385,7 +384,7 @@ export default function Landing() {
       </section>
 
       {/* 4. DEEP DIVE: PERSONAL REPERTOIRE */}
-      <section id="repertoire" className="border-t border-line-subtle bg-surface-panel/30 py-24 md:py-32">
+      <section id="repertoire" className="border-t border-line-subtle bg-surface-panel/30 py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -465,7 +464,7 @@ export default function Landing() {
       </section>
 
       {/* 5. DEEP DIVE: PRACTICE STAND & NON-JUDGMENTAL LISTENING */}
-      <section id="practice" className="relative border-y border-line-subtle/50 bg-surface-paper/40 py-24 md:py-32">
+      <section id="practice" className="relative border-y border-line-subtle/50 bg-surface-paper/40 py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -518,7 +517,7 @@ export default function Landing() {
       </section>
 
       {/* 6. DEEP DIVE: PRESERVED PERFORMANCES & TIME */}
-      <section id="performances" className="border-t border-line-subtle bg-surface-panel/30 py-24 md:py-32">
+      <section id="performances" className="border-t border-line-subtle bg-surface-panel/30 py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand">
@@ -549,7 +548,7 @@ export default function Landing() {
       </section>
 
       {/* 7. DEEP DIVE: PRIVATE SHARING */}
-      <section className="border-t border-line-subtle py-24 md:py-32">
+      <section className="border-t border-line-subtle py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -591,7 +590,7 @@ export default function Landing() {
       </section>
 
       {/* 8. SIMPLE PRICING */}
-      <section id="pricing" className="border-t border-line-subtle bg-surface-panel/40 py-24 md:py-32">
+      <section id="pricing" className="border-t border-line-subtle bg-surface-panel/40 py-20 md:py-24">
         <div className="mx-auto max-w-5xl px-5 md:px-8">
           <div className="text-center max-w-2xl mx-auto">
             <p className="type-caption font-semibold uppercase tracking-wider text-brand">
@@ -617,7 +616,7 @@ export default function Landing() {
                   <span className="font-display text-3xl font-medium text-ink-primary">
                     {formatPrice(plans.free.priceMonthly)}
                   </span>
-                  <span className="type-metadata text-ink-tertiary">/ forever</span>
+                  <span className="type-metadata text-ink-tertiary">free tier</span>
                 </div>
 
                 <ul className="mt-8 space-y-3 border-t border-line-subtle pt-6 text-sm text-ink-secondary">
@@ -636,12 +635,11 @@ export default function Landing() {
                 </ul>
               </div>
 
-              <Link
-                to={primary}
-                className="mt-8 block text-center rounded-control border border-line-subtle bg-surface-canvas py-3 text-sm font-medium text-ink-primary hover:bg-surface-paper transition shadow-xs"
-              >
-                Get Started Free
-              </Link>
+              <Button asChild intent="secondary" size="lg" className="mt-8 w-full shadow-xs">
+                <Link to={primary}>
+                  Get Started Free
+                </Link>
+              </Button>
             </MusicPaper>
 
             {/* Pro Plan */}
@@ -654,7 +652,7 @@ export default function Landing() {
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-ink-secondary">
-                  Unlimited scores, high-res PDF exports, and deep practice archives.
+                  Unlimited scores, practice insights, and deep performance archives.
                 </p>
                 <div className="mt-6 flex items-baseline gap-1">
                   <span className="font-display text-3xl font-medium text-ink-primary">
@@ -671,10 +669,10 @@ export default function Landing() {
                     <Check className="h-4 w-4 text-brand" /> Phrase looping &amp; custom tempo control
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="h-4 w-4 text-brand" /> High-fidelity audio &amp; video take archive
+                    <Check className="h-4 w-4 text-brand" /> Audio &amp; video take archive
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="h-4 w-4 text-brand" /> PDF &amp; MusicXML full export
+                    <Check className="h-4 w-4 text-brand" /> Original audio &amp; video downloads
                   </li>
                   <li className="flex items-center gap-2.5">
                     <Check className="h-4 w-4 text-brand" /> Intimate sharing with teachers &amp; friends
@@ -682,23 +680,22 @@ export default function Landing() {
                 </ul>
               </div>
 
-              <Link
-                to={primary}
-                className="mt-8 block text-center rounded-control bg-brand py-3 text-sm font-semibold text-white hover:bg-brand/90 transition shadow-sm"
-              >
-                Start Free Trial
-              </Link>
+              <Button asChild intent="primary" size="lg" className="mt-8 w-full shadow-sm">
+                <Link to={primary}>
+                  Start Free Trial
+                </Link>
+              </Button>
             </MusicPaper>
           </div>
 
           <div className="mt-8 text-center text-xs text-ink-tertiary">
-            <span>Cancel anytime. Your music and recordings can always be exported.</span>
+            <span>Cancel anytime. Your saved recordings and data can always be downloaded.</span>
           </div>
         </div>
       </section>
 
       {/* 9. EDITORIAL FAQ */}
-      <section className="mx-auto max-w-3xl px-5 py-24 md:px-8 md:py-32">
+      <section className="mx-auto max-w-3xl px-5 py-16 md:px-8 md:py-24">
         <div className="text-center">
           <p className="type-caption font-semibold uppercase tracking-wider text-brand">
             Clarity &amp; Questions
@@ -726,7 +723,7 @@ export default function Landing() {
       </section>
 
       {/* 10. FINAL BRAND CLOSING: "Play what you love." */}
-      <section className="border-t border-line-subtle bg-surface-panel/40 py-24 text-center md:py-32">
+      <section className="border-t border-line-subtle bg-surface-panel/40 py-20 text-center md:py-24">
         <div className="mx-auto max-w-3xl px-5 md:px-8">
           <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand mb-4">
             <Music className="h-5 w-5" />
@@ -743,13 +740,12 @@ export default function Landing() {
           </p>
 
           <div className="mt-8 flex justify-center gap-4">
-            <Link
-              to={primary}
-              className="inline-flex items-center gap-2 rounded-control bg-brand px-7 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand/90 hover:shadow-md"
-            >
-              <span>Begin Your Repertoire</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            <Button asChild intent="primary" size="lg" className="shadow-sm hover:shadow-md">
+              <Link to={primary}>
+                <span>Begin Your Repertoire</span>
+                <ArrowRight className="icon-sm" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
