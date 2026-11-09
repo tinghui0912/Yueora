@@ -16,6 +16,8 @@ const TARGETS = [
   { name: 'landing-mobile', path: '/', w: 390, h: 844 },
   { name: 'login-desktop', path: '/login', w: 1440, h: 900 },
   { name: 'library-desktop', path: '/library?demo=true', w: 1440, h: 900 },
+  { name: 'practice-hub-desktop', path: '/practice?demo=true', w: 1440, h: 900 },
+  { name: 'imports-desktop', path: '/imports?demo=true', w: 1440, h: 900 },
   { name: 'setup-desktop', path: '/score/clair-de-lune/setup?demo=true', w: 1440, h: 900 },
   { name: 'setup-mobile', path: '/score/clair-de-lune/setup?demo=true', w: 390, h: 844 },
   { name: 'settings-desktop', path: '/settings/account?demo=true', w: 1440, h: 900 },

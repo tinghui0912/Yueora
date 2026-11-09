@@ -9,11 +9,11 @@ const iconButtonVariants = cva(
     variants: {
       tone: {
         quiet:
-          'text-ink-secondary hover:text-ink-primary hover:bg-surface-paper active:scale-[0.98]',
+          'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]',
         outline:
-          'border border-surface-paper-edge bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-surface-paper shadow-xs active:scale-[0.98]',
+          'border border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover shadow-xs active:scale-[0.98]',
         surface:
-          'border border-line-subtle bg-surface-paper text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm shadow-xs active:scale-[0.98]',
+          'border border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover shadow-xs active:scale-[0.98]',
         primary:
           'bg-brand text-white shadow-xs hover:bg-brand-hover active:scale-[0.98]',
         danger:

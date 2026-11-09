@@ -13,8 +13,9 @@
     /* Neutral / Warm Ivory */
     --primitive-neutral-0: 0 0% 100%;       /* Pure White: panels, cards, overlays */
     --primitive-neutral-25: 44 19% 97%;     /* Warm Ivory Canvas: global page backdrop */
-    --primitive-neutral-50: 44 18% 95%;     /* Warm Neutral: subrail, hover, warm paper */
-    --primitive-neutral-100: 44 14% 92%;    /* Neutral Muted: muted tracks, subtle lines */
+    --primitive-neutral-50: 44 18% 95%;     /* Warm Neutral: subrail, passive tracks */
+    --primitive-neutral-75: 44 16% 91%;     /* Neutral Hover: interactive hover contrast */
+    --primitive-neutral-100: 44 14% 88%;    /* Neutral Muted: muted tracks, subtle lines */
     --primitive-neutral-200: 47 13% 80%;    /* Neutral Strong: control borders, strong lines */
     --primitive-neutral-300: 220 3% 62%;    /* Neutral Subtle: ink subtle, quiet dividers */
 
@@ -67,14 +68,14 @@
     --brand-hover: var(--primitive-forest-800);
     --brand-soft: var(--primitive-forest-100);
     --brand-soft-foreground: var(--primitive-forest-700);
-    --brand-wash: var(--primitive-forest-50);
-    --brand-wash-border: var(--primitive-forest-100);
-    --brand-wash-foreground: var(--primitive-forest-800);
+    --brand-wash: var(--primitive-neutral-50);
+    --brand-wash-border: var(--primitive-neutral-100);
+    --brand-wash-foreground: var(--primitive-ink-900);
 
     /* ---- Neutral quiet & hover (Warm ivory-gray, NOT green) ---- */
     --neutral-muted: var(--primitive-neutral-100);
     --neutral-muted-foreground: var(--primitive-ink-700);
-    --neutral-hover: var(--primitive-neutral-50);
+    --neutral-hover: var(--primitive-neutral-75);
     --neutral-hover-foreground: var(--primitive-ink-900);
 
     /* ---- Semantic status ---- */

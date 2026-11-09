@@ -674,13 +674,13 @@ export default function PracticeSession() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex h-9 w-9 items-center justify-center rounded-control border border-surface-paper-edge text-ink-secondary hover:bg-surface-paper hover:text-ink-primary transition-colors"
+                  className="flex h-9 w-9 items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors"
                   aria-label="More session actions"
                 >
                   <MoreHorizontal className="h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 border-surface-paper-edge bg-surface-panel shadow-overlay">
+              <DropdownMenuContent align="end" className="w-48 border-line-subtle bg-surface-panel shadow-overlay">
                 <DropdownMenuItem onClick={() => setSettingsOpen(true)} className="text-sm">
                   <Settings2 className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Session settings
                 </DropdownMenuItem>

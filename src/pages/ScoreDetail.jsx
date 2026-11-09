@@ -109,7 +109,7 @@ export default function ScoreDetail() {
           </div>
           <p className="mt-1 text-sm text-ink-secondary font-medium">{score.composer} · {score.instrument}</p>
           <div className="mt-2 flex flex-wrap items-center gap-2 type-metadata text-ink-secondary/80">
-            <span className="rounded-control bg-surface-paper px-2 py-0.5 border border-surface-paper-edge font-medium">
+            <span className="rounded-control bg-neutral-muted px-2 py-0.5 border border-line-subtle font-medium">
               {score.source}
             </span>
             <span>·</span>
@@ -133,7 +133,7 @@ export default function ScoreDetail() {
               </Link>
             </Button>
           ) : (
-            <span className="flex h-control-md items-center gap-2 rounded-control bg-surface-paper border border-surface-paper-edge px-4 type-body-small font-semibold text-ink-secondary/70">
+            <span className="flex h-control-md items-center gap-2 rounded-control bg-neutral-muted border border-line-subtle px-4 type-body-small font-semibold text-ink-secondary/70">
               <Lock className="icon-sm" /> Practice unavailable
             </span>
           )}
@@ -176,7 +176,7 @@ export default function ScoreDetail() {
                 label="More score options"
               />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52 border-surface-paper-edge bg-surface-panel shadow-overlay">
+            <DropdownMenuContent align="end" className="w-52 border-line-subtle bg-surface-panel shadow-overlay">
               <DropdownMenuItem onClick={handleFavorite} className="text-xs">
                 <Star className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> {score.favorite ? 'Remove favorite' : 'Add to favorites'}
               </DropdownMenuItem>
@@ -225,27 +225,27 @@ export default function ScoreDetail() {
             </div>
 
             {/* Pagination & Zoom Controls */}
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-surface-paper-edge pt-3 text-xs text-ink-secondary">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line-subtle pt-3 text-xs text-ink-secondary">
               <span>Page {page} of {score.pages}</span>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))}
-                  className="rounded-control border border-surface-paper-edge p-1.5 hover:bg-surface-paper"
+                  className="rounded-control border border-line-subtle p-1.5 hover:bg-neutral-hover"
                   aria-label="Zoom out"
                 >
                   <ZoomOut className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))}
-                  className="rounded-control border border-surface-paper-edge p-1.5 hover:bg-surface-paper"
+                  className="rounded-control border border-line-subtle p-1.5 hover:bg-neutral-hover"
                   aria-label="Zoom in"
                 >
                   <ZoomIn className="h-3.5 w-3.5" />
                 </button>
-                <div className="mx-1 h-4 w-px bg-surface-paper-edge" />
+                <div className="mx-1 h-4 w-px bg-line-subtle" />
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="rounded-control border border-surface-paper-edge p-1.5 hover:bg-surface-paper disabled:opacity-40"
+                  className="rounded-control border border-line-subtle p-1.5 hover:bg-neutral-hover disabled:opacity-40"
                   disabled={page <= 1}
                   aria-label="Previous page"
                 >
@@ -253,7 +253,7 @@ export default function ScoreDetail() {
                 </button>
                 <button
                   onClick={() => setPage((p) => Math.min(score.pages, p + 1))}
-                  className="rounded-control border border-surface-paper-edge p-1.5 hover:bg-surface-paper disabled:opacity-40"
+                  className="rounded-control border border-line-subtle p-1.5 hover:bg-neutral-hover disabled:opacity-40"
                   disabled={page >= score.pages}
                   aria-label="Next page"
                 >
@@ -263,7 +263,7 @@ export default function ScoreDetail() {
             </div>
 
             {/* Embedded audio playback */}
-            <div id="listen" className="mt-4 border-t border-surface-paper-edge pt-4">
+            <div id="listen" className="mt-4 border-t border-line-subtle pt-4">
               <ListenControl score={score} />
             </div>
           </MusicPaper>
@@ -272,7 +272,7 @@ export default function ScoreDetail() {
         {/* Right Column: Journey Hub & Musical Relationship */}
         <div className="lg:col-span-4 space-y-6">
           {/* Journey of this Piece */}
-          <MusicPaper tone="natural" className="p-5">
+          <div className="rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs">
             <h2 className="font-display text-base font-medium text-ink-primary">
               The Journey of this Piece
             </h2>
@@ -287,7 +287,7 @@ export default function ScoreDetail() {
                 performances={scorePerformances}
               />
             </div>
-          </MusicPaper>
+          </div>
 
           {/* Recent practice & preserved moments */}
           <div className="space-y-4">
@@ -300,7 +300,7 @@ export default function ScoreDetail() {
                 No practice recorded yet. When you play, your sessions will quietly appear here.
               </p>
             ) : (
-              <div className="divide-y divide-surface-paper-edge rounded-container border border-surface-paper-edge bg-surface-paper/70">
+              <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel shadow-xs">
                 {sessions.slice(0, 4).map((a) => {
                   const saved = scorePerformances.find((p) => p.activityId === a.id);
                   return (
@@ -317,7 +317,7 @@ export default function ScoreDetail() {
                       {saved && (
                         <Link
                           to={`/performances/${saved.id}`}
-                          className="flex shrink-0 items-center gap-1 rounded-control border border-surface-paper-edge bg-surface-panel px-2.5 py-1 text-xs font-medium text-brand hover:bg-surface-paper-warm"
+                          className="flex shrink-0 items-center gap-1 rounded-control border border-line-subtle bg-surface-panel px-2.5 py-1 text-xs font-medium text-brand hover:bg-neutral-hover"
                         >
                           <Play className="h-3 w-3 fill-current" />
                           <span>Play take</span>
@@ -336,14 +336,14 @@ export default function ScoreDetail() {
 
       {/* Move to folder dialog */}
       <Dialog open={moveFolderOpen} onOpenChange={setMoveFolderOpen}>
-        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle className="font-display text-lg">Move to folder</DialogTitle></DialogHeader>
           <div className="space-y-1 mt-2">
             {folders.map((f) => (
               <button
                 key={f.id}
                 onClick={() => { moveToFolder(score.id, f.id); setMoveFolderOpen(false); toast({ title: 'Moved', description: `${score.title} moved to ${f.name}.` }); }}
-                className="flex w-full items-center gap-2 rounded-control border border-surface-paper-edge px-3 py-2 text-left text-sm hover:bg-surface-paper"
+                className="flex w-full items-center gap-2 rounded-control border border-line-subtle px-3 py-2 text-left text-sm hover:bg-neutral-hover"
               >
                 <FolderInput className="h-4 w-4 text-ink-secondary" />
                 <span className="font-medium text-ink-primary">{f.name}</span>
@@ -357,7 +357,7 @@ export default function ScoreDetail() {
 
       {/* Versions dialog */}
       <Dialog open={versionsOpen} onOpenChange={setVersionsOpen}>
-        <DialogContent className="max-w-md border-surface-paper-edge bg-surface-panel">
+        <DialogContent className="max-w-md border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle className="font-display text-lg">Version history</DialogTitle></DialogHeader>
           <div className="space-y-2 mt-2">
             {(() => {
@@ -371,7 +371,7 @@ export default function ScoreDetail() {
                 const isCurrent = v.isCurrent && !restoredLabel;
                 const isRestored = restoredLabel === v.label;
                 return (
-                  <div key={v.label} className={`flex items-center justify-between rounded-control border px-3 py-2 text-xs transition-colors ${isCurrent || isRestored ? 'border-brand bg-neutral-hover shadow-xs' : 'border-surface-paper-edge'}`}>
+                  <div key={v.label} className={`flex items-center justify-between rounded-control border px-3 py-2 text-xs transition-colors ${isCurrent || isRestored ? 'border-brand bg-neutral-hover shadow-xs' : 'border-line-subtle'}`}>
                     <div>
                       <p className="font-medium text-ink-primary">{v.label}{isRestored ? ' · Restored' : ''}</p>
                       <p className="text-xs text-ink-secondary/70">{isRestored ? `Restored ${score.versionRestoredAt}` : v.date}</p>
@@ -392,7 +392,7 @@ export default function ScoreDetail() {
 
       {/* Delete confirm */}
       <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle className="font-display text-lg">Move to trash?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">{score.title} will move to Trash for 30 days before permanent deletion.</p>
           <DialogFooter className="mt-4">
@@ -404,7 +404,7 @@ export default function ScoreDetail() {
 
       {/* Leave confirm */}
       <Dialog open={confirmLeave} onOpenChange={setConfirmLeave}>
-        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle className="font-display text-lg">Leave shared score?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">You will lose access to {score.title}.</p>
           <DialogFooter className="mt-4">
@@ -416,7 +416,7 @@ export default function ScoreDetail() {
 
       {/* Remove saved confirm */}
       <Dialog open={confirmRemove} onOpenChange={setConfirmRemove}>
-        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle className="font-display text-lg">Remove from library?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">{score.title} will be removed from your repertoire.</p>
           <DialogFooter className="mt-4">

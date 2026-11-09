@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { dayLabel, minutesLabel } from '@/lib/practiceUtils';
 import { practiceWeek } from '@/lib/practiceStats';
+import AppPage from '@/components/patterns/AppPage';
 import PageHeader from '@/components/patterns/PageHeader';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import Metric from '@/components/patterns/Metric';
@@ -39,7 +40,7 @@ export default function PracticeProgress() {
   }).sort((a, b) => b.minutes - a.minutes);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-6 md:px-8">
+    <AppPage size="standard">
       <Link to="/practice" className="type-body-small text-ink-secondary hover:text-ink-primary">← Practice</Link>
       <div className="mt-3">
         <PageHeader
@@ -85,9 +86,9 @@ export default function PracticeProgress() {
 
           <section className="mt-8">
             <SectionHeader title="Pieces you return to" />
-            <div className="mt-3 divide-y divide-line-subtle border-y border-line-subtle">
+            <div className="mt-3 divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel shadow-xs overflow-hidden">
               {pieces.map((p) => (
-                <div key={p.id} className="flex items-center justify-between gap-3 py-3">
+                <div key={p.id} className="flex items-center justify-between gap-3 p-4 transition-colors hover:bg-neutral-hover">
                   <div className="min-w-0">
                     <p className="font-medium text-ink-primary">{p.title}</p>
                     <p className="type-metadata text-ink-tertiary">{p.sessions} {p.sessions === 1 ? 'session' : 'sessions'} · {minutesLabel(p.minutes * 60)} total · last {p.lastLabel}</p>
@@ -99,6 +100,6 @@ export default function PracticeProgress() {
           </section>
         </>
       )}
-    </div>
+    </AppPage>
   );
 }

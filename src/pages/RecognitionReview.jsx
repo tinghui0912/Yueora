@@ -59,8 +59,8 @@ export default function RecognitionReview() {
         <div className="flex items-center gap-3">
           {active && (
             <div className="hidden items-center gap-1 sm:flex">
-              <button onClick={goPrev} disabled={issues.findIndex((i) => i.id === active.id) === 0} className="rounded-control p-1 text-ink-secondary hover:bg-surface-paper disabled:opacity-30" aria-label="Previous issue"><ChevronUp className="icon-sm" /></button>
-              <button onClick={goNext} disabled={issues.findIndex((i) => i.id === active.id) === issues.length - 1} className="rounded-control p-1 text-ink-secondary hover:bg-surface-paper disabled:opacity-30" aria-label="Next issue"><ChevronDown className="icon-sm" /></button>
+              <button onClick={goPrev} disabled={issues.findIndex((i) => i.id === active.id) === 0} className="rounded-control p-1 text-ink-secondary hover:bg-neutral-hover disabled:opacity-30" aria-label="Previous issue"><ChevronUp className="icon-sm" /></button>
+              <button onClick={goNext} disabled={issues.findIndex((i) => i.id === active.id) === issues.length - 1} className="rounded-control p-1 text-ink-secondary hover:bg-neutral-hover disabled:opacity-30" aria-label="Next issue"><ChevronDown className="icon-sm" /></button>
             </div>
           )}
           <span className="type-body-small text-ink-secondary">Recognition review</span>
@@ -182,7 +182,7 @@ function IssuesPanel({ issues, activeIssue, setActiveIssue, active, onMarkFixed,
           <button
             key={iss.id}
             onClick={() => setActiveIssue(iss.id)}
-            className={`w-full rounded-container border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-neutral-hover shadow-xs' : 'border-line-subtle bg-surface-panel hover:bg-surface-paper'} ${iss.resolved ? 'opacity-50' : ''}`}
+            className={`w-full rounded-container border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-neutral-hover shadow-xs' : 'border-line-subtle bg-surface-panel hover:bg-neutral-hover'} ${iss.resolved ? 'opacity-50' : ''}`}
           >
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="icon-xs text-warning" /> Measure {iss.measure}</span>

@@ -59,7 +59,7 @@ export default function TransportControl({
             type="button"
             onClick={onReset}
             title="Return to beginning"
-            className="flex h-9 w-9 items-center justify-center rounded-control border border-surface-paper-edge bg-surface-paper text-ink-secondary transition-colors hover:bg-surface-paper-warm hover:text-ink-primary active:scale-95"
+            className="flex h-9 w-9 items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary transition-colors hover:bg-neutral-hover hover:text-ink-primary active:scale-95"
             aria-label="Return to beginning"
           >
             <RotateCcw className="h-3.5 w-3.5" />
@@ -79,7 +79,7 @@ export default function TransportControl({
             className={`flex items-center gap-1.5 rounded-control border px-2.5 py-2 text-xs font-medium transition-colors ${
               loop
                 ? 'border-brand bg-neutral-muted font-semibold text-ink-primary shadow-xs'
-                : 'border-surface-paper-edge bg-surface-paper text-ink-secondary hover:text-ink-primary'
+                : 'border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover'
             }`}
             title="Loop selected section"
           >

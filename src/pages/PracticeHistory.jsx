@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Music2 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { dayLabel, minutesLabel, modeLabel } from '@/lib/practiceUtils';
+import AppPage from '@/components/patterns/AppPage';
 import PageHeader from '@/components/patterns/PageHeader';
 import StateMessage from '@/components/patterns/StateMessage';
 import { Button } from '@/components/ui/button';
@@ -27,7 +28,7 @@ export default function PracticeHistory() {
   });
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6 md:px-8">
+    <AppPage size="standard">
       <Link to="/practice" className="type-body-small text-ink-secondary hover:text-ink-primary">← Practice</Link>
       <div className="mt-3">
         <PageHeader
@@ -51,13 +52,13 @@ export default function PracticeHistory() {
           {Object.entries(groups).map(([date, items]) => (
             <section key={date}>
               <h2 className="mb-2 type-caption text-ink-tertiary">{date}</h2>
-              <div className="divide-y divide-line-subtle border-y border-line-subtle">
+              <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel shadow-xs overflow-hidden">
                 {items.map((a) => (
                   <button
                     key={a.id}
                     type="button"
                     onClick={() => setDetail(a)}
-                    className="block w-full py-3.5 text-left"
+                    className="block w-full p-4 text-left transition-colors hover:bg-neutral-hover"
                   >
                     <p className="font-medium text-ink-primary">{a.scoreTitleSnapshot}</p>
                     <p className="mt-0.5 type-body-small text-ink-secondary">
@@ -97,6 +98,6 @@ export default function PracticeHistory() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AppPage>
   );
 }

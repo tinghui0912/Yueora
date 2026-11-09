@@ -10,6 +10,7 @@ import PerformanceSharing from '@/components/performances/PerformanceSharing';
 import ShareVideoDialog from '@/components/performances/ShareVideoDialog';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import StateMessage from '@/components/patterns/StateMessage';
+import AppPage from '@/components/patterns/AppPage';
 import { Button } from '@/components/ui/button';
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
@@ -110,7 +111,7 @@ export default function PerformanceDetail() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-6 md:px-8">
+    <AppPage size="wide">
       <Link to="/performances" className="flex items-center gap-1.5 type-body-small text-ink-secondary hover:text-ink-primary">
         <ArrowLeft className="h-4 w-4" /> Performances
       </Link>
@@ -244,6 +245,6 @@ export default function PerformanceDetail() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AppPage>
   );
 }

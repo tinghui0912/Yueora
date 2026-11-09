@@ -3,7 +3,6 @@ import { Play, ChevronRight, Clock } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { practiceWeek } from '@/lib/practiceStats';
 import ScorePreview from '@/components/library/ScorePreview';
-import MusicPaper from '@/components/patterns/MusicPaper';
 import AppPage from '@/components/patterns/AppPage';
 import { Button } from '@/components/ui/button';
 import { PracticeGlyph } from '@/components/brand/MusicalGlyphs';
@@ -57,13 +56,11 @@ export default function PracticeHub() {
             Pick up where you left off
           </p>
           <div className="mt-3">
-            <MusicPaper
-              interactive
-              tone="warm"
-              className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"
+            <div
+              className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs transition-shadow hover:shadow-paper sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex items-center gap-4 min-w-0">
-                <div className="h-16 w-24 shrink-0 overflow-hidden rounded border border-surface-paper-edge bg-white/95">
+                <div className="h-16 w-24 shrink-0 overflow-hidden rounded border border-line-subtle bg-white/95">
                   <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
                 </div>
                 <div className="min-w-0">
@@ -84,7 +81,7 @@ export default function PracticeHub() {
                   <span>Continue playing</span>
                 </Link>
               </Button>
-            </MusicPaper>
+            </div>
           </div>
         </section>
       )}
@@ -98,8 +95,8 @@ export default function PracticeHub() {
           <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {recentlyLoved.map((r) => (
               <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="block">
-                <MusicPaper interactive tone="natural" className="flex items-center gap-3.5 p-3.5">
-                  <div className="h-14 w-20 shrink-0 overflow-hidden rounded border border-surface-paper-edge bg-white">
+                <div className="flex items-center gap-3.5 rounded-container border border-line-subtle bg-surface-panel p-3.5 shadow-xs transition-shadow hover:shadow-paper">
+                  <div className="h-14 w-20 shrink-0 overflow-hidden rounded border border-line-subtle bg-white">
                     <ScorePreview id={r.scoreId} className="h-full w-full object-cover" />
                   </div>
                   <div className="min-w-0">
@@ -107,7 +104,7 @@ export default function PracticeHub() {
                     <p className="truncate type-metadata text-ink-secondary mt-0.5">{r.composer}</p>
                     <span className="inline-block mt-1 text-xs font-medium text-brand">Revisit piece →</span>
                   </div>
-                </MusicPaper>
+                </div>
               </Link>
             ))}
           </div>
@@ -123,14 +120,14 @@ export default function PracticeHub() {
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
             {havenPlayed.map((r) => (
               <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="block">
-                <MusicPaper interactive tone="natural" className="flex items-center justify-between p-4">
+                <div className="flex items-center justify-between rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs transition-shadow hover:shadow-paper">
                   <div className="min-w-0">
                     <p className="font-display font-medium text-ink-primary">{r.title}</p>
                     <p className="type-metadata text-ink-secondary mt-0.5">{r.composer} · last played {r.lastPlayed}</p>
                     <p className="mt-1 text-sm text-brand font-medium">Feel like revisiting this one?</p>
                   </div>
                   <ChevronRight className="h-4 w-4 text-ink-tertiary" />
-                </MusicPaper>
+                </div>
               </Link>
             ))}
           </div>
@@ -140,7 +137,7 @@ export default function PracticeHub() {
       {/* Empty State */}
       {!continueScore && recentlyLoved.length === 0 && havenPlayed.length === 0 && (
         <section className="mt-8">
-          <MusicPaper tone="natural" className="flex flex-col items-center gap-3 p-12 text-center">
+          <div className="flex flex-col items-center gap-3 rounded-container border border-line-subtle bg-surface-panel p-12 text-center shadow-xs">
             <PracticeGlyph className="h-8 w-8 text-brand" />
             <h2 className="type-section-title text-ink-primary">Welcome to Practice</h2>
             <p className="max-w-sm type-body-small leading-relaxed text-ink-secondary">
@@ -151,7 +148,7 @@ export default function PracticeHub() {
                 Browse your Repertoire
               </Link>
             </Button>
-          </MusicPaper>
+          </div>
         </section>
       )}
 
@@ -161,26 +158,26 @@ export default function PracticeHub() {
           This Week in Music
         </p>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">
-          <MusicPaper tone="natural" className="p-4">
+          <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs">
             <p className="type-metric text-ink-primary">
               {thisWeekMinutes} <span className="type-body-small font-normal text-ink-secondary">min</span>
             </p>
             <p className="type-metadata text-ink-secondary mt-1">across {thisWeekSessions} calm sessions</p>
-          </MusicPaper>
+          </div>
 
-          <MusicPaper tone="natural" className="p-4">
+          <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs">
             <p className="type-metric text-ink-primary">
               {thisWeekPieces}
             </p>
             <p className="type-metadata text-ink-secondary mt-1">pieces brought to life</p>
-          </MusicPaper>
+          </div>
 
-          <MusicPaper tone="natural" className="p-4 flex flex-col justify-between">
+          <div className="flex flex-col justify-between rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs">
             <div className="flex justify-between items-center pt-1">
               {week.days.map((d, i) => (
                 <div key={d.key} className="flex flex-col items-center gap-1.5">
                   <span
-                    className={`h-2.5 w-2.5 rounded-full ${thisWeekMarks[i] ? 'bg-brand' : 'bg-surface-paper-edge'}`}
+                    className={`h-2.5 w-2.5 rounded-full ${thisWeekMarks[i] ? 'bg-brand' : 'bg-neutral-muted'}`}
                   />
                   <span className="text-xs font-medium text-ink-secondary">{d.label}</span>
                 </div>
@@ -189,7 +186,7 @@ export default function PracticeHub() {
             <p className="type-metadata text-ink-secondary mt-2">
               {thisWeekMarks.filter(Boolean).length} days of music
             </p>
-          </MusicPaper>
+          </div>
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">

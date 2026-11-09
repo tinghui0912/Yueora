@@ -58,18 +58,18 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
   - `text-ink-secondary` (`hsl(223 4% 36%)`): Readable secondary descriptions, timestamps, and labels (>6.5:1 contrast).
   - `text-ink-tertiary` (`hsl(220 4% 48%)`): Readable muted copy (>4.5:1 contrast).
   - `text-ink-subtle` (`hsl(220 3% 62%)`): Strictly non-textual dividers and subtle glyphs.
-- **Surfaces:**
+- **Surfaces & Simplified 3-Surface Model:**
   - `bg-surface-canvas` (`hsl(44 19% 97%)`): Global backdrop canvas — warm ivory off-white, never pure gray and never green.
-  - `bg-surface-panel` (`hsl(0 0% 100%)`): Pure white functional container surface for primary nav sidebar, dialogs, cards, forms, inputs.
+  - `bg-surface-panel` (`hsl(0 0% 100%)`): Pure white functional container surface for primary nav sidebar, dialogs, cards, forms, inputs, resume modules, list panels, and pricing cards.
   - `bg-surface-subrail` (`hsl(44 18% 95%)`): Subtle, distinct secondary navigation rail surface for collection and folder exploration.
   - `bg-surface-raised` (`hsl(0 0% 100%)`): Elevated overlay surface (menus, popovers, floating toolbars).
-  - `bg-surface-paper` (`hsl(44 26% 96%)`): Tactile archival paper tone for score artifacts and musical notation.
-  - `bg-surface-paper-warm` (`hsl(40 28% 95%)`): Warm paper tone for preserved musical memories and takes.
+  - `bg-surface-paper` (`hsl(44 26% 96%)`): Archival paper tone **strictly reserved for score artifacts and musical notation canvases**.
+  - **Retired Tokens:** `brand-wash` and `surface-paper-warm` are permanently retired from product code.
 - **Lines & Borders:**
   - `border-line-subtle` (`hsl(47 14% 91%)`): Quiet structural dividers and panel borders.
   - `border-line-strong` (`hsl(47 13% 80%)`): Stronger borders for unfocused controls, switches, checkboxes.
   - `border-line-subrail` (`hsl(47 14% 88%)`): Distinctive divider for secondary navigation rails.
-  - `border-surface-paper-edge` (`hsl(44 16% 87%)`): Tactile card and paper boundary.
+  - `border-surface-paper-edge` (`hsl(44 16% 87%)`): Score paper boundary.
 - **Brand & Active States:**
   - `bg-brand` (`hsl(148 36% 27%)`): Deep forest green for primary CTA buttons, strong emphasis, and checkmark indicators. Brand is an accent, never a full-width background system.
   - `bg-brand-hover` (`hsl(148 36% 22%)`): Darker forest green for primary CTA hover.
@@ -80,11 +80,9 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
     - **Control Toggles:** Loop/toggle buttons use `border-brand bg-neutral-muted text-ink-primary shadow-xs` with `text-brand` icon, not `bg-brand-soft`.
     - It remains **BANNED** on navigation active items, ordinary hovers, buttons/actions, status/verification icons, popular badges, chart bars, and decorative icon circles.
   - `text-brand-soft-foreground` (`hsl(148 36% 27%)`): Contrast foreground text on pale green surfaces.
-  - `bg-brand-wash` (`hsl(148 24% 96%)`): **Featured brand surface for contained modules.** Used for Priority 1 re-engagement ("Pick up where you left off"), returning-user recommendations, and contained highlight modules. NEVER used as a full-width page section background.
-  - `border-brand-wash-border` (`hsl(148 26% 88%)`): Boundary for featured brand surfaces.
 - **Neutral Quiet & Hover & Navigation Active:**
   - `bg-neutral-muted` (`hsl(44 14% 92%)`): Warm ivory-neutral for **Navigation Active items** (`bg-neutral-muted font-semibold text-ink-primary shadow-xs`), passive badges, tab tracks, progress backgrounds.
-  - `bg-neutral-hover` (`hsl(44 16% 94%)`): Warm neutral hover state for all interactive items, navigation links, and dropdown items (warm ivory-gray, NEVER green).
+  - `bg-neutral-hover` (`hsl(44 16% 91%)`): Warm neutral hover state for all interactive items, navigation links, and dropdown items (warm ivory-gray, NEVER green).
 - **Navigation Active Contract:**
   - Inactive: `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`
   - Active: `bg-neutral-muted font-semibold text-ink-primary shadow-xs` with subtle `text-brand` icon cue.

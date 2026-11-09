@@ -2,7 +2,8 @@ import { forwardRef } from 'react';
 
 /**
  * MusicPaper: Archival tactile paper surface primitive.
- * Reflects physical sheet music rather than flat digital SaaS cards.
+ * Strictly reserved ONLY for literal sheet music scores, musical notation, and score canvas rendering.
+ * Generic application cards, lists, recommendations, stats, and empty states MUST use standard surface-panel.
  */
 /**
  * @typedef {React.HTMLAttributes<HTMLDivElement> & {
@@ -32,7 +33,7 @@ const MusicPaper = forwardRef(function MusicPaper(
 ) {
   const toneClasses = {
     natural: 'bg-surface-paper text-ink-primary',
-    warm: 'bg-surface-paper-warm text-ink-primary',
+    warm: 'bg-surface-paper text-ink-primary',
     white: 'bg-surface-panel text-ink-primary',
   }[tone] || 'bg-surface-paper text-ink-primary';
 

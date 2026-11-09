@@ -215,12 +215,12 @@ export default function Library() {
           </button>
         </div>
 
-        {/* Hero: "Pick up where you left off" - Featured Brand Surface */}
+        {/* Hero: "Pick up where you left off" - Resume Playing Card */}
         {!isTrash && !search && active === 'all' && continueScore && (
           <div className="mx-4 mt-6 md:mx-8">
-            <div className="flex flex-col gap-4 rounded-container border border-brand-washBorder bg-brand-wash p-5 shadow-xs transition-shadow hover:shadow-paper sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs transition-shadow hover:shadow-paper sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4 min-w-0">
-                <div className="hidden h-14 w-20 shrink-0 overflow-hidden rounded border border-brand-washBorder bg-white/90 sm:block">
+                <div className="hidden h-14 w-20 shrink-0 overflow-hidden rounded border border-line-subtle bg-white/90 sm:block">
                   <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
                 </div>
                 <div className="min-w-0">
@@ -444,10 +444,10 @@ export default function Library() {
                   <Trash2 className="mr-1.5 h-3.5 w-3.5" /> Empty trash
                 </Button>
               </div>
-              <div className="divide-y divide-surface-paper-edge rounded-container border border-surface-paper-edge bg-surface-paper">
+              <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel shadow-xs">
                 {filtered.map((s) => (
                   <div key={s.id} className="flex items-center gap-4 p-3.5">
-                    <div className="h-12 w-16 shrink-0 overflow-hidden rounded border border-surface-paper-edge bg-white">
+                    <div className="h-12 w-16 shrink-0 overflow-hidden rounded border border-line-subtle bg-white">
                       <ScorePreview id={s.id} className="h-full w-full object-cover" />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -456,7 +456,7 @@ export default function Library() {
                     </div>
                     <button
                       onClick={() => restoreScore(s.id)}
-                      className="rounded-control border border-surface-paper-edge bg-surface-panel px-3 py-1.5 text-xs font-semibold text-ink-primary hover:bg-surface-paper-warm"
+                      className="rounded-control border border-line-subtle bg-surface-panel px-3 py-1.5 text-xs font-semibold text-ink-primary hover:bg-neutral-hover"
                     >
                       Restore
                     </button>
@@ -482,11 +482,11 @@ export default function Library() {
               ))}
             </RepertoireGrid>
           ) : (
-            <div className="divide-y divide-surface-paper-edge rounded-container border border-surface-paper-edge bg-surface-paper shadow-paper">
+            <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel shadow-xs">
               {filtered.map((s) => (
                 <div
                   key={s.id}
-                  className={`flex items-center gap-4 p-3.5 transition-colors hover:bg-surface-paper-warm ${
+                  className={`flex items-center gap-4 p-3.5 transition-colors hover:bg-neutral-hover ${
                     selected.includes(s.id) ? 'bg-neutral-muted/70' : ''
                   }`}
                 >
@@ -496,7 +496,7 @@ export default function Library() {
                     className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
                       selected.includes(s.id)
                         ? 'border-brand bg-brand text-white'
-                        : 'border-surface-paper-edge hover:border-line-strong'
+                        : 'border-line-subtle hover:border-line-strong'
                     }`}
                     aria-label={`Select ${s.title}`}
                   >
@@ -504,7 +504,7 @@ export default function Library() {
                   </button>
 
                   <Link to={`/score/${s.id}`} className="flex min-w-0 flex-1 items-center gap-4">
-                    <div className="h-11 w-14 shrink-0 overflow-hidden rounded border border-surface-paper-edge bg-white">
+                    <div className="h-11 w-14 shrink-0 overflow-hidden rounded border border-line-subtle bg-white">
                       <ScorePreview id={s.id} className="h-full w-full object-cover" />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -537,14 +537,14 @@ export default function Library() {
 
       {/* Move to folder dialog */}
       <Dialog open={moveOpen} onOpenChange={setMoveOpen}>
-        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle className="font-display text-lg">Move to folder</DialogTitle></DialogHeader>
           <div className="space-y-1 mt-2">
             {folders.map((f) => (
               <button
                 key={f.id}
                 onClick={() => moveSelected(f.id)}
-                className="flex w-full items-center gap-2 rounded-control border border-surface-paper-edge px-3 py-2 text-left text-xs hover:bg-surface-paper"
+                className="flex w-full items-center gap-2 rounded-control border border-line-subtle px-3 py-2 text-left text-xs hover:bg-neutral-hover"
               >
                 <FolderInput className="h-3.5 w-3.5 text-ink-secondary" />
                 <span className="font-medium text-ink-primary">{f.name}</span>

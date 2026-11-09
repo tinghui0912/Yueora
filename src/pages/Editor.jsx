@@ -213,7 +213,7 @@ export default function Editor() {
               type="button"
               onClick={goPrevIssue}
               disabled={issueIdx === 0}
-              className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-surface-paper hover:text-ink-primary disabled:opacity-30 transition-colors"
+              className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary disabled:opacity-30 transition-colors"
               aria-label="Previous issue"
             >
               <ChevronLeft className="icon-xs" aria-hidden="true" />
@@ -222,7 +222,7 @@ export default function Editor() {
               type="button"
               onClick={goNextIssue}
               disabled={issueIdx >= issues.length - 1}
-              className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-surface-paper hover:text-ink-primary disabled:opacity-30 transition-colors"
+              className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary disabled:opacity-30 transition-colors"
               aria-label="Next issue"
             >
               <ChevronRight className="icon-xs" aria-hidden="true" />
@@ -248,9 +248,9 @@ export default function Editor() {
           </button>
         ))}
         <div className="ml-auto flex items-center gap-1">
-          <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="flex h-7 w-7 items-center justify-center rounded-control text-ink-secondary hover:bg-surface-paper" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
+          <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="flex h-7 w-7 items-center justify-center rounded-control text-ink-secondary hover:bg-neutral-hover" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
           <span className="text-xs font-medium text-ink-secondary">{Math.round(zoom * 100)}%</span>
-          <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="flex h-7 w-7 items-center justify-center rounded-control text-ink-secondary hover:bg-surface-paper" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
+          <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="flex h-7 w-7 items-center justify-center rounded-control text-ink-secondary hover:bg-neutral-hover" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
         </div>
       </div>
 
@@ -279,9 +279,9 @@ export default function Editor() {
             </button>
           ))}
           <div className="mt-auto flex flex-col items-center gap-1">
-            <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="flex h-8 w-8 items-center justify-center rounded-control text-ink-secondary hover:bg-surface-paper" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
+            <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="flex h-8 w-8 items-center justify-center rounded-control text-ink-secondary hover:bg-neutral-hover" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
             <span className="text-xs font-medium text-ink-secondary">{Math.round(zoom * 100)}%</span>
-            <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="flex h-8 w-8 items-center justify-center rounded-control text-ink-secondary hover:bg-surface-paper" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
+            <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="flex h-8 w-8 items-center justify-center rounded-control text-ink-secondary hover:bg-neutral-hover" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
           </div>
         </div>
 
@@ -325,7 +325,7 @@ export default function Editor() {
               <Button variant="outline" size="sm" className="w-full text-xs font-medium" onClick={copySelected}><Copy className="mr-1.5 h-3.5 w-3.5" /> Copy selected</Button>
               <div className="flex gap-1.5">
                 {['1', '2', '4', '8'].map((d) => (
-                  <button key={d} onClick={() => changeDurationSelected(d)} className="flex-1 rounded-control border border-surface-paper-edge py-1 text-xs font-medium text-ink-primary hover:bg-surface-paper">{d}</button>
+                  <button key={d} onClick={() => changeDurationSelected(d)} className="flex-1 rounded-control border border-line-subtle py-1 text-xs font-medium text-ink-primary hover:bg-neutral-hover">{d}</button>
                 ))}
               </div>
             </div>
@@ -348,9 +348,9 @@ export default function Editor() {
           <span className="font-medium text-ink-primary">Playback</span>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => setMeasure((m) => Math.max(1, m - 1))} className="flex h-7 w-7 items-center justify-center rounded-control border border-surface-paper-edge hover:bg-surface-paper" aria-label="Previous measure"><ChevronLeft className="h-3.5 w-3.5" /></button>
+          <button onClick={() => setMeasure((m) => Math.max(1, m - 1))} className="flex h-7 w-7 items-center justify-center rounded-control border border-line-subtle hover:bg-neutral-hover" aria-label="Previous measure"><ChevronLeft className="h-3.5 w-3.5" /></button>
           <span className="text-xs font-medium text-ink-secondary">Measure {measure} / {score.measures || 16}</span>
-          <button onClick={() => setMeasure((m) => Math.min(score.measures || 16, m + 1))} className="flex h-7 w-7 items-center justify-center rounded-control border border-surface-paper-edge hover:bg-surface-paper" aria-label="Next measure"><ChevronRight className="h-3.5 w-3.5" /></button>
+          <button onClick={() => setMeasure((m) => Math.min(score.measures || 16, m + 1))} className="flex h-7 w-7 items-center justify-center rounded-control border border-line-subtle hover:bg-neutral-hover" aria-label="Next measure"><ChevronRight className="h-3.5 w-3.5" /></button>
         </div>
       </div>
 
@@ -373,7 +373,7 @@ export default function Editor() {
 
 function ViewTab({ active, onClick, icon: Icon, label }) {
   return (
-    <button onClick={onClick} className={`flex items-center gap-1.5 rounded-control px-3.5 py-1.5 text-sm transition-colors ${active ? 'bg-surface-panel font-semibold text-brand shadow-xs' : 'text-ink-secondary hover:text-ink-primary hover:bg-surface-paper'}`}>
+    <button onClick={onClick} className={`flex items-center gap-1.5 rounded-control px-3.5 py-1.5 text-sm transition-colors ${active ? 'bg-surface-panel font-semibold text-brand shadow-xs' : 'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover'}`}>
       <Icon className="h-4 w-4" /> {label}
     </button>
   );

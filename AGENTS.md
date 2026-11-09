@@ -55,15 +55,14 @@ Before creating or styling any UI element:
    - **Never combine** semantic typography with conflicting font sizes (e.g. do NOT write `type-page-title text-2xl`).
 3. **Use semantic colors & respect the Color Contract:**
    - Text: `text-ink-primary`, `text-ink-secondary`, `text-ink-tertiary`, `text-ink-subtle`
-   - Surfaces & IA Depth:
-     - Primary Nav: `bg-surface-panel` (clean white)
+   - Surfaces & Simplified 3-Surface Model:
+     - Workspace Canvas: `bg-surface-canvas` (warm ivory backdrop)
+     - Standard Content Panel: `bg-surface-panel` (clean white, `border-line-subtle`, `rounded-container`, `shadow-xs`). All cards, list containers, sections, resume modules, pricing tiers, and stats use standard panel.
+     - Elevated Overlays / Menus: `bg-surface-raised` with `shadow-overlay`
      - Secondary Nav / Collection SubRail: `bg-surface-subrail`, `border-line-subrail`
-     - Workspace Canvas: `bg-surface-canvas` (warm ivory)
-     - Full-Width Page Sections: Strictly alternate between `surface-canvas` (warm ivory) and `surface-panel` (clean white). Banned on full-width sections: `bg-brand`, `bg-brand-wash`, `bg-surface-paper`, `bg-surface-paper-warm`, `bg-neutral-muted`. Brand is an accent, not a background system.
-     - Featured Surfaces: `bg-brand-wash`, `border-brand-washBorder` (contained modules like Pick up where you left off, editorial highlight; NEVER full-width)
-     - Archival Sheets & Content Cards: `bg-surface-paper`, `bg-surface-paper-warm` with `shadow-paper`
-     - Overlays / Popovers: `bg-surface-raised` with `shadow-overlay`
-   - Lines: `border-line-subtle`, `border-surface-paper-edge`, `border-line-subrail`
+     - Score Notation Canvas: `bg-surface-paper` (`MusicPaper`) strictly reserved ONLY for literal sheet music score and musical notation canvases. Banned on generic recommendation cards, practice statistics, pricing cards, empty states, and standard content cards.
+     - Retired Tokens: `brand-wash` and `surface-paper-warm` are permanently retired from product code. Brand color is an accent, not a background system.
+   - Lines: `border-line-subtle`, `border-line-strong`, `border-line-subrail`
    - Navigation Active Contract: Strictly neutral active: `bg-neutral-muted font-semibold text-ink-primary shadow-xs` with subtle `text-brand` icon cue. Inactive is `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`. NEVER use `bg-brand-soft` for navigation items.
    - Selection Contract (Large vs Compact):
      - **Compact Selection:** `bg-brand-soft text-brand-soft-foreground` (strictly for small chips, filter badges, compact tags, ChoiceCard badges where small surface area keeps it subordinate).
@@ -71,7 +70,7 @@ Before creating or styling any UI element:
      - **Maximum 2 Brand Signals per selection state:** Never stack green background + green border + green text + green icon. Selection should be understood, not painted.
      - **Drag Targets:** Dragging state is not selection; use `border-brand bg-surface-canvas text-brand`, never `bg-brand-soft`.
      - **Control Toggles:** Loop/toggle buttons use `border-brand bg-neutral-muted text-ink-primary shadow-xs` with `text-brand` icon, not `bg-brand-soft`.
-   - Featured Brand Surface: `bg-brand-wash` (subtle brand tint for recommendations, NOT selected state)
+   - Hover Contract: General interactive hover across all controls, buttons, dropdowns, list items, and links is strictly `bg-neutral-hover text-ink-primary`. Banned across generic UI: `hover:bg-surface-paper*`.
    - Primary CTA: `bg-brand` (deep forest green), `text-white`, `hover:bg-brand-hover`
    - Neutral hovers & muted items: `bg-neutral-muted`, `hover:bg-neutral-hover` (warm ivory-gray, NEVER green)
    - **Primitive Physical Palette:** 14 core physical colors + 4 status colors in `src/index.css`. Pages and domain components MUST ONLY consume semantic tokens (`bg-surface-*`, `text-ink-*`, `text-brand`, etc.), NEVER primitive tokens directly (`bg-primitive-*` is banned in product code).
@@ -80,9 +79,13 @@ Before creating or styling any UI element:
 4. **Production Auth & Product Truth Principles:**
    - **Production Auth Boundary:** Development conveniences (e.g. `?demo=true`, `loginViaDemo()`, `localStorage.yueora_demo_auth`) are strictly gated by `import.meta.env.DEV`. Production builds must never accept demo auth or fall back to demo sessions on login failure.
    - **Product Truth:** Product UI must never claim a capability that production code does not actually provide. Simulated readiness / progress must be strictly gated behind `import.meta.env.DEV`.
-5. **Anti-Flattening Principle:**
-   - Uniformity does NOT mean visual flattening.
-   - Same semantic role -> same appearance; Different semantic roles -> intentionally distinguishable appearance.
+5. **Unified Product Grammar & Anti-Overdesign Principle:**
+   - **Same product, same visual grammar.**
+   - Semantic differences should be communicated primarily through content, hierarchy, labels, icons, actions and state — not by inventing a new surface, background color, card style or decorative treatment.
+   - If two UI elements can look the same without hurting usability, they should look the same.
+   - Prefer one reusable treatment over several "semantically expressive" treatments.
+   - Do not create a new surface, color, card style, shadow, radius, width or component variant merely to make one section feel special.
+   - **When in doubt, use the standard panel (`surface-panel` + `border-line-subtle`).**
 6. **Never expose debug / prototype simulation controls in production:**
    - Gate verification simulators behind `import.meta.env.DEV` or internal tooling.
 7. Refer to `docs/design-system.md` and visit `/design-system` for interactive component examples and guidelines.

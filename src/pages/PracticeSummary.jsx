@@ -8,6 +8,7 @@ import { fmtClock, measureWindowStart } from '@/lib/practiceUtils';
 import { downloadBlob, extensionFor, slugify, uploadRecording } from '@/lib/media';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import Metric from '@/components/patterns/Metric';
+import AppPage from '@/components/patterns/AppPage';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import SyncPlayback from '@/components/performances/SyncPlayback';
 import ShareVideoDialog from '@/components/performances/ShareVideoDialog';
@@ -122,7 +123,7 @@ export default function PracticeSummary() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 md:px-8">
+    <AppPage size="form">
       <Link
         to={score ? `/score/${score.id}` : '/practice'}
         className="flex items-center gap-1.5 type-body-small text-ink-secondary hover:text-ink-primary"
@@ -270,6 +271,6 @@ export default function PracticeSummary() {
         mediaType={mediaType}
         mediaBlob={mediaBlob}
       />
-    </div>
+    </AppPage>
   );
 }

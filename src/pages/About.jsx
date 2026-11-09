@@ -29,7 +29,7 @@ export default function About() {
               <p className="mt-3 font-display text-xl font-medium leading-snug text-ink-primary">Here's what you should practice.</p>
               <p className="mt-2 type-body-small text-ink-secondary">They begin with a curriculum, a syllabus, a list of things you must do.</p>
             </div>
-            <div className="rounded-container border border-brand-washBorder bg-brand-wash p-6 shadow-xs">
+            <div className="rounded-container border border-line-subtle bg-surface-panel p-6 shadow-xs">
               <p className="type-caption font-semibold uppercase tracking-wider text-brand">Yueora</p>
               <p className="mt-3 font-display text-xl font-medium leading-snug text-ink-primary">What do you feel like playing?</p>
               <p className="mt-2 type-body-small text-ink-secondary">We begin with what you want to play. Everything else follows from that.</p>

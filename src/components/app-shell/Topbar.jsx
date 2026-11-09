@@ -60,7 +60,7 @@ export default function Topbar() {
               <DropdownMenuItem
                 key={n.id}
                 onClick={() => { markNotificationRead(n.id); navigate(n.href); }}
-                className="flex flex-col items-start gap-0.5 py-2 hover:bg-surface-paper focus:bg-surface-paper"
+                className="flex flex-col items-start gap-0.5 py-2 hover:bg-neutral-hover focus:bg-neutral-hover"
               >
                 <div className="flex w-full items-center justify-between">
                   <span className="type-body-small font-medium text-ink-primary">{n.title}</span>
@@ -70,7 +70,7 @@ export default function Topbar() {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator className="bg-line-subtle" />
-            <DropdownMenuItem onClick={() => navigate('/notifications')} className="justify-center type-body-small font-medium text-brand hover:bg-surface-paper focus:bg-surface-paper">
+            <DropdownMenuItem onClick={() => navigate('/notifications')} className="justify-center type-body-small font-medium text-brand hover:bg-neutral-hover focus:bg-neutral-hover">
               View all notifications
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -91,23 +91,23 @@ export default function Topbar() {
         {/* User profile */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex h-control-md items-center gap-1.5 rounded-control px-1.5 transition-colors hover:bg-surface-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40">
-              <Avatar className="h-8 w-8 border border-surface-paper-edge">
+            <button className="flex h-control-md items-center gap-1.5 rounded-control px-1.5 transition-colors hover:bg-neutral-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40">
+              <Avatar className="h-8 w-8 border border-line-subtle">
                 <AvatarFallback className="bg-brand text-xs font-semibold text-white">{initials}</AvatarFallback>
               </Avatar>
               <ChevronDown className="icon-sm text-ink-tertiary" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 border-surface-paper-edge bg-surface-panel shadow-overlay">
+          <DropdownMenuContent align="end" className="w-56 border-line-subtle bg-surface-panel shadow-overlay">
             <div className="px-3 py-2">
               <p className="type-body-small font-medium text-ink-primary">{user?.full_name || 'Musician'}</p>
               <p className="type-metadata text-ink-secondary/70 truncate">{user?.email}</p>
             </div>
             <DropdownMenuSeparator className="bg-line-subtle" />
-            <DropdownMenuItem onClick={() => navigate('/settings/account')} className="type-body-small text-ink-primary hover:bg-surface-paper focus:bg-surface-paper">
+            <DropdownMenuItem onClick={() => navigate('/settings/account')} className="type-body-small text-ink-primary hover:bg-neutral-hover focus:bg-neutral-hover">
               <User className="mr-2 h-4 w-4 text-ink-secondary" /> Account
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate('/settings/preferences')} className="type-body-small text-ink-primary hover:bg-surface-paper focus:bg-surface-paper">
+            <DropdownMenuItem onClick={() => navigate('/settings/preferences')} className="type-body-small text-ink-primary hover:bg-neutral-hover focus:bg-neutral-hover">
               <Settings className="mr-2 h-4 w-4 text-ink-secondary" /> Preferences
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-line-subtle" />

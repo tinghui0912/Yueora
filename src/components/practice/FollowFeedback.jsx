@@ -75,7 +75,7 @@ export default function FollowFeedback({
             type="button"
             onClick={() => onResolve('matched')}
             disabled={paused}
-            className="rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs font-medium text-ink-primary shadow-xs transition-colors hover:bg-surface-paper-warm disabled:opacity-40"
+            className="rounded-control border border-line-subtle bg-surface-panel px-2.5 py-1 text-xs font-medium text-ink-primary shadow-xs transition-colors hover:bg-neutral-hover disabled:opacity-40"
           >
             Play ({current})
           </button>
@@ -83,7 +83,7 @@ export default function FollowFeedback({
             type="button"
             onClick={() => onResolve('wrong')}
             disabled={paused}
-            className="rounded-control border border-surface-paper-edge bg-surface-paper px-2 py-1 text-xs text-ink-secondary transition-colors hover:bg-surface-paper-warm disabled:opacity-40"
+            className="rounded-control border border-line-subtle bg-surface-panel px-2 py-1 text-xs text-ink-secondary transition-colors hover:bg-neutral-hover disabled:opacity-40"
           >
             Different pitch
           </button>
@@ -91,7 +91,7 @@ export default function FollowFeedback({
             type="button"
             onClick={() => onResolve('skipped')}
             disabled={paused}
-            className="flex items-center gap-1 rounded-control border border-transparent px-2 py-1 text-xs text-ink-tertiary transition-colors hover:bg-surface-paper disabled:opacity-40"
+            className="flex items-center gap-1 rounded-control border border-transparent px-2 py-1 text-xs text-ink-tertiary transition-colors hover:bg-neutral-hover disabled:opacity-40"
           >
             <SkipForward className="h-3 w-3" />
             <span>Advance</span>

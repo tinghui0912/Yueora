@@ -76,6 +76,7 @@ const CANONICAL_PRIMITIVE_TOKENS = [
   '--primitive-neutral-0',
   '--primitive-neutral-25',
   '--primitive-neutral-50',
+  '--primitive-neutral-75',
   '--primitive-neutral-100',
   '--primitive-neutral-200',
   '--primitive-neutral-300',
@@ -98,10 +99,10 @@ const SEMANTIC_TOKENS_MAPPING_PRIMITIVES = [
   { token: '--surface-panel', expectedPrimitive: '--primitive-neutral-0' },
   { token: '--brand', expectedPrimitive: '--primitive-forest-700' },
   { token: '--brand-soft', expectedPrimitive: '--primitive-forest-100' },
-  { token: '--brand-wash', expectedPrimitive: '--primitive-forest-50' },
+  { token: '--brand-wash', expectedPrimitive: '--primitive-neutral-50' },
   { token: '--ink-primary', expectedPrimitive: '--primitive-ink-900' },
   { token: '--neutral-muted', expectedPrimitive: '--primitive-neutral-100' },
-  { token: '--neutral-hover', expectedPrimitive: '--primitive-neutral-50' },
+  { token: '--neutral-hover', expectedPrimitive: '--primitive-neutral-75' },
 ];
 
 function verifyFoundations(issues = []) {
@@ -737,6 +738,96 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     });
   }
 
+  // 11. PracticeHub.jsx: assert NO MusicPaper (narrowed strictly to literal sheet music)
+  const practiceHubPath = path.resolve('src/pages/PracticeHub.jsx');
+  if (fs.existsSync(practiceHubPath)) {
+    const code = fs.readFileSync(practiceHubPath, 'utf8');
+    if (code.includes('MusicPaper')) {
+      issues.push({
+        file: 'src/pages/PracticeHub.jsx',
+        line: 1,
+        matched: 'MusicPaper in PracticeHub',
+        message: 'PracticeHub must use standard surface-panel for recommendation, stats, and empty state cards. MusicPaper is strictly reserved for literal score notation.',
+      });
+    }
+  }
+
+  // 12. PerformanceRow.jsx: assert NO MusicPaper
+  const perfRowPath = path.resolve('src/components/performances/PerformanceRow.jsx');
+  if (fs.existsSync(perfRowPath)) {
+    const code = fs.readFileSync(perfRowPath, 'utf8');
+    if (code.includes('MusicPaper')) {
+      issues.push({
+        file: 'src/components/performances/PerformanceRow.jsx',
+        line: 1,
+        matched: 'MusicPaper in PerformanceRow',
+        message: 'PerformanceRow is a standard content card and must use surface-panel, not MusicPaper.',
+      });
+    }
+  }
+
+  // 13. Button / IconButton / Topbar: assert NO hover:bg-surface-paper*
+  const HOVER_PAPER_CHECKS = [
+    'src/components/ui/button.jsx',
+    'src/components/ui/icon-button.jsx',
+    'src/components/app-shell/Topbar.jsx',
+  ];
+  HOVER_PAPER_CHECKS.forEach((rel) => {
+    const p = path.resolve(rel);
+    if (fs.existsSync(p)) {
+      const code = fs.readFileSync(p, 'utf8');
+      if (code.includes('hover:bg-surface-paper')) {
+        issues.push({
+          file: rel,
+          line: 1,
+          matched: 'hover:bg-surface-paper in component',
+          message: `${rel} must use canonical hover token hover:bg-neutral-hover, not hover:bg-surface-paper*.`,
+        });
+      }
+    }
+  });
+
+  // 14. Retired tokens: assert NO brand-wash in product pages (except DesignSystemPreview)
+  const pagesDir = path.resolve('src/pages');
+  if (fs.existsSync(pagesDir)) {
+    const pageFiles = fs.readdirSync(pagesDir).filter((f) => f.endsWith('.jsx') && f !== 'DesignSystemPreview.jsx');
+    pageFiles.forEach((f) => {
+      const p = path.join(pagesDir, f);
+      const code = fs.readFileSync(p, 'utf8');
+      if (code.includes('bg-brand-wash') || code.includes('border-brand-washBorder')) {
+        issues.push({
+          file: `src/pages/${f}`,
+          line: 1,
+          matched: 'bg-brand-wash in page',
+          message: `src/pages/${f} contains retired token bg-brand-wash. Brand is an accent; cards must use standard surface-panel.`,
+        });
+      }
+    });
+  }
+
+  // 15. Standard AppPage usage on core overview pages
+  const OVERVIEW_PAGES = [
+    'src/pages/Imports.jsx',
+    'src/pages/Notifications.jsx',
+    'src/pages/PracticeHistory.jsx',
+    'src/pages/PracticeProgress.jsx',
+    'src/pages/PracticeSummary.jsx',
+  ];
+  OVERVIEW_PAGES.forEach((rel) => {
+    const p = path.resolve(rel);
+    if (fs.existsSync(p)) {
+      const code = fs.readFileSync(p, 'utf8');
+      if (!code.includes('<AppPage') || !code.includes("from '@/components/patterns/AppPage'")) {
+        issues.push({
+          file: rel,
+          line: 1,
+          matched: 'Missing AppPage container',
+          message: `${rel} must consume <AppPage> primitive for unified page structure and width.`,
+        });
+      }
+    }
+  });
+
   return issues;
 }
 verifyNavigationAndSurfaceContracts(totalViolations);
@@ -757,6 +848,10 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified prohibited brand-soft contexts in named shared components (ChoiceCard, ImportDropzone, OptionGroup, TransportControl, VirtualKeyboard, SidebarNavItem, LibrarySubRail, Settings)`);
   console.log(`   - Verified zero dead chart-* tokens in tailwind.config.js`);
   console.log(`   - Verified zero banned full-width Landing surfaces (strict canvas/panel alternating rhythm enforced)`);
+  console.log(`   - Verified MusicPaper narrowing (strictly reserved for notation canvases; removed from PracticeHub and PerformanceRow)`);
+  console.log(`   - Verified zero hover:bg-surface-paper in core UI primitives (Button, IconButton, Topbar)`);
+  console.log(`   - Verified retirement of bg-brand-wash across all application pages`);
+  console.log(`   - Verified standard AppPage adoption on core overview pages`);
   console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} root directories\n`);
   process.exit(0);
 } else {

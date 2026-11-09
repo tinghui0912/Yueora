@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Download, Loader2, MoreHorizontal, Pause, Play, Share2, Trash2 } from 'lucide-react';
 import { dayLabel, fmtClock } from '@/lib/practiceUtils';
-import MusicPaper from '@/components/patterns/MusicPaper';
 import { MemoryGlyph } from '@/components/brand/MusicalGlyphs';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -20,7 +19,7 @@ export default function PerformanceRow({
   const progress = durationSeconds ? Math.min(100, (position / durationSeconds) * 100) : 0;
 
   return (
-    <MusicPaper tone="natural" elevation="paper" className="p-4 sm:p-5 transition-[box-shadow,border-color,background-color] duration-base">
+    <div className="rounded-container border border-line-subtle bg-surface-panel p-4 sm:p-5 shadow-xs transition-[box-shadow,border-color] hover:shadow-paper duration-base">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -51,7 +50,7 @@ export default function PerformanceRow({
           {scoreExists && (
             <Link
               to={`/score/${performance.scoreId}`}
-              className="hidden rounded-control border border-surface-paper-edge bg-surface-paper px-2.5 py-1 text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-surface-paper-warm sm:inline-block transition-colors"
+              className="hidden rounded-control border border-line-subtle bg-surface-panel px-2.5 py-1 text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover sm:inline-block transition-colors"
             >
               View score
             </Link>
@@ -60,13 +59,13 @@ export default function PerformanceRow({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className="rounded-control border border-surface-paper-edge p-1.5 text-ink-secondary hover:text-ink-primary hover:bg-surface-paper transition-colors"
+                className="rounded-control border border-line-subtle p-1.5 text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover transition-colors"
                 aria-label={`Actions for ${performance.scoreTitleSnapshot}`}
               >
                 <MoreHorizontal className="h-3.5 w-3.5" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52 border-surface-paper-edge bg-surface-panel shadow-overlay">
+            <DropdownMenuContent align="end" className="w-52 border-line-subtle bg-surface-panel shadow-overlay">
               <DropdownMenuItem onClick={onDownload} disabled={!canPlay} className="text-sm">
                 <Download className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Download recording
               </DropdownMenuItem>
@@ -134,6 +133,6 @@ export default function PerformanceRow({
       {!canPlay && !error && (
         <p className="mt-2 text-xs text-ink-tertiary">No recording file stored for this performance.</p>
       )}
-    </MusicPaper>
+    </div>
   );
 }

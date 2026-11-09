@@ -13,15 +13,15 @@ const buttonVariants = cva(
         primary:
           "bg-brand text-white shadow-xs hover:bg-brand-hover active:scale-[0.98]",
         secondary:
-          "border border-line-strong/80 bg-surface-panel text-ink-primary shadow-xs hover:bg-surface-paper hover:text-ink-primary active:scale-[0.98]",
+          "border border-line-strong/80 bg-surface-panel text-ink-primary shadow-xs hover:bg-neutral-hover hover:text-ink-primary active:scale-[0.98]",
         quiet:
-          "text-ink-secondary hover:text-ink-primary hover:bg-surface-paper active:scale-[0.98]",
+          "text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]",
         danger:
           "bg-danger text-white shadow-xs hover:bg-danger/90 active:scale-[0.98]",
         transport:
           "rounded-full bg-brand text-white shadow-paper hover:bg-brand-hover active:scale-[0.97]",
         subtle:
-          "border border-line-subtle bg-surface-canvas/60 text-ink-secondary hover:text-ink-primary hover:bg-surface-paper active:scale-[0.98]",
+          "border border-line-subtle bg-surface-canvas/60 text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]",
         link:
           "text-brand underline-offset-4 hover:underline",
 
@@ -31,9 +31,9 @@ const buttonVariants = cva(
         destructive:
           "bg-danger text-white shadow-xs hover:bg-danger/90 active:scale-[0.98]",
         outline:
-          "border border-line-strong/80 bg-surface-panel text-ink-primary shadow-xs hover:bg-surface-paper hover:text-ink-primary active:scale-[0.98]",
+          "border border-line-strong/80 bg-surface-panel text-ink-primary shadow-xs hover:bg-neutral-hover hover:text-ink-primary active:scale-[0.98]",
         ghost:
-          "text-ink-secondary hover:text-ink-primary hover:bg-surface-paper active:scale-[0.98]",
+          "text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]",
       },
       size: {
         xs: "h-control-xs min-h-control-xs px-2.5 type-caption rounded-control gap-1.5 [&_svg]:icon-xs",

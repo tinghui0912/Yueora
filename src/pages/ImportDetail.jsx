@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileMusic, RefreshCw, AlertTriangle, CheckCircle2, Pencil, ArrowRight, Trash2 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { Button } from '@/components/ui/button';
+import AppPage from '@/components/patterns/AppPage';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -45,7 +46,7 @@ export default function ImportDetail() {
   const handleRemove = () => { removeImport(imp.id); setRemoveOpen(false); navigate('/imports'); toast({ title: 'Import removed', description: 'The score in your library was not affected.' }); };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6 md:px-8">
+    <AppPage size="form">
       <Link to="/imports" className="flex items-center gap-1.5 type-body-small text-ink-secondary hover:text-ink-primary">
         <ArrowLeft className="h-4 w-4" /> Imports
       </Link>
@@ -164,6 +165,6 @@ export default function ImportDetail() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AppPage>
   );
 }

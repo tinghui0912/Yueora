@@ -165,7 +165,7 @@ export default function Performances() {
           </Link>
           <button
             onClick={clearScoreFilter}
-            className="flex items-center gap-1 rounded-control border border-surface-paper-edge bg-surface-paper px-2 py-0.5 hover:bg-surface-paper-warm"
+            className="flex items-center gap-1 rounded-control border border-line-subtle bg-surface-panel px-2 py-0.5 hover:bg-neutral-hover"
           >
             <X className="h-3 w-3" /> Show all
           </button>
@@ -174,7 +174,7 @@ export default function Performances() {
 
       {/* Tabs */}
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-b border-line-subtle pb-3">
-        <div role="tablist" aria-label="Performances view" className="inline-flex rounded-control border border-surface-paper-edge bg-surface-paper p-0.5">
+        <div role="tablist" aria-label="Performances view" className="inline-flex rounded-control border border-line-subtle bg-neutral-muted p-0.5">
           {TABS.map((t) => (
             <button
               key={t.value}

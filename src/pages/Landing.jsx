@@ -606,7 +606,7 @@ export default function Landing() {
 
           <div className="mt-14 grid gap-8 md:grid-cols-2 max-w-3xl mx-auto">
             {/* Free Plan */}
-            <MusicPaper tone="white" elevation="paper" className="p-6 sm:p-8 flex flex-col justify-between">
+            <div className="rounded-container border border-line-subtle bg-surface-panel p-6 sm:p-8 flex flex-col justify-between shadow-xs">
               <div>
                 <p className="font-display text-xl font-medium text-ink-primary">Free</p>
                 <p className="mt-1 text-sm text-ink-secondary">
@@ -640,10 +640,10 @@ export default function Landing() {
                   Get Started Free
                 </Link>
               </Button>
-            </MusicPaper>
+            </div>
 
             {/* Pro Plan */}
-            <MusicPaper tone="warm" elevation="paper" className="p-6 sm:p-8 flex flex-col justify-between border-2 border-brand/50">
+            <div className="rounded-container border-2 border-brand bg-surface-panel p-6 sm:p-8 flex flex-col justify-between shadow-xs">
               <div>
                 <div className="flex items-center justify-between">
                   <p className="font-display text-xl font-medium text-ink-primary">Pro Repertoire</p>
@@ -685,7 +685,7 @@ export default function Landing() {
                   Start Free Trial
                 </Link>
               </Button>
-            </MusicPaper>
+            </div>
           </div>
 
           <div className="mt-8 text-center text-xs text-ink-tertiary">

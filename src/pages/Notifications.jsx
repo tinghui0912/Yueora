@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { CheckCheck, Bell, Users, Music, Sparkles, Shield, CreditCard, Inbox, Disc3, MessageCircle } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { Button } from '@/components/ui/button';
+import AppPage from '@/components/patterns/AppPage';
 import PageHeader from '@/components/patterns/PageHeader';
 import StateMessage from '@/components/patterns/StateMessage';
 
@@ -52,7 +53,7 @@ export default function Notifications() {
   }, [filtered]);
 
   return (
-    <div className="mx-auto max-w-2xl px-5 py-8 md:px-8">
+    <AppPage size="standard">
       <PageHeader
         title="Notifications"
         description={`${unreadCount} unread`}
@@ -88,7 +89,7 @@ export default function Notifications() {
           {groups.earlier.length > 0 && <Group label="Earlier" items={groups.earlier} onOpen={(id) => { markRead(id); }} navigate={navigate} />}
         </div>
       )}
-    </div>
+    </AppPage>
   );
 }
 

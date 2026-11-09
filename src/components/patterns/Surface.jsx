@@ -10,7 +10,7 @@ const surfaceVariants = cva(
       tone: {
         panel: 'bg-surface-panel',
         paper: 'bg-surface-paper',
-        'paper-warm': 'bg-surface-paper-warm',
+        'paper-warm': 'bg-surface-paper', /* Deprecated alias to paper */
         canvas: 'bg-surface-canvas',
         raised: 'bg-surface-panel',
       },

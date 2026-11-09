@@ -17,16 +17,16 @@ export default function PublicMobileMenu() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="rounded-control p-2 text-ink-secondary hover:bg-surface-paper hover:text-ink-primary md:hidden transition-colors"
+        className="rounded-control p-2 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary md:hidden transition-colors"
         aria-label="Open navigation menu"
       >
         <Menu className="h-5 w-5" />
       </button>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="right" className="w-80 border-surface-paper-edge bg-surface-canvas p-6 flex flex-col justify-between">
+        <SheetContent side="right" className="w-80 border-line-subtle bg-surface-canvas p-6 flex flex-col justify-between">
           <div>
-            <SheetHeader className="text-left pb-4 border-b border-surface-paper-edge">
+            <SheetHeader className="text-left pb-4 border-b border-line-subtle">
               <SheetTitle>
                 <Logo variant="full" size="md" />
               </SheetTitle>
@@ -42,25 +42,25 @@ export default function PublicMobileMenu() {
               </p>
               <a
                 href="/#lifecycle"
-                className="rounded-control px-3 py-2.5 font-display text-lg font-medium text-ink-primary hover:bg-surface-paper transition-colors"
+                className="rounded-control px-3 py-2.5 font-display text-lg font-medium text-ink-primary hover:bg-neutral-hover transition-colors"
               >
                 How it works
               </a>
               <a
                 href="/#practice"
-                className="rounded-control px-3 py-2.5 font-display text-lg font-medium text-ink-primary hover:bg-surface-paper transition-colors"
+                className="rounded-control px-3 py-2.5 font-display text-lg font-medium text-ink-primary hover:bg-neutral-hover transition-colors"
               >
                 Practice without pressure
               </a>
               <a
                 href="/#performances"
-                className="rounded-control px-3 py-2.5 font-display text-lg font-medium text-ink-primary hover:bg-surface-paper transition-colors"
+                className="rounded-control px-3 py-2.5 font-display text-lg font-medium text-ink-primary hover:bg-neutral-hover transition-colors"
               >
                 Preserved moments
               </a>
               <Link
                 to="/pricing"
-                className="rounded-control px-3 py-2.5 font-display text-lg font-medium text-ink-primary hover:bg-surface-paper transition-colors"
+                className="rounded-control px-3 py-2.5 font-display text-lg font-medium text-ink-primary hover:bg-neutral-hover transition-colors"
               >
                 Pricing &amp; plans
               </Link>

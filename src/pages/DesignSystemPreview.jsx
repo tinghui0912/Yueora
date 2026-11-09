@@ -141,9 +141,9 @@ export default function DesignSystemPreview() {
                 <span className="type-caption text-ink-primary">Paper</span>
                 <p className="type-metadata text-ink-tertiary">Archival Sheet</p>
               </div>
-              <div className="rounded-control border border-surface-paper-edge bg-surface-paper-warm p-3 text-center">
-                <span className="type-caption text-ink-primary">Paper Warm</span>
-                <p className="type-metadata text-ink-tertiary">Saved Take</p>
+              <div className="rounded-control border border-line-subtle bg-surface-raised p-3 text-center shadow-overlay">
+                <span className="type-caption text-ink-primary">Raised</span>
+                <p className="type-metadata text-ink-tertiary">Overlay / Menu</p>
               </div>
               <div className="rounded-control border border-transparent bg-brand p-3 text-center text-white">
                 <span className="type-caption text-white">Brand CTA</span>
@@ -153,9 +153,9 @@ export default function DesignSystemPreview() {
                 <span className="type-caption text-brand-soft-foreground">Brand Soft</span>
                 <p className="type-metadata text-brand-soft-foreground/80">Compact Selection</p>
               </div>
-              <div className="rounded-control border border-brand-washBorder bg-brand-wash p-3 text-center">
-                <span className="type-caption text-brand font-semibold">Brand Wash</span>
-                <p className="type-metadata text-ink-secondary">Featured / Pick up</p>
+              <div className="rounded-control border border-line-subtle bg-neutral-muted p-3 text-center">
+                <span className="type-caption text-ink-primary font-semibold">Standard Panel</span>
+                <p className="type-metadata text-ink-secondary">Unified Container</p>
               </div>
               <div className="rounded-control border border-line-subrail bg-surface-subrail p-3 text-center">
                 <span className="type-caption text-ink-primary font-medium">SubRail</span>
@@ -359,18 +359,18 @@ export default function DesignSystemPreview() {
             <p className="type-metadata text-ink-secondary mt-1">Warm ivory app backdrop.</p>
           </div>
 
-          <div className="rounded-container border border-brand-washBorder bg-brand-wash p-4 shadow-xs">
-            <span className="type-caption text-brand uppercase font-semibold">Featured Brand</span>
-            <p className="type-subsection text-ink-primary mt-1">Brand Wash</p>
-            <p className="type-metadata text-ink-secondary mt-1">Resume playing &amp; practice highlight.</p>
+          <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs">
+            <span className="type-caption text-brand uppercase font-semibold">Unified Surface</span>
+            <p className="type-subsection text-ink-primary mt-1">Surface Panel</p>
+            <p className="type-metadata text-ink-secondary mt-1">Resume playing &amp; standard content card.</p>
           </div>
         </div>
 
         {/* Live Pick up where you left off sample */}
-        <div className="rounded-container border border-brand-washBorder bg-brand-wash p-5 shadow-xs transition-shadow hover:shadow-paper">
+        <div className="rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs transition-shadow hover:shadow-paper">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-brand-washBorder bg-surface-panel text-brand">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-line-subtle bg-surface-panel text-brand">
                 <Sparkles className="icon-sm" />
               </span>
               <div>
