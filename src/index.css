@@ -4,94 +4,138 @@
 
 @layer base {
   :root {
-    /* ---- Existing shadcn tokens (preserved) ---- */
-    --background: 44 19% 97%;
-    --foreground: 220 5% 13%;
-    --card: 0 0% 100%;
-    --card-foreground: 220 5% 13%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 5% 13%;
-    --primary: 148 36% 27%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 47 13% 87%;
-    --secondary-foreground: 220 5% 13%;
-    --muted: 44 14% 92%;
-    --muted-foreground: 223 4% 36%;
-    --accent: 44 16% 94%;
-    --accent-foreground: 220 5% 13%;
-    --destructive: 0 72% 42%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 47 14% 91%;
-    --input: 47 14% 91%;
-    --ring: 148 36% 27%;
-    --gold: 44 67% 46%;
+    /* ==========================================================================
+       1. PRIMITIVE PHYSICAL PALETTE (14 Core Physical Colors + 4 Status)
+       Restrained physical foundation. Pages compose semantic tokens;
+       semantic tokens reference these primitives.
+       Direct consumption of primitive-* in application code is strictly forbidden.
+       ========================================================================== */
+    /* Neutral / Warm Ivory */
+    --primitive-neutral-0: 0 0% 100%;       /* Pure White: panels, cards, overlays */
+    --primitive-neutral-25: 44 19% 97%;     /* Warm Ivory Canvas: global page backdrop */
+    --primitive-neutral-50: 44 18% 95%;     /* Warm Neutral: subrail, hover, warm paper */
+    --primitive-neutral-100: 44 14% 92%;    /* Neutral Muted: muted tracks, subtle lines */
+    --primitive-neutral-200: 47 13% 80%;    /* Neutral Strong: control borders, strong lines */
+    --primitive-neutral-300: 220 3% 62%;    /* Neutral Subtle: ink subtle, quiet dividers */
+
+    /* Ink (Dark contrast hierarchy) */
+    --primitive-ink-500: 220 4% 48%;        /* Ink Tertiary: readable muted metadata (>4.5:1) */
+    --primitive-ink-700: 223 4% 36%;        /* Ink Secondary: readable secondary copy (>6.5:1) */
+    --primitive-ink-900: 220 5% 13%;        /* Ink Primary: primary titles/content (>10:1) */
+
+    /* Forest Green (Brand Accent, max 4 physical greens) */
+    --primitive-forest-50: 148 24% 96%;     /* Brand Wash: featured recommendation surface */
+    --primitive-forest-100: 148 36% 93%;    /* Brand Soft: compact selected content only */
+    --primitive-forest-700: 148 36% 27%;    /* Brand Accent: primary CTA, key indicator */
+    --primitive-forest-800: 148 36% 22%;    /* Brand Hover / Pressed */
+
+    /* Musical Accent */
+    --primitive-gold-500: 44 67% 46%;       /* Gold: favorites, special musical detail */
+
+    /* Functional Status */
+    --primitive-success-500: 148 30% 40%;   /* Success confirmation */
+    --primitive-warning-500: 38 58% 45%;    /* Warning notice */
+    --primitive-danger-500: 0 65% 45%;      /* Terracotta alert */
+    --primitive-info-500: 210 30% 45%;      /* Slate blue instructional notice */
+
+    /* ==========================================================================
+       2. SEMANTIC TOKENS (Product Meaning)
+       Pages and domain components consume these semantic tokens.
+       ========================================================================== */
+    /* ---- Surface semantic aliases ---- */
+    --surface-canvas: var(--primitive-neutral-25);
+    --surface-panel: var(--primitive-neutral-0);
+    --surface-raised: var(--primitive-neutral-0);
+    --surface-paper: var(--primitive-neutral-25);
+    --surface-paper-warm: var(--primitive-neutral-50);
+    --surface-paper-edge: var(--primitive-neutral-100);
+    --surface-subrail: var(--primitive-neutral-50);
+    --surface-subrail-border: var(--primitive-neutral-100);
+
+    /* ---- Text hierarchy (ink) ---- */
+    --ink-primary: var(--primitive-ink-900);
+    --ink-secondary: var(--primitive-ink-700);
+    --ink-tertiary: var(--primitive-ink-500);
+    --ink-subtle: var(--primitive-neutral-300);
+
+    /* ---- Border hierarchy (line) ---- */
+    --line-subtle: var(--primitive-neutral-100);
+    --line-strong: var(--primitive-neutral-200);
+
+    /* ---- Brand ---- */
+    --brand: var(--primitive-forest-700);
+    --brand-hover: var(--primitive-forest-800);
+    --brand-soft: var(--primitive-forest-100);
+    --brand-soft-foreground: var(--primitive-forest-700);
+    --brand-wash: var(--primitive-forest-50);
+    --brand-wash-border: var(--primitive-forest-100);
+    --brand-wash-foreground: var(--primitive-forest-800);
+
+    /* ---- Neutral quiet & hover (Warm ivory-gray, NOT green) ---- */
+    --neutral-muted: var(--primitive-neutral-100);
+    --neutral-muted-foreground: var(--primitive-ink-700);
+    --neutral-hover: var(--primitive-neutral-50);
+    --neutral-hover-foreground: var(--primitive-ink-900);
+
+    /* ---- Semantic status ---- */
+    --success: var(--primitive-success-500);
+    --success-foreground: var(--primitive-neutral-0);
+    --warning: var(--primitive-warning-500);
+    --warning-foreground: var(--primitive-neutral-0);
+    --danger: var(--primitive-danger-500);
+    --danger-foreground: var(--primitive-neutral-0);
+    --info: var(--primitive-info-500);
+    --info-foreground: var(--primitive-neutral-0);
+
+    /* ---- Selection (Compact canvas selection alias) ---- */
+    --selection: var(--primitive-forest-100);
+
+    /* ---- Practice semantic colors (non-judgmental) ---- */
+    --practice-following: var(--primitive-success-500);
+    --practice-following-foreground: var(--primitive-neutral-0);
+    --practice-waiting: var(--primitive-ink-700);
+    --practice-waiting-foreground: var(--primitive-neutral-0);
+    --practice-resyncing: var(--primitive-warning-500);
+    --practice-resyncing-foreground: var(--primitive-neutral-0);
+    --practice-current: var(--primitive-gold-500);
+    --practice-current-foreground: var(--primitive-neutral-0);
+    --practice-correct: var(--primitive-success-500);
+    --practice-correct-foreground: var(--primitive-neutral-0);
+    --practice-error: var(--primitive-danger-500);
+    --practice-error-foreground: var(--primitive-neutral-0);
+
+    --gold: var(--primitive-gold-500);
+
+    /* ==========================================================================
+       3. INTERNAL COMPATIBILITY LAYER
+       Implementation detail for Radix / legacy third-party components only.
+       Forbidden in application code.
+       ========================================================================== */
+    --background: var(--primitive-neutral-25);
+    --foreground: var(--primitive-ink-900);
+    --card: var(--primitive-neutral-0);
+    --card-foreground: var(--primitive-ink-900);
+    --popover: var(--primitive-neutral-0);
+    --popover-foreground: var(--primitive-ink-900);
+    --primary: var(--primitive-forest-700);
+    --primary-foreground: var(--primitive-neutral-0);
+    --secondary: var(--primitive-neutral-100);
+    --secondary-foreground: var(--primitive-ink-900);
+    --muted: var(--primitive-neutral-100);
+    --muted-foreground: var(--primitive-ink-700);
+    --accent: var(--primitive-neutral-50);
+    --accent-foreground: var(--primitive-ink-900);
+    --destructive: var(--primitive-danger-500);
+    --destructive-foreground: var(--primitive-neutral-0);
+    --border: var(--primitive-neutral-100);
+    --input: var(--primitive-neutral-100);
+    --ring: var(--primitive-forest-700);
+
     --radius: 0.375rem;
     --font-heading: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
     --font-body: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
     --font-display: "Newsreader", ui-serif, Georgia, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-
-    /* ---- Surface semantic aliases ---- */
-    --surface-canvas: 44 19% 97%;
-    --surface-panel: 0 0% 100%;
-    --surface-raised: 0 0% 100%;
-    --surface-paper: 44 26% 96%;
-    --surface-paper-warm: 40 28% 95%;
-    --surface-paper-edge: 44 16% 87%;
-    --surface-subrail: 44 18% 95%;
-    --surface-subrail-border: 47 14% 88%;
-
-    /* ---- Text hierarchy (ink) ---- */
-    --ink-primary: 220 5% 13%;
-    --ink-secondary: 223 4% 36%;
-    --ink-tertiary: 220 4% 48%;
-    --ink-subtle: 220 3% 62%;
-
-    /* ---- Border hierarchy (line) ---- */
-    --line-subtle: 47 14% 91%;
-    --line-strong: 47 13% 80%;
-
-    /* ---- Brand ---- */
-    --brand: 148 36% 27%;
-    --brand-hover: 148 36% 22%;
-    --brand-soft: 148 36% 93%;
-    --brand-soft-foreground: 148 36% 27%;
-    --brand-wash: 148 24% 96%;
-    --brand-wash-border: 148 26% 88%;
-    --brand-wash-foreground: 148 36% 22%;
-
-    /* ---- Neutral quiet & hover (Warm ivory-gray, NOT green) ---- */
-    --neutral-muted: 44 14% 92%;
-    --neutral-muted-foreground: 223 4% 36%;
-    --neutral-hover: 44 16% 94%;
-    --neutral-hover-foreground: 220 5% 13%;
-
-    /* ---- Semantic status ---- */
-    --success: 148 30% 40%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 58% 45%;
-    --warning-foreground: 0 0% 100%;
-    --danger: 0 65% 45%;
-    --danger-foreground: 0 0% 100%;
-    --info: 210 30% 45%;
-    --info-foreground: 0 0% 100%;
-
-    /* ---- Selection ---- */
-    --selection: 148 36% 88%;
-
-    /* ---- Practice semantic colors (non-judgmental) ---- */
-    --practice-following: 148 35% 36%;
-    --practice-following-foreground: 0 0% 100%;
-    --practice-waiting: 40 18% 46%;
-    --practice-waiting-foreground: 0 0% 100%;
-    --practice-resyncing: 35 48% 45%;
-    --practice-resyncing-foreground: 0 0% 100%;
-    --practice-current: 40 55% 48%;
-    --practice-current-foreground: 0 0% 100%;
-    --practice-correct: 148 35% 40%;
-    --practice-correct-foreground: 0 0% 100%;
-    --practice-error: 0 55% 48%;
-    --practice-error-foreground: 0 0% 100%;
 
     /* ---- Radius semantic ---- */
     --radius-control: 0.375rem;

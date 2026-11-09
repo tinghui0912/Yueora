@@ -7,7 +7,11 @@ import RouteLoading from '@/components/patterns/RouteLoading';
 export default function ProtectedRoute({ fallback = <RouteLoading message="Loading repertoire…" />, unauthenticatedElement }) {
   const { isAuthenticated, isLoadingAuth, authChecked, authError, checkUserAuth } = useAuth();
 
-  const isDemoActive = typeof window !== 'undefined' && (localStorage.getItem('yueora_demo_auth') === 'true' || new URLSearchParams(window.location.search).get('demo') === 'true');
+  const isDemoActive =
+    import.meta.env.DEV &&
+    typeof window !== 'undefined' &&
+    (localStorage.getItem('yueora_demo_auth') === 'true' ||
+      new URLSearchParams(window.location.search).get('demo') === 'true');
 
   useEffect(() => {
     if (!authChecked && !isLoadingAuth && !isDemoActive) {

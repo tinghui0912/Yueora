@@ -1,5 +1,3 @@
-import { Check } from 'lucide-react';
-
 // A restrained radio list — reads as a choice, not a settings form.
 export default function OptionGroup({ value, onChange, options, ariaLabel }) {
   return (
@@ -25,7 +23,6 @@ export default function OptionGroup({ value, onChange, options, ariaLabel }) {
               <span className={`block type-body-small ${active ? 'font-medium text-ink-primary' : 'text-ink-secondary'}`}>{o.label}</span>
               {o.description && <span className="mt-0.5 block type-body-small text-ink-secondary">{o.description}</span>}
             </span>
-            {active && <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden="true" />}
           </button>
         );
       })}

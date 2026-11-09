@@ -74,11 +74,15 @@ Before creating or styling any UI element:
    - Featured Brand Surface: `bg-brand-wash` (subtle brand tint for recommendations, NOT selected state)
    - Primary CTA: `bg-brand` (deep forest green), `text-white`, `hover:bg-brand-hover`
    - Neutral hovers & muted items: `bg-neutral-muted`, `hover:bg-neutral-hover` (warm ivory-gray, NEVER green)
+   - **Primitive Physical Palette:** 14 core physical colors + 4 status colors in `src/index.css`. Pages and domain components MUST ONLY consume semantic tokens (`bg-surface-*`, `text-ink-*`, `text-brand`, etc.), NEVER primitive tokens directly (`bg-primitive-*` is banned in product code).
    - **Legacy tokens are permanently retired from product code:** NEVER use `bg-accent`, `bg-muted`, `text-muted-foreground`, `bg-primary`, `text-primary`, `bg-card`, `bg-background`, `text-foreground`, `border-border`, `border-input`, `ring-ring` in pages or domain components.
    - Never use arbitrary `bg-brand/10` or raw hex colors (`#...`) in application JSX.
-4. **Anti-Flattening Principle:**
+4. **Production Auth & Product Truth Principles:**
+   - **Production Auth Boundary:** Development conveniences (e.g. `?demo=true`, `loginViaDemo()`, `localStorage.yueora_demo_auth`) are strictly gated by `import.meta.env.DEV`. Production builds must never accept demo auth or fall back to demo sessions on login failure.
+   - **Product Truth:** Product UI must never claim a capability that production code does not actually provide. Simulated readiness / progress must be strictly gated behind `import.meta.env.DEV`.
+5. **Anti-Flattening Principle:**
    - Uniformity does NOT mean visual flattening.
    - Same semantic role -> same appearance; Different semantic roles -> intentionally distinguishable appearance.
-5. **Never expose debug / prototype simulation controls in production:**
+6. **Never expose debug / prototype simulation controls in production:**
    - Gate verification simulators behind `import.meta.env.DEV` or internal tooling.
-6. Refer to `docs/design-system.md` and visit `/design-system` for interactive component examples and guidelines.
+7. Refer to `docs/design-system.md` and visit `/design-system` for interactive component examples and guidelines.

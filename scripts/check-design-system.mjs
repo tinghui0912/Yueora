@@ -72,6 +72,38 @@ const REQUIRED_SURFACE_AND_BRAND_TOKENS = [
   '--surface-subrail-border',
 ];
 
+const CANONICAL_PRIMITIVE_TOKENS = [
+  '--primitive-neutral-0',
+  '--primitive-neutral-25',
+  '--primitive-neutral-50',
+  '--primitive-neutral-100',
+  '--primitive-neutral-200',
+  '--primitive-neutral-300',
+  '--primitive-ink-500',
+  '--primitive-ink-700',
+  '--primitive-ink-900',
+  '--primitive-forest-50',
+  '--primitive-forest-100',
+  '--primitive-forest-700',
+  '--primitive-forest-800',
+  '--primitive-gold-500',
+  '--primitive-success-500',
+  '--primitive-warning-500',
+  '--primitive-danger-500',
+  '--primitive-info-500',
+];
+
+const SEMANTIC_TOKENS_MAPPING_PRIMITIVES = [
+  { token: '--surface-canvas', expectedPrimitive: '--primitive-neutral-25' },
+  { token: '--surface-panel', expectedPrimitive: '--primitive-neutral-0' },
+  { token: '--brand', expectedPrimitive: '--primitive-forest-700' },
+  { token: '--brand-soft', expectedPrimitive: '--primitive-forest-100' },
+  { token: '--brand-wash', expectedPrimitive: '--primitive-forest-50' },
+  { token: '--ink-primary', expectedPrimitive: '--primitive-ink-900' },
+  { token: '--neutral-muted', expectedPrimitive: '--primitive-neutral-100' },
+  { token: '--neutral-hover', expectedPrimitive: '--primitive-neutral-50' },
+];
+
 function verifyFoundations(issues = []) {
   if (!fs.existsSync(INDEX_CSS_PATH)) {
     issues.push({
@@ -176,6 +208,31 @@ function verifyFoundations(issues = []) {
     }
   });
 
+  // Verify primitive physical tokens exist
+  CANONICAL_PRIMITIVE_TOKENS.forEach((prim) => {
+    if (!css.includes(prim)) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: prim,
+        message: `Canonical primitive color token ${prim} is missing from src/index.css.`,
+      });
+    }
+  });
+
+  // Verify semantic tokens map to canonical primitives
+  SEMANTIC_TOKENS_MAPPING_PRIMITIVES.forEach(({ token, expectedPrimitive }) => {
+    const regex = new RegExp(`${token}:\\s*var\\(${expectedPrimitive}\\)`);
+    if (!regex.test(css)) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: token,
+        message: `Semantic token ${token} must reference primitive ${expectedPrimitive} (found no var(${expectedPrimitive}) assignment).`,
+      });
+    }
+  });
+
   // Verify primitive consumption
   const primitiveChecks = [
     { file: 'src/components/ui/button.jsx', required: ['h-control-md'] },
@@ -239,6 +296,10 @@ const FORBIDDEN_PATTERNS = [
   {
     regex: /text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|\[\w+\])\s+type-(?:page-title|section-title|experience-title)/g,
     message: 'Conflicting font-size override before semantic heading. The semantic heading class owns the font size.',
+  },
+  {
+    regex: /(?:bg|text|border|ring|fill|stroke)-primitive-/g,
+    message: 'Direct consumption of primitive tokens found in JSX. Application code must only consume semantic tokens (e.g. text-ink-*, bg-surface-*, text-brand).',
   },
 ];
 
@@ -620,7 +681,35 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   }
 
-  // 8. Landing.jsx top-level sections: assert NO banned full-width section surfaces
+  // 8. ChoiceCard.jsx: assert NO bg-brand-soft (ChoiceCard is a large card selection)
+  const choiceCardPath = path.resolve('src/components/patterns/ChoiceCard.jsx');
+  if (fs.existsSync(choiceCardPath)) {
+    const code = fs.readFileSync(choiceCardPath, 'utf8');
+    if (code.includes('bg-brand-soft')) {
+      issues.push({
+        file: 'src/components/patterns/ChoiceCard.jsx',
+        line: 1,
+        matched: 'bg-brand-soft in ChoiceCard',
+        message: 'ChoiceCard is a large selection surface and must not use bg-brand-soft; use neutral selection (bg-neutral-hover) with brand indicator.',
+      });
+    }
+  }
+
+  // 9. tailwind.config.js: assert NO dead chart tokens
+  const tailwindConfigPath = path.resolve('tailwind.config.js');
+  if (fs.existsSync(tailwindConfigPath)) {
+    const code = fs.readFileSync(tailwindConfigPath, 'utf8');
+    if (code.includes('chart-1') || code.includes('chart:')) {
+      issues.push({
+        file: 'tailwind.config.js',
+        line: 1,
+        matched: 'dead chart tokens in tailwind.config.js',
+        message: 'tailwind.config.js contains dead chart-* token mappings without canonical CSS variables or consumers.',
+      });
+    }
+  }
+
+  // 10. Landing.jsx top-level sections: assert NO banned full-width section surfaces
   const landingPath = path.resolve('src/pages/Landing.jsx');
   if (fs.existsSync(landingPath)) {
     const code = fs.readFileSync(landingPath, 'utf8');
@@ -655,6 +744,7 @@ verifyNavigationAndSurfaceContracts(totalViolations);
 if (totalViolations.length === 0) {
   console.log('✅ Design System integrity checks passed.');
   console.log(`   - Verified ${REQUIRED_TYPOGRAPHY.length} semantic typography roles in src/index.css`);
+  console.log(`   - Verified ${CANONICAL_PRIMITIVE_TOKENS.length} canonical primitive tokens & ${SEMANTIC_TOKENS_MAPPING_PRIMITIVES.length} primitive alias mappings in src/index.css`);
   console.log(`   - Verified ${REQUIRED_SURFACE_AND_BRAND_TOKENS.length} canonical surface/brand tokens in src/index.css`);
   console.log(`   - Verified ${CANONICAL_CONTROL_TOKENS.length} canonical control tokens & ${REQUIRED_CONTROL_UTILITIES.length} utilities`);
   console.log(`   - Verified ${CANONICAL_ICON_TOKENS.length} canonical icon tokens & ${REQUIRED_ICON_UTILITIES.length} utilities`);
@@ -662,9 +752,11 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified document landmark integrity (AppShell/PublicShell own main, AppPage does not nest main)`);
   console.log(`   - Verified jsconfig exclusion integrity (zero excluded UI primitives imported by application)`);
   console.log(`   - Verified legacy color token retirement (zero legacy tokens in application pages or active primitives)`);
+  console.log(`   - Verified zero direct primitive-* token utilities consumed in application JSX`);
   console.log(`   - Verified brand-soft vs brand-wash integrity (zero arbitrary bg-brand/opacity in application code)`);
-  console.log(`   - Verified prohibited brand-soft contexts in named shared components (ImportDropzone, OptionGroup, TransportControl, VirtualKeyboard, SidebarNavItem, LibrarySubRail, Settings)`);
-  console.log(`   - Verified landing page surface rhythm (zero banned surfaces on full-width sections; strict canvas/panel alternating rhythm)`);
+  console.log(`   - Verified prohibited brand-soft contexts in named shared components (ChoiceCard, ImportDropzone, OptionGroup, TransportControl, VirtualKeyboard, SidebarNavItem, LibrarySubRail, Settings)`);
+  console.log(`   - Verified zero dead chart-* tokens in tailwind.config.js`);
+  console.log(`   - Verified zero banned full-width Landing surfaces (strict canvas/panel alternating rhythm enforced)`);
   console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} root directories\n`);
   process.exit(0);
 } else {

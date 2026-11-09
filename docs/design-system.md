@@ -99,17 +99,19 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
 
 | UI Context | Default Surface | Hover Surface | Active / Selected | Border | Text |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Primary Button** | `bg-brand` | `bg-brand-hover` | `bg-brand` | `border-transparent` | `text-white` |
-| **Secondary Button** | `bg-surface-panel` | `bg-neutral-hover` | `bg-brand-soft` | `border-line-subtle` | `text-ink-primary` |
-| **Quiet Button** | `transparent` | `bg-neutral-hover` | `bg-brand-soft` | `border-transparent` | `text-ink-primary` |
-| **Dropdown Item** | `transparent` | `bg-neutral-hover` | `bg-brand-soft` | `none` | `text-ink-primary` |
+| **Primary Button** | `bg-brand` | `bg-brand-hover` | `bg-brand-hover` | `border-transparent` | `text-white` |
+| **Secondary Button** | `bg-surface-panel` | `bg-neutral-hover` | `bg-neutral-muted` | `border-line-strong/80` | `text-ink-primary` |
+| **Quiet Button** | `transparent` | `bg-neutral-hover` | `bg-neutral-muted` | `border-transparent` | `text-ink-secondary` |
+| **Danger Button** | `bg-danger` | `bg-danger/90` | `bg-danger` | `border-transparent` | `text-white` |
+| **Dropdown Item** | `transparent` | `bg-neutral-hover` | `bg-neutral-muted` (with brand cue) | `none` | `text-ink-primary` |
 | **Tab Trigger** | `transparent` | `bg-neutral-hover` | `bg-surface-panel` | `none` | `text-ink-primary` |
-| **Filter Pill** | `transparent` | `bg-neutral-hover` | `bg-brand-soft` | `border-line-subtle` | `text-brand-soft-foreground` |
+| **Filter Pill (Compact)** | `transparent` | `bg-neutral-hover` | `bg-brand-soft` | `border-line-subtle` | `text-brand-soft-foreground` |
+| **ChoiceCard (Large)** | `bg-surface-panel` | `bg-neutral-hover` | `bg-neutral-hover` | `border-brand` | `text-ink-primary` |
 | **Standard Card** | `bg-surface-panel` | `bg-surface-panel` | `border-brand` | `border-line-subtle` | `text-ink-primary` |
 | **Music Paper Card** | `bg-surface-paper` | `bg-surface-paper-warm`| `border-brand` | `border-surface-paper-edge` | `text-ink-primary` |
 | **Form Input** | `bg-surface-panel` | `bg-surface-panel` | `ring-brand/20 border-brand` | `border-surface-paper-edge` | `text-ink-primary` |
 | **Neutral Badge** | `bg-neutral-muted` | — | — | `border-transparent` | `text-ink-secondary` |
-| **Active/Selected Badge** | `bg-brand-soft` | — | — | `border-transparent` | `text-brand-soft-foreground` |
+| **Selected Badge (Compact)**| `bg-brand-soft` | — | — | `border-transparent` | `text-brand-soft-foreground` |
 
 #### Legacy Token to Yueora Canonical Mapping:
 
@@ -126,6 +128,44 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
 | `border-border` | Component borders | `border-line-subtle` |
 | `border-input` | Form input borders | `border-surface-paper-edge` |
 | `text-foreground` | Primary text | `text-ink-primary` |
+
+#### Primitive Physical Palette (14 Core Colors + 4 Status):
+
+Yueora's visual vocabulary is rich in semantic roles, but strictly restrained in underlying physical colors. Pages and domain components **never** consume primitive tokens directly; they compose semantic tokens.
+
+| Primitive Color Token | Physical Value (HSL) | Semantic Consumers | Design System Role |
+| :--- | :--- | :--- | :--- |
+| `--primitive-neutral-0` | `0 0% 100%` | `surface-panel`, `surface-raised`, `*-foreground` | Pure White: panels, clean cards, overlay popovers, button text |
+| `--primitive-neutral-25` | `44 19% 97%` | `surface-canvas`, `surface-paper` | Warm Ivory Canvas: global page backdrop, tactile archival paper |
+| `--primitive-neutral-50` | `44 18% 95%` | `surface-subrail`, `surface-paper-warm`, `neutral-hover` | Warm Neutral: secondary navigation rail, hover states, preserved takes |
+| `--primitive-neutral-100` | `44 14% 92%` | `neutral-muted`, `line-subtle`, `surface-paper-edge`, `subrail-border` | Neutral Muted: quiet borders, passive tracks, nav active background |
+| `--primitive-neutral-200` | `47 13% 80%` | `line-strong` | Neutral Strong: control borders, checkboxes, switches |
+| `--primitive-neutral-300` | `220 3% 62%` | `ink-subtle` | Neutral Subtle: quiet dividers, passive iconography |
+| `--primitive-ink-500` | `220 4% 48%` | `ink-tertiary` | Ink Tertiary: readable muted metadata (>4.5:1 contrast) |
+| `--primitive-ink-700` | `223 4% 36%` | `ink-secondary`, `neutral-muted-foreground`, `practice-waiting` | Ink Secondary: secondary body copy, timestamps (>6.5:1 contrast) |
+| `--primitive-ink-900` | `220 5% 13%` | `ink-primary`, `neutral-hover-foreground` | Ink Primary: main page headings, high-emphasis copy (>10:1 contrast) |
+| `--primitive-forest-50` | `148 24% 96%` | `brand-wash` | Brand Wash: contained featured highlight surfaces |
+| `--primitive-forest-100` | `148 36% 93%` | `brand-soft`, `selection`, `brand-wash-border` | Brand Soft: compact selected content only (≤ 32px), score highlights |
+| `--primitive-forest-700` | `148 36% 27%` | `brand`, `brand-soft-foreground` | Forest Green Accent: primary CTA, active cues, brand dots |
+| `--primitive-forest-800` | `148 36% 22%` | `brand-hover`, `brand-wash-foreground` | Forest Dark: primary CTA pressed/hover state |
+| `--primitive-gold-500` | `44 67% 46%` | `gold`, `practice-current` | Musical Accent: favorite stars, sounding key / notation accent |
+| `--primitive-success-500` | `148 30% 40%` | `success`, `practice-following`, `practice-correct` | Functional Success: positive feedback, followed notes |
+| `--primitive-warning-500` | `38 58% 45%` | `warning`, `practice-resyncing` | Functional Warning: pending device access, resyncing tempo |
+| `--primitive-danger-500` | `0 65% 45%` | `danger`, `practice-error` | Functional Alert: terracotta destructive action, error states |
+| `--primitive-info-500` | `210 30% 45%` | `info` | Functional Info: instructional notices, guidance callouts |
+
+#### Practice Domain Palette Mapping:
+
+Practice runtime conveys musical feedback without looking like a rainbow arcade game:
+
+| Practice Semantic Role | Mapped Primitive Token | Physical Value | Visual Purpose |
+| :--- | :--- | :--- | :--- |
+| `practice-following` | `--primitive-success-500` | `148 30% 40%` | Active listening lock on current note |
+| `practice-correct` | `--primitive-success-500` | `148 30% 40%` | Accurately played note confirmation |
+| `practice-waiting` | `--primitive-ink-700` | `223 4% 36%` | Paused / waiting for musician input |
+| `practice-resyncing` | `--primitive-warning-500` | `38 58% 45%` | Tempo drift / resyncing cursor cue |
+| `practice-current` | `--primitive-gold-500` | `44 67% 46%` | Active sounding note / piano key illumination |
+| `practice-error` | `--primitive-danger-500` | `0 65% 45%` | Pitch or rhythm correction prompt |
 
 ### 2.3 Surface Hierarchy & Anti-Flattening Contract
 

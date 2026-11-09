@@ -21,6 +21,10 @@ export const AuthProvider = ({ children }) => {
   const [appPublicSettings, setAppPublicSettings] = useState(null);
 
   const loginViaDemo = useCallback((customEmail) => {
+    if (!import.meta.env.DEV) {
+      console.error('Demo authentication is strictly disabled in production builds.');
+      return null;
+    }
     const demoUser = {
       ...DEMO_USER,
       email: customEmail || DEMO_USER.email,
@@ -38,8 +42,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkUserAuth = useCallback(async () => {
-    // If local demo mode is active
-    if (typeof window !== 'undefined' && (localStorage.getItem('yueora_demo_auth') === 'true' || new URLSearchParams(window.location.search).get('demo') === 'true')) {
+    // Local demo mode is strictly allowed in DEV environment only
+    const isDemoActive =
+      import.meta.env.DEV &&
+      typeof window !== 'undefined' &&
+      (localStorage.getItem('yueora_demo_auth') === 'true' ||
+        new URLSearchParams(window.location.search).get('demo') === 'true');
+
+    if (isDemoActive) {
       try {
         localStorage.setItem('yueora_demo_auth', 'true');
       } catch (_) {}
@@ -73,8 +83,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAppState = useCallback(async () => {
-    // Check if demo bypass is already active
-    if (typeof window !== 'undefined' && (localStorage.getItem('yueora_demo_auth') === 'true' || new URLSearchParams(window.location.search).get('demo') === 'true')) {
+    // Local demo mode is strictly allowed in DEV environment only
+    const isDemoActive =
+      import.meta.env.DEV &&
+      typeof window !== 'undefined' &&
+      (localStorage.getItem('yueora_demo_auth') === 'true' ||
+        new URLSearchParams(window.location.search).get('demo') === 'true');
+
+    if (isDemoActive) {
       try {
         localStorage.setItem('yueora_demo_auth', 'true');
       } catch (_) {}

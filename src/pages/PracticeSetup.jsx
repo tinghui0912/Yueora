@@ -4,6 +4,7 @@ import { ArrowLeft, Video } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import OptionGroup from '@/components/practice/OptionGroup';
 import ReadinessRow from '@/components/practice/ReadinessRow';
+import { AppPage } from '@/components/patterns/AppPage';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 
@@ -70,9 +71,15 @@ export default function PracticeSetup() {
     if (mode === 'follow' && input === 'none') setInput('microphone');
   }, [mode, input]);
 
-  // The recognition model is prepared on arrival, never after Start.
+  // The recognition model is prepared in DEV environment only, never simulated in production.
   useEffect(() => {
     if (!needsRecognition) return undefined;
+    if (!import.meta.env.DEV) {
+      // Production Product Truth: do not simulate fake model download or fake readiness
+      setModelStatus('unavailable');
+      setModelProgress(0);
+      return undefined;
+    }
     if (preflight.modelReady) {
       setModelStatus('ready');
       setModelProgress(100);
@@ -166,7 +173,7 @@ export default function PracticeSetup() {
   const micOk = !needsMic || micStatus === 'ready';
   const midiOk = !needsMidi || midiStatus === 'connected';
   const cameraOk = !needsCamera || cameraStatus === 'ready';
-  const modelOk = !needsRecognition || modelStatus === 'ready';
+  const modelOk = !needsRecognition || (import.meta.env.DEV && modelStatus === 'ready');
   const allReady = micOk && midiOk && cameraOk && modelOk;
   const preparing =
     modelStatus === 'checking' || modelStatus === 'downloading' ||
@@ -197,7 +204,7 @@ export default function PracticeSetup() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6 md:px-8 md:py-8">
+    <AppPage size="form">
       <Link to={`/score/${scoreId}`} className="flex items-center gap-1.5 type-body-small text-ink-secondary hover:text-ink-primary">
         <ArrowLeft className="h-4 w-4" /> {score.title}
       </Link>
@@ -309,32 +316,37 @@ export default function PracticeSetup() {
           )}
 
           {needsRecognition && (
-            <>
-              <ReadinessRow
-                label="Practice model"
-                status={modelStatus === 'ready' ? 'ready' : modelStatus === 'unavailable' ? 'error' : 'progress'}
-                statusText={
-                  modelStatus === 'ready' ? 'Ready'
-                    : modelStatus === 'checking' ? 'Checking…'
-                      : modelStatus === 'downloading' ? `Downloading… ${modelProgress}%`
-                        : modelStatus === 'unavailable' ? 'Unavailable' : 'Preparing'
-                }
-              >
-                {modelStatus !== 'ready' && modelStatus !== 'unavailable' && (
-                  <Progress value={modelProgress} className="h-1.5 max-w-xs" aria-label="Practice model download" />
-                )}
-              </ReadinessRow>
-              <ReadinessRow
-                label="Recognition runtime"
-                status={modelStatus === 'ready' ? 'ready' : 'progress'}
-                statusText={modelStatus === 'ready' ? 'Ready' : 'Preparing'}
-              />
-              {import.meta.env.DEV && (
+            import.meta.env.DEV ? (
+              <>
+                <ReadinessRow
+                  label="Practice model"
+                  status={modelStatus === 'ready' ? 'ready' : 'progress'}
+                  statusText={
+                    modelStatus === 'ready' ? 'Ready'
+                      : modelStatus === 'checking' ? 'Checking…'
+                        : `Downloading… ${modelProgress}%`
+                  }
+                >
+                  {modelStatus !== 'ready' && (
+                    <Progress value={modelProgress} className="h-1.5 max-w-xs" aria-label="Practice model download" />
+                  )}
+                </ReadinessRow>
+                <ReadinessRow
+                  label="Recognition runtime"
+                  status={modelStatus === 'ready' ? 'ready' : 'progress'}
+                  statusText={modelStatus === 'ready' ? 'Ready' : 'Preparing'}
+                />
                 <p className="py-1 type-metadata text-ink-tertiary">
-                  Prototype: the recognition model is simulated here — nothing is actually downloaded to this device.
+                  Developer simulation: the recognition model is simulated locally — no weights are fetched.
                 </p>
-              )}
-            </>
+              </>
+            ) : (
+              <ReadinessRow
+                label="Audio note recognition"
+                status="error"
+                statusText="Microphone note-following runtime is in private preview for this build. Switch to Performance mode or connect a MIDI keyboard."
+              />
+            )
           )}
 
           {needsCamera && (
@@ -411,6 +423,6 @@ export default function PracticeSetup() {
           Video keeps both the camera and the microphone. You can hide your self-view while you play.
         </p>
       )}
-    </div>
+    </AppPage>
   );
 }

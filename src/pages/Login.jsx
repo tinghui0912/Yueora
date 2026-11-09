@@ -21,8 +21,10 @@ export default function Login() {
   const destination = returnTo && returnTo !== "/" && returnTo !== "/login" ? returnTo : "/library";
 
   const handleDemoLogin = () => {
-    loginViaDemo();
-    navigate(destination);
+    if (import.meta.env.DEV) {
+      loginViaDemo();
+      navigate(destination);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -33,10 +35,15 @@ export default function Login() {
       await base44.auth.loginViaEmailPassword(email, password);
       window.location.href = destination;
     } catch (err) {
-      // If Base44 remote auth is unavailable in local dev, seamlessly provide local demo access
-      console.warn("Base44 cloud auth not reached, entering local prototype session:", err);
-      loginViaDemo(email);
-      window.location.href = destination;
+      if (import.meta.env.DEV) {
+        // In local development without Base44 cloud backend, allow demo bypass
+        console.warn("Base44 cloud auth not reached in DEV, entering local prototype session:", err);
+        loginViaDemo(email);
+        window.location.href = destination;
+        return;
+      }
+      // Production: never fall back to demo. Show real error, remain unauthenticated.
+      setError(err?.message || "Invalid email or password. Please check your credentials and try again.");
     } finally {
       setLoading(false);
     }
@@ -45,9 +52,13 @@ export default function Login() {
   const handleGoogle = () => {
     try {
       base44.auth.loginWithProvider("google", destination);
-    } catch (_) {
-      loginViaDemo();
-      navigate(destination);
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        loginViaDemo();
+        navigate(destination);
+        return;
+      }
+      setError("Unable to connect to Google authentication provider. Please try email login or check your connection.");
     }
   };
 
