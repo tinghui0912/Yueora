@@ -7,19 +7,26 @@ import ReadinessRow from '@/components/practice/ReadinessRow';
 import { AppPage } from '@/components/patterns/AppPage';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { PRODUCT_CAPABILITIES } from '@/lib/productCapabilities';
 
 const MODES = [
-  { value: 'follow', label: 'Follow notes', description: 'Yueora waits for each note or chord before moving on.' },
+  {
+    value: 'follow',
+    label: import.meta.env.DEV ? 'Follow notes' : 'Follow notes (Private preview)',
+    description: import.meta.env.DEV
+      ? 'Yueora waits for each note or chord before moving on (dev simulation).'
+      : 'Acoustic following & MIDI note-matching pipeline is in private development. Please select Performance mode.',
+  },
   { value: 'performance', label: 'Performance', description: 'Play through continuously at the chosen tempo.' },
 ];
 const FOLLOW_INPUTS = [
-  { value: 'microphone', label: 'Microphone', description: 'Yueora listens for the notes you play.' },
-  { value: 'midi', label: 'MIDI', description: 'Yueora reads note events from a connected keyboard.' },
+  { value: 'microphone', label: 'Microphone', description: 'Acoustic listening for played notes.' },
+  { value: 'midi', label: 'MIDI', description: 'Reads note events from a connected keyboard.' },
 ];
 const PERFORMANCE_INPUTS = [
-  { value: 'none', label: 'No input', description: 'Play without real-time feedback. Nothing is listened to.' },
-  { value: 'microphone', label: 'Microphone', description: 'Listens while you play, for optional real-time feedback.' },
-  { value: 'midi', label: 'MIDI', description: 'Reads note events for optional real-time feedback.' },
+  { value: 'none', label: 'No input', description: 'Play without recording. Nothing is listened to.' },
+  { value: 'microphone', label: 'Microphone', description: 'Captures acoustic audio for performance recording.' },
+  { value: 'midi', label: 'MIDI', description: 'Reads connected keyboard events for recording.' },
 ];
 const RECORDINGS = [
   { value: 'off', label: 'Off', description: 'Just play. Nothing is recorded.' },
@@ -109,10 +116,12 @@ export default function PracticeSetup() {
 
   if (!score) {
     return (
-      <div className="px-6 py-16 text-center">
-        <p className="font-display text-xl">Score not found.</p>
-        <Button onClick={() => navigate('/library')} className="mt-4">Back to library</Button>
-      </div>
+      <AppPage size="form">
+        <div className="py-16 text-center">
+          <p className="font-display text-xl text-ink-primary">Score not found.</p>
+          <Button onClick={() => navigate('/library')} className="mt-4">Back to library</Button>
+        </div>
+      </AppPage>
     );
   }
 
@@ -170,11 +179,16 @@ export default function PracticeSetup() {
     }
   };
 
+  const modeSupported =
+    mode === 'performance' ||
+    import.meta.env.DEV ||
+    (mode === 'follow' && (input === 'midi' ? PRODUCT_CAPABILITIES.supportsMidiFollow : PRODUCT_CAPABILITIES.supportsMicrophoneFollow));
+
   const micOk = !needsMic || micStatus === 'ready';
   const midiOk = !needsMidi || midiStatus === 'connected';
   const cameraOk = !needsCamera || cameraStatus === 'ready';
   const modelOk = !needsRecognition || (import.meta.env.DEV && modelStatus === 'ready');
-  const allReady = micOk && midiOk && cameraOk && modelOk;
+  const allReady = modeSupported && micOk && midiOk && cameraOk && modelOk;
   const preparing =
     modelStatus === 'checking' || modelStatus === 'downloading' ||
     micStatus === 'requesting' || midiStatus === 'detecting' || cameraStatus === 'requesting';
@@ -196,7 +210,7 @@ export default function PracticeSetup() {
           mode,
           input,
           recording: mode === 'performance' ? recording : 'off',
-          feedbackAvailable: input !== 'none',
+          feedbackAvailable: PRODUCT_CAPABILITIES.supportsRealtimePerformanceFeedback,
           prefill,
         },
       },
@@ -223,7 +237,7 @@ export default function PracticeSetup() {
         <div className="flex items-baseline justify-between">
           <h2 className="type-caption uppercase tracking-wider text-ink-tertiary">2. Audio &amp; Note Input</h2>
           <span className="type-metadata text-ink-secondary">
-            {mode === 'follow' ? 'How Yueora follows you' : 'Optional real-time feedback'}
+            {mode === 'follow' ? 'How Yueora follows you' : 'Recording & input source'}
           </span>
         </div>
         <OptionGroup ariaLabel="Input source" value={input} onChange={setInput} options={inputOptions} />
@@ -253,18 +267,26 @@ export default function PracticeSetup() {
           {needsMidi && (
             <ReadinessRow
               label="MIDI keyboard"
-              status={midiStatus === 'connected' ? 'ready' : midiStatus === 'disconnected' || midiStatus === 'unsupported' ? 'error' : midiStatus === 'detecting' ? 'progress' : 'idle'}
+              status={
+                mode === 'follow' && !import.meta.env.DEV && !PRODUCT_CAPABILITIES.supportsMidiFollow
+                  ? 'error'
+                  : midiStatus === 'connected' ? 'ready' : midiStatus === 'disconnected' || midiStatus === 'unsupported' ? 'error' : midiStatus === 'detecting' ? 'progress' : 'idle'
+              }
               statusText={
-                midiStatus === 'connected' ? 'Connected'
-                  : midiStatus === 'detecting' ? 'Detecting…'
-                    : midiStatus === 'disconnected' ? 'Disconnected'
-                      : midiStatus === 'unsupported' ? 'Unsupported' : 'No device'
+                mode === 'follow' && !import.meta.env.DEV && !PRODUCT_CAPABILITIES.supportsMidiFollow
+                  ? 'MIDI note-following matching runtime is in private preview. Please select Performance mode.'
+                  : midiStatus === 'connected' ? 'Connected'
+                    : midiStatus === 'detecting' ? 'Detecting…'
+                      : midiStatus === 'disconnected' ? 'Disconnected'
+                        : midiStatus === 'unsupported' ? 'Unsupported' : 'No device'
               }
               action={
-                midiStatus === 'connected' ? null : (
-                  <Button variant="outline" size="sm" onClick={detectMidi} disabled={midiStatus === 'detecting'}>
-                    {midiStatus === 'detecting' ? 'Detecting…' : 'Detect devices'}
-                  </Button>
+                mode === 'follow' && !import.meta.env.DEV && !PRODUCT_CAPABILITIES.supportsMidiFollow ? null : (
+                  midiStatus === 'connected' ? null : (
+                    <Button variant="outline" size="sm" onClick={detectMidi} disabled={midiStatus === 'detecting'}>
+                      {midiStatus === 'detecting' ? 'Detecting…' : 'Detect devices'}
+                    </Button>
+                  )
                 )
               }
             >

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import PublicShell from '@/components/public/PublicShell';
+import AppPage from '@/components/patterns/AppPage';
 
 export default function HelpArticle() {
   const { slug } = useParams();
@@ -21,17 +22,17 @@ export default function HelpArticle() {
   if (!article) {
     return (
       <PublicShell>
-        <div className="mx-auto max-w-2xl px-5 py-16 text-center">
+        <AppPage size="form" className="py-16 text-center">
           <h1 className="type-section-title text-ink-primary">Article not found</h1>
           <Link to="/help" className="mt-4 inline-block type-body-small text-brand hover:underline">Back to help center</Link>
-        </div>
+        </AppPage>
       </PublicShell>
     );
   }
 
   return (
     <PublicShell>
-      <div className="mx-auto max-w-2xl px-5 py-12 md:px-8">
+      <AppPage size="form" className="py-12">
         <nav className="flex items-center gap-1.5 text-sm text-ink-tertiary">
           <Link to="/help" className="hover:text-ink-primary">Help</Link>
           <ChevronRight className="h-3.5 w-3.5" />
@@ -77,7 +78,7 @@ export default function HelpArticle() {
             <Button variant="ghost" size="sm" onClick={() => setSupportOpen(true)}><Flag className="mr-1.5 h-4 w-4" /> Report a problem</Button>
           </div>
         </div>
-      </div>
+      </AppPage>
 
       <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
         <DialogContent className="max-w-md">

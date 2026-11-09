@@ -1,3 +1,5 @@
+import AppPage from '@/components/patterns/AppPage';
+
 /**
  * LegalLayout — legal content composition only.
  * No shell. Wrap in <PublicShell> from the page.
@@ -5,7 +7,7 @@
  */
 export default function LegalLayout({ title, updated = undefined, intro = undefined, sections = [], children = null }) {
   return (
-    <div className="mx-auto max-w-3xl px-5 py-12 md:px-8 md:py-16">
+    <AppPage size="form" className="py-12 md:py-16">
       <h1 className="type-page-title text-ink-primary">{title}</h1>
       {updated && <p className="mt-2 type-body-small text-ink-tertiary">Last updated {updated}</p>}
       {intro && <p className="mt-5 type-body text-ink-secondary leading-relaxed">{intro}</p>}
@@ -27,6 +29,6 @@ export default function LegalLayout({ title, updated = undefined, intro = undefi
       </div>
 
       {children && <div className="mt-10">{children}</div>}
-    </div>
+    </AppPage>
   );
 }

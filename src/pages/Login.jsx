@@ -52,7 +52,7 @@ export default function Login() {
   const handleGoogle = () => {
     try {
       base44.auth.loginWithProvider("google", destination);
-    } catch (err) {
+    } catch {
       if (import.meta.env.DEV) {
         loginViaDemo();
         navigate(destination);

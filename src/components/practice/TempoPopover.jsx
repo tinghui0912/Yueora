@@ -11,7 +11,7 @@ export default function TempoPopover({
   scoreTempo,
   hasTempoChanges,
   tempoMode,
-  customBpm,
+  customBpm: _customBpm,
   bpm,
   locked,
   metronome,

@@ -20,7 +20,6 @@ import ProgressVisual from '@/components/visuals/ProgressVisual';
 import SharingVisual from '@/components/visuals/SharingVisual';
 import PerformanceMemoryVisual from '@/components/visuals/PerformanceMemoryVisual';
 import MockScanPage from '@/components/visuals/MockScanPage';
-import MusicPaper from '@/components/patterns/MusicPaper';
 import {
   ScoreSheetGlyph,
   PracticeGlyph,
@@ -437,8 +436,8 @@ export default function Landing() {
 
             {/* Repertoire visual showcase */}
             <div className="grid grid-cols-2 gap-4">
-              <MusicPaper tone="warm" elevation="paper" className="p-4 transition hover:shadow-paper-hover">
-                <div className="aspect-[4/3] overflow-hidden rounded border border-line-subtle bg-white">
+              <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs transition-colors hover:border-line-strong">
+                <div className="aspect-[4/3] overflow-hidden rounded border border-line-subtle bg-surface-paper">
                   <ScorePreview id="rep-clair" className="h-full w-full" />
                 </div>
                 <div className="mt-3">
@@ -446,10 +445,10 @@ export default function Landing() {
                   <p className="font-display text-base font-medium text-ink-primary">Clair de Lune</p>
                   <p className="type-metadata text-ink-tertiary">Debussy · 1 take kept</p>
                 </div>
-              </MusicPaper>
+              </div>
 
-              <MusicPaper tone="white" elevation="paper" className="p-4 transition hover:shadow-paper-hover">
-                <div className="aspect-[4/3] overflow-hidden rounded border border-line-subtle bg-white">
+              <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs transition-colors hover:border-line-strong">
+                <div className="aspect-[4/3] overflow-hidden rounded border border-line-subtle bg-surface-paper">
                   <ScorePreview id="rep-gymno" className="h-full w-full" />
                 </div>
                 <div className="mt-3">
@@ -457,7 +456,7 @@ export default function Landing() {
                   <p className="font-display text-base font-medium text-ink-primary">Gymnopédie No. 1</p>
                   <p className="type-metadata text-ink-tertiary">Satie · 2 takes kept</p>
                 </div>
-              </MusicPaper>
+              </div>
             </div>
           </div>
         </div>

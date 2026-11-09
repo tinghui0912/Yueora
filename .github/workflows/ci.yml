@@ -35,3 +35,6 @@ jobs:
 
       - name: Production Build
         run: npm run build
+
+      - name: Verify Production Auth Boundary
+        run: npm run verify:auth-boundary

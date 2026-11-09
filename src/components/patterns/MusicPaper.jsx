@@ -10,7 +10,6 @@ import { forwardRef } from 'react';
  *   children?: React.ReactNode;
  *   className?: string;
  *   interactive?: boolean;
- *   tone?: 'natural' | 'warm' | 'white';
  *   elevation?: 'flat' | 'paper' | 'raised';
  *   bordered?: boolean;
  *   as?: React.ElementType;
@@ -23,7 +22,6 @@ const MusicPaper = forwardRef(function MusicPaper(
     children = null,
     className = '',
     interactive = false,
-    tone = 'natural', // 'natural' | 'warm' | 'white'
     elevation = 'paper', // 'flat' | 'paper' | 'raised'
     bordered = true,
     as: Component = 'div',
@@ -31,17 +29,11 @@ const MusicPaper = forwardRef(function MusicPaper(
   },
   ref
 ) {
-  const toneClasses = {
-    natural: 'bg-surface-paper text-ink-primary',
-    warm: 'bg-surface-paper text-ink-primary',
-    white: 'bg-surface-panel text-ink-primary',
-  }[tone] || 'bg-surface-paper text-ink-primary';
-
   const elevationClasses = {
     flat: '',
     paper: interactive ? 'shadow-paper hover:shadow-paper-hover' : 'shadow-paper',
     raised: 'shadow-raised',
-  }[elevation];
+  }[elevation] || '';
 
   const borderClass = bordered ? 'border border-surface-paper-edge' : '';
   const interactiveClass = interactive
@@ -51,7 +43,7 @@ const MusicPaper = forwardRef(function MusicPaper(
   return (
     <Component
       ref={ref}
-      className={`relative rounded-container ${toneClasses} ${borderClass} ${elevationClasses} ${interactiveClass} ${className}`}
+      className={`relative rounded-container bg-surface-paper text-ink-primary ${borderClass} ${elevationClasses} ${interactiveClass} ${className}`}
       {...props}
     >
       {children}

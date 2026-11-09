@@ -194,7 +194,7 @@ export default function Performances() {
 
         {source.length > 0 && (
           <div className="flex flex-wrap items-center gap-2">
-            <div role="group" aria-label="Filter media type" className="inline-flex rounded-control border border-surface-paper-edge bg-surface-paper p-0.5">
+            <div role="group" aria-label="Filter media type" className="inline-flex rounded-control border border-line-subtle bg-neutral-muted/50 p-0.5">
               {FILTERS.map((f) => (
                 <button
                   key={f.value}
@@ -217,7 +217,7 @@ export default function Performances() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search score title…"
-                className="h-7 w-44 rounded-control border-surface-paper-edge bg-surface-paper/70 pl-8 text-xs focus:bg-surface-paper"
+                className="h-7 w-44 rounded-control border-line-subtle bg-surface-panel pl-8 text-xs"
               />
             </div>
           </div>
@@ -278,7 +278,7 @@ export default function Performances() {
 
       {/* Delete confirmation dialog */}
       <Dialog open={!!pendingDelete} onOpenChange={(o) => !o && setPendingDelete(null)}>
-        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle className="font-display text-lg">Delete preserved moment?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">
             This will permanently remove the preserved recording of {pendingDelete?.scoreTitleSnapshot}.

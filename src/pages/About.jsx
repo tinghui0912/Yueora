@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import PublicShell from '@/components/public/PublicShell';
+import AppPage from '@/components/patterns/AppPage';
 import { Button } from '@/components/ui/button';
 import { Music2, Heart, Eye, TrendingUp, Hand } from 'lucide-react';
 
@@ -9,7 +10,7 @@ export default function About() {
 
   return (
     <PublicShell>
-      <div className="mx-auto max-w-3xl px-5 py-12 md:px-8 md:py-20">
+      <AppPage size="form" className="py-12 md:py-20">
         {/* Hero */}
         <div className="text-center">
           <h1 className="type-hero-title text-ink-primary">
@@ -116,7 +117,7 @@ export default function About() {
             )}
           </div>
         </section>
-      </div>
+      </AppPage>
     </PublicShell>
   );
 }

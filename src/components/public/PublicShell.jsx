@@ -6,7 +6,7 @@ import PublicFooter from './PublicFooter';
  * Flex column with sticky footer behavior (min-h-dvh).
  * Header + Footer + flexible main.
  */
-export default function PublicShell({ children = null, maxWidth = undefined }) {
+export default function PublicShell({ children = null, maxWidth: _maxWidth = undefined }) {
   return (
     <div className="flex min-h-dvh flex-col bg-surface-canvas">
       <PublicHeader />

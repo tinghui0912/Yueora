@@ -53,7 +53,7 @@ export default function PreferencesSettings() {
         <select
           value={prefs.language}
           onChange={(e) => update({ language: e.target.value })}
-          className="h-9 w-full max-w-sm rounded-control border border-surface-paper-edge bg-surface-panel px-3 type-body-small text-ink-primary shadow-xs"
+          className="h-9 w-full max-w-sm rounded-control border border-line-subtle bg-surface-panel px-3 type-body-small text-ink-primary shadow-xs"
         >
           <option>English</option>
           <option>中文</option>

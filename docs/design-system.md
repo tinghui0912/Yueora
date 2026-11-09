@@ -106,8 +106,8 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
 | **Filter Pill (Compact)** | `transparent` | `bg-neutral-hover` | `bg-brand-soft` | `border-line-subtle` | `text-brand-soft-foreground` |
 | **ChoiceCard (Large)** | `bg-surface-panel` | `bg-neutral-hover` | `bg-neutral-hover` | `border-brand` | `text-ink-primary` |
 | **Standard Card** | `bg-surface-panel` | `bg-surface-panel` | `border-brand` | `border-line-subtle` | `text-ink-primary` |
-| **Music Paper Card** | `bg-surface-paper` | `bg-surface-paper-warm`| `border-brand` | `border-surface-paper-edge` | `text-ink-primary` |
-| **Form Input** | `bg-surface-panel` | `bg-surface-panel` | `ring-brand/20 border-brand` | `border-surface-paper-edge` | `text-ink-primary` |
+| **Notation Canvas** | `bg-surface-paper` | — | — | `border-surface-paper-edge` | `text-ink-primary` |
+| **Form Input** | `bg-surface-panel` | `bg-surface-panel` | `ring-brand/20 border-brand` | `border-line-subtle` | `text-ink-primary` |
 | **Neutral Badge** | `bg-neutral-muted` | — | — | `border-transparent` | `text-ink-secondary` |
 | **Selected Badge (Compact)**| `bg-brand-soft` | — | — | `border-transparent` | `text-brand-soft-foreground` |
 
@@ -124,10 +124,10 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
 | `bg-muted` (passive container) | Progress track, badge | `bg-neutral-muted` |
 | `text-muted-foreground` | Helper text, secondary copy | `text-ink-secondary` or `text-ink-tertiary` |
 | `border-border` | Component borders | `border-line-subtle` |
-| `border-input` | Form input borders | `border-surface-paper-edge` |
+| `border-input` | Form input borders | `border-line-subtle` |
 | `text-foreground` | Primary text | `text-ink-primary` |
 
-#### Primitive Physical Palette (14 Core Colors + 4 Status):
+#### Primitive Physical Palette (15 Core Colors + 4 Status = 19 Primitives):
 
 Yueora's visual vocabulary is rich in semantic roles, but strictly restrained in underlying physical colors. Pages and domain components **never** consume primitive tokens directly; they compose semantic tokens.
 
@@ -135,22 +135,23 @@ Yueora's visual vocabulary is rich in semantic roles, but strictly restrained in
 | :--- | :--- | :--- | :--- |
 | `--primitive-neutral-0` | `0 0% 100%` | `surface-panel`, `surface-raised`, `*-foreground` | Pure White: panels, clean cards, overlay popovers, button text |
 | `--primitive-neutral-25` | `44 19% 97%` | `surface-canvas`, `surface-paper` | Warm Ivory Canvas: global page backdrop, tactile archival paper |
-| `--primitive-neutral-50` | `44 18% 95%` | `surface-subrail`, `surface-paper-warm`, `neutral-hover` | Warm Neutral: secondary navigation rail, hover states, preserved takes |
+| `--primitive-neutral-50` | `44 18% 95%` | `surface-subrail` | Warm Neutral: secondary navigation rail, preserved takes |
+| `--primitive-neutral-75` | `44 16% 91%` | `neutral-hover` | Neutral Hover: perceptible interactive hover contrast |
 | `--primitive-neutral-100` | `44 14% 92%` | `neutral-muted`, `line-subtle`, `surface-paper-edge`, `subrail-border` | Neutral Muted: quiet borders, passive tracks, nav active background |
 | `--primitive-neutral-200` | `47 13% 80%` | `line-strong` | Neutral Strong: control borders, checkboxes, switches |
 | `--primitive-neutral-300` | `220 3% 62%` | `ink-subtle` | Neutral Subtle: quiet dividers, passive iconography |
-| `--primitive-ink-500` | `220 4% 48%` | `ink-tertiary` | Ink Tertiary: readable muted metadata (>4.5:1 contrast) |
+| `--primitive-ink-500` | `220 4% 44%` | `ink-tertiary` | Ink Tertiary: readable muted metadata (>=4.5:1 WCAG AA contrast) |
 | `--primitive-ink-700` | `223 4% 36%` | `ink-secondary`, `neutral-muted-foreground`, `practice-waiting` | Ink Secondary: secondary body copy, timestamps (>6.5:1 contrast) |
 | `--primitive-ink-900` | `220 5% 13%` | `ink-primary`, `neutral-hover-foreground` | Ink Primary: main page headings, high-emphasis copy (>10:1 contrast) |
-| `--primitive-forest-50` | `148 24% 96%` | `brand-wash` | Brand Wash: contained featured highlight surfaces |
-| `--primitive-forest-100` | `148 36% 93%` | `brand-soft`, `selection`, `brand-wash-border` | Brand Soft: compact selected content only (≤ 32px), score highlights |
+| `--primitive-forest-50` | `148 24% 96%` | internal fallback | Internal Forest: legacy compatibility fallback |
+| `--primitive-forest-100` | `148 36% 93%` | `brand-soft`, `selection` | Brand Soft: compact selected content only (≤ 32px), score highlights |
 | `--primitive-forest-700` | `148 36% 27%` | `brand`, `brand-soft-foreground` | Forest Green Accent: primary CTA, active cues, brand dots |
-| `--primitive-forest-800` | `148 36% 22%` | `brand-hover`, `brand-wash-foreground` | Forest Dark: primary CTA pressed/hover state |
+| `--primitive-forest-800` | `148 36% 22%` | `brand-hover` | Forest Dark: primary CTA pressed/hover state |
 | `--primitive-gold-500` | `44 67% 46%` | `gold`, `practice-current` | Musical Accent: favorite stars, sounding key / notation accent |
-| `--primitive-success-500` | `148 30% 40%` | `success`, `practice-following`, `practice-correct` | Functional Success: positive feedback, followed notes |
+| `--primitive-success-500` | `148 30% 38%` | `success`, `practice-following`, `practice-correct` | Functional Success: positive feedback (>=4.5:1 WCAG AA contrast) |
 | `--primitive-warning-500` | `38 58% 45%` | `warning`, `practice-resyncing` | Functional Warning: pending device access, resyncing tempo |
-| `--primitive-danger-500` | `0 65% 45%` | `danger`, `practice-error` | Functional Alert: terracotta destructive action, error states |
-| `--primitive-info-500` | `210 30% 45%` | `info` | Functional Info: instructional notices, guidance callouts |
+| `--primitive-danger-500` | `0 65% 45%` | `danger`, `practice-error` | Functional Alert: terracotta destructive action (>=4.5:1 contrast) |
+| `--primitive-info-500` | `210 30% 45%` | `info` | Functional Info: instructional notices, guidance callouts (>=4.5:1) |
 
 #### Practice Domain Palette Mapping:
 
@@ -158,28 +159,30 @@ Practice runtime conveys musical feedback without looking like a rainbow arcade 
 
 | Practice Semantic Role | Mapped Primitive Token | Physical Value | Visual Purpose |
 | :--- | :--- | :--- | :--- |
-| `practice-following` | `--primitive-success-500` | `148 30% 40%` | Active listening lock on current note |
-| `practice-correct` | `--primitive-success-500` | `148 30% 40%` | Accurately played note confirmation |
+| `practice-following` | `--primitive-success-500` | `148 30% 38%` | Active listening lock on current note |
+| `practice-correct` | `--primitive-success-500` | `148 30% 38%` | Accurately played note confirmation |
 | `practice-waiting` | `--primitive-ink-700` | `223 4% 36%` | Paused / waiting for musician input |
 | `practice-resyncing` | `--primitive-warning-500` | `38 58% 45%` | Tempo drift / resyncing cursor cue |
 | `practice-current` | `--primitive-gold-500` | `44 67% 46%` | Active sounding note / piano key illumination |
 | `practice-error` | `--primitive-danger-500` | `0 65% 45%` | Pitch or rhythm correction prompt |
 
-### 2.3 Surface Hierarchy & Anti-Flattening Contract
+### 2.3 Unified Product Grammar & 4-Surface Model
 
-> **Golden Rule of Anti-Flattening:**
-> *Uniformity does NOT mean visual flattening.*
-> *Same semantic role → same appearance.*
-> *Different semantic roles → intentionally distinguishable appearance.*
+> **Golden Rule of Unified Product Grammar:**
+> *Same product, same visual grammar.*
+> *Simple before expressive. Consistent before distinctive.*
+> *If the standard treatment works, use it.*
+> *Semantic meaning does not automatically justify a different visual treatment.*
+> *Do not create a new surface, color, shadow, radius, card treatment, page width or component variant merely because a section is important, musical, premium, emotional, featured or memorable.*
+> *Visual differences must have functional necessity, not aesthetic preference.*
+> *When in doubt, use the standard panel.*
 
-Authenticated application layout establishes a 5-tier depth model:
+Authenticated application layout converges on a simplified 4-surface model:
 
-1. **Primary Navigation (AppShell Sidebar):** `bg-surface-panel` (pure white, `hsl(0 0% 100%)`) with `border-r border-line-subtle`.
-2. **Secondary Navigation (Collection SubRail):** `bg-surface-subrail` (`hsl(44 18% 95%)`) with `border-r border-line-subrail`. Deliberately distinct from pure white sidebar and main canvas.
-3. **Workspace Canvas:** `bg-surface-canvas` (`hsl(44 19% 97%)`). Warm ivory backdrop for all application views.
-4. **Featured Content (Re-engagement / Priority 1):** `bg-brand-wash` (`hsl(148 24% 96%)`) with `border border-brand-wash-border`. Elevates "Pick up where you left off" above ordinary cards without shouting.
-5. **Content Cards & Archival Sheets:** `bg-surface-panel` or `bg-surface-paper` with `shadow-paper` and `border border-surface-paper-edge`.
-6. **Raised Overlays:** `bg-surface-raised` with `shadow-overlay` (popovers, menus, search palette).
+1. **App Canvas (`bg-surface-canvas`):** `hsl(44 19% 97%)`. Warm ivory backdrop for all application views.
+2. **Standard Content Panel (`bg-surface-panel`):** `hsl(0 0% 100%)` with `border border-line-subtle`, `rounded-container`, and `shadow-xs`. All application cards, list containers, resume modules, stats, pricing cards, and forms use this universal container.
+3. **Floating Raised Overlays (`bg-surface-raised`):** `hsl(0 0% 100%)` with `shadow-overlay` (popovers, menus, modal dialogs, search trigger).
+4. **Notation Canvas Surface (`bg-surface-paper`):** `hsl(44 19% 97%)` (`MusicPaper`). Strictly reserved for literal sheet music score and stave notation rendering canvases. Banned on generic UI.
 
 ### 2.4 Marketing Surface Rhythm Contract (Landing Page)
 
@@ -204,7 +207,7 @@ Full-width marketing page sections strictly alternate between two canonical surf
 | **10. Final CTA** | Clean editorial closing ("Play what you love") | `bg-surface-panel` | `border-t border-line-subtle` |
 | **11. Footer** | Sanctuary credits & quiet legal navigation | `bg-surface-canvas` | `border-t border-line-subtle` |
 
-Contained artifacts within these sections (e.g. music cards, take folios, featured modules) utilize `surface-paper`, `surface-paper-warm`, `brand-wash`, and `surface-panel` with appropriate elevation.
+Contained artifacts within these sections utilize standard `surface-panel` with appropriate elevation, reserving `surface-paper` strictly for literal notation staves.
 
 ### 2.5 Canonical Control Scale & Icon Sizing
 

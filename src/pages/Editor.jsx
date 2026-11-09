@@ -288,7 +288,7 @@ export default function Editor() {
         {/* Canvas area */}
         <div className="min-w-0 flex-1 overflow-auto bg-surface-canvas p-6">
           {view === 'original' ? (
-            <div className="mx-auto max-w-sm rounded-container border border-surface-paper-edge bg-surface-panel p-4 shadow-paper">
+            <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs">
               <div className="staff-bg aspect-[3/4] w-full rounded border border-line-subtle opacity-60" />
               <p className="mt-2 text-center text-xs text-ink-secondary">Original scan · Page 1</p>
             </div>
@@ -296,19 +296,19 @@ export default function Editor() {
             <div className="flex gap-4">
               <div className="flex-1">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Original</p>
-                <div className="rounded-container border border-surface-paper-edge bg-surface-panel p-4 shadow-paper">
+                <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs">
                   <div className="staff-bg aspect-[3/4] w-full rounded border border-line-subtle opacity-60" />
                 </div>
               </div>
               <div className="flex-1">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Score</p>
-                <div className="mx-auto max-w-3xl rounded-container border border-surface-paper-edge bg-surface-panel p-6 shadow-paper">
+                <div className="mx-auto max-w-3xl rounded-container border border-line-subtle bg-surface-panel p-6 shadow-xs">
                   <ScoreCanvas notes={notes} selectedIds={selectedIds} onSelect={handleSelect} onAddNote={addNote} onDelete={deleteNote} tool={tool} zoom={zoom} activeIssueMeasure={activeIssue?.measure} />
                 </div>
               </div>
             </div>
           ) : (
-            <div className="mx-auto max-w-3xl rounded-container border border-surface-paper-edge bg-surface-panel p-6 shadow-paper">
+            <div className="mx-auto max-w-3xl rounded-container border border-line-subtle bg-surface-panel p-6 shadow-xs">
               <ScoreCanvas notes={notes} selectedIds={selectedIds} onSelect={handleSelect} onAddNote={addNote} onDelete={deleteNote} tool={tool} zoom={zoom} activeIssueMeasure={activeIssue?.measure} />
               <p className="mt-4 text-center text-sm text-ink-secondary">Page 1 of {score.pages}</p>
             </div>

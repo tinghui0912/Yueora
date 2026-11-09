@@ -7,7 +7,7 @@ import Logo from '@/components/brand/Logo';
  * Covers Login, Register, Forgot Password, Reset Password, Verify Email.
  * No giant icon block, no rounded-2xl card, no heavy shadow.
  */
-export default function AuthLayout({ icon: Icon = undefined, title, subtitle = null, footer = null, children = null }) {
+export default function AuthLayout({ icon: _Icon = undefined, title, subtitle = null, footer = null, children = null }) {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center bg-surface-canvas px-4 py-12">
       <div className="w-full max-w-sm">

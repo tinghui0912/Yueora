@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, ArrowRight } from 'lucide-react';
 import PublicShell from '@/components/public/PublicShell';
+import AppPage from '@/components/patterns/AppPage';
 import { useAuth } from '@/lib/AuthContext';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { checkoutPath, formatPrice, intervalNoun, monthlyEquivalent, yearlySavingPercent } from '@/lib/commercial';
@@ -35,7 +36,7 @@ export default function Pricing() {
 
   return (
     <PublicShell>
-      <div className="mx-auto max-w-4xl px-5 py-12 md:px-8">
+      <AppPage size="standard" className="py-12">
         <div className="text-center">
           <h1 className="type-marketing-title text-ink-primary">Play more, for less</h1>
           <p className="mx-auto mt-3 max-w-md type-body-small text-ink-secondary">
@@ -158,7 +159,7 @@ export default function Pricing() {
             Log in
           </Link>
         </p>
-      </div>
+      </AppPage>
     </PublicShell>
   );
 }

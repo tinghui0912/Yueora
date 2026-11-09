@@ -5,7 +5,7 @@
 @layer base {
   :root {
     /* ==========================================================================
-       1. PRIMITIVE PHYSICAL PALETTE (14 Core Physical Colors + 4 Status)
+       1. PRIMITIVE PHYSICAL PALETTE (15 Core Physical Colors + 4 Status = 19 Primitives)
        Restrained physical foundation. Pages compose semantic tokens;
        semantic tokens reference these primitives.
        Direct consumption of primitive-* in application code is strictly forbidden.
@@ -20,24 +20,24 @@
     --primitive-neutral-300: 220 3% 62%;    /* Neutral Subtle: ink subtle, quiet dividers */
 
     /* Ink (Dark contrast hierarchy) */
-    --primitive-ink-500: 220 4% 48%;        /* Ink Tertiary: readable muted metadata (>4.5:1) */
+    --primitive-ink-500: 220 4% 44%;        /* Ink Tertiary: readable muted metadata (>=4.5:1 on white and canvas) */
     --primitive-ink-700: 223 4% 36%;        /* Ink Secondary: readable secondary copy (>6.5:1) */
     --primitive-ink-900: 220 5% 13%;        /* Ink Primary: primary titles/content (>10:1) */
 
     /* Forest Green (Brand Accent, max 4 physical greens) */
-    --primitive-forest-50: 148 24% 96%;     /* Brand Wash: featured recommendation surface */
+    --primitive-forest-50: 148 24% 96%;     /* Forest 50: internal compatibility fallback */
     --primitive-forest-100: 148 36% 93%;    /* Brand Soft: compact selected content only */
-    --primitive-forest-700: 148 36% 27%;    /* Brand Accent: primary CTA, key indicator */
+    --primitive-forest-700: 148 36% 27%;    /* Brand Accent: primary CTA, key indicator (>7:1 on white) */
     --primitive-forest-800: 148 36% 22%;    /* Brand Hover / Pressed */
 
     /* Musical Accent */
     --primitive-gold-500: 44 67% 46%;       /* Gold: favorites, special musical detail */
 
     /* Functional Status */
-    --primitive-success-500: 148 30% 40%;   /* Success confirmation */
+    --primitive-success-500: 148 30% 38%;   /* Success confirmation (>=4.5:1 on white) */
     --primitive-warning-500: 38 58% 45%;    /* Warning notice */
-    --primitive-danger-500: 0 65% 45%;      /* Terracotta alert */
-    --primitive-info-500: 210 30% 45%;      /* Slate blue instructional notice */
+    --primitive-danger-500: 0 65% 45%;      /* Terracotta alert (>=4.5:1 on white) */
+    --primitive-info-500: 210 30% 45%;      /* Slate blue instructional notice (>=4.5:1 on white) */
 
     /* ==========================================================================
        2. SEMANTIC TOKENS (Product Meaning)
@@ -48,7 +48,8 @@
     --surface-panel: var(--primitive-neutral-0);
     --surface-raised: var(--primitive-neutral-0);
     --surface-paper: var(--primitive-neutral-25);
-    --surface-paper-warm: var(--primitive-neutral-50);
+    /* @deprecated: Retired token. Internal alias to surface-paper. Application consumption forbidden. */
+    --surface-paper-warm: var(--primitive-neutral-25);
     --surface-paper-edge: var(--primitive-neutral-100);
     --surface-subrail: var(--primitive-neutral-50);
     --surface-subrail-border: var(--primitive-neutral-100);
@@ -68,7 +69,8 @@
     --brand-hover: var(--primitive-forest-800);
     --brand-soft: var(--primitive-forest-100);
     --brand-soft-foreground: var(--primitive-forest-700);
-    --brand-wash: var(--primitive-neutral-50);
+    /* @deprecated: Retired token. Internal alias to surface-panel. Application consumption forbidden. */
+    --brand-wash: var(--primitive-neutral-0);
     --brand-wash-border: var(--primitive-neutral-100);
     --brand-wash-foreground: var(--primitive-ink-900);
 
@@ -82,7 +84,7 @@
     --success: var(--primitive-success-500);
     --success-foreground: var(--primitive-neutral-0);
     --warning: var(--primitive-warning-500);
-    --warning-foreground: var(--primitive-neutral-0);
+    --warning-foreground: var(--primitive-ink-900);
     --danger: var(--primitive-danger-500);
     --danger-foreground: var(--primitive-neutral-0);
     --info: var(--primitive-info-500);
@@ -97,9 +99,9 @@
     --practice-waiting: var(--primitive-ink-700);
     --practice-waiting-foreground: var(--primitive-neutral-0);
     --practice-resyncing: var(--primitive-warning-500);
-    --practice-resyncing-foreground: var(--primitive-neutral-0);
+    --practice-resyncing-foreground: var(--primitive-ink-900);
     --practice-current: var(--primitive-gold-500);
-    --practice-current-foreground: var(--primitive-neutral-0);
+    --practice-current-foreground: var(--primitive-ink-900);
     --practice-correct: var(--primitive-success-500);
     --practice-correct-foreground: var(--primitive-neutral-0);
     --practice-error: var(--primitive-danger-500);

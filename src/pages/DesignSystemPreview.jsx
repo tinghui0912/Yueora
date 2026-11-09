@@ -334,40 +334,40 @@ export default function DesignSystemPreview() {
         </Surface>
       </section>
 
-      {/* 5. Surface Hierarchy & Anti-Flattening Contract */}
+      {/* 5. Unified Product Grammar & Surface Model */}
       <section className="space-y-4">
         <SectionHeader
-          title="Surface Hierarchy & Anti-Flattening System"
-          description="Different semantic roles have intentional visual contrast. Uniformity does not mean flat monotony."
+          title="Unified Product Grammar & Surface Model"
+          description="Same product, same visual grammar. When in doubt, use Standard Panel."
         />
         <div className="grid gap-4 sm:grid-cols-4">
-          <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs">
-            <span className="type-caption text-ink-tertiary uppercase">Primary Nav</span>
-            <p className="type-subsection text-ink-primary mt-1">Surface Panel</p>
-            <p className="type-metadata text-ink-secondary mt-1">Sidebar &amp; clean header (pure white).</p>
-          </div>
-
-          <div className="rounded-container border border-line-subrail bg-surface-subrail p-4 shadow-xs">
-            <span className="type-caption text-ink-tertiary uppercase">Secondary Nav</span>
-            <p className="type-subsection text-ink-primary mt-1">Surface SubRail</p>
-            <p className="type-metadata text-ink-secondary mt-1">Collection rail (subtle warm navigation tone).</p>
-          </div>
-
           <div className="rounded-container border border-line-subtle bg-surface-canvas p-4 shadow-xs">
-            <span className="type-caption text-ink-tertiary uppercase">Workspace</span>
+            <span className="type-caption text-ink-tertiary uppercase">1. App Canvas</span>
             <p className="type-subsection text-ink-primary mt-1">Surface Canvas</p>
-            <p className="type-metadata text-ink-secondary mt-1">Warm ivory app backdrop.</p>
+            <p className="type-metadata text-ink-secondary mt-1">Warm ivory app backdrop (surface-canvas).</p>
           </div>
 
           <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs">
-            <span className="type-caption text-brand uppercase font-semibold">Unified Surface</span>
-            <p className="type-subsection text-ink-primary mt-1">Surface Panel</p>
-            <p className="type-metadata text-ink-secondary mt-1">Resume playing &amp; standard content card.</p>
+            <span className="type-caption text-brand uppercase font-semibold">2. Universal Container</span>
+            <p className="type-subsection text-ink-primary mt-1">Standard Panel</p>
+            <p className="type-metadata text-ink-secondary mt-1">All cards, lists, and forms (surface-panel).</p>
+          </div>
+
+          <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-overlay">
+            <span className="type-caption text-ink-tertiary uppercase">3. Elevated Overlay</span>
+            <p className="type-subsection text-ink-primary mt-1">Raised Overlay</p>
+            <p className="type-metadata text-ink-secondary mt-1">Menus, dialogs, popovers (surface-raised).</p>
+          </div>
+
+          <div className="rounded-container border border-surface-paper-edge bg-surface-paper p-4 shadow-paper">
+            <span className="type-caption text-brand uppercase font-semibold">4. Score Only</span>
+            <p className="type-subsection text-ink-primary mt-1">Notation Surface</p>
+            <p className="type-metadata text-ink-secondary mt-1">Sheet music staves only (MusicPaper).</p>
           </div>
         </div>
 
         {/* Live Pick up where you left off sample */}
-        <div className="rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs transition-shadow hover:shadow-paper">
+        <div className="rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs transition-colors hover:border-line-strong">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-full border border-line-subtle bg-surface-panel text-brand">
@@ -375,13 +375,13 @@ export default function DesignSystemPreview() {
               </span>
               <div>
                 <span className="type-caption font-semibold uppercase tracking-wider text-brand">
-                  Live Featured Surface Demo
+                  Live Standard Panel Demo
                 </span>
                 <p className="font-display text-base font-medium text-ink-primary">
                   Pick up where you left off · Clair de Lune
                 </p>
                 <p className="type-metadata text-ink-secondary">
-                  Continue from bar 14 · Subtle brand wash elevates Priority 1 actions
+                  Continue from bar 14 · Standard surface-panel with brand accent indicator
                 </p>
               </div>
             </div>
@@ -393,26 +393,21 @@ export default function DesignSystemPreview() {
         </div>
       </section>
 
-      {/* 6. Surface & Paper System */}
+      {/* 6. Notation Surface Primitive */}
       <section className="space-y-4">
         <SectionHeader
-          title="Archival Music Paper"
-          description="Tactile paper surfaces representing physical scores and quiet study."
+          title="Notation Surface Primitive"
+          description="MusicPaper is strictly reserved for literal score reading, stave notation, and musical canvas viewports."
         />
-        <div className="grid gap-4 sm:grid-cols-3">
-          <Surface tone="panel" elevation="paper" padding="sm">
-            <p className="type-subsection text-ink-primary">Surface Panel</p>
-            <p className="type-metadata text-ink-secondary mt-1">Default container surface with paper edge.</p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Surface tone="panel" padding="md" className="border-line-subtle">
+            <p className="type-subsection text-ink-primary">Standard Surface Panel</p>
+            <p className="type-metadata text-ink-secondary mt-1">Standard content container across the entire application.</p>
           </Surface>
 
-          <Surface tone="paper" elevation="paper" padding="sm">
-            <p className="type-subsection text-ink-primary">Surface Paper</p>
-            <p className="type-metadata text-ink-secondary mt-1">Subtly textured archival sheet tone.</p>
-          </Surface>
-
-          <MusicPaper tone="warm" elevation="paper" className="p-4">
-            <p className="type-subsection text-ink-primary">MusicPaper</p>
-            <p className="type-metadata text-ink-secondary mt-1">Tactile musical score surface.</p>
+          <MusicPaper elevation="paper" className="p-4">
+            <p className="type-subsection text-ink-primary">MusicPaper (Notation Canvas)</p>
+            <p className="type-metadata text-ink-secondary mt-1">Archival sheet music viewport with subtle tactile paper styling.</p>
           </MusicPaper>
         </div>
       </section>

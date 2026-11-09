@@ -57,7 +57,7 @@ export default function PracticeHub() {
           </p>
           <div className="mt-3">
             <div
-              className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs transition-shadow hover:shadow-paper sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs transition-colors hover:border-line-strong sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex items-center gap-4 min-w-0">
                 <div className="h-16 w-24 shrink-0 overflow-hidden rounded border border-line-subtle bg-white/95">
@@ -95,7 +95,7 @@ export default function PracticeHub() {
           <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {recentlyLoved.map((r) => (
               <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="block">
-                <div className="flex items-center gap-3.5 rounded-container border border-line-subtle bg-surface-panel p-3.5 shadow-xs transition-shadow hover:shadow-paper">
+                <div className="flex items-center gap-3.5 rounded-container border border-line-subtle bg-surface-panel p-3.5 shadow-xs transition-colors hover:border-line-strong">
                   <div className="h-14 w-20 shrink-0 overflow-hidden rounded border border-line-subtle bg-white">
                     <ScorePreview id={r.scoreId} className="h-full w-full object-cover" />
                   </div>
@@ -120,7 +120,7 @@ export default function PracticeHub() {
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
             {havenPlayed.map((r) => (
               <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="block">
-                <div className="flex items-center justify-between rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs transition-shadow hover:shadow-paper">
+                <div className="flex items-center justify-between rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs transition-colors hover:border-line-strong">
                   <div className="min-w-0">
                     <p className="font-display font-medium text-ink-primary">{r.title}</p>
                     <p className="type-metadata text-ink-secondary mt-0.5">{r.composer} · last played {r.lastPlayed}</p>

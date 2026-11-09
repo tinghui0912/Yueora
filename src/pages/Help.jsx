@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { helpArticles, helpCategories } from '@/lib/mockData';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import PublicShell from '@/components/public/PublicShell';
+import AppPage from '@/components/patterns/AppPage';
 
 export default function Help() {
   const [query, setQuery] = useState('');
@@ -29,7 +30,7 @@ export default function Help() {
 
   return (
     <PublicShell>
-      <div className="mx-auto max-w-3xl px-5 py-12 md:px-8">
+      <AppPage size="form" className="py-12">
         <h1 className="type-page-title text-ink-primary">Help center</h1>
         <p className="mt-1 type-body text-ink-secondary">Find guides, tips, and answers about Yueora.</p>
 
@@ -87,7 +88,7 @@ export default function Help() {
           <p className="mt-0.5 type-body-small text-ink-secondary">Reach out and we’ll get back to you.</p>
           <Button className="mt-3" onClick={() => { setSupportOpen(true); setSent(false); }}><LifeBuoy className="mr-1.5 h-4 w-4" /> Contact support</Button>
         </div>
-      </div>
+      </AppPage>
 
       <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
         <DialogContent className="max-w-md">

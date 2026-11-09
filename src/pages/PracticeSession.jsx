@@ -360,7 +360,7 @@ export default function PracticeSession() {
     <div className="flex h-dvh flex-col bg-surface-canvas select-none">
       {/* Workspace Header: softly recedes during active playing */}
       <header
-        className={`flex items-center justify-between gap-3 border-b border-surface-paper-edge bg-surface-panel/90 px-4 py-2.5 backdrop-blur-md transition-opacity duration-slow md:px-6 ${
+        className={`flex items-center justify-between gap-3 border-b border-line-subtle bg-surface-panel/90 px-4 py-2.5 backdrop-blur-md transition-opacity duration-slow md:px-6 ${
           isPlaying ? 'opacity-40 hover:opacity-100' : 'opacity-100'
         }`}
       >
@@ -377,7 +377,7 @@ export default function PracticeSession() {
             <div
               role="img"
               aria-label="Camera preview"
-              className="relative hidden h-9 w-14 items-center justify-center overflow-hidden rounded-control border border-surface-paper-edge bg-ink-primary/10 sm:flex"
+              className="relative hidden h-9 w-14 items-center justify-center overflow-hidden rounded-control border border-line-subtle bg-ink-primary/10 sm:flex"
             >
               <Video className="h-3.5 w-3.5 text-ink-secondary" aria-hidden="true" />
               {isPlaying && (
@@ -389,7 +389,7 @@ export default function PracticeSession() {
           )}
 
           {/* Session Phase Pill */}
-          <div className="flex items-center gap-1.5 rounded-full border border-surface-paper-edge bg-surface-paper px-3 py-1 text-xs text-ink-secondary">
+          <div className="flex items-center gap-1.5 rounded-full border border-line-subtle bg-neutral-muted/50 px-3 py-1 text-xs text-ink-secondary">
             <span
               className={`h-2 w-2 rounded-full ${
                 isPlaying ? 'bg-brand animate-pulse' : phase === 'countin' ? 'bg-practice-current' : 'bg-ink-tertiary'
@@ -420,7 +420,7 @@ export default function PracticeSession() {
         <div className="w-full max-w-4xl">
           {/* Section range selector notification bar */}
           {selecting && (
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-container border border-surface-paper-edge bg-surface-panel p-3 shadow-xs">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-container border border-line-subtle bg-surface-panel p-3 shadow-xs">
               <p className="text-xs text-ink-primary font-medium">
                 {sectionPhase === 'start'
                   ? 'Choose starting measure on score.'
@@ -430,7 +430,7 @@ export default function PracticeSession() {
                 <button
                   onClick={() => setPickWindow((w) => Math.max(1, w - 4))}
                   disabled={pickWindow <= 1}
-                  className="rounded-control border border-surface-paper-edge p-1 disabled:opacity-30"
+                  className="rounded-control border border-line-subtle p-1 disabled:opacity-30"
                   aria-label="Previous measures"
                 >
                   <ChevronLeft className="h-3.5 w-3.5" />
@@ -441,14 +441,14 @@ export default function PracticeSession() {
                 <button
                   onClick={() => setPickWindow((w) => Math.min(measureWindowStart(totalMeasures), w + 4))}
                   disabled={pickWindow + 4 > totalMeasures}
-                  className="rounded-control border border-surface-paper-edge p-1 disabled:opacity-30"
+                  className="rounded-control border border-line-subtle p-1 disabled:opacity-30"
                   aria-label="Next measures"
                 >
                   <ChevronRight className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={() => { setSectionPhase('idle'); setPendingStart(null); }}
-                  className="ml-1 rounded-control border border-surface-paper-edge p-1 text-ink-secondary hover:text-ink-primary"
+                  className="ml-1 rounded-control border border-line-subtle p-1 text-ink-secondary hover:text-ink-primary"
                   aria-label="Cancel section"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -459,7 +459,6 @@ export default function PracticeSession() {
 
           {/* Archival Music Paper Stand */}
           <MusicPaper
-            tone="white"
             elevation="paper"
             className="p-4 sm:p-8 relative"
           >
@@ -476,7 +475,7 @@ export default function PracticeSession() {
             />
 
             {/* Position indicator & measure navigation */}
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-surface-paper-edge pt-3 text-xs text-ink-secondary">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line-subtle pt-3 text-xs text-ink-secondary">
               <span>Showing bars {canvasStart}–{Math.min(totalMeasures, canvasStart + 3)} of {totalMeasures}</span>
 
               {!selecting && phase === 'paused' && measureWindowStart(activeMeasure) !== visibleMeasureStart && (
@@ -532,7 +531,7 @@ export default function PracticeSession() {
       </main>
 
       {/* Listening companion / Non-judgmental status band */}
-      <div className="border-t border-surface-paper-edge bg-surface-paper/90 px-4 py-2">
+      <div className="border-t border-line-subtle bg-surface-panel px-4 py-2">
         {mode === 'follow' && phase !== 'ready' ? (
           <FollowFeedback
             current={GROUPS[activeMeasure % GROUPS.length]}
@@ -555,7 +554,7 @@ export default function PracticeSession() {
 
       {/* Bottom Transport System */}
       <footer
-        className="border-t border-surface-paper-edge bg-surface-panel px-4 py-3 md:px-6 shadow-overlay"
+        className="border-t border-line-subtle bg-surface-panel px-4 py-3 md:px-6 shadow-overlay"
         style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
       >
         <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3">
@@ -613,7 +612,7 @@ export default function PracticeSession() {
                 <button
                   type="button"
                   className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
-                    metronome ? 'border-line-strong text-ink-primary' : 'border-surface-paper-edge text-ink-secondary hover:text-ink-primary'
+                    metronome ? 'border-line-strong text-ink-primary' : 'border-line-subtle text-ink-secondary hover:text-ink-primary'
                   }`}
                 >
                   <Timer className="h-4 w-4" />
@@ -639,7 +638,7 @@ export default function PracticeSession() {
               className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
                 selectedRange.kind === 'section'
                   ? 'border-brand bg-neutral-muted font-semibold text-ink-primary shadow-xs'
-                  : 'border-surface-paper-edge text-ink-secondary hover:bg-neutral-hover'
+                  : 'border-line-subtle text-ink-secondary hover:bg-neutral-hover'
               }`}
             >
               <span>Section{selectedRange.kind === 'section' ? ` ${selectedRange.startMeasure}–${selectedRange.endMeasure}` : ''}</span>
@@ -651,7 +650,7 @@ export default function PracticeSession() {
                 onClick={() => setLoop((l) => !l)}
                 aria-pressed={loop}
                 className={`hidden h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium sm:flex transition-colors ${
-                  loop ? 'border-brand bg-neutral-muted font-semibold text-ink-primary shadow-xs' : 'border-surface-paper-edge text-ink-secondary hover:bg-neutral-hover'
+                  loop ? 'border-brand bg-neutral-muted font-semibold text-ink-primary shadow-xs' : 'border-line-subtle text-ink-secondary hover:bg-neutral-hover'
                 }`}
               >
                 <Repeat className={`h-4 w-4 ${loop ? 'text-brand' : ''}`} />
@@ -720,7 +719,7 @@ export default function PracticeSession() {
 
       {/* Exit confirmation dialog */}
       <Dialog open={exitOpen} onOpenChange={setExitOpen}>
-        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle className="font-display text-lg">Leave practice?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">You can preserve this session in your repertoire history, or discard it.</p>
           <DialogFooter className="mt-4 gap-2">

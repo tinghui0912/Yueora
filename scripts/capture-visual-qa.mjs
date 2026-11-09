@@ -2,6 +2,7 @@
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
+import http from 'node:http';
 
 const OUT_DIR = path.resolve('.taste-skill/shots');
 if (!fs.existsSync(OUT_DIR)) {
@@ -12,19 +13,80 @@ const PORT = process.env.PORT || 5350;
 const BASE_URL = `http://localhost:${PORT}`;
 
 const TARGETS = [
-  { name: 'landing-desktop', path: '/', w: 1440, h: 900 },
-  { name: 'landing-mobile', path: '/', w: 390, h: 844 },
-  { name: 'login-desktop', path: '/login', w: 1440, h: 900 },
-  { name: 'library-desktop', path: '/library?demo=true', w: 1440, h: 900 },
-  { name: 'practice-hub-desktop', path: '/practice?demo=true', w: 1440, h: 900 },
-  { name: 'imports-desktop', path: '/imports?demo=true', w: 1440, h: 900 },
-  { name: 'setup-desktop', path: '/score/clair-de-lune/setup?demo=true', w: 1440, h: 900 },
-  { name: 'setup-mobile', path: '/score/clair-de-lune/setup?demo=true', w: 390, h: 844 },
-  { name: 'settings-desktop', path: '/settings/account?demo=true', w: 1440, h: 900 },
+  // Public & Commercial Pages (No demo auth needed)
+  { name: 'landing-desktop', category: 'Public', path: '/', w: 1440, h: 900 },
+  { name: 'landing-mobile', category: 'Public', path: '/', w: 390, h: 844 },
+  { name: 'pricing-desktop', category: 'Public', path: '/pricing', w: 1440, h: 900 },
+  { name: 'about-desktop', category: 'Public', path: '/about', w: 1440, h: 900 },
+  { name: 'login-desktop', category: 'Public', path: '/login', w: 1440, h: 900 },
+
+  // Authenticated Application (Dev Demo Boundary: local dev preview only)
+  { name: 'library-desktop', category: 'DEV Demo', path: '/library?demo=true', w: 1440, h: 900 },
+  { name: 'practice-hub-desktop', category: 'DEV Demo', path: '/practice?demo=true', w: 1440, h: 900 },
+  { name: 'imports-desktop', category: 'DEV Demo', path: '/imports?demo=true', w: 1440, h: 900 },
+  { name: 'setup-desktop', category: 'DEV Demo', path: '/score/clair-de-lune/setup?demo=true', w: 1440, h: 900 },
+  { name: 'setup-mobile', category: 'DEV Demo', path: '/score/clair-de-lune/setup?demo=true', w: 390, h: 844 },
+  { name: 'settings-desktop', category: 'DEV Demo', path: '/settings/account?demo=true', w: 1440, h: 900 },
 ];
 
 console.log('📸 Starting Yueora Automated Visual QA Screenshot Capture...');
 console.log(`Target server: ${BASE_URL}\n`);
+
+function checkHealthy(url) {
+  return new Promise((resolve) => {
+    const req = http.get(url, (res) => {
+      resolve(Boolean(res.statusCode && res.statusCode < 500));
+    });
+    req.on('error', () => resolve(false));
+    req.setTimeout(1000, () => {
+      req.destroy();
+      resolve(false);
+    });
+  });
+}
+
+async function waitForHealthy(url, timeoutMs = 15000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    if (await checkHealthy(url)) return true;
+    await new Promise((r) => setTimeout(r, 300));
+  }
+  return false;
+}
+
+function killProcess(proc) {
+  if (!proc) return;
+  try {
+    if (process.platform === 'win32') {
+      spawn('taskkill', ['/pid', String(proc.pid), '/f', '/t']);
+    } else {
+      proc.kill();
+    }
+  } catch {}
+}
+
+async function ensureServerRunning(port) {
+  const isRunning = await checkHealthy(`http://localhost:${port}/`);
+  if (isRunning) {
+    console.log(`  ✓ Detected existing server running on port ${port}`);
+    return null;
+  }
+
+  console.log(`  ⏳ Spawning Vite development server on port ${port}...`);
+  const isWin = process.platform === 'win32';
+  const serverProc = isWin
+    ? spawn('cmd.exe', ['/d', '/s', '/c', `npm.cmd run dev -- --port ${port} --strictPort`], { stdio: 'pipe' })
+    : spawn('npm', ['run', 'dev', '--', '--port', String(port), '--strictPort'], { stdio: 'pipe' });
+
+  const healthy = await waitForHealthy(`http://localhost:${port}/`, 15000);
+  if (!healthy) {
+    killProcess(serverProc);
+    throw new Error(`Failed to start Vite dev server on port ${port}`);
+  }
+
+  console.log(`  ✓ Dev server ready on port ${port}\n`);
+  return serverProc;
+}
 
 async function runShoot(target) {
   const fullUrl = `${BASE_URL}${target.path}`;
@@ -47,7 +109,7 @@ async function runShoot(target) {
 
     child.on('exit', (code) => {
       if (code === 0) {
-        console.log(`✓ Captured ${target.name} (${target.w}x${target.h}) -> ${path.relative(process.cwd(), outFile)}`);
+        console.log(`✓ [${target.category}] ${target.name} (${target.w}x${target.h}) -> ${path.relative(process.cwd(), outFile)}`);
         resolve(outFile);
       } else {
         reject(new Error(`Failed to capture ${target.name} (exit code ${code})`));
@@ -57,14 +119,36 @@ async function runShoot(target) {
 }
 
 async function main() {
-  for (const target of TARGETS) {
-    try {
-      await runShoot(target);
-    } catch (err) {
-      console.error(`⚠️ Error capturing ${target.name}:`, err.message);
+  let serverProcess = null;
+  let failures = 0;
+
+  try {
+    serverProcess = await ensureServerRunning(PORT);
+
+    for (const target of TARGETS) {
+      try {
+        await runShoot(target);
+      } catch (err) {
+        failures++;
+        console.error(`⚠️ Error capturing ${target.name}:`, err.message);
+      }
+    }
+  } catch (globalErr) {
+    console.error('Fatal visual QA runner error:', globalErr);
+    failures++;
+  } finally {
+    if (serverProcess) {
+      console.log('\n  🧹 Terminating spawned dev server...');
+      killProcess(serverProcess);
     }
   }
-  console.log('\n✅ Automated screenshot capture complete. Files saved in .taste-skill/shots/');
+
+  if (failures > 0) {
+    console.error(`\n❌ Visual QA capture finished with ${failures} failure(s).`);
+    process.exit(1);
+  }
+
+  console.log('\n✅ Automated screenshot capture complete. All targets captured successfully in .taste-skill/shots/');
 }
 
 main();

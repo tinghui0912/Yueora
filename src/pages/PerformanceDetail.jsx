@@ -71,27 +71,31 @@ export default function PerformanceDetail() {
 
   if (!performance) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-16 md:px-8">
-        <StateMessage
-          tone="neutral"
-          title="This performance is not here"
-          description="It may have been deleted, or the link belongs to something else."
-          primaryAction={<Button asChild><Link to="/performances">Back to Performances</Link></Button>}
-        />
-      </div>
+      <AppPage size="form">
+        <div className="py-12">
+          <StateMessage
+            tone="neutral"
+            title="This performance is not here"
+            description="It may have been deleted, or the link belongs to something else."
+            primaryAction={<Button asChild><Link to="/performances">Back to Performances</Link></Button>}
+          />
+        </div>
+      </AppPage>
     );
   }
 
   if (!canView) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-16 md:px-8">
-        <StateMessage
-          tone="neutral"
-          title="You do not have access to this performance"
-          description="The owner has not shared this recording with you, or access was revoked."
-          primaryAction={<Button asChild><Link to="/performances">Back to Performances</Link></Button>}
-        />
-      </div>
+      <AppPage size="form">
+        <div className="py-12">
+          <StateMessage
+            tone="neutral"
+            title="You do not have access to this performance"
+            description="The owner has not shared this recording with you, or access was revoked."
+            primaryAction={<Button asChild><Link to="/performances">Back to Performances</Link></Button>}
+          />
+        </div>
+      </AppPage>
     );
   }
 

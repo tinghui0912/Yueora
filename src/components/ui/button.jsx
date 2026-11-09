@@ -19,7 +19,7 @@ const buttonVariants = cva(
         danger:
           "bg-danger text-white shadow-xs hover:bg-danger/90 active:scale-[0.98]",
         transport:
-          "rounded-full bg-brand text-white shadow-paper hover:bg-brand-hover active:scale-[0.97]",
+          "rounded-full bg-brand text-white shadow-sm hover:bg-brand-hover active:scale-[0.97]",
         subtle:
           "border border-line-subtle bg-surface-canvas/60 text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]",
         link:

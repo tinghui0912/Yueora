@@ -32,10 +32,13 @@ export default function ImportDetail() {
 
   if (!imp) {
     return (
-      <div className="px-8 py-16 text-center">
-        <h1 className="type-section-title">Import not found</h1>
-        <Link to="/imports" className="mt-4 inline-block type-body-small text-brand hover:underline">Back to imports</Link>
-      </div>
+      <AppPage size="form">
+        <div className="py-16 text-center">
+          <h1 className="type-section-title text-ink-primary">Import not found</h1>
+          <p className="mt-2 type-body-small text-ink-secondary">The requested import session could not be located.</p>
+          <Link to="/imports" className="mt-4 inline-block type-body-small text-brand hover:underline">Back to imports</Link>
+        </div>
+      </AppPage>
     );
   }
 

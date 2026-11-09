@@ -218,7 +218,7 @@ export default function Library() {
         {/* Hero: "Pick up where you left off" - Resume Playing Card */}
         {!isTrash && !search && active === 'all' && continueScore && (
           <div className="mx-4 mt-6 md:mx-8">
-            <div className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs transition-shadow hover:shadow-paper sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs transition-colors hover:border-line-strong sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4 min-w-0">
                 <div className="hidden h-14 w-20 shrink-0 overflow-hidden rounded border border-line-subtle bg-white/90 sm:block">
                   <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
@@ -560,7 +560,7 @@ export default function Library() {
 
       {/* Folder delete confirmation */}
       <Dialog open={!!folderDelete} onOpenChange={(o) => !o && setFolderDelete(null)}>
-        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle className="font-display text-lg">Delete folder?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">Scores in this folder will stay in your library — only the folder is removed.</p>
           <DialogFooter className="mt-4">
@@ -572,7 +572,7 @@ export default function Library() {
 
       {/* Bulk remove confirmation */}
       <Dialog open={!!trashConfirm} onOpenChange={(o) => !o && setTrashConfirm(null)}>
-        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle className="font-display text-lg">{removeLabel}?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">
             {allMine && 'These pieces will move to Trash for 30 days.'}
@@ -589,12 +589,12 @@ export default function Library() {
 
       {/* Manage folders dialog (mobile) */}
       <Dialog open={manageFoldersOpen} onOpenChange={setManageFoldersOpen}>
-        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle className="font-display text-lg">Manage folders</DialogTitle></DialogHeader>
           <div className="space-y-2 mt-2">
             {folders.length === 0 && <p className="py-4 text-center text-xs text-ink-tertiary">No folders created yet.</p>}
             {folders.map((f) => (
-              <div key={f.id} className="flex items-center gap-2 rounded-control border border-surface-paper-edge px-3 py-2">
+              <div key={f.id} className="flex items-center gap-2 rounded-control border border-line-subtle px-3 py-2">
                 {editingFolderId === f.id ? (
                   <>
                     <input
@@ -602,7 +602,7 @@ export default function Library() {
                       value={editFolderName}
                       onChange={(e) => setEditFolderName(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter') { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); } }}
-                      className="h-7 flex-1 rounded border border-surface-paper-edge bg-surface-paper px-2 text-xs outline-none focus:border-brand"
+                      className="h-7 flex-1 rounded border border-line-subtle bg-surface-panel px-2 text-xs outline-none focus:border-brand"
                     />
                     <button onClick={() => { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); }} className="rounded p-1 text-brand hover:bg-neutral-hover" aria-label="Confirm"><Check className="h-3.5 w-3.5" /></button>
                     <button onClick={() => setEditingFolderId(null)} className="rounded p-1 text-ink-tertiary hover:bg-neutral-hover" aria-label="Cancel"><X className="h-3.5 w-3.5" /></button>
@@ -623,7 +623,7 @@ export default function Library() {
                 onChange={(e) => setNewFolderName(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}
                 placeholder="New folder name"
-                className="h-7 flex-1 rounded border border-surface-paper-edge bg-surface-paper px-2 text-xs outline-none focus:border-brand"
+                className="h-7 flex-1 rounded border border-line-subtle bg-surface-panel px-2 text-xs outline-none focus:border-brand"
               />
               <Button size="sm" onClick={() => { if (newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}><Plus className="h-3.5 w-3.5" /></Button>
             </div>
@@ -636,7 +636,7 @@ export default function Library() {
 
       {/* Folder delete confirmation (mobile) */}
       <Dialog open={!!folderToDelete} onOpenChange={(o) => !o && setFolderToDelete(null)}>
-        <DialogContent className="max-w-sm border-surface-paper-edge bg-surface-panel">
+        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle className="font-display text-lg">Delete folder?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">Scores in this folder will remain in your library.</p>
           <DialogFooter className="mt-4">
@@ -652,7 +652,7 @@ export default function Library() {
 function EmptyState({ active, isTrash }) {
   if (isTrash) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-surface-paper-edge py-20 text-center">
+      <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
         <Trash2 className="h-8 w-8 text-ink-tertiary" />
         <h2 className="mt-3 font-display text-xl font-medium text-ink-primary">Trash is empty</h2>
         <p className="mt-1.5 max-w-sm text-xs text-ink-secondary">Scores you remove go here first. You can restore them anytime within 30 days.</p>
@@ -661,7 +661,7 @@ function EmptyState({ active, isTrash }) {
   }
   if (active === 'all') {
     return (
-      <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-surface-paper-edge bg-surface-paper/40 py-20 text-center">
+      <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
         <h2 className="type-section-title text-ink-primary">Start with something you love.</h2>
         <p className="mt-2 max-w-sm type-body-small leading-relaxed text-ink-secondary">
           Add sheet music you have always wanted to play — whether scan, photo, or MusicXML.
@@ -685,7 +685,7 @@ function EmptyState({ active, isTrash }) {
   }
   const labels = { mine: 'your own scores', shared: 'scores shared with you', saved: 'saved scores', favorites: 'favorites' };
   return (
-    <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-surface-paper-edge py-20 text-center">
+    <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
       <h2 className="type-section-title text-ink-primary">Nothing here yet</h2>
       <p className="mt-1.5 max-w-sm type-body-small text-ink-secondary">This is where {labels[active] || 'these scores'} will appear.</p>
       <Button intent="primary" size="md" className="mt-5" asChild>

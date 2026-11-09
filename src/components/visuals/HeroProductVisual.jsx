@@ -26,7 +26,6 @@ export default function HeroProductVisual() {
 
       {/* 2. Recognized interactive score in personal repertoire */}
       <MusicPaper
-        tone="white"
         elevation="paper"
         className="ml-[30%] sm:ml-[28%] p-4 sm:p-5 relative z-20 transition-transform duration-slow hover:translate-y-[-2px]"
       >

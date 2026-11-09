@@ -20,7 +20,6 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
   return (
     <MusicPaper
       interactive
-      tone="natural"
       className={cn(
         'group relative flex flex-col overflow-hidden transition-[box-shadow,border-color,transform] duration-base',
         selected && 'ring-2 ring-brand border-brand'
