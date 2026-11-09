@@ -23,7 +23,7 @@ export default function Settings() {
                   to={i.to}
                   className={({ isActive }) =>
                     `block whitespace-nowrap rounded-control px-3 py-2 type-body-small transition-colors ${
-                      isActive ? 'bg-brand/10 font-semibold text-brand' : 'text-ink-secondary hover:bg-surface-paper hover:text-ink-primary'
+                      isActive ? 'bg-brand-soft font-semibold text-brand-soft-foreground shadow-xs' : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
                     }`
                   }
                 >

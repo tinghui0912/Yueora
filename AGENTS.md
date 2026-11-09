@@ -55,13 +55,23 @@ Before creating or styling any UI element:
    - **Never combine** semantic typography with conflicting font sizes (e.g. do NOT write `type-page-title text-2xl`).
 3. **Use semantic colors & respect the Color Contract:**
    - Text: `text-ink-primary`, `text-ink-secondary`, `text-ink-tertiary`, `text-ink-subtle`
-   - Surfaces: `bg-surface-canvas`, `bg-surface-panel`, `bg-surface-paper`, `bg-surface-paper-warm`
-   - Lines: `border-line-subtle`, `border-surface-paper-edge`
+   - Surfaces & IA Depth:
+     - Primary Nav: `bg-surface-panel` (clean white)
+     - Secondary Nav / Collection SubRail: `bg-surface-subrail`, `border-line-subrail`
+     - Workspace Canvas: `bg-surface-canvas` (warm ivory)
+     - Featured Surfaces: `bg-brand-wash`, `border-brand-washBorder` (Pick up where you left off, editorial highlight)
+     - Archival Sheets & Content Cards: `bg-surface-paper`, `bg-surface-paper-warm` with `shadow-paper`
+     - Overlays / Popovers: `bg-surface-raised` with `shadow-overlay`
+   - Lines: `border-line-subtle`, `border-surface-paper-edge`, `border-line-subrail`
    - Brand active context: `bg-brand-soft` (pale green, strictly for selected/active items), `text-brand-soft-foreground`
+   - Featured Brand Surface: `bg-brand-wash` (subtle brand tint for recommendations, NOT selected state)
    - Primary CTA: `bg-brand` (deep forest green), `text-white`, `hover:bg-brand-hover`
    - Neutral hovers & muted items: `bg-neutral-muted`, `hover:bg-neutral-hover` (warm ivory-gray, NEVER green)
    - **Legacy tokens are permanently retired from product code:** NEVER use `bg-accent`, `bg-muted`, `text-muted-foreground`, `bg-primary`, `text-primary`, `bg-card`, `bg-background`, `text-foreground`, `border-border`, `border-input`, `ring-ring` in pages or domain components.
-   - Never use raw hex colors (`#...`) in application JSX.
-4. **Never expose debug / prototype simulation controls in production:**
+   - Never use arbitrary `bg-brand/10` or raw hex colors (`#...`) in application JSX.
+4. **Anti-Flattening Principle:**
+   - Uniformity does NOT mean visual flattening.
+   - Same semantic role -> same appearance; Different semantic roles -> intentionally distinguishable appearance.
+5. **Never expose debug / prototype simulation controls in production:**
    - Gate verification simulators behind `import.meta.env.DEV` or internal tooling.
-5. Refer to `docs/design-system.md` and visit `/design-system` for interactive component examples and guidelines.
+6. Refer to `docs/design-system.md` and visit `/design-system` for interactive component examples and guidelines.

@@ -48,7 +48,7 @@ export default function ProgressVisual() {
                 </span>
                 <div 
                   className={`w-full rounded-sm transition-all ${
-                    d.mins > 0 ? 'bg-brand/25 group-hover:bg-brand/40' : 'bg-line-subtle/50'
+                    d.mins > 0 ? 'bg-brand-soft border-t border-brand group-hover:bg-brand' : 'bg-line-subtle/50'
                   }`}
                   style={{ height: `${heightPercent}%` }}
                 />
@@ -68,7 +68,7 @@ export default function ProgressVisual() {
 
         <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-paper px-3 py-2">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand/10 text-brand">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft text-brand-soft-foreground">
               <BookmarkCheck className="h-3 w-3" />
             </span>
             <div>

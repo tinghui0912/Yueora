@@ -182,7 +182,7 @@ export default function Landing() {
       </section>
 
       {/* 2. PHILOSOPHY MOMENT: "Your music, not ours." */}
-      <section id="philosophy" className="border-t border-line-subtle bg-surface-panel/40 py-16 md:py-24">
+      <section id="philosophy" className="border-t border-line-subtle bg-surface-panel py-16 md:py-24">
         <div className="mx-auto max-w-5xl px-5 md:px-8">
           <div className="max-w-2xl">
             <p className="type-caption font-semibold uppercase tracking-wider text-brand">
@@ -253,7 +253,7 @@ export default function Landing() {
       </section>
 
       {/* 3. THE CONNECTED LIFECYCLE: "A piece has a life in Yueora." */}
-      <section id="lifecycle" className="border-t border-line-subtle py-20 md:py-24">
+      <section id="lifecycle" className="border-t border-line-subtle bg-surface-paper py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand">
@@ -331,7 +331,7 @@ export default function Landing() {
                 <div className="music-paper rounded-lg p-6 shadow-paper">
                   <div className="flex items-center justify-between border-b border-line-subtle pb-3">
                     <p className="type-caption text-ink-tertiary">Step 02 · Interactive Score Review</p>
-                    <span className="rounded-control bg-brand/10 px-2 py-0.5 text-xs font-medium text-brand">
+                    <span className="rounded-control bg-brand-soft px-2 py-0.5 text-xs font-semibold text-brand-soft-foreground">
                       OMR Recognized
                     </span>
                   </div>
@@ -355,11 +355,11 @@ export default function Landing() {
                     <div className="flex items-start justify-between">
                       <div>
                         <h4 className="font-display text-lg font-medium text-ink-primary">
-                          Clair de Lune
+                           Clair de Lune
                         </h4>
                         <p className="type-metadata text-ink-secondary">Claude Debussy</p>
                       </div>
-                      <span className="rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-semibold text-brand">
+                      <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand-soft-foreground">
                         Active Study
                       </span>
                     </div>
@@ -384,7 +384,7 @@ export default function Landing() {
       </section>
 
       {/* 4. DEEP DIVE: PERSONAL REPERTOIRE */}
-      <section id="repertoire" className="border-t border-line-subtle bg-surface-panel/30 py-20 md:py-24">
+      <section id="repertoire" className="border-t border-line-subtle bg-surface-canvas py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -404,7 +404,7 @@ export default function Landing() {
 
               <div className="mt-8 space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-soft-foreground">
                     <ScoreSheetGlyph className="h-3.5 w-3.5" />
                   </div>
                   <div>
@@ -419,7 +419,7 @@ export default function Landing() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-soft-foreground">
                     <Heart className="h-3.5 w-3.5" />
                   </div>
                   <div>
@@ -464,7 +464,7 @@ export default function Landing() {
       </section>
 
       {/* 5. DEEP DIVE: PRACTICE STAND & NON-JUDGMENTAL LISTENING */}
-      <section id="practice" className="relative border-y border-line-subtle/50 bg-surface-paper/40 py-20 md:py-24">
+      <section id="practice" className="relative border-y border-brand-washBorder bg-brand-wash py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -517,7 +517,7 @@ export default function Landing() {
       </section>
 
       {/* 6. DEEP DIVE: PRESERVED PERFORMANCES & TIME */}
-      <section id="performances" className="border-t border-line-subtle bg-surface-panel/30 py-20 md:py-24">
+      <section id="performances" className="border-t border-surface-paper-edge bg-surface-paper-warm py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand">
@@ -548,7 +548,7 @@ export default function Landing() {
       </section>
 
       {/* 7. DEEP DIVE: PRIVATE SHARING */}
-      <section className="border-t border-line-subtle py-20 md:py-24">
+      <section className="border-t border-line-subtle bg-surface-canvas py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -590,7 +590,7 @@ export default function Landing() {
       </section>
 
       {/* 8. SIMPLE PRICING */}
-      <section id="pricing" className="border-t border-line-subtle bg-surface-panel/40 py-20 md:py-24">
+      <section id="pricing" className="border-t border-line-subtle bg-neutral-muted/40 py-20 md:py-24">
         <div className="mx-auto max-w-5xl px-5 md:px-8">
           <div className="text-center max-w-2xl mx-auto">
             <p className="type-caption font-semibold uppercase tracking-wider text-brand">
@@ -695,52 +695,54 @@ export default function Landing() {
       </section>
 
       {/* 9. EDITORIAL FAQ */}
-      <section className="mx-auto max-w-3xl px-5 py-16 md:px-8 md:py-24">
-        <div className="text-center">
-          <p className="type-caption font-semibold uppercase tracking-wider text-brand">
-            Clarity &amp; Questions
-          </p>
-          <h2 className="mt-3 font-display text-[clamp(1.75rem,3vw,2.5rem)] font-medium text-ink-primary">
-            Frequently asked questions
-          </h2>
-        </div>
+      <section className="border-t border-line-subtle bg-surface-panel py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-5 md:px-8">
+          <div className="text-center">
+            <p className="type-caption font-semibold uppercase tracking-wider text-brand">
+              Clarity &amp; Questions
+            </p>
+            <h2 className="mt-3 font-display text-[clamp(1.75rem,3vw,2.5rem)] font-medium text-ink-primary">
+              Frequently asked questions
+            </h2>
+          </div>
 
-        <div className="mt-12 divide-y divide-line-subtle border-y border-line-subtle">
-          {faqs.map((f) => (
-            <details key={f.q} className="group py-5 transition-colors">
-              <summary className="flex cursor-pointer items-center justify-between text-base font-medium text-ink-primary focus:outline-hidden">
-                <span>{f.q}</span>
-                <span className="ml-4 font-mono text-ink-tertiary group-open:rotate-45 transition-transform">
-                  +
-                </span>
-              </summary>
-              <p className="mt-3 text-sm leading-relaxed text-ink-secondary font-serif">
-                {f.a}
-              </p>
-            </details>
-          ))}
+          <div className="mt-12 divide-y divide-line-subtle border-y border-line-subtle">
+            {faqs.map((f) => (
+              <details key={f.q} className="group py-5 transition-colors">
+                <summary className="flex cursor-pointer items-center justify-between text-base font-medium text-ink-primary focus:outline-hidden">
+                  <span>{f.q}</span>
+                  <span className="ml-4 font-mono text-ink-tertiary group-open:rotate-45 transition-transform">
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 text-sm leading-relaxed text-ink-secondary font-serif">
+                  {f.a}
+                </p>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* 10. FINAL BRAND CLOSING: "Play what you love." */}
-      <section className="border-t border-line-subtle bg-surface-panel/40 py-20 text-center md:py-24">
+      <section className="border-t border-brand bg-brand py-20 text-center text-white md:py-24">
         <div className="mx-auto max-w-3xl px-5 md:px-8">
-          <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand mb-4">
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white mb-4">
             <Music className="h-5 w-5" />
           </div>
 
-          <h2 className="font-display text-[clamp(2.25rem,4vw,3.5rem)] font-medium leading-tight text-ink-primary">
+          <h2 className="font-display text-[clamp(2.25rem,4vw,3.5rem)] font-medium leading-tight text-white">
             Play what you love.
           </h2>
-          <p className="mt-3 font-serif italic text-xl text-brand">
+          <p className="mt-3 font-serif italic text-xl text-brand-soft">
             喜欢，就弹。
           </p>
-          <p className="mt-4 max-w-md mx-auto text-base text-ink-secondary">
+          <p className="mt-4 max-w-md mx-auto text-base text-white/80">
             Your music is waiting on your piano stand. Bring it into Yueora today.
           </p>
 
           <div className="mt-8 flex justify-center gap-4">
-            <Button asChild intent="primary" size="lg" className="shadow-sm hover:shadow-md">
+            <Button asChild intent="secondary" size="lg" className="bg-white text-brand hover:bg-surface-paper shadow-sm hover:shadow-md">
               <Link to={primary}>
                 <span>Begin Your Repertoire</span>
                 <ArrowRight className="icon-sm" />

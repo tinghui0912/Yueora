@@ -12,7 +12,7 @@ export default function PerformanceMemoryVisual() {
       {/* Folio Header */}
       <div className="flex items-center justify-between border-b border-line-subtle pb-3">
         <div className="flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand/10 text-brand">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft text-brand-soft-foreground">
             <Music2 className="h-3 w-3" />
           </span>
           <p className="type-caption font-medium uppercase tracking-wider text-ink-tertiary">

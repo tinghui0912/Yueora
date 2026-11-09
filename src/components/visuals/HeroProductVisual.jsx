@@ -32,12 +32,12 @@ export default function HeroProductVisual() {
       >
         <div className="flex items-center justify-between border-b border-surface-paper-edge pb-2.5 text-xs">
           <div className="flex items-center gap-1.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand/10 text-brand">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-soft text-brand-soft-foreground">
               <ScoreSheetGlyph className="h-3 w-3" />
             </span>
             <span className="font-medium text-ink-primary">In your Repertoire</span>
           </div>
-          <span className="rounded-control bg-brand/10 px-2 py-0.5 text-xs font-semibold text-brand">
+          <span className="rounded-control bg-brand-soft px-2 py-0.5 text-xs font-semibold text-brand-soft-foreground">
             Interactive Score
           </span>
         </div>

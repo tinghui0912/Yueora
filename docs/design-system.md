@@ -56,19 +56,23 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
   - `text-ink-subtle` (`hsl(220 3% 62%)`): Strictly non-textual dividers and subtle glyphs.
 - **Surfaces:**
   - `bg-surface-canvas` (`hsl(44 19% 97%)`): Global backdrop canvas — warm ivory off-white, never pure gray and never green.
-  - `bg-surface-panel` (`hsl(0 0% 100%)`): Pure white functional container surface for dialogs, cards, forms, inputs.
+  - `bg-surface-panel` (`hsl(0 0% 100%)`): Pure white functional container surface for primary nav sidebar, dialogs, cards, forms, inputs.
+  - `bg-surface-subrail` (`hsl(44 18% 95%)`): Subtle, distinct secondary navigation rail surface for collection and folder exploration.
   - `bg-surface-raised` (`hsl(0 0% 100%)`): Elevated overlay surface (menus, popovers, floating toolbars).
   - `bg-surface-paper` (`hsl(44 26% 96%)`): Tactile archival paper tone for score artifacts and musical notation.
   - `bg-surface-paper-warm` (`hsl(40 28% 95%)`): Warm paper tone for preserved musical memories and takes.
 - **Lines & Borders:**
   - `border-line-subtle` (`hsl(47 14% 91%)`): Quiet structural dividers and panel borders.
   - `border-line-strong` (`hsl(47 13% 80%)`): Stronger borders for unfocused controls, switches, checkboxes.
+  - `border-line-subrail` (`hsl(47 14% 88%)`): Distinctive divider for secondary navigation rails.
   - `border-surface-paper-edge` (`hsl(44 16% 87%)`): Tactile card and paper boundary.
 - **Brand & Active States:**
   - `bg-brand` (`hsl(148 36% 27%)`): Deep forest green for primary CTA buttons, strong emphasis, and checkmark indicators.
   - `bg-brand-hover` (`hsl(148 36% 22%)`): Darker forest green for primary CTA hover.
   - `bg-brand-soft` (`hsl(148 36% 93%)`): **Pale green has exactly ONE meaning: selected / active Yueora context.** Used for active tabs, selected choice cards, active filters, and reviewed badges. **NEVER** use for neutral hover or disabled states.
   - `text-brand-soft-foreground` (`hsl(148 36% 27%)`): Contrast foreground text on pale green surfaces.
+  - `bg-brand-wash` (`hsl(148 24% 96%)`): **Featured brand surface.** Used for Priority 1 re-engagement ("Pick up where you left off"), returning-user recommendations, and signature practice stand sections. Distinct from canvas and never confused with active selection.
+  - `border-brand-wash-border` (`hsl(148 26% 88%)`): Boundary for featured brand surfaces.
 - **Neutral Quiet & Hover:**
   - `bg-neutral-muted` (`hsl(44 14% 92%)`): Warm ivory-neutral for passive badges, tab tracks, progress backgrounds.
   - `bg-neutral-hover` (`hsl(44 16% 94%)`): Warm neutral hover state for dropdown menu items, command items, unselected tabs.
@@ -110,7 +114,41 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
 | `border-input` | Form input borders | `border-surface-paper-edge` |
 | `text-foreground` | Primary text | `text-ink-primary` |
 
-### 2.3 Canonical Control Scale & Icon Sizing
+### 2.3 Surface Hierarchy & Anti-Flattening Contract
+
+> **Golden Rule of Anti-Flattening:**
+> *Uniformity does NOT mean visual flattening.*
+> *Same semantic role → same appearance.*
+> *Different semantic roles → intentionally distinguishable appearance.*
+
+Authenticated application layout establishes a 5-tier depth model:
+
+1. **Primary Navigation (AppShell Sidebar):** `bg-surface-panel` (pure white, `hsl(0 0% 100%)`) with `border-r border-line-subtle`.
+2. **Secondary Navigation (Collection SubRail):** `bg-surface-subrail` (`hsl(44 18% 95%)`) with `border-r border-line-subrail`. Deliberately distinct from pure white sidebar and main canvas.
+3. **Workspace Canvas:** `bg-surface-canvas` (`hsl(44 19% 97%)`). Warm ivory backdrop for all application views.
+4. **Featured Content (Re-engagement / Priority 1):** `bg-brand-wash` (`hsl(148 24% 96%)`) with `border border-brand-wash-border`. Elevates "Pick up where you left off" above ordinary cards without shouting.
+5. **Content Cards & Archival Sheets:** `bg-surface-panel` or `bg-surface-paper` with `shadow-paper` and `border border-surface-paper-edge`.
+6. **Raised Overlays:** `bg-surface-raised` with `shadow-overlay` (popovers, menus, search palette).
+
+### 2.4 Marketing Surface Rhythm Contract (Landing Page)
+
+Marketing pages must follow an intentional chapter rhythm rather than being flattened into one continuous canvas wash:
+
+| Section | Content Role | Semantic Surface | Border Divider |
+| :--- | :--- | :--- | :--- |
+| **01. Hero** | Musical Invitation ("Play what you love") | `bg-surface-canvas` | — |
+| **02. Philosophy** | 4 Quiet Pillars ("Your music, not ours") | `bg-surface-panel` (pure editorial white) | `border-t border-line-subtle` |
+| **03. Lifecycle** | Paper-to-playable transformation continuum | `bg-surface-paper` (tactile paper) | `border-t border-line-subtle` |
+| **04. Repertoire** | Music cabinet ("Not a cloud drive") | `bg-surface-canvas` | `border-t border-line-subtle` |
+| **05. Practice Stand** | Signature non-judgmental phrase following | `bg-brand-wash` (subtle brand wash) | `border-y border-brand-wash-border` |
+| **06. Performances** | Preserved takes & memory archive | `bg-surface-paper-warm` (warm paper) | `border-t border-surface-paper-edge` |
+| **07. Sharing** | Private sanctuary ("A door you choose to open") | `bg-surface-canvas` | `border-t border-line-subtle` |
+| **08. Pricing** | Durable & fair subscription plans | `bg-neutral-muted/40` (soft neutral backdrop) | `border-t border-line-subtle` |
+| **09. FAQ** | Clarity & questions | `bg-surface-panel` (clean reading white) | `border-t border-line-subtle` |
+| **10. Final CTA** | Inverse brand moment ("Play what you love") | `bg-brand text-white` (deep forest green) | `border-t border-brand` |
+| **11. Footer** | Sanctuary credits & quiet legal navigation | `bg-surface-canvas` | `border-t border-line-subtle` |
+
+### 2.5 Canonical Control Scale & Icon Sizing
 
 One visual decision has one owner. All interactive controls, inputs, and icon elements consume these exact dimensions:
 

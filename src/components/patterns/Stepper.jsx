@@ -39,7 +39,7 @@ export function Stepper({ steps = [], current = 1, onStepClick = undefined, clas
                     className={cn(
                       'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-base',
                       isCompleted && 'bg-brand text-white shadow-xs',
-                      isCurrent && 'border-2 border-brand bg-brand/10 text-brand font-bold',
+                      isCurrent && 'border-2 border-brand bg-brand-soft text-brand-soft-foreground font-bold',
                       isUpcoming && 'border border-line-subtle bg-surface-canvas/80 text-ink-tertiary'
                     )}
                   >
@@ -65,7 +65,7 @@ export function Stepper({ steps = [], current = 1, onStepClick = undefined, clas
                     className={cn(
                       'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-base',
                       isCompleted && 'bg-brand text-white shadow-xs',
-                      isCurrent && 'border-2 border-brand bg-brand/10 text-brand font-bold',
+                      isCurrent && 'border-2 border-brand bg-brand-soft text-brand-soft-foreground font-bold',
                       isUpcoming && 'border border-line-subtle bg-surface-canvas/80 text-ink-tertiary'
                     )}
                   >
@@ -92,7 +92,7 @@ export function Stepper({ steps = [], current = 1, onStepClick = undefined, clas
                   aria-hidden="true"
                   className={cn(
                     'h-px flex-1 min-w-[1rem] max-w-[2.5rem] transition-colors duration-base',
-                    stepNum < current ? 'bg-brand/60' : 'bg-line-subtle'
+                    stepNum < current ? 'bg-brand' : 'bg-line-subtle'
                   )}
                 />
               )}

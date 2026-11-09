@@ -12,7 +12,7 @@ export default function PracticeWorkspaceVisual() {
       {/* Stand Header: Piece & Non-judgmental Status */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-subtle pb-3">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand/10 text-brand">
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-soft text-brand-soft-foreground">
             <Music className="h-3.5 w-3.5" />
           </span>
           <div>

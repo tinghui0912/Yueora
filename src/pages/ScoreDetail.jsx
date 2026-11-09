@@ -371,7 +371,7 @@ export default function ScoreDetail() {
                 const isCurrent = v.isCurrent && !restoredLabel;
                 const isRestored = restoredLabel === v.label;
                 return (
-                  <div key={v.label} className={`flex items-center justify-between rounded-control border px-3 py-2 text-xs ${isCurrent || isRestored ? 'border-brand/40 bg-brand/5' : 'border-surface-paper-edge'}`}>
+                  <div key={v.label} className={`flex items-center justify-between rounded-control border px-3 py-2 text-xs ${isCurrent || isRestored ? 'border-brand/40 bg-brand-soft' : 'border-surface-paper-edge'}`}>
                     <div>
                       <p className="font-medium text-ink-primary">{v.label}{isRestored ? ' · Restored' : ''}</p>
                       <p className="text-xs text-ink-secondary/70">{isRestored ? `Restored ${score.versionRestoredAt}` : v.date}</p>

@@ -21,8 +21,8 @@ export function SidebarNavItem({
         cn(
           'group relative flex items-center justify-between rounded-control px-3 py-2 type-body-small font-medium transition-[color,background-color,border-color,box-shadow,transform] duration-fast select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
           isActive
-            ? 'bg-brand/10 text-brand font-semibold shadow-xs'
-            : 'text-ink-secondary hover:bg-surface-paper hover:text-ink-primary',
+            ? 'bg-brand-soft font-semibold text-brand-soft-foreground shadow-xs'
+            : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary',
           className
         )
       }

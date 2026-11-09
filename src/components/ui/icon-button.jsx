@@ -26,7 +26,7 @@ const iconButtonVariants = cva(
         lg: 'h-control-lg w-control-lg min-h-control-lg min-w-control-lg p-2.5 [&_svg]:icon-lg',
       },
       active: {
-        true: 'bg-brand/10 text-brand font-semibold shadow-xs',
+        true: 'bg-brand-soft text-brand-soft-foreground font-semibold shadow-xs',
       },
     },
     defaultVariants: {

@@ -196,7 +196,7 @@ export default function SharedScore() {
                       onClick={() => setReportReason(r)}
                       className={`flex w-full items-center rounded-control border px-3 py-2 text-left type-body-small transition-colors ${
                         reportReason === r
-                          ? 'border-brand bg-brand/10 text-brand font-medium'
+                          ? 'border-brand bg-brand-soft text-brand-soft-foreground font-semibold'
                           : 'border-surface-paper-edge bg-surface-panel hover:bg-surface-paper text-ink-primary'
                       }`}
                     >

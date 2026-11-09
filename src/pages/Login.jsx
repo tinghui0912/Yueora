@@ -70,7 +70,7 @@ export default function Login() {
     >
       {/* Local Preview / Demo Bypass Banner (DEV only) */}
       {import.meta.env.DEV && (
-        <div className="mb-6 rounded-container border border-brand/30 bg-brand/5 p-4 text-left shadow-xs">
+        <div className="mb-6 rounded-container border border-brand-washBorder bg-brand-wash p-4 text-left shadow-xs">
           <div className="flex items-center gap-1.5 type-caption font-semibold text-brand">
             <Sparkles className="icon-sm shrink-0" aria-hidden="true" />
             <span>本地开发与重构效果预览</span>

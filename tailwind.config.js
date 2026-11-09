@@ -56,6 +56,8 @@ module.exports = {
 					paper: 'hsl(var(--surface-paper))',
 					'paper-warm': 'hsl(var(--surface-paper-warm))',
 					'paper-edge': 'hsl(var(--surface-paper-edge))',
+					subrail: 'hsl(var(--surface-subrail))',
+					'subrail-border': 'hsl(var(--surface-subrail-border))',
 				},
 				/* ---- Text hierarchy (ink) ---- */
 				ink: {
@@ -68,12 +70,16 @@ module.exports = {
 				line: {
 					subtle: 'hsl(var(--line-subtle))',
 					strong: 'hsl(var(--line-strong))',
+					subrail: 'hsl(var(--surface-subrail-border))',
 				},
 				/* ---- Brand ---- */
 				brand: {
 					DEFAULT: 'hsl(var(--brand))',
 					hover: 'hsl(var(--brand-hover))',
 					soft: 'hsl(var(--brand-soft))',
+					wash: 'hsl(var(--brand-wash))',
+					washBorder: 'hsl(var(--brand-wash-border))',
+					washForeground: 'hsl(var(--brand-wash-foreground))',
 				},
 				/* ---- Neutral quiet & hover ---- */
 				neutral: {

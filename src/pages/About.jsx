@@ -29,7 +29,7 @@ export default function About() {
               <p className="mt-3 font-display text-xl font-medium leading-snug text-ink-primary">Here's what you should practice.</p>
               <p className="mt-2 type-body-small text-ink-secondary">They begin with a curriculum, a syllabus, a list of things you must do.</p>
             </div>
-            <div className="rounded-container border-2 border-brand bg-brand/5 p-6 shadow-xs">
+            <div className="rounded-container border border-brand-washBorder bg-brand-wash p-6 shadow-xs">
               <p className="type-caption font-semibold uppercase tracking-wider text-brand">Yueora</p>
               <p className="mt-3 font-display text-xl font-medium leading-snug text-ink-primary">What do you feel like playing?</p>
               <p className="mt-2 type-body-small text-ink-secondary">We begin with what you want to play. Everything else follows from that.</p>
@@ -126,7 +126,7 @@ function Principle({ icon: Icon, title, body }) {
     <div className="flex gap-4">
       <Icon className="h-5 w-5 shrink-0 text-brand mt-0.5" />
       <div>
-        <h3 className="type-subsection text-base text-ink-primary">{title}</h3>
+        <h3 className="type-subsection text-ink-primary">{title}</h3>
         <p className="mt-1 type-body-small text-ink-secondary">{body}</p>
       </div>
     </div>

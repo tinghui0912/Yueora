@@ -78,7 +78,7 @@ export default function TransportControl({
             onClick={onToggleLoop}
             className={`flex items-center gap-1.5 rounded-control border px-2.5 py-2 text-xs font-medium transition-colors ${
               loop
-                ? 'border-brand/40 bg-brand/10 text-brand'
+                ? 'border-brand/40 bg-brand-soft font-semibold text-brand-soft-foreground'
                 : 'border-surface-paper-edge bg-surface-paper text-ink-secondary hover:text-ink-primary'
             }`}
             title="Loop selected section"

@@ -27,7 +27,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
   };
 
   return (
-    <div className="hidden w-[200px] shrink-0 border-r border-line-subtle bg-surface-canvas/50 lg:block">
+    <div className="hidden w-52 shrink-0 border-r border-line-subrail bg-surface-subrail lg:block">
       <div className="sticky top-14 max-h-[calc(100vh-3.5rem)] overflow-y-auto overflow-x-hidden px-3 py-5">
         <p className="px-2.5 type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Collections</p>
         <div className="mt-2 space-y-0.5">
@@ -37,8 +37,8 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
               onClick={() => onSelect(item.key)}
               className={`flex w-full min-w-0 items-center rounded-control px-2.5 py-1.5 text-left type-body-small transition-colors ${
                 active === item.key
-                  ? 'bg-brand/10 font-semibold text-brand'
-                  : 'text-ink-secondary hover:bg-surface-paper hover:text-ink-primary'
+                  ? 'bg-brand-soft font-semibold text-brand-soft-foreground shadow-xs'
+                  : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
               }`}
             >
               <span className="truncate">{item.label}</span>
@@ -72,7 +72,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
                 icon={Check}
                 size="xs"
                 tone="quiet"
-                className="text-brand hover:bg-brand/10"
+                className="text-brand hover:bg-brand-soft"
                 label="Confirm folder"
                 onClick={submitCreate}
               />
@@ -80,7 +80,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
                 icon={X}
                 size="xs"
                 tone="quiet"
-                className="text-ink-secondary hover:bg-surface-paper"
+                className="text-ink-secondary hover:bg-neutral-hover"
                 label="Cancel"
                 onClick={() => setCreating(false)}
               />
@@ -101,7 +101,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
                     icon={Check}
                     size="xs"
                     tone="quiet"
-                    className="text-brand hover:bg-brand/10"
+                    className="text-brand hover:bg-brand-soft"
                     label="Confirm rename"
                     onClick={() => submitRename(f.id)}
                   />
@@ -109,7 +109,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
                     icon={X}
                     size="xs"
                     tone="quiet"
-                    className="text-ink-secondary hover:bg-surface-paper"
+                    className="text-ink-secondary hover:bg-neutral-hover"
                     label="Cancel"
                     onClick={() => setEditingId(null)}
                   />
@@ -120,14 +120,14 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
                     onClick={() => onSelect(`folder:${f.id}`)}
                     className={`flex w-full min-w-0 items-center gap-2 rounded-control px-2.5 py-1.5 pr-14 text-left type-body-small transition-colors ${
                       active === `folder:${f.id}`
-                        ? 'bg-brand/10 font-semibold text-brand'
-                        : 'text-ink-secondary hover:bg-surface-paper hover:text-ink-primary'
+                        ? 'bg-brand-soft font-semibold text-brand-soft-foreground shadow-xs'
+                        : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
                     }`}
                   >
                     <Folder className="icon-sm shrink-0 opacity-70" />
                     <span className="truncate min-w-0">{f.name}</span>
                   </button>
-                  <div className="absolute right-1 flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 bg-surface-canvas/90 backdrop-blur-xs rounded-control">
+                  <div className="absolute right-1 flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 bg-surface-subrail/90 backdrop-blur-xs rounded-control">
                     <IconButton
                       icon={Pencil}
                       size="xs"

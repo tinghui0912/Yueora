@@ -72,7 +72,7 @@ export default function Pricing() {
                 <div className="flex items-center justify-between">
                   <p className="font-display text-xl font-medium text-ink-primary">{p.name}</p>
                   {isPro && (
-                    <span className="rounded-control bg-brand/10 px-2.5 py-0.5 type-caption font-semibold text-brand">Popular</span>
+                    <span className="rounded-control bg-brand-soft px-2.5 py-0.5 type-caption font-semibold text-brand-soft-foreground">Popular</span>
                   )}
                 </div>
 

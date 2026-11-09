@@ -38,6 +38,8 @@
     --surface-paper: 44 26% 96%;
     --surface-paper-warm: 40 28% 95%;
     --surface-paper-edge: 44 16% 87%;
+    --surface-subrail: 44 18% 95%;
+    --surface-subrail-border: 47 14% 88%;
 
     /* ---- Text hierarchy (ink) ---- */
     --ink-primary: 220 5% 13%;
@@ -54,6 +56,9 @@
     --brand-hover: 148 36% 22%;
     --brand-soft: 148 36% 93%;
     --brand-soft-foreground: 148 36% 27%;
+    --brand-wash: 148 24% 96%;
+    --brand-wash-border: 148 26% 88%;
+    --brand-wash-foreground: 148 36% 22%;
 
     /* ---- Neutral quiet & hover (Warm ivory-gray, NOT green) ---- */
     --neutral-muted: 44 14% 92%;

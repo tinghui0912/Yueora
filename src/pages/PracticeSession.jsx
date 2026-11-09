@@ -401,7 +401,7 @@ export default function PracticeSession() {
           </div>
 
           {/* Current Bar Badge */}
-          <span className="rounded-control bg-brand/10 px-2.5 py-1 text-xs font-semibold text-brand">
+          <span className="rounded-control bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-soft-foreground">
             Bar {activeMeasure}
           </span>
 
@@ -638,8 +638,8 @@ export default function PracticeSession() {
               onClick={selecting ? () => { setSectionPhase('idle'); setPendingStart(null); } : startSectionPick}
               className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
                 selectedRange.kind === 'section'
-                  ? 'border-brand/40 bg-brand/10 font-semibold text-brand'
-                  : 'border-surface-paper-edge text-ink-secondary hover:bg-surface-paper'
+                  ? 'border-brand/40 bg-brand-soft font-semibold text-brand-soft-foreground'
+                  : 'border-surface-paper-edge text-ink-secondary hover:bg-neutral-hover'
               }`}
             >
               <span>Section{selectedRange.kind === 'section' ? ` ${selectedRange.startMeasure}–${selectedRange.endMeasure}` : ''}</span>
@@ -651,7 +651,7 @@ export default function PracticeSession() {
                 onClick={() => setLoop((l) => !l)}
                 aria-pressed={loop}
                 className={`hidden h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium sm:flex transition-colors ${
-                  loop ? 'border-brand/40 bg-brand/10 font-semibold text-brand' : 'border-surface-paper-edge text-ink-secondary hover:bg-surface-paper'
+                  loop ? 'border-brand/40 bg-brand-soft font-semibold text-brand-soft-foreground' : 'border-surface-paper-edge text-ink-secondary hover:bg-neutral-hover'
                 }`}
               >
                 <Repeat className="h-4 w-4" />
@@ -665,7 +665,7 @@ export default function PracticeSession() {
             <button
               onClick={finish}
               disabled={!startedAt.current}
-              className="rounded-control bg-brand/10 px-3.5 py-2 text-sm font-semibold text-brand hover:bg-brand hover:text-white transition-colors disabled:opacity-40"
+              className="rounded-control bg-brand-soft px-3.5 py-2 text-sm font-semibold text-brand-soft-foreground hover:bg-brand hover:text-white transition-colors disabled:opacity-40"
             >
               Finish take
             </button>

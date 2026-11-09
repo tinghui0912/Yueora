@@ -60,6 +60,14 @@ const REQUIRED_ICON_UTILITIES = [
   '.icon-xl',
 ];
 
+const REQUIRED_SURFACE_AND_BRAND_TOKENS = [
+  '--brand-soft',
+  '--brand-wash',
+  '--brand-wash-border',
+  '--surface-subrail',
+  '--surface-subrail-border',
+];
+
 function verifyFoundations(issues = []) {
   if (!fs.existsSync(INDEX_CSS_PATH)) {
     issues.push({
@@ -148,6 +156,18 @@ function verifyFoundations(issues = []) {
         line: 1,
         matched: u,
         message: `Required icon utility ${u} is missing from @layer utilities in src/index.css.`,
+      });
+    }
+  });
+
+  // Verify surface and brand tokens exist
+  REQUIRED_SURFACE_AND_BRAND_TOKENS.forEach((tok) => {
+    if (!css.includes(tok)) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: tok,
+        message: `Required surface/brand token ${tok} is missing from src/index.css.`,
       });
     }
   });
@@ -454,15 +474,59 @@ function verifyLegacyColorRetirement(issues = []) {
 }
 verifyLegacyColorRetirement(totalViolations);
 
+// Phase 6: Verify Brand-Soft vs Brand-Wash & No Arbitrary Brand Opacities
+function verifyBrandSoftVsWashIntegrity(issues = []) {
+  const arbitraryBrandRegex = /\bbg-brand\/\d+\b/g;
+
+  function scanDir(dir) {
+    if (!fs.existsSync(dir)) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanDir(full);
+      } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
+        const content = fs.readFileSync(full, 'utf8');
+        const lines = content.split('\n');
+        lines.forEach((line, idx) => {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+          if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
+          const matches = line.match(arbitraryBrandRegex);
+          if (matches) {
+            matches.forEach((m) => {
+              issues.push({
+                file: path.relative(process.cwd(), full),
+                line: idx + 1,
+                matched: m,
+                message: `Arbitrary brand opacity '${m}' found. Use canonical semantic token (bg-brand-soft for selected/active context, bg-brand-wash for featured modules, or bg-neutral-muted for quiet containers).`,
+              });
+            });
+          }
+        });
+      }
+    }
+  }
+
+  for (const dir of SCAN_DIRECTORIES) {
+    scanDir(dir);
+  }
+
+  return issues;
+}
+verifyBrandSoftVsWashIntegrity(totalViolations);
+
 if (totalViolations.length === 0) {
   console.log('✅ Design System integrity checks passed.');
   console.log(`   - Verified ${REQUIRED_TYPOGRAPHY.length} semantic typography roles in src/index.css`);
+  console.log(`   - Verified ${REQUIRED_SURFACE_AND_BRAND_TOKENS.length} canonical surface/brand tokens in src/index.css`);
   console.log(`   - Verified ${CANONICAL_CONTROL_TOKENS.length} canonical control tokens & ${REQUIRED_CONTROL_UTILITIES.length} utilities`);
   console.log(`   - Verified ${CANONICAL_ICON_TOKENS.length} canonical icon tokens & ${REQUIRED_ICON_UTILITIES.length} utilities`);
   console.log(`   - Verified primitive token consumption contracts (Button, IconButton, Input, SearchTrigger, ChoiceCard)`);
   console.log(`   - Verified document landmark integrity (AppShell/PublicShell own main, AppPage does not nest main)`);
   console.log(`   - Verified jsconfig exclusion integrity (zero excluded UI primitives imported by application)`);
   console.log(`   - Verified legacy color token retirement (zero legacy tokens in application pages or active primitives)`);
+  console.log(`   - Verified brand-soft vs brand-wash integrity (zero arbitrary bg-brand/opacity in application code)`);
   console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} root directories\n`);
   process.exit(0);
 } else {

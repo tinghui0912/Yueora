@@ -182,7 +182,7 @@ function IssuesPanel({ issues, activeIssue, setActiveIssue, active, onMarkFixed,
           <button
             key={iss.id}
             onClick={() => setActiveIssue(iss.id)}
-            className={`w-full rounded-container border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-brand/5 shadow-xs' : 'border-line-subtle bg-surface-panel hover:bg-surface-paper'} ${iss.resolved ? 'opacity-50' : ''}`}
+            className={`w-full rounded-container border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-brand-soft shadow-xs' : 'border-line-subtle bg-surface-panel hover:bg-surface-paper'} ${iss.resolved ? 'opacity-50' : ''}`}
           >
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="icon-xs text-warning" /> Measure {iss.measure}</span>
