@@ -54,7 +54,7 @@ export default function PracticeProgress() {
             tone="neutral"
             title="Nothing to look back on yet"
             description="Once you practise, this page shows how much time you've spent and which pieces you keep returning to."
-            primaryAction={<Link to="/practice" className="rounded-control bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">Go to Practice</Link>}
+            primaryAction={<Link to="/practice" className="rounded-control bg-brand px-4 py-2 type-body-small font-semibold text-white hover:bg-brand-hover">Go to Practice</Link>}
           />
         </div>
       ) : (
@@ -73,7 +73,7 @@ export default function PracticeProgress() {
                   <div key={i} className="flex flex-1 flex-col items-center gap-1">
                     <span className="text-xs tabular-nums text-ink-secondary/70">{d.minutes > 0 ? d.minutes : ''}</span>
                     <div
-                      className={`w-full rounded-t ${d.isToday ? 'bg-primary' : 'bg-primary/50'}`}
+                      className={`w-full rounded-t ${d.isToday ? 'bg-brand' : 'bg-brand/50'}`}
                       style={{ height: `${(d.minutes / max) * 100}%`, minHeight: d.minutes > 0 ? 3 : 0 }}
                     />
                     <span className="text-xs font-medium text-ink-secondary/80">{d.label}</span>

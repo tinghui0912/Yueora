@@ -44,25 +44,71 @@ All typography in application pages must use semantic typography roles. **Do not
 | `.type-metadata` | Timestamps, counters & helper text | `13px` (`0.8125rem`) | `1.45` | Normal | Plus Jakarta Sans (400) |
 | `.type-metric` | Large reflective numbers & hours | Mobile `28px` (`1.75rem`), Desktop `32px` (`2rem`) | `1.0` | Tabular | Newsreader |
 
-### 2.2 Color Vocabulary (WCAG 2.2 AA)
+### 2.2 Color Vocabulary & Usage Contract (WCAG 2.2 AA)
 
+Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-accent`, `bg-muted`, `text-muted-foreground`, `bg-primary`, etc.) are retired from product code.
+
+#### Canonical Roles:
 - **Ink (Text):**
   - `text-ink-primary` (`hsl(220 5% 13%)`): Main titles and high-emphasis reading copy (>10:1 contrast).
   - `text-ink-secondary` (`hsl(223 4% 36%)`): Readable secondary descriptions, timestamps, and labels (>6.5:1 contrast).
   - `text-ink-tertiary` (`hsl(220 4% 48%)`): Readable muted copy (>4.5:1 contrast).
   - `text-ink-subtle` (`hsl(220 3% 62%)`): Strictly non-textual dividers and subtle glyphs.
 - **Surfaces:**
-  - `bg-surface-canvas`: Global backdrop canvas (`#fcfaf5`).
-  - `bg-surface-panel`: Pure container surface (`#ffffff`).
-  - `bg-surface-paper`: Tactile archival paper tone (`hsl(45 18% 97%)`).
-  - `bg-surface-paper-warm`: Warm paper highlight (`hsl(45 22% 95%)`).
+  - `bg-surface-canvas` (`hsl(44 19% 97%)`): Global backdrop canvas — warm ivory off-white, never pure gray and never green.
+  - `bg-surface-panel` (`hsl(0 0% 100%)`): Pure white functional container surface for dialogs, cards, forms, inputs.
+  - `bg-surface-raised` (`hsl(0 0% 100%)`): Elevated overlay surface (menus, popovers, floating toolbars).
+  - `bg-surface-paper` (`hsl(44 26% 96%)`): Tactile archival paper tone for score artifacts and musical notation.
+  - `bg-surface-paper-warm` (`hsl(40 28% 95%)`): Warm paper tone for preserved musical memories and takes.
 - **Lines & Borders:**
-  - `border-line-subtle`: Quiet dividers (`hsl(47 14% 91%)`).
-  - `border-surface-paper-edge`: Tactile card and paper boundary (`hsl(44 16% 87%)`).
-- **Brand & Semantic Feedback:**
-  - `bg-brand` / `text-brand`: Deep forest green (`hsl(148 36% 27%)`).
-  - `text-danger` / `bg-danger`: Non-punitive alert red.
-  - Practice states: `following`, `waiting`, `resyncing`, `current`.
+  - `border-line-subtle` (`hsl(47 14% 91%)`): Quiet structural dividers and panel borders.
+  - `border-line-strong` (`hsl(47 13% 80%)`): Stronger borders for unfocused controls, switches, checkboxes.
+  - `border-surface-paper-edge` (`hsl(44 16% 87%)`): Tactile card and paper boundary.
+- **Brand & Active States:**
+  - `bg-brand` (`hsl(148 36% 27%)`): Deep forest green for primary CTA buttons, strong emphasis, and checkmark indicators.
+  - `bg-brand-hover` (`hsl(148 36% 22%)`): Darker forest green for primary CTA hover.
+  - `bg-brand-soft` (`hsl(148 36% 93%)`): **Pale green has exactly ONE meaning: selected / active Yueora context.** Used for active tabs, selected choice cards, active filters, and reviewed badges. **NEVER** use for neutral hover or disabled states.
+  - `text-brand-soft-foreground` (`hsl(148 36% 27%)`): Contrast foreground text on pale green surfaces.
+- **Neutral Quiet & Hover:**
+  - `bg-neutral-muted` (`hsl(44 14% 92%)`): Warm ivory-neutral for passive badges, tab tracks, progress backgrounds.
+  - `bg-neutral-hover` (`hsl(44 16% 94%)`): Warm neutral hover state for dropdown menu items, command items, unselected tabs.
+- **Semantic Feedback:**
+  - `text-success` / `bg-success`: Subdued musical confirmation green (`hsl(148 40% 32%)`).
+  - `text-warning` / `bg-warning`: Warm amber for pending or verification notices (`hsl(38 76% 40%)`).
+  - `text-danger` / `bg-danger`: Non-punitive alert terracotta red (`hsl(0 62% 44%)`).
+  - `text-info` / `bg-info`: Soft instructional slate blue (`hsl(204 45% 40%)`).
+
+#### Color Usage Matrix:
+
+| UI Context | Default Surface | Hover Surface | Active / Selected | Border | Text |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Primary Button** | `bg-brand` | `bg-brand-hover` | `bg-brand` | `border-transparent` | `text-white` |
+| **Secondary Button** | `bg-surface-panel` | `bg-neutral-hover` | `bg-brand-soft` | `border-line-subtle` | `text-ink-primary` |
+| **Quiet Button** | `transparent` | `bg-neutral-hover` | `bg-brand-soft` | `border-transparent` | `text-ink-primary` |
+| **Dropdown Item** | `transparent` | `bg-neutral-hover` | `bg-brand-soft` | `none` | `text-ink-primary` |
+| **Tab Trigger** | `transparent` | `bg-neutral-hover` | `bg-surface-panel` | `none` | `text-ink-primary` |
+| **Filter Pill** | `transparent` | `bg-neutral-hover` | `bg-brand-soft` | `border-line-subtle` | `text-brand-soft-foreground` |
+| **Standard Card** | `bg-surface-panel` | `bg-surface-panel` | `border-brand` | `border-line-subtle` | `text-ink-primary` |
+| **Music Paper Card** | `bg-surface-paper` | `bg-surface-paper-warm`| `border-brand` | `border-surface-paper-edge` | `text-ink-primary` |
+| **Form Input** | `bg-surface-panel` | `bg-surface-panel` | `ring-brand/20 border-brand` | `border-surface-paper-edge` | `text-ink-primary` |
+| **Neutral Badge** | `bg-neutral-muted` | — | — | `border-transparent` | `text-ink-secondary` |
+| **Active/Selected Badge** | `bg-brand-soft` | — | — | `border-transparent` | `text-brand-soft-foreground` |
+
+#### Legacy Token to Yueora Canonical Mapping:
+
+| Legacy Token | Forbidden Usage | Canonical Yueora Replacement |
+| :--- | :--- | :--- |
+| `bg-background` | Page container backdrops | `bg-surface-canvas` |
+| `bg-card` | Standard panels, cards | `bg-surface-panel` |
+| `bg-primary` | Primary buttons, active dots | `bg-brand` (with `text-white`) |
+| `text-primary` | Text links, brand headers | `text-brand` |
+| `bg-accent` (active context) | Selected item, active filter | `bg-brand-soft text-brand-soft-foreground` |
+| `bg-accent` (hover context) | Item hover, menu hover | `bg-neutral-hover` (warm ivory-neutral) |
+| `bg-muted` (passive container) | Progress track, badge | `bg-neutral-muted` |
+| `text-muted-foreground` | Helper text, secondary copy | `text-ink-secondary` or `text-ink-tertiary` |
+| `border-border` | Component borders | `border-line-subtle` |
+| `border-input` | Form input borders | `border-surface-paper-edge` |
+| `text-foreground` | Primary text | `text-ink-primary` |
 
 ### 2.3 Canonical Control Scale & Icon Sizing
 

@@ -162,7 +162,7 @@ export default function Editor() {
     return (
       <div className="px-8 py-16 text-center">
         <p>Score not found.</p>
-        <Link to="/library" className="text-primary underline">Back to library</Link>
+        <Link to="/library" className="text-brand hover:underline">Back to library</Link>
       </div>
     );
   }

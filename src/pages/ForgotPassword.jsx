@@ -31,7 +31,7 @@ export default function ForgotPassword() {
       title="Reset password"
       subtitle="We'll send you a link to reset it"
       footer={
-        <Link to="/login" className="text-primary font-medium hover:underline">
+        <Link to="/login" className="text-brand font-medium hover:underline">
           <ArrowLeft className="icon-xs inline mr-1" />Back to log in
         </Link>
       }

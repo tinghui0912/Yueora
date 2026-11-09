@@ -61,44 +61,44 @@ export default function PrivacySettings() {
       <SettingsSection title="Data sharing" desc="Control how your data is used to improve Yueora.">
         <div className="max-w-sm space-y-5">
           <div className="flex items-center justify-between">
-            <div><Label>Anonymous analytics</Label><p className="text-xs text-muted-foreground">Help improve Yueora with usage data — no personal content.</p></div>
+            <div><Label>Anonymous analytics</Label><p className="type-caption text-ink-secondary">Help improve Yueora with usage data — no personal content.</p></div>
             <Switch checked={analytics} onCheckedChange={setAnalytics} />
           </div>
           <div className="flex items-center justify-between">
-            <div><Label>Share practice stats with collaborators</Label><p className="text-xs text-muted-foreground">Let editors see your tempo and progress.</p></div>
+            <div><Label>Share practice stats with collaborators</Label><p className="type-caption text-ink-secondary">Let editors see your tempo and progress.</p></div>
             <Switch checked={practiceShare} onCheckedChange={setPracticeShare} />
           </div>
         </div>
       </SettingsSection>
 
-      <SettingsSection title="Your data" desc="Export a copy of everything Yueora holds for you.">
+      <SettingsSection title="Your data" desc="Download a copy of your scores, folders, practice history, and saved performance metadata.">
         {exported ? (
-          <p className="text-sm text-primary">Export ready — we've saved a copy to your downloads.</p>
+          <p className="type-body-small text-brand">Export ready — we've saved a copy to your downloads.</p>
         ) : (
           <Button variant="outline" onClick={exportData} disabled={exporting}>{exporting ? 'Preparing export…' : 'Export my data'}</Button>
         )}
       </SettingsSection>
 
       <SettingsSection title="Delete account" desc="Permanently delete your account, scores, and practice history.">
-        <p className="text-sm text-muted-foreground">This can't be undone. If you just want a break, you can sign out instead.</p>
-        <Button variant="outline" className="mt-3 text-destructive hover:text-destructive" onClick={() => setDeleteOpen(true)}>Delete account</Button>
+        <p className="type-body-small text-ink-secondary">This can't be undone. If you just want a break, you can sign out instead.</p>
+        <Button variant="outline" className="mt-3 text-danger hover:text-danger hover:bg-danger/10" onClick={() => setDeleteOpen(true)}>Delete account</Button>
       </SettingsSection>
 
       <Dialog open={deleteOpen} onOpenChange={(o) => { if (!o && deleteState !== 'scheduled') setDeleteOpen(false); }}>
         <DialogContent className="max-w-sm">
           {deleteState === 'scheduled' ? (
             <div className="py-4 text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <CheckCircle2 className="h-6 w-6 text-primary" />
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft">
+                <CheckCircle2 className="h-6 w-6 text-brand" />
               </div>
-              <p className="font-medium">Account scheduled for deletion</p>
-              <p className="mt-1 text-sm text-muted-foreground">Your account will be removed shortly. We're sorry to see you go.</p>
+              <p className="type-body-small font-medium text-ink-primary">Account scheduled for deletion</p>
+              <p className="mt-1 type-caption text-ink-secondary">Your account will be removed shortly. We're sorry to see you go.</p>
               <Button onClick={signOutAfterDelete} className="mt-5 w-full">Sign out</Button>
             </div>
           ) : (
             <>
               <DialogHeader><DialogTitle>Delete account?</DialogTitle></DialogHeader>
-              <p className="text-sm text-muted-foreground">This permanently deletes your scores, practice history, and account. To confirm, type <strong>DELETE</strong> below.</p>
+              <p className="type-body-small text-ink-secondary">This permanently deletes your scores, practice history, and account. To confirm, type <strong>DELETE</strong> below.</p>
               <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} placeholder="DELETE" className="mt-3" disabled={deleteState === 'processing'} />
               <DialogFooter>
                 <Button variant="outline" onClick={() => setDeleteOpen(false)} disabled={deleteState === 'processing'}>Cancel</Button>

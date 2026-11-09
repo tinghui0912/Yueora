@@ -59,7 +59,7 @@ export default function ListenControl({ score }) {
         type="button"
         onClick={toggle}
         aria-label={status === 'playing' ? 'Pause listening' : 'Listen to this score'}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line-subtle text-ink-primary hover:bg-accent"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line-subtle text-ink-primary hover:bg-neutral-hover"
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : status === 'playing' ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
       </button>
@@ -68,7 +68,7 @@ export default function ListenControl({ score }) {
           <span>{stateLabel}</span>
           <span className="tabular-nums">{fmtClock(pos)} <span className="text-ink-tertiary">/ {fmtClock(totalSec)}</span></span>
         </div>
-        <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-muted" aria-hidden="true">
+        <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-neutral-muted" aria-hidden="true">
           <div className="h-full rounded-full bg-brand transition-[width] duration-500" style={{ width: `${percent}%` }} />
         </div>
       </div>

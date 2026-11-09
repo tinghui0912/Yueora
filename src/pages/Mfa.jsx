@@ -39,8 +39,8 @@ export default function Mfa() {
 
   if (resuming) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      <div className="min-h-screen flex items-center justify-center bg-surface-canvas">
+        <Loader2 className="w-8 h-8 animate-spin text-ink-secondary" />
       </div>
     );
   }
@@ -81,17 +81,17 @@ function ConfirmIdentity({ returnTo, onChallenge, initialError }) {
     <>
       <MfaHeader title={info && `Welcome to ${info.name || "the app"}`} description="Sign in to continue" />
       <MfaNotice error={error} />
-      {!options && !error && <Loader2 className="mx-auto w-6 h-6 animate-spin text-muted-foreground" />}
+      {!options && !error && <Loader2 className="mx-auto w-6 h-6 animate-spin text-ink-secondary" />}
       {options && (
         <div className="space-y-4">
           {providers.map((provider) => (
-            <Button key={provider.id} variant="outline" className="w-full h-12 text-sm font-medium" onClick={() => withProvider(provider.id)}>
+            <Button key={provider.id} variant="outline" className="w-full h-12 type-body-small font-medium" onClick={() => withProvider(provider.id)}>
               {provider.id === "google" && <GoogleIcon className="w-5 h-5 mr-2" />}
               Continue with {provider.name}
             </Button>
           ))}
           {(options.enable_sso_login || options.use_workspace_sso) && (
-            <Button variant="outline" className="w-full h-12 text-sm font-medium" onClick={() => withProvider("sso")}>
+            <Button variant="outline" className="w-full h-12 type-body-small font-medium" onClick={() => withProvider("sso")}>
               Continue with SSO
             </Button>
           )}
@@ -100,7 +100,7 @@ function ConfirmIdentity({ returnTo, onChallenge, initialError }) {
               <div className="space-y-2">
                 <Label htmlFor="mfa-email">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-secondary" aria-hidden="true" />
                   <Input id="mfa-email" type="email" autoComplete="email" placeholder="you@example.com" value={email}
                     onChange={(e) => setEmail(e.target.value)} className="pl-10 h-12" required />
                 </div>
@@ -108,7 +108,7 @@ function ConfirmIdentity({ returnTo, onChallenge, initialError }) {
               <div className="space-y-2">
                 <Label htmlFor="mfa-password">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-secondary" aria-hidden="true" />
                   <Input id="mfa-password" type="password" autoComplete="current-password" placeholder="••••••••" value={password}
                     onChange={(e) => setPassword(e.target.value)} className="pl-10 h-12" required />
                 </div>

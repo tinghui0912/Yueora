@@ -55,7 +55,7 @@ export default function Register() {
           Already have an account?{" "}
           <Link
             to={"/login" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : "")}
-            className="text-primary font-medium hover:underline"
+            className="text-brand font-medium hover:underline"
           >
             Log in
           </Link>

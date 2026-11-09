@@ -31,7 +31,7 @@ export default function CheckoutSuccess() {
   return (
     <div className="mx-auto max-w-xl">
       <div className="flex items-center gap-3">
-        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-brand">
+        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-soft text-brand">
           <CheckCircle2 className="h-6 w-6" />
         </span>
         <div>

@@ -52,7 +52,7 @@ export default function AccountSettings() {
             {account.avatar ? (
               <img src={account.avatar} alt="Avatar" className="h-12 w-12 rounded-full object-cover" />
             ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground font-medium">{name.slice(0, 1).toUpperCase()}</div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand text-white font-medium">{name.slice(0, 1).toUpperCase()}</div>
             )}
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onAvatarChange} />
             <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()}>
@@ -75,11 +75,11 @@ export default function AccountSettings() {
           </div>
           <div className="space-y-1.5">
             <Label>Login method</Label>
-            <p className="text-sm text-muted-foreground">Google · email verification on file</p>
+            <p className="type-body-small text-ink-secondary">Google · email verification on file</p>
           </div>
           <div className="flex items-center gap-3">
             <Button onClick={save}>Save changes</Button>
-            {saved && <span className="text-sm text-primary">Saved</span>}
+            {saved && <span className="type-body-small text-brand">Saved</span>}
           </div>
         </div>
       </SettingsSection>
@@ -87,11 +87,11 @@ export default function AccountSettings() {
       <SettingsSection title="Language & region" desc="Interface language and regional formatting.">
         <div className="max-w-sm space-y-1.5">
           <Label htmlFor="lang">Language</Label>
-          <select id="lang" className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm">
+          <select id="lang" className="h-9 w-full rounded-control border border-surface-paper-edge bg-surface-panel px-3 type-body-small text-ink-primary shadow-xs">
             <option>English</option>
             <option>中文</option>
           </select>
-          <p className="text-xs text-muted-foreground">Some pages may not be fully translated yet.</p>
+          <p className="type-caption text-ink-secondary">Some pages may not be fully translated yet.</p>
         </div>
       </SettingsSection>
 

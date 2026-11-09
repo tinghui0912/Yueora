@@ -41,7 +41,7 @@ export default function TempoPopover({
             onClick={() => onTempoMode('score')}
             disabled={locked}
             aria-pressed={tempoMode === 'score'}
-            className={`mt-2 w-full rounded-control border px-3 py-1.5 text-sm disabled:opacity-50 ${tempoMode === 'score' ? 'border-brand text-brand' : 'border-line-subtle text-ink-secondary hover:bg-accent/50'}`}
+            className={`mt-2 w-full rounded-control border px-3 py-1.5 text-sm transition-colors disabled:opacity-50 ${tempoMode === 'score' ? 'border-brand bg-brand-soft text-brand-soft-foreground font-medium' : 'border-line-subtle text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'}`}
           >
             {tempoMode === 'score' ? 'Using score tempo' : 'Use score tempo'}
           </button>
@@ -54,7 +54,7 @@ export default function TempoPopover({
               onClick={() => nudge(-5)}
               disabled={locked}
               aria-label="Decrease tempo by 5 BPM"
-              className="rounded-control border border-line-subtle p-1.5 text-ink-secondary disabled:opacity-40 hover:bg-accent"
+              className="rounded-control border border-line-subtle p-1.5 text-ink-secondary disabled:opacity-40 hover:bg-neutral-hover hover:text-ink-primary"
             >
               <Minus className="h-3.5 w-3.5" />
             </button>
@@ -64,7 +64,7 @@ export default function TempoPopover({
               onClick={() => nudge(5)}
               disabled={locked}
               aria-label="Increase tempo by 5 BPM"
-              className="rounded-control border border-line-subtle p-1.5 text-ink-secondary disabled:opacity-40 hover:bg-accent"
+              className="rounded-control border border-line-subtle p-1.5 text-ink-secondary disabled:opacity-40 hover:bg-neutral-hover hover:text-ink-primary"
             >
               <Plus className="h-3.5 w-3.5" />
             </button>

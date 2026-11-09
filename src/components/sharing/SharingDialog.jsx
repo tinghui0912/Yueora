@@ -35,7 +35,12 @@ const expirations = [
 ];
 
 function defaultSharingData(score) {
-  return { scoreId: score.id, title: score.title, people: [{ id: 'you', name: 'You', email: 'you@example.com', role: 'Owner' }], link: { access: 'Off', download: false, practice: false, expiration: 'Never', enabled: false } };
+  return {
+    scoreId: score.id,
+    title: score.title,
+    people: [{ id: 'you', name: 'You', email: 'you@example.com', role: 'Owner' }],
+    link: { access: 'Off', practice: false, expiration: 'Never', enabled: false },
+  };
 }
 
 export default function SharingDialog({ score, open, onOpenChange }) {
@@ -48,7 +53,6 @@ export default function SharingDialog({ score, open, onOpenChange }) {
   const resendInvitation = usePrototypeStore((s) => s.resendInvitation);
   const revokeInvitation = usePrototypeStore((s) => s.revokeInvitation);
   const setLinkAccess = usePrototypeStore((s) => s.setLinkAccess);
-  const setLinkDownload = usePrototypeStore((s) => s.setLinkDownload);
   const setLinkPractice = usePrototypeStore((s) => s.setLinkPractice);
   const setLinkExpiration = usePrototypeStore((s) => s.setLinkExpiration);
   const disableLink = usePrototypeStore((s) => s.disableLink);
@@ -88,15 +92,22 @@ export default function SharingDialog({ score, open, onOpenChange }) {
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-lg gap-0 p-0">
-          <DialogHeader className="border-b border-border px-5 py-4">
-            <DialogTitle className="font-display text-lg font-medium">Share “{sharing.title}”</DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">Decide who can access this score.</DialogDescription>
+          <DialogHeader className="border-b border-line-subtle px-5 py-4">
+            <DialogTitle className="type-section-title font-semibold text-ink-primary">Share “{sharing.title}”</DialogTitle>
+            <DialogDescription className="type-body-small text-ink-secondary">Decide who can access this score.</DialogDescription>
           </DialogHeader>
 
           <div className="px-5 py-4">
-            <p className="text-sm font-medium">Add people</p>
+            <p className="type-label text-ink-primary">Add people</p>
             <div className="mt-2 flex gap-2">
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" className="flex-1" onKeyDown={(e) => e.key === 'Enter' && sendInvite()} />
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email address"
+                className="flex-1"
+                onKeyDown={(e) => e.key === 'Enter' && sendInvite()}
+              />
               <Select value={inviteRole} onValueChange={setInviteRole}>
                 <SelectTrigger className="w-[120px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -107,27 +118,31 @@ export default function SharingDialog({ score, open, onOpenChange }) {
               <Button onClick={sendInvite} size="icon" aria-label="Send invite"><Send className="h-4 w-4" /></Button>
             </div>
 
-            <p className="mt-5 text-sm font-medium">People</p>
-            <div className="mt-2 divide-y divide-border rounded-md border border-border">
+            <p className="mt-5 type-label text-ink-primary">People</p>
+            <div className="mt-2 divide-y divide-line-subtle rounded-control border border-line-subtle bg-surface-panel">
               {sharing.people.map((person) => (
                 <div key={person.id} className="flex items-center justify-between gap-3 px-3 py-2.5">
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{person.name}</p>
-                    {person.email && person.email !== person.name && <p className="truncate text-xs text-muted-foreground">{person.email}</p>}
-                    {person.resentAt && <p className="text-xs text-primary">Invitation resent</p>}
+                    <p className="truncate type-body-small font-medium text-ink-primary">{person.name}</p>
+                    {person.email && person.email !== person.name && <p className="truncate type-caption text-ink-secondary">{person.email}</p>}
+                    {person.resentAt && <p className="type-caption text-brand">Invitation resent</p>}
                   </div>
                   <div className="flex items-center gap-2">
                     {person.role === 'Owner' ? (
-                      <span className="text-xs text-muted-foreground">Owner</span>
+                      <span className="type-caption text-ink-tertiary">Owner</span>
                     ) : person.role === 'Invitation pending' ? (
                       <>
-                        <span className="text-xs text-warning">Pending · {person.pendingRole || 'Can view'}</span>
+                        <span className="type-caption text-warning">Pending · {person.pendingRole || 'Can view'}</span>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <button className="rounded p-1 text-muted-foreground hover:bg-accent"><MoreHorizontal className="h-4 w-4" /></button>
+                            <button className="rounded-control p-1 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-44">
-                            <DropdownMenuItem onClick={() => { resendInvitation(score.id, person.id); toast({ title: 'Invitation resent', description: person.email }); }}>Resend invitation</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { resendInvitation(score.id, person.id); toast({ title: 'Invitation resent', description: person.email }); }}>
+                              Resend invitation
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => {
                               const inv = invitations.find((i) => i.personId === person.id);
                               if (inv) {
@@ -135,28 +150,42 @@ export default function SharingDialog({ score, open, onOpenChange }) {
                                 navigator.clipboard?.writeText(url).catch(() => {});
                                 toast({ title: 'Invitation link copied', description: url });
                               }
-                            }}><Link2 className="mr-2 h-3.5 w-3.5" /> Copy invitation link</DropdownMenuItem>
+                            }}>
+                              <Link2 className="mr-2 h-3.5 w-3.5" /> Copy invitation link
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => {
                               const inv = invitations.find((i) => i.personId === person.id);
                               if (inv) window.open(`/invite/${inv.token}`, '_blank');
-                            }}>Preview invitation</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => { changeMemberRole(score.id, person.id, person.pendingRole === 'Can view' ? 'Can edit' : 'Can view'); toast({ title: 'Role changed' }); }}>Change to {person.pendingRole === 'Can view' ? 'Can edit' : 'Can view'}</DropdownMenuItem>
+                            }}>
+                              Preview invitation
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { changeMemberRole(score.id, person.id, person.pendingRole === 'Can view' ? 'Can edit' : 'Can view'); toast({ title: 'Role changed' }); }}>
+                              Change to {person.pendingRole === 'Can view' ? 'Can edit' : 'Can view'}
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive" onClick={() => { revokeInvitation(score.id, person.id); toast({ title: 'Invitation revoked', description: person.email }); }}>Revoke invitation</DropdownMenuItem>
+                            <DropdownMenuItem className="text-danger focus:text-danger focus:bg-danger/10" onClick={() => { revokeInvitation(score.id, person.id); toast({ title: 'Invitation revoked', description: person.email }); }}>
+                              Revoke invitation
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </>
                     ) : (
                       <>
-                        <span className="text-xs text-foreground">{person.role}</span>
+                        <span className="type-caption text-ink-primary">{person.role}</span>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <button className="rounded p-1 text-muted-foreground hover:bg-accent"><MoreHorizontal className="h-4 w-4" /></button>
+                            <button className="rounded-control p-1 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-44">
-                            <DropdownMenuItem onClick={() => { changeMemberRole(score.id, person.id, person.role === 'Can view' ? 'Can edit' : 'Can view'); toast({ title: 'Role changed' }); }}>Change to {person.role === 'Can view' ? 'Can edit' : 'Can view'}</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { changeMemberRole(score.id, person.id, person.role === 'Can view' ? 'Can edit' : 'Can view'); toast({ title: 'Role changed' }); }}>
+                              Change to {person.role === 'Can view' ? 'Can edit' : 'Can view'}
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive" onClick={() => { removeMember(score.id, person.id); toast({ title: 'Access removed', description: person.email }); }}>Remove access</DropdownMenuItem>
+                            <DropdownMenuItem className="text-danger focus:text-danger focus:bg-danger/10" onClick={() => { removeMember(score.id, person.id); toast({ title: 'Access removed', description: person.email }); }}>
+                              Remove access
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </>
@@ -166,14 +195,14 @@ export default function SharingDialog({ score, open, onOpenChange }) {
               ))}
             </div>
 
-            <div className="my-5 border-t border-border" />
+            <div className="my-5 border-t border-line-subtle" />
 
-            <p className="text-sm font-medium">General access</p>
-            <div className="mt-2 rounded-md border border-border">
+            <p className="type-label text-ink-primary">General access</p>
+            <div className="mt-2 rounded-control border border-line-subtle bg-surface-panel">
               <div className="flex items-center justify-between px-3 py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <Link2 className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">Anyone with the link</span>
+                  <Link2 className="h-4 w-4 text-ink-secondary" />
+                  <span className="type-body-small text-ink-primary">Anyone with the link</span>
                 </div>
                 <Select value={sharing.link.access} onValueChange={(v) => setLinkAccess(score.id, v)}>
                   <SelectTrigger className="h-8 w-[120px]"><SelectValue /></SelectTrigger>
@@ -186,22 +215,20 @@ export default function SharingDialog({ score, open, onOpenChange }) {
               </div>
               {sharing.link.access === 'Can edit' && (
                 <div className="flex items-center gap-2 border-t border-line-subtle bg-warning/10 px-3 py-2">
-                  <span className="text-xs text-warning">Anyone with this link can edit.</span>
+                  <span className="type-caption text-warning">Anyone with this link can edit.</span>
                 </div>
               )}
               {sharing.link.access !== 'Off' && (
                 <>
-                  <div className="flex items-center justify-between border-t border-border px-3 py-2.5">
-                    <span className="text-sm">Download</span>
-                    <Switch checked={sharing.link.download} onCheckedChange={(v) => setLinkDownload(score.id, v)} />
-                  </div>
-                  <div className="flex items-center justify-between border-t border-border px-3 py-2.5">
-                    <span className="text-sm">Practice</span>
+                  <div className="flex items-center justify-between border-t border-line-subtle px-3 py-2.5">
+                    <span className="type-body-small text-ink-primary">Practice</span>
                     <Switch checked={sharing.link.practice} onCheckedChange={(v) => setLinkPractice(score.id, v)} />
                   </div>
-                  <div className="flex items-center justify-between border-t border-border px-3 py-2.5">
-                    <span className="flex items-center gap-1.5 text-sm"><Clock className="h-3.5 w-3.5 text-muted-foreground" /> Expiration</span>
-                    <span className="text-sm text-muted-foreground">{sharing.link.expiration}</span>
+                  <div className="flex items-center justify-between border-t border-line-subtle px-3 py-2.5">
+                    <span className="flex items-center gap-1.5 type-body-small text-ink-primary">
+                      <Clock className="h-3.5 w-3.5 text-ink-secondary" /> Expiration
+                    </span>
+                    <span className="type-caption text-ink-secondary">{sharing.link.expiration}</span>
                   </div>
                 </>
               )}
@@ -210,11 +237,11 @@ export default function SharingDialog({ score, open, onOpenChange }) {
             <div className="mt-4 flex items-center gap-2">
               {sharing.link.access !== 'Off' && sharing.link.token ? (
                 <Button variant="outline" onClick={copyLink} className="flex-1">
-                  {copied ? <Check className="mr-1.5 h-4 w-4 text-primary" /> : <Copy className="mr-1.5 h-4 w-4" />}
+                  {copied ? <Check className="mr-1.5 h-4 w-4 text-brand" /> : <Copy className="mr-1.5 h-4 w-4" />}
                   {copied ? 'Link copied' : 'Copy link'}
                 </Button>
               ) : (
-                <p className="flex-1 text-sm text-muted-foreground">Turn on link sharing to copy a link.</p>
+                <p className="flex-1 type-body-small text-ink-secondary">Turn on link sharing to copy a link.</p>
               )}
               <Button variant="outline" onClick={() => setLinkSettingsOpen(true)}>Link settings</Button>
             </div>
@@ -228,24 +255,34 @@ export default function SharingDialog({ score, open, onOpenChange }) {
           <DialogHeader><DialogTitle>Link settings</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div>
-              <p className="text-sm font-medium">Expiration</p>
+              <p className="type-label text-ink-primary">Expiration</p>
               <div className="mt-2 grid grid-cols-2 gap-2">
                 {expirations.map((e) => (
-                  <button key={e.v} onClick={() => { setLinkExpiration(score.id, e.v); toast({ title: 'Expiration set', description: e.label }); }} className={`rounded-md border px-3 py-2 text-sm ${sharing.link.expiration === e.v ? 'border-primary bg-accent/40 font-medium' : 'border-border hover:bg-accent'}`}>{e.label}</button>
+                  <button
+                    key={e.v}
+                    onClick={() => { setLinkExpiration(score.id, e.v); toast({ title: 'Expiration set', description: e.label }); }}
+                    className={`rounded-control border px-3 py-2 type-body-small transition-colors ${
+                      sharing.link.expiration === e.v
+                        ? 'border-brand bg-brand-soft text-brand-soft-foreground font-medium'
+                        : 'border-line-subtle text-ink-primary hover:bg-neutral-hover'
+                    }`}
+                  >
+                    {e.label}
+                  </button>
                 ))}
               </div>
             </div>
-            <div className="flex items-center justify-between rounded-md border border-border px-3 py-2.5">
-              <span className="text-sm">Allow download</span>
-              <Switch checked={sharing.link.download} onCheckedChange={(v) => setLinkDownload(score.id, v)} />
-            </div>
-            <div className="flex items-center justify-between rounded-md border border-border px-3 py-2.5">
-              <span className="text-sm">Allow practice</span>
+            <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-3 py-2.5">
+              <span className="type-body-small text-ink-primary">Allow practice</span>
               <Switch checked={sharing.link.practice} onCheckedChange={(v) => setLinkPractice(score.id, v)} />
             </div>
-            <div className="flex gap-2 border-t border-border pt-3">
-              <Button variant="outline" size="sm" className="flex-1" onClick={() => { regenerateLink(score.id); toast({ title: 'Link regenerated', description: 'The old link no longer works.' }); }}><RefreshCw className="mr-1.5 h-3.5 w-3.5" /> Regenerate</Button>
-              <Button variant="outline" size="sm" className="flex-1 text-destructive" onClick={() => setConfirmDisable(true)}><Ban className="mr-1.5 h-3.5 w-3.5" /> Disable</Button>
+            <div className="flex gap-2 border-t border-line-subtle pt-3">
+              <Button variant="outline" size="sm" className="flex-1" onClick={() => { regenerateLink(score.id); toast({ title: 'Link regenerated', description: 'The old link no longer works.' }); }}>
+                <RefreshCw className="mr-1.5 h-3.5 w-3.5" /> Regenerate
+              </Button>
+              <Button variant="outline" size="sm" className="flex-1 text-danger hover:bg-danger/10 hover:text-danger" onClick={() => setConfirmDisable(true)}>
+                <Ban className="mr-1.5 h-3.5 w-3.5" /> Disable
+              </Button>
             </div>
           </div>
           <div className="flex justify-end">
@@ -258,7 +295,7 @@ export default function SharingDialog({ score, open, onOpenChange }) {
       <Dialog open={confirmDisable} onOpenChange={setConfirmDisable}>
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Disable link?</DialogTitle></DialogHeader>
-          <p className="text-sm text-muted-foreground">No one will be able to access this score via the link. You can turn it back on anytime.</p>
+          <p className="type-body-small text-ink-secondary">No one will be able to access this score via the link. You can turn it back on anytime.</p>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setConfirmDisable(false)}>Cancel</Button>
             <Button variant="destructive" onClick={handleDisable}>Disable link</Button>

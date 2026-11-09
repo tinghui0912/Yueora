@@ -11,7 +11,7 @@ export default function VirtualKeyboard({ current, showNames }) {
         {WHITE_KEYS.map((k, i) => (
           <div
             key={`w-${i}`}
-            className={`relative flex h-16 flex-1 items-end justify-center border-r border-line-subtle pb-1 last:border-r-0 ${k === current ? 'bg-accent' : ''}`}
+            className={`relative flex h-16 flex-1 items-end justify-center border-r border-line-subtle pb-1 last:border-r-0 ${k === current ? 'bg-brand-soft' : ''}`}
           >
             {(showNames || k === current) && (
               <span className={`text-xs ${k === current ? 'font-semibold text-brand' : 'text-ink-secondary/70'}`}>{k}</span>

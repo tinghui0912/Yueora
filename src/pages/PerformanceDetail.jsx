@@ -142,7 +142,7 @@ export default function PerformanceDetail() {
           {isOwner && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="rounded-control border border-line-subtle p-2.5 text-ink-secondary hover:bg-accent" aria-label="More actions">
+                <button className="rounded-control border border-line-subtle p-2.5 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors" aria-label="More actions">
                   <MoreHorizontal className="h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>

@@ -15,14 +15,14 @@
     --primary-foreground: 0 0% 100%;
     --secondary: 47 13% 87%;
     --secondary-foreground: 220 5% 13%;
-    --muted: 146 20% 93%;
-    --muted-foreground: 223 3% 43%;
-    --accent: 146 20% 93%;
-    --accent-foreground: 148 36% 27%;
+    --muted: 44 14% 92%;
+    --muted-foreground: 223 4% 36%;
+    --accent: 44 16% 94%;
+    --accent-foreground: 220 5% 13%;
     --destructive: 0 72% 42%;
     --destructive-foreground: 0 0% 100%;
-    --border: 47 13% 87%;
-    --input: 47 13% 87%;
+    --border: 47 14% 91%;
+    --input: 47 14% 91%;
     --ring: 148 36% 27%;
     --gold: 44 67% 46%;
     --radius: 0.375rem;
@@ -52,6 +52,14 @@
     /* ---- Brand ---- */
     --brand: 148 36% 27%;
     --brand-hover: 148 36% 22%;
+    --brand-soft: 148 36% 93%;
+    --brand-soft-foreground: 148 36% 27%;
+
+    /* ---- Neutral quiet & hover (Warm ivory-gray, NOT green) ---- */
+    --neutral-muted: 44 14% 92%;
+    --neutral-muted-foreground: 223 4% 36%;
+    --neutral-hover: 44 16% 94%;
+    --neutral-hover-foreground: 220 5% 13%;
 
     /* ---- Semantic status ---- */
     --success: 148 30% 40%;

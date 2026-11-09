@@ -41,7 +41,15 @@ export default function Help() {
         {!query && (
           <div className="mt-4 flex flex-wrap gap-1.5">
             {helpCategories.map((c) => (
-              <button key={c} onClick={() => setActive(c)} className={`rounded-control px-3 py-1.5 text-sm ${active === c ? 'bg-accent font-medium text-accent-foreground' : 'text-ink-secondary hover:bg-accent/50'}`}>{c}</button>
+              <button
+                key={c}
+                onClick={() => setActive(c)}
+                className={`rounded-control px-3 py-1.5 type-body-small transition-colors ${
+                  active === c ? 'bg-brand-soft font-medium text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
+                }`}
+              >
+                {c}
+              </button>
             ))}
           </div>
         )}
@@ -50,7 +58,7 @@ export default function Help() {
           {Object.keys(grouped).length === 0 ? (
             <div className="flex flex-col items-center gap-2 py-12 text-center">
               <Search className="h-7 w-7 text-ink-tertiary" />
-              <p className="text-sm text-ink-secondary">No articles match “{query}”.</p>
+              <p className="type-body-small text-ink-secondary">No articles match “{query}”.</p>
             </div>
           ) : (
             helpCategories.filter((c) => grouped[c]).map((c) => (
@@ -59,10 +67,10 @@ export default function Help() {
                 <ul className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
                   {grouped[c].map((a) => (
                     <li key={a.slug}>
-                      <Link to={`/help/${a.slug}`} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent/40">
+                      <Link to={`/help/${a.slug}`} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-neutral-hover transition-colors">
                         <span className="min-w-0 flex-1">
-                          <span className="block text-sm font-medium text-ink-primary">{a.title}</span>
-                          <span className="mt-0.5 block text-sm text-ink-secondary">{a.excerpt}</span>
+                          <span className="block type-body-small font-medium text-ink-primary">{a.title}</span>
+                          <span className="mt-0.5 block type-body-small text-ink-secondary">{a.excerpt}</span>
                         </span>
                         <ChevronRight className="h-4 w-4 shrink-0 text-ink-tertiary" />
                       </Link>
@@ -74,9 +82,9 @@ export default function Help() {
           )}
         </div>
 
-        <div className="mt-10 rounded-container border border-line-subtle bg-accent/40 p-5">
-          <h2 className="font-display text-lg font-medium text-ink-primary">Still need help?</h2>
-          <p className="mt-0.5 text-sm text-ink-secondary">Reach out and we’ll get back to you.</p>
+        <div className="mt-10 rounded-container border border-line-subtle bg-surface-panel p-5">
+          <h2 className="type-section-title font-medium text-ink-primary">Still need help?</h2>
+          <p className="mt-0.5 type-body-small text-ink-secondary">Reach out and we’ll get back to you.</p>
           <Button className="mt-3" onClick={() => { setSupportOpen(true); setSent(false); }}><LifeBuoy className="mr-1.5 h-4 w-4" /> Contact support</Button>
         </div>
       </div>
@@ -86,9 +94,9 @@ export default function Help() {
           <DialogHeader><DialogTitle>Contact support</DialogTitle></DialogHeader>
           {sent ? (
             <div className="py-6 text-center">
-              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary"><ThumbsUp className="h-5 w-5" /></div>
-              <p className="mt-3 font-medium">Message sent</p>
-              <p className="mt-1 text-sm text-muted-foreground">We’ll get back to you soon.</p>
+              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-brand"><ThumbsUp className="h-5 w-5" /></div>
+              <p className="mt-3 type-body-small font-medium text-ink-primary">Message sent</p>
+              <p className="mt-1 type-caption text-ink-secondary">We’ll get back to you soon.</p>
             </div>
           ) : (
             <div className="space-y-3">

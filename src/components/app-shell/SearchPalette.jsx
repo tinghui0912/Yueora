@@ -44,54 +44,59 @@ export default function SearchPalette({ open, onOpenChange }) {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-     
-  }, []);
+  }, [onOpenChange]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg gap-0 p-0">
         <DialogHeader className="sr-only"><DialogTitle>Search</DialogTitle></DialogHeader>
-        <div className="flex items-center gap-2 border-b border-border px-4 py-3">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search scores, folders, or commands…" className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground" />
-          <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">esc</kbd>
+        <div className="flex items-center gap-2 border-b border-line-subtle px-4 py-3">
+          <Search className="h-4 w-4 text-ink-secondary" />
+          <input
+            autoFocus
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search scores, folders, or commands…"
+            className="w-full bg-transparent type-body-small text-ink-primary outline-none placeholder:text-ink-tertiary"
+          />
+          <kbd className="rounded-control border border-line-subtle bg-neutral-muted px-1.5 py-0.5 type-caption text-ink-secondary">esc</kbd>
         </div>
         <div className="max-h-96 overflow-y-auto p-2">
           {!q.trim() && (
             <div>
-              <p className="px-2 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Quick actions</p>
+              <p className="px-2 pb-1 pt-2 type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Quick actions</p>
               {commands.map((c) => (
-                <button key={c.label} onClick={() => go(c.path)} className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left hover:bg-accent">
-                  <c.icon className="h-4 w-4 text-muted-foreground" /><span className="text-sm font-medium">{c.label}</span>
+                <button key={c.label} onClick={() => go(c.path)} className="flex w-full items-center gap-3 rounded-control px-3 py-2 text-left hover:bg-neutral-hover transition-colors">
+                  <c.icon className="h-4 w-4 text-ink-secondary" /><span className="type-body-small font-medium text-ink-primary">{c.label}</span>
                 </button>
               ))}
-              <p className="px-2 pb-1 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recent scores</p>
+              <p className="px-2 pb-1 pt-3 type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Recent scores</p>
               {scores.filter((s) => s.ownership !== 'trash').slice(0, 3).map((s) => (
-                <button key={s.id} onClick={() => go(`/score/${s.id}`)} className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left hover:bg-accent">
-                  <span className="text-sm font-medium">{s.title}</span><span className="text-xs text-muted-foreground">{s.composer}</span>
+                <button key={s.id} onClick={() => go(`/score/${s.id}`)} className="flex w-full items-center justify-between rounded-control px-3 py-2 text-left hover:bg-neutral-hover transition-colors">
+                  <span className="type-body-small font-medium text-ink-primary">{s.title}</span><span className="type-caption text-ink-secondary">{s.composer}</span>
                 </button>
               ))}
             </div>
           )}
           {q.trim() && results.scores.length === 0 && results.folders.length === 0 && results.commands.length === 0 && (
-            <div className="px-3 py-6 text-center text-sm text-muted-foreground">No matches.</div>
+            <div className="px-3 py-6 text-center type-body-small text-ink-secondary">No matches.</div>
           )}
-          {results.commands.length > 0 && <div className="px-2 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Commands</div>}
+          {results.commands.length > 0 && <div className="px-2 pb-1 pt-2 type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Commands</div>}
           {results.commands.map((c) => (
-            <button key={c.label} onClick={() => go(c.path)} className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left hover:bg-accent">
-              <c.icon className="h-4 w-4 text-muted-foreground" /><span className="text-sm font-medium">{c.label}</span><ArrowRight className="ml-auto h-3.5 w-3.5 text-muted-foreground" />
+            <button key={c.label} onClick={() => go(c.path)} className="flex w-full items-center gap-3 rounded-control px-3 py-2 text-left hover:bg-neutral-hover transition-colors">
+              <c.icon className="h-4 w-4 text-ink-secondary" /><span className="type-body-small font-medium text-ink-primary">{c.label}</span><ArrowRight className="ml-auto h-3.5 w-3.5 text-ink-secondary" />
             </button>
           ))}
-          {results.scores.length > 0 && <div className="px-2 pb-1 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Scores</div>}
+          {results.scores.length > 0 && <div className="px-2 pb-1 pt-3 type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Scores</div>}
           {results.scores.map((s) => (
-            <button key={s.id} onClick={() => go(`/score/${s.id}`)} className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left hover:bg-accent">
-              <span className="text-sm font-medium">{s.title}</span><span className="text-xs text-muted-foreground">{s.composer}</span>
+            <button key={s.id} onClick={() => go(`/score/${s.id}`)} className="flex w-full items-center justify-between rounded-control px-3 py-2 text-left hover:bg-neutral-hover transition-colors">
+              <span className="type-body-small font-medium text-ink-primary">{s.title}</span><span className="type-caption text-ink-secondary">{s.composer}</span>
             </button>
           ))}
-          {results.folders.length > 0 && <div className="px-2 pb-1 pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Folders</div>}
+          {results.folders.length > 0 && <div className="px-2 pb-1 pt-3 type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Folders</div>}
           {results.folders.map((f) => (
-            <button key={f.id} onClick={() => go(`/library?view=folder:${f.id}`)} className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-accent">
-              <Folder className="h-4 w-4 text-muted-foreground" /><span className="text-sm font-medium">{f.name}</span>
+            <button key={f.id} onClick={() => go(`/library?view=folder:${f.id}`)} className="flex w-full items-center gap-2 rounded-control px-3 py-2 text-left hover:bg-neutral-hover transition-colors">
+              <Folder className="h-4 w-4 text-ink-secondary" /><span className="type-body-small font-medium text-ink-primary">{f.name}</span>
             </button>
           ))}
         </div>

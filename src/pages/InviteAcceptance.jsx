@@ -69,17 +69,17 @@ export default function InviteAcceptance() {
       <div className="mx-auto flex max-w-md flex-col items-center px-5 py-16 text-center md:px-8">
         {status === 'valid' && (
           <>
-            <p className="text-sm text-muted-foreground">{invitedBy} invited you to</p>
+            <p className="type-body-small text-ink-secondary">{invitedBy} invited you to</p>
             <h1 className="mt-1 type-page-title">{score?.title || 'Score'}</h1>
-            <p className="mt-1 text-muted-foreground">{score?.composer}</p>
-            <span className="mt-4 rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-foreground">{permission}</span>
+            <p className="mt-1 type-body-small text-ink-secondary">{score?.composer}</p>
+            <span className="mt-4 rounded-control bg-brand-soft px-3 py-1.5 type-body-small font-medium text-brand-soft-foreground border border-line-subtle">{permission}</span>
 
             {isAuthenticated ? (
               wrongAccount ? (
                 <div className="mt-8 flex flex-col items-center gap-3">
-                  <div className="flex items-start gap-2 rounded-md border border-warning/40 bg-warning/10 p-3 text-left">
+                  <div className="flex items-start gap-2 rounded-control border border-warning/40 bg-warning/10 p-3 text-left">
                     <AlertTriangle className="mt-0.5 h-4 w-4 text-warning" />
-                    <p className="text-sm text-muted-foreground">This invitation was sent to <strong>{invitedEmail}</strong>, but you are signed in as <strong>{user?.email}</strong>. Switch accounts to accept it.</p>
+                    <p className="type-body-small text-ink-secondary">This invitation was sent to <strong>{invitedEmail}</strong>, but you are signed in as <strong>{user?.email}</strong>. Switch accounts to accept it.</p>
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" onClick={() => navigate(`/login?returnTo=/invite/${inviteToken}`)}>Switch account</Button>
@@ -87,16 +87,16 @@ export default function InviteAcceptance() {
                   </div>
                 </div>
               ) : (
-                <Button onClick={accept} className="mt-8 bg-primary px-6 text-primary-foreground"><CheckCircle2 className="mr-1.5 h-4 w-4" /> Accept invitation</Button>
+                <Button onClick={accept} className="mt-8 bg-brand px-6 text-white hover:bg-brand-hover"><CheckCircle2 className="mr-1.5 h-4 w-4" /> Accept invitation</Button>
               )
             ) : (
               <div className="mt-8 flex flex-col items-center gap-3">
-                <Button onClick={() => navigate(`/login?returnTo=/invite/${inviteToken}`)} className="bg-primary px-6 text-primary-foreground"><LogIn className="mr-1.5 h-4 w-4" /> Continue to log in</Button>
-                <p className="text-sm text-muted-foreground">You will return here to accept after logging in.</p>
-                <Link to={`/register?returnTo=/invite/${inviteToken}`} className="text-sm font-medium text-primary hover:underline">Don't have an account? Sign up</Link>
+                <Button onClick={() => navigate(`/login?returnTo=/invite/${inviteToken}`)} className="bg-brand px-6 text-white hover:bg-brand-hover"><LogIn className="mr-1.5 h-4 w-4" /> Continue to log in</Button>
+                <p className="type-body-small text-ink-secondary">You will return here to accept after logging in.</p>
+                <Link to={`/register?returnTo=/invite/${inviteToken}`} className="type-body-small font-medium text-brand hover:underline">Don't have an account? Sign up</Link>
               </div>
             )}
-            <Button variant="ghost" onClick={decline} className="mt-4 text-sm text-muted-foreground">Decline invitation</Button>
+            <Button variant="ghost" onClick={decline} className="mt-4 type-body-small text-ink-secondary hover:text-ink-primary">Decline invitation</Button>
           </>
         )}
 

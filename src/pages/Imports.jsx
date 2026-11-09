@@ -58,7 +58,7 @@ export default function Imports() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`border-b-2 px-3 py-2 text-sm font-medium transition-colors ${tab === t.key ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+            className={`border-b-2 px-3 py-2 type-body-small transition-colors ${tab === t.key ? 'border-brand text-brand font-semibold' : 'border-transparent text-ink-secondary hover:text-ink-primary'}`}
           >
             {t.label}
           </button>
@@ -73,14 +73,14 @@ export default function Imports() {
             title="No imports yet"
             description="Scores you add will show recognition progress here."
             primaryAction={
-              <Link to="/add-score" className="rounded-control bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90">
+              <Link to="/add-score" className="rounded-control bg-brand px-4 py-2 type-body-small font-semibold text-white hover:bg-brand-hover">
                 Add a score
               </Link>
             }
           />
         )}
         {list.map((imp) => (
-          <Link key={imp.id} to={`/imports/${imp.id}`} className="block rounded-container border border-line-subtle bg-surface-panel p-4 hover:bg-accent/40">
+          <Link key={imp.id} to={`/imports/${imp.id}`} className="block rounded-container border border-line-subtle bg-surface-panel p-4 hover:bg-neutral-hover transition-colors">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <p className="truncate font-medium text-ink-primary">{imp.title}</p>
@@ -94,7 +94,7 @@ export default function Imports() {
             {imp.status === 'processing' && (
               <div className="mt-3">
                 <div className="mb-1 flex justify-between type-metadata text-ink-tertiary"><span>Recognizing notation…</span><span>{imp.progress}%</span></div>
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all duration-1000" style={{ width: `${imp.progress}%` }} /></div>
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-muted"><div className="h-full rounded-full bg-brand transition-all duration-1000" style={{ width: `${imp.progress}%` }} /></div>
               </div>
             )}
             {imp.status === 'failed' && <p className="mt-2 type-body-small text-danger">{imp.failure}</p>}

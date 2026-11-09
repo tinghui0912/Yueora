@@ -115,28 +115,28 @@ export default function MfaMethodSetup({ session, method, onDone, onBack, signIn
   if (method === "totp" && step === "start") {
     return (
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-center">Set up your authenticator app</h2>
+        <h2 className="type-section-title font-semibold text-ink-primary text-center">Set up your authenticator app</h2>
         <MfaNotice error={error} signInPath={signInPath} />
-        {!setup && !error && <Loader2 className="mx-auto w-6 h-6 animate-spin text-muted-foreground" />}
+        {!setup && !error && <Loader2 className="mx-auto w-6 h-6 animate-spin text-ink-secondary" />}
         {setup && (isTouchDevice() ? (
-          <div className="space-y-3 text-sm">
-            <ol className="list-decimal pl-5 space-y-1 text-muted-foreground">
+          <div className="space-y-3 type-body-small text-ink-primary">
+            <ol className="list-decimal pl-5 space-y-1 text-ink-secondary">
               <li>Copy the key below.</li>
               <li>In your authenticator app, add an account and paste the key.</li>
               <li>Come back here and enter the code the app shows.</li>
             </ol>
-            <code className="block rounded-lg border border-border px-3 py-3 text-center font-mono font-medium tracking-wider break-all">
+            <code className="block rounded-control border border-line-subtle bg-surface-panel px-3 py-3 text-center font-mono font-medium tracking-wider break-all text-ink-primary">
               {setup.secret_formatted}
             </code>
             <CopyKeyButton text={setup.secret_formatted} wide />
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-2 text-sm">
-            <p className="font-medium">Scan the QR code with your authenticator app</p>
-            <img src={setup.qr_code} alt="QR code for authenticator app setup" className="w-36 h-36 rounded-lg border border-border bg-white p-1" />
-            <p className="text-muted-foreground mt-3">Can't scan the code? Enter it manually:</p>
+          <div className="flex flex-col items-center gap-2 type-body-small">
+            <p className="font-medium text-ink-primary">Scan the QR code with your authenticator app</p>
+            <img src={setup.qr_code} alt="QR code for authenticator app setup" className="w-36 h-36 rounded-control border border-line-subtle bg-surface-panel p-1" />
+            <p className="type-caption text-ink-secondary mt-3">Can't scan the code? Enter it manually:</p>
             <div className="flex flex-wrap items-center justify-center gap-1">
-              <code className="font-mono font-medium tracking-wider break-all">{setup.secret_formatted}</code>
+              <code className="font-mono font-medium tracking-wider break-all text-ink-primary">{setup.secret_formatted}</code>
               <CopyKeyButton text={setup.secret_formatted} />
             </div>
           </div>
@@ -150,8 +150,8 @@ export default function MfaMethodSetup({ session, method, onDone, onBack, signIn
     const phoneError = fieldError ?? (error && !error.mustSignInAgain ? error.message : null);
     return (
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-center">Enter your phone number</h2>
-        <p className="text-sm text-muted-foreground text-center">A verification code will be sent to this number to confirm it's yours.</p>
+        <h2 className="type-section-title font-semibold text-ink-primary text-center">Enter your phone number</h2>
+        <p className="type-body-small text-ink-secondary text-center">A verification code will be sent to this number to confirm it's yours.</p>
         <div className="space-y-1.5">
           <Label htmlFor="mfa-phone">Phone number</Label>
           <PhoneField
@@ -168,16 +168,16 @@ export default function MfaMethodSetup({ session, method, onDone, onBack, signIn
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-center">
+      <h2 className="type-section-title font-semibold text-ink-primary text-center">
         {method === "totp" ? "Enter a code from your authenticator app" : "Verify your phone number"}
       </h2>
-      {method === "sms" && <p className="text-sm text-muted-foreground text-center">A 6-digit code sent to {countryCode} {phoneNumber}</p>}
+      {method === "sms" && <p className="type-body-small text-ink-secondary text-center">A 6-digit code sent to {countryCode} {phoneNumber}</p>}
       <div className="flex flex-col items-center gap-2">
         <CodeField id="mfa-setup-code" value={code} onChange={(value) => { setCode(value); setFieldError(null); }}
           onComplete={confirm} hasError={Boolean(fieldError)} />
-        {fieldError && <p className="text-sm text-destructive">{fieldError}</p>}
+        {fieldError && <p className="type-caption text-danger">{fieldError}</p>}
         {method === "totp"
-          ? <p className="text-xs text-muted-foreground">Codes refresh every 30 seconds.</p>
+          ? <p className="type-caption text-ink-secondary">Codes refresh every 30 seconds.</p>
           : <ResendLine cooldown={cooldown} onResend={resend} error={resendError} />}
       </div>
       <MfaNotice error={error} signInPath={signInPath} />

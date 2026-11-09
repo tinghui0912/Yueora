@@ -4,23 +4,23 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-control border px-2.5 py-0.5 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-control border px-2.5 py-0.5 type-caption font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand/40 focus:ring-offset-2",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+          "border-transparent bg-brand text-white hover:bg-brand-hover",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "border-transparent bg-neutral-muted text-ink-primary hover:bg-neutral-hover",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "border-border text-foreground",
+          "border-transparent bg-danger/10 text-danger hover:bg-danger/20",
+        outline: "border-line-subtle text-ink-primary",
         /* Semantic status variants — subdued, not saturated */
-        brand: "border-transparent bg-accent text-accent-foreground",
+        brand: "border-transparent bg-brand-soft text-brand-soft-foreground",
         success: "border-transparent bg-success/10 text-success",
         warning: "border-transparent bg-warning/10 text-warning",
         danger: "border-transparent bg-danger/10 text-danger",
-        neutral: "border-transparent bg-muted text-ink-secondary",
+        neutral: "border-transparent bg-neutral-muted text-ink-secondary",
       },
     },
     defaultVariants: {

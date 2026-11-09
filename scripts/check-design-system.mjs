@@ -399,6 +399,61 @@ for (const dir of SCAN_DIRECTORIES) {
   scanDirectory(dir, totalViolations);
 }
 
+// Phase 5: Verify Legacy Color Token Retirement
+function verifyLegacyColorRetirement(issues = []) {
+  const jsconfigPath = path.resolve('jsconfig.json');
+  let excludedSet = new Set();
+  if (fs.existsSync(jsconfigPath)) {
+    try {
+      const jsconfig = JSON.parse(fs.readFileSync(jsconfigPath, 'utf8'));
+      (jsconfig.exclude || []).forEach((p) => {
+        excludedSet.add(path.resolve(p).replace(/\\/g, '/'));
+      });
+    } catch (_) {}
+  }
+
+  const legacyRegex = /\b(bg-(?:muted|accent|primary|secondary|card|background)|text-(?:muted-foreground|primary|secondary-foreground|card-foreground|foreground)|border-(?:border|input))\b/g;
+
+  function scanDir(dir) {
+    if (!fs.existsSync(dir)) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanDir(full);
+      } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
+        const norm = full.replace(/\\/g, '/');
+        if (excludedSet.has(norm)) continue;
+
+        const content = fs.readFileSync(full, 'utf8');
+        const lines = content.split('\n');
+        lines.forEach((line, idx) => {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+          const matches = line.match(legacyRegex);
+          if (matches) {
+            matches.forEach((m) => {
+              issues.push({
+                file: path.relative(process.cwd(), full),
+                line: idx + 1,
+                matched: m,
+                message: `Legacy shadcn color token '${m}' found in product code. Use canonical Yueora tokens (bg-surface-*, text-ink-*, border-line-*, bg-brand, bg-brand-soft, bg-neutral-muted, bg-neutral-hover) instead.`,
+              });
+            });
+          }
+        });
+      }
+    }
+  }
+
+  for (const dir of SCAN_DIRECTORIES) {
+    scanDir(dir);
+  }
+
+  return issues;
+}
+verifyLegacyColorRetirement(totalViolations);
+
 if (totalViolations.length === 0) {
   console.log('✅ Design System integrity checks passed.');
   console.log(`   - Verified ${REQUIRED_TYPOGRAPHY.length} semantic typography roles in src/index.css`);
@@ -407,6 +462,7 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified primitive token consumption contracts (Button, IconButton, Input, SearchTrigger, ChoiceCard)`);
   console.log(`   - Verified document landmark integrity (AppShell/PublicShell own main, AppPage does not nest main)`);
   console.log(`   - Verified jsconfig exclusion integrity (zero excluded UI primitives imported by application)`);
+  console.log(`   - Verified legacy color token retirement (zero legacy tokens in application pages or active primitives)`);
   console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} root directories\n`);
   process.exit(0);
 } else {

@@ -5,7 +5,7 @@ import MobileNav from './MobileNav';
 
 export default function AppShell() {
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
+    <div className="flex min-h-dvh flex-col bg-surface-canvas">
       <div className="flex min-h-0 flex-1 lg:flex-row">
         <aside className="hidden w-[220px] shrink-0 border-r border-line-subtle bg-surface-panel lg:sticky lg:top-0 lg:h-dvh lg:block">
           <Sidebar />

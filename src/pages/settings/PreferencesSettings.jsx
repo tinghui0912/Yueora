@@ -30,9 +30,19 @@ export default function PreferencesSettings() {
           </div>
           <div className="space-y-2">
             <Label>Page fit</Label>
-            <div className="inline-flex rounded-md border border-border p-0.5">
+            <div className="inline-flex rounded-control border border-line-subtle bg-neutral-muted p-0.5">
               {[['width', 'Fit width'], ['page', 'Fit page']].map(([v, l]) => (
-                <button key={v} onClick={() => update({ pageFit: v })} className={`rounded px-3 py-1.5 text-sm ${prefs.pageFit === v ? 'bg-accent font-medium' : 'text-muted-foreground hover:bg-accent/60'}`}>{l}</button>
+                <button
+                  key={v}
+                  onClick={() => update({ pageFit: v })}
+                  className={`rounded-sm px-3 py-1.5 type-body-small transition-all ${
+                    prefs.pageFit === v
+                      ? 'bg-surface-panel font-medium text-ink-primary shadow-xs'
+                      : 'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover'
+                  }`}
+                >
+                  {l}
+                </button>
               ))}
             </div>
           </div>
@@ -40,7 +50,11 @@ export default function PreferencesSettings() {
       </SettingsSection>
 
       <SettingsSection title="Language & region" desc="Interface language.">
-        <select value={prefs.language} onChange={(e) => update({ language: e.target.value })} className="h-9 w-full max-w-sm rounded-md border border-input bg-transparent px-3 text-sm">
+        <select
+          value={prefs.language}
+          onChange={(e) => update({ language: e.target.value })}
+          className="h-9 w-full max-w-sm rounded-control border border-surface-paper-edge bg-surface-panel px-3 type-body-small text-ink-primary shadow-xs"
+        >
           <option>English</option>
           <option>中文</option>
         </select>
@@ -52,7 +66,7 @@ export default function PreferencesSettings() {
 function Toggle({ label, desc, checked, onChange }) {
   return (
     <div className="flex items-center justify-between">
-      <div><Label>{label}</Label><p className="text-xs text-muted-foreground">{desc}</p></div>
+      <div><Label>{label}</Label><p className="type-caption text-ink-secondary">{desc}</p></div>
       <Switch checked={checked} onCheckedChange={onChange} />
     </div>
   );

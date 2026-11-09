@@ -106,7 +106,7 @@ export default function RecognitionReview() {
               {active && (
                 <div className="mt-3 rounded-md border border-warning/40 bg-warning/10 px-3 py-2">
                   <p className="text-sm font-medium text-warning">Measure {active.measure}: {active.type}</p>
-                  <p className="text-xs text-muted-foreground">{active.detail}</p>
+                  <p className="type-caption text-ink-secondary">{active.detail}</p>
                 </div>
               )}
             </div>
@@ -122,7 +122,7 @@ export default function RecognitionReview() {
       {/* Mobile issues button */}
       <button onClick={() => setMobileIssuesOpen(true)} className="flex items-center justify-between border-t border-line-subtle px-4 py-3 md:hidden">
         <span className="text-sm font-medium">{issues.length} issues · {reviewed} reviewed</span>
-        <ChevronUp className="h-4 w-4 text-muted-foreground" />
+        <ChevronUp className="h-4 w-4 text-ink-secondary" />
       </button>
 
       {/* Mobile issues sheet */}
@@ -131,7 +131,7 @@ export default function RecognitionReview() {
           <SheetHeader><SheetTitle>Issues to review</SheetTitle></SheetHeader>
           <div className="mt-3 space-y-2">
             {issues.map((iss) => (
-              <button key={iss.id} onClick={() => { setActiveIssue(iss.id); setMobileIssuesOpen(false); }} className={`w-full rounded-control border p-3 text-left ${activeIssue === iss.id ? 'border-brand bg-accent/40' : 'border-line-subtle'} ${iss.resolved ? 'opacity-50' : ''}`}>
+              <button key={iss.id} onClick={() => { setActiveIssue(iss.id); setMobileIssuesOpen(false); }} className={`w-full rounded-control border p-3 text-left ${activeIssue === iss.id ? 'border-brand bg-brand-soft' : 'border-line-subtle'} ${iss.resolved ? 'opacity-50' : ''}`}>
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5 text-sm font-medium"><AlertTriangle className="h-3.5 w-3.5 text-warning" /> Measure {iss.measure}</span>
                   {iss.resolved && <Check className="h-3.5 w-3.5 text-success" />}

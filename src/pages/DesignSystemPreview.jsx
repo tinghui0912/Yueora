@@ -106,6 +106,85 @@ export default function DesignSystemPreview() {
         </Surface>
       </section>
 
+      {/* 2. Color System & Interaction Matrix */}
+      <section className="space-y-4">
+        <SectionHeader
+          title="Color System & Interaction Matrix"
+          description="One canonical visual language. Pale green (brand-soft) is strictly selected context; warm neutral is hover/muted."
+        />
+        <Surface tone="panel" elevation="paper" padding="md" className="space-y-6">
+          {/* Swatches */}
+          <div className="space-y-2">
+            <span className="type-caption text-ink-secondary/70">Canonical Color Roles</span>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-4">
+              <div className="rounded-control border border-line-subtle bg-surface-canvas p-3 text-center">
+                <span className="type-caption text-ink-secondary">Canvas</span>
+                <p className="type-metadata text-ink-tertiary">#fcfaf5</p>
+              </div>
+              <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
+                <span className="type-caption text-ink-primary">Panel</span>
+                <p className="type-metadata text-ink-tertiary">#ffffff</p>
+              </div>
+              <div className="rounded-control border border-surface-paper-edge bg-surface-paper p-3 text-center">
+                <span className="type-caption text-ink-primary">Paper</span>
+                <p className="type-metadata text-ink-tertiary">Archival Sheet</p>
+              </div>
+              <div className="rounded-control border border-surface-paper-edge bg-surface-paper-warm p-3 text-center">
+                <span className="type-caption text-ink-primary">Paper Warm</span>
+                <p className="type-metadata text-ink-tertiary">Saved Take</p>
+              </div>
+              <div className="rounded-control border border-transparent bg-brand p-3 text-center text-white">
+                <span className="type-caption text-white">Brand CTA</span>
+                <p className="type-metadata text-white/80">Primary</p>
+              </div>
+              <div className="rounded-control border border-brand bg-brand-soft p-3 text-center">
+                <span className="type-caption text-brand-soft-foreground">Brand Soft</span>
+                <p className="type-metadata text-brand-soft-foreground/80">Active / Selected</p>
+              </div>
+              <div className="rounded-control border border-line-subtle bg-neutral-muted p-3 text-center">
+                <span className="type-caption text-ink-secondary">Neutral Muted</span>
+                <p className="type-metadata text-ink-tertiary">Passive / Track</p>
+              </div>
+              <div className="rounded-control border border-line-subtle bg-neutral-hover p-3 text-center">
+                <span className="type-caption text-ink-primary">Neutral Hover</span>
+                <p className="type-metadata text-ink-tertiary">Hover / Focus</p>
+              </div>
+            </div>
+          </div>
+
+          {/* State Matrix */}
+          <div className="space-y-3 border-t border-line-subtle pt-4">
+            <span className="type-caption text-ink-secondary/70">Component State Matrix</span>
+            <div className="grid gap-3 sm:grid-cols-4">
+              <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
+                <p className="type-caption text-ink-tertiary uppercase">Default</p>
+                <div className="mt-2 rounded-control border border-line-subtle bg-surface-panel px-3 py-1.5 type-body-small text-ink-primary">
+                  Item Default
+                </div>
+              </div>
+              <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
+                <p className="type-caption text-ink-tertiary uppercase">Hover (Neutral Hover)</p>
+                <div className="mt-2 rounded-control border border-line-subtle bg-neutral-hover px-3 py-1.5 type-body-small text-ink-primary">
+                  Item Hovered
+                </div>
+              </div>
+              <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
+                <p className="type-caption text-brand uppercase font-semibold">Selected (Brand Soft)</p>
+                <div className="mt-2 rounded-control border border-brand bg-brand-soft px-3 py-1.5 type-body-small font-medium text-brand-soft-foreground">
+                  Item Selected
+                </div>
+              </div>
+              <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
+                <p className="type-caption text-ink-tertiary uppercase">Disabled</p>
+                <div className="mt-2 rounded-control border border-line-subtle bg-neutral-muted/50 px-3 py-1.5 type-body-small text-ink-tertiary opacity-60">
+                  Item Disabled
+                </div>
+              </div>
+            </div>
+          </div>
+        </Surface>
+      </section>
+
       {/* 2. Button Primitives */}
       <section className="space-y-4">
         <SectionHeader

@@ -53,15 +53,15 @@ export default function SecuritySettings() {
         <form onSubmit={changePw} className="max-w-sm space-y-4">
           <div className="space-y-1.5"><Label htmlFor="cur">Current password</Label><Input id="cur" type="password" placeholder="••••••••" /></div>
           <div className="space-y-1.5"><Label htmlFor="new">New password</Label><Input id="new" type="password" /></div>
-          <div className="flex items-center gap-3"><Button type="submit">Update password</Button>{pwSaved && <span className="text-sm text-primary">Updated</span>}</div>
+          <div className="flex items-center gap-3"><Button type="submit">Update password</Button>{pwSaved && <span className="type-body-small text-brand">Updated</span>}</div>
         </form>
       </SettingsSection>
 
       <SettingsSection title="Two-factor authentication" desc="Add an extra layer of security to your account.">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShieldCheck className={`h-5 w-5 ${twoFactor ? 'text-primary' : 'text-muted-foreground'}`} />
-            <span className="text-sm">{twoFactor ? 'Enabled' : 'Disabled'}</span>
+            <ShieldCheck className={`h-5 w-5 ${twoFactor ? 'text-brand' : 'text-ink-secondary'}`} />
+            <span className="type-body-small text-ink-primary">{twoFactor ? 'Enabled' : 'Disabled'}</span>
           </div>
           {twoFactor ? (
             <Button variant="outline" size="sm" onClick={disable}>Disable</Button>
@@ -74,19 +74,19 @@ export default function SecuritySettings() {
       <SettingsSection title="Passkeys" desc="Sign in faster with a passkey.">
         {account.passkeys.length === 0 ? (
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2"><KeyRound className="h-5 w-5 text-muted-foreground" /><span className="text-sm">No passkeys yet</span></div>
+            <div className="flex items-center gap-2"><KeyRound className="h-5 w-5 text-ink-secondary" /><span className="type-body-small text-ink-secondary">No passkeys yet</span></div>
             <Button variant="outline" size="sm" onClick={() => setPasskeyOpen(true)}><Plus className="mr-1.5 h-4 w-4" /> Add passkey</Button>
           </div>
         ) : (
           <>
-            <ul className="divide-y divide-border">
+            <ul className="divide-y divide-line-subtle">
               {account.passkeys.map((p) => (
                 <li key={p.id} className="flex items-center justify-between py-3">
                   <div className="flex items-center gap-3">
-                    <KeyRound className="h-5 w-5 text-muted-foreground" />
-                    <div><p className="text-sm font-medium">{p.name}</p><p className="text-xs text-muted-foreground">Added {p.addedAt}</p></div>
+                    <KeyRound className="h-5 w-5 text-ink-secondary" />
+                    <div><p className="type-body-small font-medium text-ink-primary">{p.name}</p><p className="type-caption text-ink-secondary">Added {p.addedAt}</p></div>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => removePasskey(p.id)} className="text-destructive hover:text-destructive"><Trash2 className="mr-1.5 h-4 w-4" /> Remove</Button>
+                  <Button variant="ghost" size="sm" onClick={() => removePasskey(p.id)} className="text-danger hover:text-danger hover:bg-danger/10"><Trash2 className="mr-1.5 h-4 w-4" /> Remove</Button>
                 </li>
               ))}
             </ul>
@@ -96,14 +96,14 @@ export default function SecuritySettings() {
       </SettingsSection>
 
       <SettingsSection title="Active sessions" desc="Devices currently signed in to your account.">
-        <ul className="divide-y divide-border">
+        <ul className="divide-y divide-line-subtle">
           {account.sessions.map((s) => (
             <li key={s.id} className="flex items-center justify-between py-3">
               <div className="flex items-center gap-3">
-                {s.device?.includes('iPhone') ? <Smartphone className="h-5 w-5 text-muted-foreground" /> : <Monitor className="h-5 w-5 text-muted-foreground" />}
-                <div><p className="text-sm font-medium">{s.device} · {s.browser}</p><p className="text-xs text-muted-foreground">{s.location}</p></div>
+                {s.device?.includes('iPhone') ? <Smartphone className="h-5 w-5 text-ink-secondary" /> : <Monitor className="h-5 w-5 text-ink-secondary" />}
+                <div><p className="type-body-small font-medium text-ink-primary">{s.device} · {s.browser}</p><p className="type-caption text-ink-secondary">{s.location}</p></div>
               </div>
-              {s.current ? <span className="text-xs text-primary">This device</span> : <Button variant="ghost" size="sm" onClick={() => signOutSession(s.id)}>Sign out</Button>}
+              {s.current ? <span className="type-caption text-brand">This device</span> : <Button variant="ghost" size="sm" onClick={() => signOutSession(s.id)}>Sign out</Button>}
             </li>
           ))}
         </ul>
@@ -113,9 +113,9 @@ export default function SecuritySettings() {
       </SettingsSection>
 
       <SettingsSection title="Security activity" desc="Recent sign-ins and account changes.">
-        <ul className="space-y-2 text-sm">
-          <li className="flex justify-between"><span>New sign-in on Chrome</span><span className="text-muted-foreground">1 day ago</span></li>
-          <li className="flex justify-between"><span>Password updated</span><span className="text-muted-foreground">2 weeks ago</span></li>
+        <ul className="space-y-2 type-body-small">
+          <li className="flex justify-between"><span>New sign-in on Chrome</span><span className="type-caption text-ink-secondary">1 day ago</span></li>
+          <li className="flex justify-between"><span>Password updated</span><span className="type-caption text-ink-secondary">2 weeks ago</span></li>
         </ul>
       </SettingsSection>
 
@@ -125,14 +125,14 @@ export default function SecuritySettings() {
           <DialogHeader><DialogTitle>{setupStep === 1 ? 'Set up 2FA' : setupStep === 2 ? 'Enter code' : 'Save recovery codes'}</DialogTitle></DialogHeader>
           {setupStep === 1 && (
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">Scan this QR code with an authenticator app like Authy or 1Password.</p>
-              <div className="flex h-40 w-40 items-center justify-center rounded-md border border-border bg-card mx-auto"><span className="text-xs text-muted-foreground">QR code</span></div>
+              <p className="type-body-small text-ink-secondary">Scan this QR code with an authenticator app like Authy or 1Password.</p>
+              <div className="flex h-40 w-40 items-center justify-center rounded-control border border-line-subtle bg-surface-panel mx-auto"><span className="type-caption text-ink-secondary">QR code</span></div>
               <DialogFooter><Button onClick={() => setSetupStep(2)}>Next</Button></DialogFooter>
             </div>
           )}
           {setupStep === 2 && (
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">Enter the 6-digit code from your app.</p>
+              <p className="type-body-small text-ink-secondary">Enter the 6-digit code from your app.</p>
               <Input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="123456" className="text-center text-lg tracking-[0.4em]" />
               <DialogFooter>
                 <Button variant="outline" onClick={cancelSetup}>Cancel</Button>
@@ -142,11 +142,11 @@ export default function SecuritySettings() {
           )}
           {setupStep === 3 && (
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">Save these one-time recovery codes somewhere safe. You can use them if you lose your device.</p>
-              <div className="rounded-md border border-border bg-muted/40 p-3 font-mono text-sm">
+              <p className="type-body-small text-ink-secondary">Save these one-time recovery codes somewhere safe. You can use them if you lose your device.</p>
+              <div className="rounded-control border border-line-subtle bg-neutral-muted/40 p-3 font-mono type-body-small text-ink-primary">
                 {recoveryCodes.map((c) => <div key={c}>{c}</div>)}
               </div>
-              <Button variant="outline" size="sm" onClick={copyCodes} className="w-full">{copied ? <><Check className="mr-1.5 h-4 w-4" /> Copied</> : <><Copy className="mr-1.5 h-4 w-4" /> Copy codes</>}</Button>
+              <Button variant="outline" size="sm" onClick={copyCodes} className="w-full">{copied ? <><Check className="mr-1.5 h-4 w-4 text-brand" /> Copied</> : <><Copy className="mr-1.5 h-4 w-4" /> Copy codes</>}</Button>
               <DialogFooter><Button onClick={finishSetup}>I've saved them — finish</Button></DialogFooter>
             </div>
           )}
@@ -158,7 +158,7 @@ export default function SecuritySettings() {
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Add a passkey</DialogTitle></DialogHeader>
           <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">Name this passkey so you remember which device it belongs to.</p>
+            <p className="type-body-small text-ink-secondary">Name this passkey so you remember which device it belongs to.</p>
             <div className="space-y-1.5">
               <Label htmlFor="pkname">Passkey name</Label>
               <Input id="pkname" value={passkeyName} onChange={(e) => setPasskeyName(e.target.value)} placeholder="MacBook Pro" />

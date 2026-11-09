@@ -139,7 +139,7 @@ export default function ShareVideoDialog({
                     onClick={() => setFormat(f.value)}
                     aria-pressed={format === f.value}
                     disabled={stage === 'generating'}
-                    className={`rounded-control border px-3 py-1.5 text-sm disabled:opacity-50 ${format === f.value ? 'border-brand text-brand' : 'border-line-subtle text-ink-secondary hover:bg-accent/50'}`}
+                    className={`rounded-control border px-3 py-1.5 type-body-small transition-colors disabled:opacity-50 ${format === f.value ? 'border-brand bg-brand-soft text-brand-soft-foreground font-medium' : 'border-line-subtle text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'}`}
                   >
                     {f.label}
                   </button>
@@ -158,7 +158,7 @@ export default function ShareVideoDialog({
                       onClick={() => setLayout(l.value)}
                       aria-pressed={layout === l.value}
                       disabled={stage === 'generating'}
-                      className={`rounded-control border px-3 py-1.5 text-sm disabled:opacity-50 ${layout === l.value ? 'border-brand text-brand' : 'border-line-subtle text-ink-secondary hover:bg-accent/50'}`}
+                      className={`rounded-control border px-3 py-1.5 type-body-small transition-colors disabled:opacity-50 ${layout === l.value ? 'border-brand bg-brand-soft text-brand-soft-foreground font-medium' : 'border-line-subtle text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'}`}
                     >
                       {l.label}
                     </button>
@@ -195,7 +195,7 @@ export default function ShareVideoDialog({
               </div>
             )}
 
-            {stage === 'error' && <p className="type-body-small text-destructive">{error}</p>}
+            {stage === 'error' && <p className="type-body-small text-danger">{error}</p>}
 
             <p className="type-metadata text-ink-tertiary">
               Built on this device and downloaded by you. The video is not uploaded to Yueora, does not appear in

@@ -205,10 +205,10 @@ export default function PracticeSummary() {
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {saved ? (
               <>
-                <span className="flex items-center rounded-control bg-muted px-4 py-2.5 text-sm font-semibold text-ink-secondary">
+                <span className="flex items-center rounded-control bg-neutral-muted px-4 py-2.5 type-body-small font-semibold text-ink-secondary">
                   Saved to Performances
                 </span>
-                <Link to="/performances" className="text-sm font-medium text-brand hover:underline">View Performances</Link>
+                <Link to="/performances" className="type-body-small font-medium text-brand hover:underline">View Performances</Link>
               </>
             ) : (
               <Button onClick={() => setSaveOpen(true)}>Save performance</Button>
@@ -233,13 +233,13 @@ export default function PracticeSummary() {
       )}
 
       <div className="mt-8 flex flex-wrap gap-2">
-        <Link to={`/score/${live.scoreId}/setup`} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
+        <Link to={`/score/${live.scoreId}/setup`} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 type-body-small font-semibold text-ink-primary hover:bg-neutral-hover transition-colors">
           <RotateCcw className="h-4 w-4" /> Play it again
         </Link>
-        <Link to="/practice/history" className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
+        <Link to="/practice/history" className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 type-body-small font-semibold text-ink-primary hover:bg-neutral-hover transition-colors">
           <History className="h-4 w-4" /> Practice history
         </Link>
-        <Link to="/practice" className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 text-sm font-semibold hover:bg-accent">
+        <Link to="/practice" className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 type-body-small font-semibold text-ink-primary hover:bg-neutral-hover transition-colors">
           Back to Practice
         </Link>
       </div>

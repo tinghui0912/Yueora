@@ -76,7 +76,7 @@ export default function PlanSettings() {
         </div>
 
         {isPro && isCancelling && (
-          <div className="mt-3 flex items-start gap-2 rounded-container border border-line-subtle bg-accent/40 p-3 type-body-small text-ink-secondary">
+          <div className="mt-3 flex items-start gap-2 rounded-container border border-line-subtle bg-surface-panel p-3 type-body-small text-ink-secondary">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-ink-tertiary" />
             <span>
               Your Pro plan stays active until {subscription.cancelAt}. Nothing changes before then, and you can resume
@@ -158,7 +158,7 @@ export default function PlanSettings() {
                   <p className="font-medium text-ink-primary">{b.date} · {b.amount}</p>
                   <p className="type-metadata text-ink-tertiary">
                     {b.plan} · {b.invoice}
-                    {b.demo && <span className="ml-2 rounded-control bg-accent px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-accent-foreground">Demo</span>}
+                    {b.demo && <span className="ml-2 rounded-control bg-neutral-muted px-2 py-0.5 type-caption font-semibold uppercase tracking-wider text-ink-secondary">Demo</span>}
                   </p>
                 </div>
                 <span className="type-metadata text-ink-tertiary">No invoice file in this prototype</span>
@@ -192,12 +192,12 @@ function UsageBar({ label, value, limit }) {
   const pct = limit === 'Unlimited' ? 8 : 50;
   return (
     <div>
-      <div className="flex justify-between text-sm">
+      <div className="flex justify-between type-body-small">
         <span className="text-ink-secondary">{label}</span>
         <span className="text-ink-primary">{value} / {limit}</span>
       </div>
-      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-        <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
+      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-neutral-muted">
+        <div className="h-full rounded-full bg-brand" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );

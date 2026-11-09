@@ -28,8 +28,8 @@ export function useAppInfo() {
 // shows them returns <MfaScreen> in place of its own layout instead of nesting them in its card.
 export function MfaScreen({ children }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
-      <div className="w-full max-w-md bg-card rounded-2xl shadow-sm border border-border p-8">{children}</div>
+    <div className="min-h-screen flex items-center justify-center bg-surface-canvas px-4 py-8">
+      <div className="w-full max-w-md bg-surface-panel rounded-2xl shadow-overlay border border-line-subtle p-8">{children}</div>
     </div>
   );
 }
@@ -39,11 +39,11 @@ export function MfaScreen({ children }) {
 export function MfaHeader({ title, description = undefined }) {
   return (
     <div className="flex flex-col items-center text-center mb-6">
-      <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary mb-4">
-        <ShieldCheck className="w-7 h-7 text-primary-foreground" aria-hidden="true" />
+      <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand mb-4">
+        <ShieldCheck className="w-7 h-7 text-white" aria-hidden="true" />
       </div>
-      <h1 className="text-2xl font-bold tracking-tight text-foreground min-h-[2rem]">{title}</h1>
-      {description && <p className="text-muted-foreground mt-2">{description}</p>}
+      <h1 className="type-page-title font-bold text-ink-primary min-h-[2rem]">{title}</h1>
+      {description && <p className="type-body-small text-ink-secondary mt-2">{description}</p>}
     </div>
   );
 }
@@ -53,13 +53,13 @@ export function MfaHeader({ title, description = undefined }) {
 export function CodeField({ id, label = "Enter the 6-digit code", value, onChange, onComplete, hasError = false }) {
   return (
     <div className="space-y-2">
-      <Label htmlFor={id} className="block text-center font-normal text-muted-foreground">{label}</Label>
+      <Label htmlFor={id} className="block text-center font-normal type-caption text-ink-secondary">{label}</Label>
       <InputOTP id={id} maxLength={6} value={value} autoFocus autoComplete="one-time-code" containerClassName="justify-center"
         onChange={(next) => { onChange(next); if (next.length === 6) onComplete?.(next); }}
         onKeyDown={(e) => { if (e.key === "Enter" && onComplete) { e.preventDefault(); onComplete(value); } }}>
         <InputOTPGroup>
           {[0, 1, 2, 3, 4, 5].map((index) => (
-            <InputOTPSlot key={index} index={index} className={hasError ? "border-destructive" : undefined} />
+            <InputOTPSlot key={index} index={index} className={hasError ? "border-danger" : undefined} />
           ))}
         </InputOTPGroup>
       </InputOTP>
@@ -71,17 +71,17 @@ export function CodeField({ id, label = "Enter the 6-digit code", value, onChang
 export function ResendLine({ cooldown, disabled = false, onResend, error = undefined }) {
   return (
     <div className="space-y-1 text-center">
-      <p className="text-sm text-muted-foreground">
+      <p className="type-caption text-ink-secondary">
         Didn't receive a code?{" "}
         {cooldown > 0 ? (
           <span>Resend in {cooldown}s</span>
         ) : (
-          <button type="button" disabled={disabled} onClick={onResend} className="font-semibold text-foreground hover:underline disabled:opacity-50">
+          <button type="button" disabled={disabled} onClick={onResend} className="font-semibold text-ink-primary hover:text-brand hover:underline disabled:opacity-50">
             Resend
           </button>
         )}
       </p>
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && <p className="type-caption text-danger">{error}</p>}
     </div>
   );
 }
@@ -173,11 +173,11 @@ export function PhoneField({ countryCode, onCountryCodeChange, phoneNumber, onPh
           placeholder="5551234567" aria-invalid={Boolean(message)}
           onChange={(e) => { onPhoneNumberChange(e.target.value.replace(/\D/g, "")); setTouched(true); }}
           onKeyDown={(e) => { if (e.key === "Enter" && onSubmit) { e.preventDefault(); onSubmit(); } }}
-          className={cn("h-10 flex-1", message && "border-destructive focus-visible:ring-destructive")} />
+          className={cn("h-10 flex-1", message && "border-danger focus-visible:ring-danger")} />
       </div>
       {message
-        ? <p className="text-sm text-destructive">{message}</p>
-        : <p className="text-sm text-muted-foreground">Standard message and data rates may apply.</p>}
+        ? <p className="type-caption text-danger">{message}</p>
+        : <p className="type-caption text-ink-secondary">Standard message and data rates may apply.</p>}
     </div>
   );
 }
@@ -199,8 +199,8 @@ export function CopyKeyButton({ text, wide = false }) {
   }
   return (
     <button type="button" onClick={copy} title="Copy to clipboard" aria-label="Copy to clipboard"
-      className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-muted">
-      {copied ? <Check className="w-4 h-4" aria-hidden="true" /> : <Copy className="w-4 h-4" aria-hidden="true" />}
+      className="inline-flex items-center justify-center rounded-control p-2 text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover">
+      {copied ? <Check className="w-4 h-4 text-brand" aria-hidden="true" /> : <Copy className="w-4 h-4" aria-hidden="true" />}
     </button>
   );
 }
@@ -212,7 +212,7 @@ export function MfaNotice({ error, signInPath = "/login" }) {
   if (!error) return null;
   const returnTo = safeReturnTo();
   return (
-    <div role="alert" className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm text-center">
+    <div role="alert" className="mb-4 p-3 rounded-control bg-danger/10 text-danger type-caption text-center">
       {error.mustSignInAgain ? (
         <>
           Your sign-in expired.{" "}
@@ -227,8 +227,8 @@ export function MfaNotice({ error, signInPath = "/login" }) {
 
 export function RememberDevice({ checked, onChange }) {
   return (
-    <label className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-      <input type="checkbox" className="h-4 w-4 accent-primary" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+    <label className="flex items-center justify-center gap-2 type-caption text-ink-secondary">
+      <input type="checkbox" className="h-4 w-4 accent-brand rounded-sm" checked={checked} onChange={(e) => onChange(e.target.checked)} />
       Remember this device for 30 days
     </label>
   );

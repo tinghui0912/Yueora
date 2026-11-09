@@ -41,15 +41,15 @@ export default function MfaManage({ session, returnTo }) {
       {view.name === "list" && (
         <div className="space-y-4">
           <MfaNotice error={error} signInPath="/mfa" />
-          {!status && !error && <Loader2 className="mx-auto w-6 h-6 animate-spin text-muted-foreground" />}
+          {!status && !error && <Loader2 className="mx-auto w-6 h-6 animate-spin text-ink-secondary" />}
           {status && METHODS.map(({ id, name, icon: Icon, description }) => {
             const enrolled = status.methods.includes(id);
             return (
-              <div key={id} className="flex flex-wrap items-center gap-3 rounded-lg border border-border p-4">
-                <Icon className="w-5 h-5 text-muted-foreground shrink-0" aria-hidden="true" />
+              <div key={id} className="flex flex-wrap items-center gap-3 rounded-container border border-line-subtle bg-surface-panel p-4">
+                <Icon className="w-5 h-5 text-ink-secondary shrink-0" aria-hidden="true" />
                 <div className="flex-1 min-w-[10rem]">
-                  <p className="font-medium">{name}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="type-body-small font-medium text-ink-primary">{name}</p>
+                  <p className="type-caption text-ink-secondary">
                     {enrolled ? (id === "sms" && status.phone_hint ? `Enabled · ${status.phone_hint}` : "Enabled") : description}
                   </p>
                 </div>
@@ -112,7 +112,7 @@ function Disable({ session, method, onDone, onBack }) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-center">
+      <h2 className="type-section-title font-semibold text-ink-primary text-center">
         {method === "totp" ? "Enter a code from your authenticator app" : "Verify with a code sent to your phone"}
       </h2>
       <MfaNotice error={error} signInPath="/mfa" />

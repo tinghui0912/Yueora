@@ -53,10 +53,14 @@ Before creating or styling any UI element:
    - Body & content: `.type-body`, `.type-body-small`, `.type-label`
    - Captions & stats: `.type-caption`, `.type-metadata`, `.type-metric`
    - **Never combine** semantic typography with conflicting font sizes (e.g. do NOT write `type-page-title text-2xl`).
-3. **Use semantic colors:**
+3. **Use semantic colors & respect the Color Contract:**
    - Text: `text-ink-primary`, `text-ink-secondary`, `text-ink-tertiary`, `text-ink-subtle`
    - Surfaces: `bg-surface-canvas`, `bg-surface-panel`, `bg-surface-paper`, `bg-surface-paper-warm`
    - Lines: `border-line-subtle`, `border-surface-paper-edge`
+   - Brand active context: `bg-brand-soft` (pale green, strictly for selected/active items), `text-brand-soft-foreground`
+   - Primary CTA: `bg-brand` (deep forest green), `text-white`, `hover:bg-brand-hover`
+   - Neutral hovers & muted items: `bg-neutral-muted`, `hover:bg-neutral-hover` (warm ivory-gray, NEVER green)
+   - **Legacy tokens are permanently retired from product code:** NEVER use `bg-accent`, `bg-muted`, `text-muted-foreground`, `bg-primary`, `text-primary`, `bg-card`, `bg-background`, `text-foreground`, `border-border`, `border-input`, `ring-ring` in pages or domain components.
    - Never use raw hex colors (`#...`) in application JSX.
 4. **Never expose debug / prototype simulation controls in production:**
    - Gate verification simulators behind `import.meta.env.DEV` or internal tooling.

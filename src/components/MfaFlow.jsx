@@ -95,7 +95,7 @@ function Verify({ session, challenge, returnTo, onDone }) {
       <MfaHeader title="Verify your identity" />
       <div className="space-y-4">
         <MfaNotice error={error} />
-        <p className="text-sm text-muted-foreground text-center">
+        <p className="type-body-small text-ink-secondary text-center">
           {method === "totp" ? "Enter the code from your authenticator app"
             : sending && !cooldown ? `Sending code to ${phone}…` : `Enter the code sent to ${phone}`}
         </p>
@@ -112,7 +112,7 @@ function Verify({ session, challenge, returnTo, onDone }) {
           </Button>
         )}
         <div className="text-center">
-          <a href={returnTo && returnTo !== "/" ? "/login?returnTo=" + encodeURIComponent(returnTo) : "/login"} className="text-sm text-muted-foreground hover:underline">Back to Login</a>
+          <a href={returnTo && returnTo !== "/" ? "/login?returnTo=" + encodeURIComponent(returnTo) : "/login"} className="type-body-small text-ink-secondary hover:text-ink-primary hover:underline">Back to Login</a>
         </div>
       </div>
     </>

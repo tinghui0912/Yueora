@@ -73,6 +73,12 @@ module.exports = {
 				brand: {
 					DEFAULT: 'hsl(var(--brand))',
 					hover: 'hsl(var(--brand-hover))',
+					soft: 'hsl(var(--brand-soft))',
+				},
+				/* ---- Neutral quiet & hover ---- */
+				neutral: {
+					muted: 'hsl(var(--neutral-muted))',
+					hover: 'hsl(var(--neutral-hover))',
 				},
 				/* ---- Semantic status ---- */
 				success: {

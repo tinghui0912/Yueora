@@ -21,7 +21,7 @@ export default function NotificationSettings() {
     <div className="divide-y divide-line-subtle">
       <SettingsSection title="Notification preferences" desc="Choose what you hear about, and how. Practice reminders are gentle by default.">
         <div className="max-w-2xl overflow-hidden rounded-container border border-line-subtle">
-          <div className="grid grid-cols-[1fr_auto_auto] gap-4 border-b border-line-subtle bg-muted/30 px-5 py-2.5 type-caption text-ink-tertiary">
+          <div className="grid grid-cols-[1fr_auto_auto] gap-4 border-b border-line-subtle bg-neutral-muted/40 px-5 py-2.5 type-caption text-ink-tertiary">
             <span>Category</span>
             <span className="w-16 text-center">In-app</span>
             <span className="w-16 text-center">Email</span>

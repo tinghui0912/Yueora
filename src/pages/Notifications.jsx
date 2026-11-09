@@ -61,7 +61,17 @@ export default function Notifications() {
 
       <div className="mt-5 flex flex-wrap gap-1">
         {filters.map((t) => (
-          <button key={t.key} onClick={() => setFilter(t.key)} className={`rounded-control px-3 py-1.5 text-sm ${filter === t.key ? 'bg-accent font-medium text-accent-foreground' : 'text-muted-foreground hover:bg-accent/50'}`}>{t.label}</button>
+          <button
+            key={t.key}
+            onClick={() => setFilter(t.key)}
+            className={`rounded-control px-3 py-1.5 type-body-small transition-colors ${
+              filter === t.key
+                ? 'bg-brand-soft font-medium text-brand-soft-foreground'
+                : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
+            }`}
+          >
+            {t.label}
+          </button>
         ))}
       </div>
 
@@ -91,13 +101,13 @@ function Group({ label, items, onOpen, navigate }) {
           const Icon = categoryIcon[n.category] || Sparkles;
           return (
             <li key={n.id}>
-              <button onClick={() => { onOpen(n.id); navigate(n.href); }} className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-accent/40">
-                <span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-control ${n.unread ? 'bg-primary/10 text-primary' : 'bg-accent text-muted-foreground'}`}><Icon className="h-4 w-4" /></span>
+              <button onClick={() => { onOpen(n.id); navigate(n.href); }} className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-neutral-hover transition-colors">
+                <span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-control ${n.unread ? 'bg-brand-soft text-brand' : 'bg-neutral-muted text-ink-secondary'}`}><Icon className="h-4 w-4" /></span>
                 <span className="min-w-0 flex-1">
-                  <span className="flex items-center justify-between gap-2"><span className={`text-sm ${n.unread ? 'font-medium' : 'text-muted-foreground'}`}>{n.title}</span><span className="shrink-0 type-metadata text-ink-tertiary">{n.time}</span></span>
+                  <span className="flex items-center justify-between gap-2"><span className={`type-body-small ${n.unread ? 'font-medium text-ink-primary' : 'text-ink-secondary'}`}>{n.title}</span><span className="shrink-0 type-metadata text-ink-tertiary">{n.time}</span></span>
                   <span className="mt-0.5 block truncate type-body-small text-ink-secondary">{n.body}</span>
                 </span>
-                {n.unread && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary" />}
+                {n.unread && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand" />}
               </button>
             </li>
           );

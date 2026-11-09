@@ -13,7 +13,7 @@ export default function OptionGroup({ value, onChange, options, ariaLabel }) {
             role="radio"
             aria-checked={active}
             onClick={() => onChange(o.value)}
-            className={`flex w-full items-start gap-3 py-3 text-left transition-colors ${i > 0 ? 'border-t border-line-subtle' : ''} ${active ? '' : 'hover:bg-accent/40'}`}
+            className={`flex w-full items-start gap-3 py-3 px-2 rounded-control text-left transition-colors ${i > 0 ? 'border-t border-line-subtle' : ''} ${active ? 'bg-brand-soft/30' : 'hover:bg-neutral-hover'}`}
           >
             <span
               aria-hidden="true"

@@ -138,7 +138,7 @@ export default function OAuthConsent() {
   if (checking) {
     return (
       <AuthLayout icon={ShieldCheck} title="Authorize access">
-        <div className="flex items-center justify-center py-6 text-muted-foreground">
+        <div className="flex items-center justify-center py-6 text-ink-secondary">
           <Loader2 className="w-5 h-5 mr-2 animate-spin" aria-hidden="true" />
           Loading…
         </div>
@@ -165,7 +165,7 @@ export default function OAuthConsent() {
   if (reconnect) {
     return (
       <AuthLayout icon={ShieldCheck} title="Reconnect required">
-        <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+        <div className="p-3 rounded-control bg-danger/10 text-danger type-body-small">
           {reconnect}
         </div>
       </AuthLayout>
@@ -178,7 +178,7 @@ export default function OAuthConsent() {
   if (error && !info) {
     return (
       <AuthLayout icon={ShieldCheck} title="Authorize access">
-        <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+        <div className="p-3 rounded-control bg-danger/10 text-danger type-body-small">
           {error}
         </div>
       </AuthLayout>
@@ -194,23 +194,23 @@ export default function OAuthConsent() {
       subtitle={`${client} wants to access ${appName} on your behalf`}
     >
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+        <div className="mb-4 p-3 rounded-control bg-danger/10 text-danger type-body-small">
           {error}
         </div>
       )}
 
-      <p className="text-sm font-medium text-foreground mb-2">
+      <p className="type-body-small font-medium text-ink-primary mb-2">
         {tools.length ? `It will be able to use these tools in ${appName}:` : "No tools requested"}
       </p>
       {tools.length > 0 && (
-        <ul className="space-y-2 text-sm mb-6">
+        <ul className="space-y-2 type-body-small mb-6">
           {tools.map((tool) => (
             <li key={tool.name} className="flex flex-col">
-              <span className="text-foreground font-medium">
+              <span className="text-ink-primary font-medium">
                 {tool.title || tool.name}
               </span>
               {tool.description && (
-                <span className="text-muted-foreground">{tool.description}</span>
+                <span className="text-ink-secondary">{tool.description}</span>
               )}
             </li>
           ))}

@@ -58,7 +58,7 @@ export default function SharingVisual() {
               <p className="type-metadata text-ink-tertiary">emma.debussy@example.com</p>
             </div>
           </div>
-          <span className="rounded-control bg-accent/60 px-2.5 py-1 text-xs font-medium text-accent-foreground border border-line-subtle">
+          <span className="rounded-control bg-neutral-muted px-2.5 py-1 type-caption font-medium text-ink-secondary border border-line-subtle">
             Can view &amp; annotate
           </span>
         </div>

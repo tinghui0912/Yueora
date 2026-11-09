@@ -23,7 +23,7 @@ export default function HelpArticle() {
       <PublicShell>
         <div className="mx-auto max-w-2xl px-5 py-16 text-center">
           <h1 className="type-section-title text-ink-primary">Article not found</h1>
-          <Link to="/help" className="mt-4 inline-block text-primary underline">Back to help center</Link>
+          <Link to="/help" className="mt-4 inline-block type-body-small text-brand hover:underline">Back to help center</Link>
         </div>
       </PublicShell>
     );
@@ -54,8 +54,8 @@ export default function HelpArticle() {
                 if (!a) return null;
                 return (
                   <li key={r}>
-                    <Link to={`/help/${r}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent/40">
-                      <span className="text-sm font-medium text-ink-primary">{a.title}</span>
+                    <Link to={`/help/${r}`} className="flex items-center justify-between px-4 py-3 hover:bg-neutral-hover transition-colors">
+                      <span className="type-body-small font-medium text-ink-primary">{a.title}</span>
                       <ChevronRight className="h-4 w-4 text-ink-tertiary" />
                     </Link>
                   </li>
@@ -84,9 +84,9 @@ export default function HelpArticle() {
           <DialogHeader><DialogTitle>Contact support</DialogTitle></DialogHeader>
           {sent ? (
             <div className="py-6 text-center">
-              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary"><ThumbsUp className="h-5 w-5" /></div>
-              <p className="mt-3 font-medium">Message sent</p>
-              <p className="mt-1 text-sm text-muted-foreground">We’ll get back to you soon.</p>
+              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-brand"><ThumbsUp className="h-5 w-5" /></div>
+              <p className="mt-3 type-body-small font-medium text-ink-primary">Message sent</p>
+              <p className="mt-1 type-caption text-ink-secondary">We’ll get back to you soon.</p>
             </div>
           ) : (
             <div className="space-y-3">

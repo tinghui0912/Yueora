@@ -164,7 +164,7 @@ export default function SyncPlayback({
             type="button"
             onClick={restart}
             disabled={unavailable}
-            className="rounded-control border border-line-subtle p-2 text-ink-secondary hover:bg-accent disabled:opacity-40"
+            className="rounded-control border border-line-subtle p-2 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary disabled:opacity-40"
             aria-label="Restart from the beginning"
           >
             <RotateCcw className="h-4 w-4" />
@@ -173,7 +173,7 @@ export default function SyncPlayback({
             type="button"
             onClick={() => seek(time - 10)}
             disabled={unavailable}
-            className="rounded-control border border-line-subtle p-2 text-ink-secondary hover:bg-accent disabled:opacity-40"
+            className="rounded-control border border-line-subtle p-2 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary disabled:opacity-40"
             aria-label="Back 10 seconds"
           >
             <SkipBack className="h-4 w-4" />
@@ -182,7 +182,7 @@ export default function SyncPlayback({
             type="button"
             onClick={() => (playing ? pause() : play())}
             disabled={unavailable}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground disabled:opacity-40"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-brand text-white hover:bg-brand-hover disabled:opacity-40"
             aria-label={playing ? 'Pause' : 'Play'}
           >
             {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
@@ -191,14 +191,14 @@ export default function SyncPlayback({
             type="button"
             onClick={() => seek(time + 10)}
             disabled={unavailable}
-            className="rounded-control border border-line-subtle p-2 text-ink-secondary hover:bg-accent disabled:opacity-40"
+            className="rounded-control border border-line-subtle p-2 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary disabled:opacity-40"
             aria-label="Forward 10 seconds"
           >
             <SkipForward className="h-4 w-4" />
           </button>
 
           <div className="relative mx-1 min-w-[140px] flex-1">
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted" aria-hidden="true">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-muted" aria-hidden="true">
               <div className="h-full rounded-full bg-brand" style={{ width: `${progress}%` }} />
             </div>
             <input
@@ -218,7 +218,7 @@ export default function SyncPlayback({
             {fmtClock(time)} / {fmtClock(shownDuration)}
           </span>
         </div>
-        {mediaError && <p className="mt-2 type-metadata text-destructive">{mediaError}</p>}
+        {mediaError && <p className="mt-2 type-metadata text-danger">{mediaError}</p>}
       </div>
     </div>
   );
