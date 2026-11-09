@@ -418,7 +418,7 @@ export default function AddScore() {
         {step === 5 && (
           <Surface tone="panel" elevation="paper" padding="lg" className="space-y-5 text-center sm:text-left">
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-brand-soft-foreground">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas text-brand">
                 <Check className="icon-lg" />
               </span>
               <div>

@@ -177,8 +177,8 @@ export default function Library() {
               onClick={() => { setParam('view', item.key); clearSelect(); }}
               className={`whitespace-nowrap rounded-control px-3 py-1.5 text-xs transition-colors ${
                 active === item.key
-                  ? 'bg-brand-soft font-semibold text-brand-soft-foreground shadow-xs'
-                  : 'text-ink-secondary hover:bg-neutral-hover'
+                  ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                  : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
               }`}
             >
               {item.label}
@@ -190,8 +190,8 @@ export default function Library() {
               onClick={() => { setParam('view', `folder:${f.id}`); clearSelect(); }}
               className={`whitespace-nowrap rounded-control px-3 py-1.5 text-xs transition-colors ${
                 active === `folder:${f.id}`
-                  ? 'bg-brand-soft font-semibold text-brand-soft-foreground shadow-xs'
-                  : 'text-ink-secondary hover:bg-neutral-hover'
+                  ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                  : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
               }`}
             >
               {f.name}
@@ -199,7 +199,7 @@ export default function Library() {
           ))}
           <button
             onClick={() => setManageFoldersOpen(true)}
-            className="flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 text-xs text-ink-secondary hover:bg-neutral-hover"
+            className="flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 text-xs text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary"
           >
             <Settings className="h-3.5 w-3.5" /> Manage
           </button>
@@ -207,8 +207,8 @@ export default function Library() {
             onClick={() => { setParam('view', 'trash'); clearSelect(); }}
             className={`flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 text-xs transition-colors ${
               active === 'trash'
-                ? 'bg-brand-soft font-semibold text-brand-soft-foreground shadow-xs'
-                : 'text-ink-secondary hover:bg-neutral-hover'
+                ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
             }`}
           >
             <Trash2 className="h-3.5 w-3.5" /> Trash
@@ -285,10 +285,12 @@ export default function Library() {
                   size="md"
                   onClick={() => { setShowFilters((s) => !s); setShowSort(false); }}
                   aria-label="Filter repertoire"
-                  className={filterFav || filterInstrument !== 'all' || filterPlayed !== 'any' ? 'border-brand/40 bg-brand-soft text-brand-soft-foreground font-semibold' : ''}
                 >
                   <SlidersHorizontal className="icon-sm" />
                   <span className="hidden sm:inline">Filter</span>
+                  {(filterFav || filterInstrument !== 'all' || filterPlayed !== 'any') && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+                  )}
                 </Button>
                 {showFilters && (
                   <div className="absolute right-0 z-20 mt-1 w-56 rounded-container border border-surface-paper-edge bg-surface-panel p-3 shadow-overlay">
@@ -512,13 +514,17 @@ export default function Library() {
                     </span>
                   </Link>
 
-                  <Link
-                    to={`/score/${s.id}/setup`}
-                    className="flex shrink-0 items-center gap-1.5 rounded-control bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-soft-foreground hover:bg-brand hover:text-white transition-colors"
+                  <Button
+                    intent="subtle"
+                    size="xs"
+                    asChild
+                    className="shrink-0"
                   >
-                    <Play className="h-3 w-3 fill-current" />
-                    <span>Practice</span>
-                  </Link>
+                    <Link to={`/score/${s.id}/setup`}>
+                      <Play className="icon-xs fill-current" />
+                      <span>Practice</span>
+                    </Link>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -595,7 +601,7 @@ export default function Library() {
                       onKeyDown={(e) => { if (e.key === 'Enter') { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); } }}
                       className="h-7 flex-1 rounded border border-surface-paper-edge bg-surface-paper px-2 text-xs outline-none focus:border-brand"
                     />
-                    <button onClick={() => { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); }} className="rounded p-1 text-brand hover:bg-brand-soft" aria-label="Confirm"><Check className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); }} className="rounded p-1 text-brand hover:bg-neutral-hover" aria-label="Confirm"><Check className="h-3.5 w-3.5" /></button>
                     <button onClick={() => setEditingFolderId(null)} className="rounded p-1 text-ink-tertiary hover:bg-neutral-hover" aria-label="Cancel"><X className="h-3.5 w-3.5" /></button>
                   </>
                 ) : (

@@ -130,7 +130,7 @@ export default function PracticeSummary() {
         <ArrowLeft className="h-4 w-4" /> {score ? live.scoreTitle : 'Practice'}
       </Link>
 
-      <h1 className="mt-6 type-display text-[clamp(1.75rem,4vw,2.75rem)] text-ink-primary">
+      <h1 className="mt-6 type-display text-ink-primary">
         You played it through.
       </h1>
       <p className="mt-2 type-body text-ink-secondary">

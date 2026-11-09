@@ -5,6 +5,10 @@ import path from 'path';
 const INDEX_CSS_PATH = path.resolve('src/index.css');
 
 const REQUIRED_TYPOGRAPHY = [
+  'type-hero-title',
+  'type-marketing-title',
+  'type-editorial-quote',
+  'type-marketing-body',
   'type-display',
   'type-experience-title',
   'type-page-title',
@@ -516,6 +520,82 @@ function verifyBrandSoftVsWashIntegrity(issues = []) {
 }
 verifyBrandSoftVsWashIntegrity(totalViolations);
 
+// Phase 7: Semantic Navigation & Landing Surface Contract Verification
+function verifyNavigationAndSurfaceContracts(issues = []) {
+  // 1. SidebarNavItem: assert NO bg-brand-soft
+  const sidebarNavItemPath = path.resolve('src/components/app-shell/SidebarNavItem.jsx');
+  if (fs.existsSync(sidebarNavItemPath)) {
+    const code = fs.readFileSync(sidebarNavItemPath, 'utf8');
+    if (code.includes('bg-brand-soft')) {
+      issues.push({
+        file: 'src/components/app-shell/SidebarNavItem.jsx',
+        line: 1,
+        matched: 'bg-brand-soft in SidebarNavItem',
+        message: 'SidebarNavItem must use neutral active navigation (bg-neutral-muted text-ink-primary font-semibold shadow-xs) instead of bg-brand-soft.',
+      });
+    }
+  }
+
+  // 2. LibrarySubRail: assert NO bg-brand-soft
+  const librarySubRailPath = path.resolve('src/components/library/LibrarySubRail.jsx');
+  if (fs.existsSync(librarySubRailPath)) {
+    const code = fs.readFileSync(librarySubRailPath, 'utf8');
+    if (code.includes('bg-brand-soft')) {
+      issues.push({
+        file: 'src/components/library/LibrarySubRail.jsx',
+        line: 1,
+        matched: 'bg-brand-soft in LibrarySubRail',
+        message: 'LibrarySubRail navigation items must use neutral active styling (bg-neutral-muted) instead of bg-brand-soft.',
+      });
+    }
+  }
+
+  // 3. Settings.jsx: assert NO bg-brand-soft on navigation tabs
+  const settingsPath = path.resolve('src/pages/Settings.jsx');
+  if (fs.existsSync(settingsPath)) {
+    const code = fs.readFileSync(settingsPath, 'utf8');
+    if (code.includes('bg-brand-soft')) {
+      issues.push({
+        file: 'src/pages/Settings.jsx',
+        line: 1,
+        matched: 'bg-brand-soft in Settings navigation',
+        message: 'Settings navigation tabs must use neutral active styling (bg-neutral-muted) instead of bg-brand-soft.',
+      });
+    }
+  }
+
+  // 4. Landing.jsx top-level sections: assert NO banned full-width section surfaces
+  const landingPath = path.resolve('src/pages/Landing.jsx');
+  if (fs.existsSync(landingPath)) {
+    const code = fs.readFileSync(landingPath, 'utf8');
+    const sectionTags = code.match(/<section[^>]*>/g) || [];
+    const BANNED_SECTION_SURFACES = [
+      'bg-brand-wash',
+      'bg-surface-paper',
+      'bg-surface-paper-warm',
+      'bg-neutral-muted',
+      'bg-brand',
+    ];
+
+    sectionTags.forEach((tag) => {
+      BANNED_SECTION_SURFACES.forEach((banned) => {
+        const regex = new RegExp(`\\b${banned}(?:\\/\\d+)?\\b`);
+        if (regex.test(tag)) {
+          issues.push({
+            file: 'src/pages/Landing.jsx',
+            line: 1,
+            matched: tag,
+            message: `Landing top-level section contains banned surface '${banned}'. Large surfaces must strictly alternate between bg-surface-canvas and bg-surface-panel.`,
+          });
+        }
+      });
+    });
+  }
+
+  return issues;
+}
+verifyNavigationAndSurfaceContracts(totalViolations);
+
 if (totalViolations.length === 0) {
   console.log('✅ Design System integrity checks passed.');
   console.log(`   - Verified ${REQUIRED_TYPOGRAPHY.length} semantic typography roles in src/index.css`);
@@ -527,6 +607,8 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified jsconfig exclusion integrity (zero excluded UI primitives imported by application)`);
   console.log(`   - Verified legacy color token retirement (zero legacy tokens in application pages or active primitives)`);
   console.log(`   - Verified brand-soft vs brand-wash integrity (zero arbitrary bg-brand/opacity in application code)`);
+  console.log(`   - Verified navigation active contract (SidebarNavItem, LibrarySubRail, Settings strictly use neutral active)`);
+  console.log(`   - Verified landing page surface rhythm (zero banned surfaces on full-width sections; strict canvas/panel alternating rhythm)`);
   console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} root directories\n`);
   process.exit(0);
 } else {

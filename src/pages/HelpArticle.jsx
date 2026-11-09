@@ -84,7 +84,7 @@ export default function HelpArticle() {
           <DialogHeader><DialogTitle>Contact support</DialogTitle></DialogHeader>
           {sent ? (
             <div className="py-6 text-center">
-              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-brand"><ThumbsUp className="h-5 w-5" /></div>
+              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas text-brand"><ThumbsUp className="h-5 w-5" /></div>
               <p className="mt-3 type-body-small font-medium text-ink-primary">Message sent</p>
               <p className="mt-1 type-caption text-ink-secondary">We’ll get back to you soon.</p>
             </div>

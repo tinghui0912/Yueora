@@ -64,7 +64,7 @@ export default function VerifyEmail() {
   return (
     <ExternalShell>
       <div className="mx-auto flex max-w-md flex-col items-center px-5 py-16 text-center md:px-8">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-brand-soft-foreground">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-line-subtle bg-surface-panel text-brand">
           <MailCheck className="icon-xl" aria-hidden="true" />
         </div>
         <h1 className="mt-5 type-page-title text-ink-primary">Check your email</h1>

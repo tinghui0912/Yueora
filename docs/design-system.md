@@ -32,7 +32,11 @@ All typography in application pages must use semantic typography roles. **Do not
 
 | Semantic Class | Target Role | Baseline Size | Line Height | Tracking | Font Family |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `.type-display` | Hero titles & brand headlines | `clamp(2rem, 4vw, 3rem)` | `1.1` | `-0.02em` | Newsreader |
+| `.type-hero-title` | Marketing page primary hero headline | `clamp(2.5rem, 5vw, 4rem)` | `1.05` | `-0.025em` | Newsreader (500) |
+| `.type-marketing-title` | Marketing chapter / section titles | `clamp(1.875rem, 3.5vw, 2.75rem)` | `1.15` | `-0.02em` | Newsreader (500) |
+| `.type-editorial-quote` | Philosophy, pull quotes & reflections | `clamp(1.25rem, 2vw, 1.5rem)` | `1.5` | Normal | Newsreader (400, italic) |
+| `.type-marketing-body` | Marketing lead paragraphs & introductory copy | `18px` (`1.125rem`) | `1.65` | Normal | Plus Jakarta Sans (400) |
+| `.type-display` | Editorial display titles & brand headlines | `clamp(2rem, 4vw, 3rem)` | `1.1` | `-0.02em` | Newsreader |
 | `.type-experience-title` | Core musical space titles (Repertoire, Practice Hub, Preserved Moments) | Mobile `32px` (`2rem`), Desktop `38px` (`2.375rem`) | `1.15` | `-0.02em` | Newsreader |
 | `.type-page-title` | Application page headings | Mobile `28px` (`1.75rem`), Desktop `34px` (`2.125rem`) | `1.2` | `-0.015em` | Newsreader |
 | `.type-section-title` | Major section headings | Mobile `20px` (`1.25rem`), Desktop `22px` (`1.375rem`) | `1.25–1.3` | `-0.01em` | Newsreader |
@@ -67,15 +71,19 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
   - `border-line-subrail` (`hsl(47 14% 88%)`): Distinctive divider for secondary navigation rails.
   - `border-surface-paper-edge` (`hsl(44 16% 87%)`): Tactile card and paper boundary.
 - **Brand & Active States:**
-  - `bg-brand` (`hsl(148 36% 27%)`): Deep forest green for primary CTA buttons, strong emphasis, and checkmark indicators.
+  - `bg-brand` (`hsl(148 36% 27%)`): Deep forest green for primary CTA buttons, strong emphasis, and checkmark indicators. Brand is an accent, never a full-width background system.
   - `bg-brand-hover` (`hsl(148 36% 22%)`): Darker forest green for primary CTA hover.
-  - `bg-brand-soft` (`hsl(148 36% 93%)`): **Pale green has exactly ONE meaning: selected / active Yueora context.** Used for active tabs, selected choice cards, active filters, and reviewed badges. **NEVER** use for neutral hover or disabled states.
+  - `bg-brand-soft` (`hsl(148 36% 93%)`): **Selected CONTENT state only.** Pale green is strictly reserved for selected content objects (selected ChoiceCard, selected option, active measure looping range, selected table row). It is **BANNED** on navigation active items, ordinary hovers, buttons/actions, status/verification icons, popular badges, chart bars, and decorative icon circles.
   - `text-brand-soft-foreground` (`hsl(148 36% 27%)`): Contrast foreground text on pale green surfaces.
-  - `bg-brand-wash` (`hsl(148 24% 96%)`): **Featured brand surface.** Used for Priority 1 re-engagement ("Pick up where you left off"), returning-user recommendations, and signature practice stand sections. Distinct from canvas and never confused with active selection.
+  - `bg-brand-wash` (`hsl(148 24% 96%)`): **Featured brand surface for contained modules.** Used for Priority 1 re-engagement ("Pick up where you left off"), returning-user recommendations, and contained highlight modules. NEVER used as a full-width page section background.
   - `border-brand-wash-border` (`hsl(148 26% 88%)`): Boundary for featured brand surfaces.
-- **Neutral Quiet & Hover:**
-  - `bg-neutral-muted` (`hsl(44 14% 92%)`): Warm ivory-neutral for passive badges, tab tracks, progress backgrounds.
-  - `bg-neutral-hover` (`hsl(44 16% 94%)`): Warm neutral hover state for dropdown menu items, command items, unselected tabs.
+- **Neutral Quiet & Hover & Navigation Active:**
+  - `bg-neutral-muted` (`hsl(44 14% 92%)`): Warm ivory-neutral for **Navigation Active items** (`bg-neutral-muted font-semibold text-ink-primary shadow-xs`), passive badges, tab tracks, progress backgrounds.
+  - `bg-neutral-hover` (`hsl(44 16% 94%)`): Warm neutral hover state for all interactive items, navigation links, and dropdown items (warm ivory-gray, NEVER green).
+- **Navigation Active Contract:**
+  - Inactive: `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`
+  - Active: `bg-neutral-muted font-semibold text-ink-primary shadow-xs` with subtle `text-brand` icon cue.
+  - Uniform across `SidebarNavItem`, `LibrarySubRail`, `Settings`, and `Help`.
 - **Semantic Feedback:**
   - `text-success` / `bg-success`: Subdued musical confirmation green (`hsl(148 40% 32%)`).
   - `text-warning` / `bg-warning`: Warm amber for pending or verification notices (`hsl(38 76% 40%)`).
@@ -132,21 +140,28 @@ Authenticated application layout establishes a 5-tier depth model:
 
 ### 2.4 Marketing Surface Rhythm Contract (Landing Page)
 
-Marketing pages must follow an intentional chapter rhythm rather than being flattened into one continuous canvas wash:
+> **Golden Rule of Restraint:**
+> *Restraint creates hierarchy. Brand color is an accent, not a background system.*
+> *Structure should be felt, not painted.*
+
+Full-width marketing page sections strictly alternate between two canonical surfaces: `surface-canvas` (warm ivory) and `surface-panel` (editorial white).
+**Banned on full-width sections:** `bg-brand-wash`, `bg-surface-paper`, `bg-surface-paper-warm`, `bg-neutral-muted`, `bg-brand`.
 
 | Section | Content Role | Semantic Surface | Border Divider |
 | :--- | :--- | :--- | :--- |
 | **01. Hero** | Musical Invitation ("Play what you love") | `bg-surface-canvas` | — |
-| **02. Philosophy** | 4 Quiet Pillars ("Your music, not ours") | `bg-surface-panel` (pure editorial white) | `border-t border-line-subtle` |
-| **03. Lifecycle** | Paper-to-playable transformation continuum | `bg-surface-paper` (tactile paper) | `border-t border-line-subtle` |
-| **04. Repertoire** | Music cabinet ("Not a cloud drive") | `bg-surface-canvas` | `border-t border-line-subtle` |
-| **05. Practice Stand** | Signature non-judgmental phrase following | `bg-brand-wash` (subtle brand wash) | `border-y border-brand-wash-border` |
-| **06. Performances** | Preserved takes & memory archive | `bg-surface-paper-warm` (warm paper) | `border-t border-surface-paper-edge` |
+| **02. Philosophy** | 4 Quiet Pillars ("Your music, not ours") | `bg-surface-panel` | `border-t border-line-subtle` |
+| **03. Lifecycle** | Paper-to-playable transformation continuum | `bg-surface-canvas` | `border-t border-line-subtle` |
+| **04. Repertoire** | Music cabinet ("Not a cloud drive") | `bg-surface-panel` | `border-t border-line-subtle` |
+| **05. Practice Stand** | Signature non-judgmental phrase following | `bg-surface-canvas` | `border-t border-line-subtle` |
+| **06. Performances** | Preserved takes & memory archive | `bg-surface-panel` | `border-t border-line-subtle` |
 | **07. Sharing** | Private sanctuary ("A door you choose to open") | `bg-surface-canvas` | `border-t border-line-subtle` |
-| **08. Pricing** | Durable & fair subscription plans | `bg-neutral-muted/40` (soft neutral backdrop) | `border-t border-line-subtle` |
-| **09. FAQ** | Clarity & questions | `bg-surface-panel` (clean reading white) | `border-t border-line-subtle` |
-| **10. Final CTA** | Inverse brand moment ("Play what you love") | `bg-brand text-white` (deep forest green) | `border-t border-brand` |
+| **08. Pricing** | Durable & fair subscription plans | `bg-surface-panel` | `border-t border-line-subtle` |
+| **09. FAQ** | Clarity & questions | `bg-surface-canvas` | `border-t border-line-subtle` |
+| **10. Final CTA** | Clean editorial closing ("Play what you love") | `bg-surface-panel` | `border-t border-line-subtle` |
 | **11. Footer** | Sanctuary credits & quiet legal navigation | `bg-surface-canvas` | `border-t border-line-subtle` |
+
+Contained artifacts within these sections (e.g. music cards, take folios, featured modules) utilize `surface-paper`, `surface-paper-warm`, `brand-wash`, and `surface-panel` with appropriate elevation.
 
 ### 2.5 Canonical Control Scale & Icon Sizing
 

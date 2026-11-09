@@ -118,7 +118,7 @@ export default function PerformanceDetail() {
       {/* Header */}
       <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h1 className="type-page-title text-[clamp(1.6rem,3.5vw,2.25rem)] text-ink-primary">{performance.scoreTitleSnapshot}</h1>
+          <h1 className="type-page-title text-ink-primary">{performance.scoreTitleSnapshot}</h1>
           <p className="mt-1 type-body-small text-ink-secondary">
             {performance.composer || 'Composer unknown'} · {fullDate(performance.createdAt)} · {fmtClock(performance.durationSeconds)}
           </p>

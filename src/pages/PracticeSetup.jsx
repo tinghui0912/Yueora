@@ -202,7 +202,7 @@ export default function PracticeSetup() {
         <ArrowLeft className="h-4 w-4" /> {score.title}
       </Link>
 
-      <h1 className="mt-4 font-display text-[clamp(1.5rem,3vw,2rem)] font-medium text-ink-primary">Practice setup</h1>
+      <h1 className="mt-4 type-page-title text-ink-primary">Practice setup</h1>
       <p className="mt-1.5 type-body-small text-ink-secondary">
         Yueora gets the technical parts ready first, so pressing Start only means the music begins.
       </p>

@@ -88,7 +88,7 @@ export default function PrivacySettings() {
         <DialogContent className="max-w-sm">
           {deleteState === 'scheduled' ? (
             <div className="py-4 text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas">
                 <CheckCircle2 className="h-6 w-6 text-brand" />
               </div>
               <p className="type-body-small font-medium text-ink-primary">Account scheduled for deletion</p>

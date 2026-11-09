@@ -37,7 +37,7 @@ export default function Pricing() {
     <PublicShell>
       <div className="mx-auto max-w-4xl px-5 py-12 md:px-8">
         <div className="text-center">
-          <h1 className="font-display text-[clamp(2rem,4vw,3rem)] font-medium text-ink-primary">Play more, for less</h1>
+          <h1 className="type-marketing-title text-ink-primary">Play more, for less</h1>
           <p className="mx-auto mt-3 max-w-md type-body-small text-ink-secondary">
             Start free. Upgrade when your library grows. Cancel or change your plan whenever you like.
           </p>
@@ -72,7 +72,7 @@ export default function Pricing() {
                 <div className="flex items-center justify-between">
                   <p className="font-display text-xl font-medium text-ink-primary">{p.name}</p>
                   {isPro && (
-                    <span className="rounded-control bg-brand-soft px-2.5 py-0.5 type-caption font-semibold text-brand-soft-foreground">Popular</span>
+                    <span className="rounded-control border border-line-subtle bg-surface-panel px-2.5 py-0.5 type-caption font-semibold text-brand">Popular</span>
                   )}
                 </div>
 

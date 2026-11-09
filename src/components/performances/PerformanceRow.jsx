@@ -24,7 +24,7 @@ export default function PerformanceRow({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-soft text-brand-soft-foreground">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas text-brand">
               <MemoryGlyph className="h-3 w-3" />
             </span>
             <Link

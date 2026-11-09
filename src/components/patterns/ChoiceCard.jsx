@@ -73,7 +73,7 @@ export function ChoiceCard({
               'flex h-control-md w-control-md shrink-0 items-center justify-center rounded-control transition-colors duration-base',
               selected
                 ? 'bg-brand text-white shadow-xs'
-                : 'border border-line-subtle bg-surface-canvas text-brand group-hover:bg-brand-soft'
+                : 'border border-line-subtle bg-surface-canvas text-brand group-hover:bg-neutral-hover'
             )}
           >
             <Icon className="icon-md" aria-hidden="true" />

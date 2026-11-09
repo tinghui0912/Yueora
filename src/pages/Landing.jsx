@@ -132,13 +132,13 @@ export default function Landing() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="mt-6 font-display text-[clamp(2.75rem,5.5vw,4.25rem)] font-medium leading-[1.04] tracking-tight text-ink-primary">
+            <h1 className="mt-6 type-hero-title text-ink-primary">
               Play what<br />
               <span className="italic font-normal">you love.</span>
             </h1>
 
             {/* Supporting Copy */}
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-ink-secondary">
+            <p className="mt-6 max-w-lg type-marketing-body text-ink-secondary">
               Bring the sheet music that already matters to you. Yueora turns physical pages into
               living interactive scores, holds your personal repertoire, follows your playing without
               judgment, and preserves the musical moments worth keeping.
@@ -188,16 +188,16 @@ export default function Landing() {
             <p className="type-caption font-semibold uppercase tracking-wider text-brand">
               The Yueora Philosophy
             </p>
-            <h2 className="mt-3 font-display text-[clamp(2rem,4vw,3.2rem)] font-medium leading-[1.1] text-ink-primary">
+            <h2 className="mt-3 type-marketing-title text-ink-primary">
               Your music, <br />
               <span className="italic font-normal">not ours.</span>
             </h2>
-            <p className="mt-6 text-lg leading-relaxed text-ink-secondary">
+            <p className="mt-6 type-marketing-body text-ink-secondary">
               Most music platforms give you an algorithmically prescribed course, pressure you with
               streaks, or judge every note against an unforgiving standard. Yueora is built on a
               different belief:
             </p>
-            <p className="mt-4 font-serif italic text-xl leading-relaxed text-ink-primary">
+            <p className="mt-4 type-editorial-quote text-ink-primary">
               &ldquo;The music already on your piano stand is the music that deserves your devotion.
               Yueora does not teach you what to love—it gives what you love a lasting home.&rdquo;
             </p>
@@ -253,17 +253,17 @@ export default function Landing() {
       </section>
 
       {/* 3. THE CONNECTED LIFECYCLE: "A piece has a life in Yueora." */}
-      <section id="lifecycle" className="border-t border-line-subtle bg-surface-paper py-20 md:py-24">
+      <section id="lifecycle" className="border-t border-line-subtle bg-surface-canvas py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand">
               <RepertoireGlyph className="h-4 w-4" />
               <span>The Musical Lifecycle</span>
             </div>
-            <h2 className="mt-3 font-display text-[clamp(2rem,3.5vw,2.75rem)] font-medium text-ink-primary">
+            <h2 className="mt-3 type-marketing-title text-ink-primary">
               A piece has a life in Yueora.
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-ink-secondary">
+            <p className="mt-4 type-body text-ink-secondary">
               Follow how Claude Debussy’s <span className="font-serif italic font-medium text-ink-primary">Clair de Lune</span> journeys
               through Yueora: from a wrinkled paper scan into a living performance memory.
             </p>
@@ -283,7 +283,7 @@ export default function Landing() {
                     className={`w-full text-left rounded-lg p-4 transition-[color,background-color,border-color,box-shadow] duration-fast ${
                       isActive
                         ? 'music-paper shadow-paper border-l-4 border-l-brand'
-                        : 'border border-transparent hover:bg-surface-panel/60'
+                        : 'border border-transparent hover:bg-surface-panel/80'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -331,7 +331,7 @@ export default function Landing() {
                 <div className="music-paper rounded-lg p-6 shadow-paper">
                   <div className="flex items-center justify-between border-b border-line-subtle pb-3">
                     <p className="type-caption text-ink-tertiary">Step 02 · Interactive Score Review</p>
-                    <span className="rounded-control bg-brand-soft px-2 py-0.5 text-xs font-semibold text-brand-soft-foreground">
+                    <span className="rounded-control border border-line-subtle bg-surface-panel px-2 py-0.5 type-caption font-semibold text-brand">
                       OMR Recognized
                     </span>
                   </div>
@@ -359,7 +359,7 @@ export default function Landing() {
                         </h4>
                         <p className="type-metadata text-ink-secondary">Claude Debussy</p>
                       </div>
-                      <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand-soft-foreground">
+                      <span className="rounded-full border border-line-subtle bg-surface-panel px-2.5 py-0.5 type-caption font-semibold text-brand">
                         Active Study
                       </span>
                     </div>
@@ -384,7 +384,7 @@ export default function Landing() {
       </section>
 
       {/* 4. DEEP DIVE: PERSONAL REPERTOIRE */}
-      <section id="repertoire" className="border-t border-line-subtle bg-surface-canvas py-20 md:py-24">
+      <section id="repertoire" className="border-t border-line-subtle bg-surface-panel py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -392,11 +392,11 @@ export default function Landing() {
                 <BookOpen className="h-4 w-4" />
                 <span>Personal Repertoire</span>
               </div>
-              <h2 className="mt-3 font-display text-[clamp(2rem,3.5vw,2.75rem)] font-medium text-ink-primary">
+              <h2 className="mt-3 type-marketing-title text-ink-primary">
                 A music cabinet,<br />
                 not a cloud drive.
               </h2>
-              <p className="mt-5 text-base leading-relaxed text-ink-secondary">
+              <p className="mt-5 type-body text-ink-secondary">
                 Yueora doesn’t treat your music like generic files or spreadsheets. Every piece is
                 bound into tactile paper, complete with its practice timeline, saved takes, and
                 personal notes.
@@ -404,7 +404,7 @@ export default function Landing() {
 
               <div className="mt-8 space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-soft-foreground">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas text-brand">
                     <ScoreSheetGlyph className="h-3.5 w-3.5" />
                   </div>
                   <div>
@@ -419,7 +419,7 @@ export default function Landing() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand-soft-foreground">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas text-brand">
                     <Heart className="h-3.5 w-3.5" />
                   </div>
                   <div>
@@ -464,7 +464,7 @@ export default function Landing() {
       </section>
 
       {/* 5. DEEP DIVE: PRACTICE STAND & NON-JUDGMENTAL LISTENING */}
-      <section id="practice" className="relative border-y border-brand-washBorder bg-brand-wash py-20 md:py-24">
+      <section id="practice" className="border-t border-line-subtle bg-surface-canvas py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -472,11 +472,11 @@ export default function Landing() {
                 <PracticeGlyph className="h-4 w-4" />
                 <span>The Practice Stand</span>
               </div>
-              <h2 className="mt-3 font-display text-[clamp(2rem,3.5vw,2.75rem)] font-medium text-ink-primary">
+              <h2 className="mt-3 type-marketing-title text-ink-primary">
                 Following your phrasing,<br />
                 not policing your notes.
               </h2>
-              <p className="mt-5 text-base leading-relaxed text-ink-secondary">
+              <p className="mt-5 type-body text-ink-secondary">
                 Traditional practice tools penalize every missed accidental with blaring red marks.
                 Yueora listens quietly to acoustic piano through your microphone, tracking where you
                 are on the score and following your phrase.
@@ -517,18 +517,18 @@ export default function Landing() {
       </section>
 
       {/* 6. DEEP DIVE: PRESERVED PERFORMANCES & TIME */}
-      <section id="performances" className="border-t border-surface-paper-edge bg-surface-paper-warm py-20 md:py-24">
+      <section id="performances" className="border-t border-line-subtle bg-surface-panel py-20 md:py-24">
         <div className="mx-auto max-w-6xl px-5 md:px-8">
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand">
               <MemoryGlyph className="h-4 w-4" />
               <span>Preserved Moments &amp; Time</span>
             </div>
-            <h2 className="mt-3 font-display text-[clamp(2rem,3.5vw,2.75rem)] font-medium text-ink-primary">
+            <h2 className="mt-3 type-marketing-title text-ink-primary">
               Reflective memories,<br />
               never vanity metrics.
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-ink-secondary">
+            <p className="mt-4 type-body text-ink-secondary">
               Music is not a gym workout or a productivity sprint. Yueora preserves the takes you
               love and reflects on the quiet time you spent immersed in sound.
             </p>
@@ -556,11 +556,11 @@ export default function Landing() {
                 <Lock className="h-4 w-4" />
                 <span>Intimate Sharing</span>
               </div>
-              <h2 className="mt-3 font-display text-[clamp(2rem,3.5vw,2.75rem)] font-medium text-ink-primary">
+              <h2 className="mt-3 type-marketing-title text-ink-primary">
                 Sharing is a door<br />
                 you choose to open.
               </h2>
-              <p className="mt-5 text-base leading-relaxed text-ink-secondary">
+              <p className="mt-5 type-body text-ink-secondary">
                 No public feeds. No follower counts. No social media pressure. When you complete a take
                 you want your piano teacher or a close friend to hear, you can invite them privately
                 with an accompanying personal note.
@@ -590,16 +590,16 @@ export default function Landing() {
       </section>
 
       {/* 8. SIMPLE PRICING */}
-      <section id="pricing" className="border-t border-line-subtle bg-neutral-muted/40 py-20 md:py-24">
+      <section id="pricing" className="border-t border-line-subtle bg-surface-panel py-20 md:py-24">
         <div className="mx-auto max-w-5xl px-5 md:px-8">
           <div className="text-center max-w-2xl mx-auto">
             <p className="type-caption font-semibold uppercase tracking-wider text-brand">
               Durable &amp; Fair
             </p>
-            <h2 className="mt-3 font-display text-[clamp(2rem,3.5vw,2.75rem)] font-medium text-ink-primary">
+            <h2 className="mt-3 type-marketing-title text-ink-primary">
               Simple, transparent pricing.
             </h2>
-            <p className="mt-4 text-base text-ink-secondary">
+            <p className="mt-4 type-body text-ink-secondary">
               Start for free with your favorite pieces. Upgrade to Pro when your repertoire expands.
             </p>
           </div>
@@ -695,13 +695,13 @@ export default function Landing() {
       </section>
 
       {/* 9. EDITORIAL FAQ */}
-      <section className="border-t border-line-subtle bg-surface-panel py-16 md:py-24">
+      <section className="border-t border-line-subtle bg-surface-canvas py-16 md:py-24">
         <div className="mx-auto max-w-3xl px-5 md:px-8">
           <div className="text-center">
             <p className="type-caption font-semibold uppercase tracking-wider text-brand">
               Clarity &amp; Questions
             </p>
-            <h2 className="mt-3 font-display text-[clamp(1.75rem,3vw,2.5rem)] font-medium text-ink-primary">
+            <h2 className="mt-3 type-marketing-title text-ink-primary">
               Frequently asked questions
             </h2>
           </div>
@@ -725,24 +725,24 @@ export default function Landing() {
       </section>
 
       {/* 10. FINAL BRAND CLOSING: "Play what you love." */}
-      <section className="border-t border-brand bg-brand py-20 text-center text-white md:py-24">
+      <section className="border-t border-line-subtle bg-surface-panel py-20 text-center md:py-24">
         <div className="mx-auto max-w-3xl px-5 md:px-8">
-          <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white mb-4">
-            <Music className="h-5 w-5" />
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas text-brand mb-4">
+            <Music className="icon-md" />
           </div>
 
-          <h2 className="font-display text-[clamp(2.25rem,4vw,3.5rem)] font-medium leading-tight text-white">
+          <h2 className="type-marketing-title text-ink-primary">
             Play what you love.
           </h2>
-          <p className="mt-3 font-serif italic text-xl text-brand-soft">
+          <p className="mt-3 type-editorial-quote text-ink-secondary">
             喜欢，就弹。
           </p>
-          <p className="mt-4 max-w-md mx-auto text-base text-white/80">
+          <p className="mt-4 max-w-md mx-auto type-body text-ink-secondary">
             Your music is waiting on your piano stand. Bring it into Yueora today.
           </p>
 
           <div className="mt-8 flex justify-center gap-4">
-            <Button asChild intent="secondary" size="lg" className="bg-white text-brand hover:bg-surface-paper shadow-sm hover:shadow-md">
+            <Button asChild intent="primary" size="lg" className="shadow-sm hover:shadow-md">
               <Link to={primary}>
                 <span>Begin Your Repertoire</span>
                 <ArrowRight className="icon-sm" />

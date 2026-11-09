@@ -401,7 +401,7 @@ export default function PracticeSession() {
           </div>
 
           {/* Current Bar Badge */}
-          <span className="rounded-control bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand-soft-foreground">
+          <span className="rounded-control border border-line-subtle bg-surface-panel px-2.5 py-1 type-caption font-semibold text-ink-primary">
             Bar {activeMeasure}
           </span>
 
@@ -662,13 +662,14 @@ export default function PracticeSession() {
 
           {/* Secondary Actions & Finish */}
           <div className="flex items-center gap-2">
-            <button
+            <Button
+              intent="secondary"
+              size="md"
               onClick={finish}
               disabled={!startedAt.current}
-              className="rounded-control bg-brand-soft px-3.5 py-2 text-sm font-semibold text-brand-soft-foreground hover:bg-brand hover:text-white transition-colors disabled:opacity-40"
             >
               Finish take
-            </button>
+            </Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

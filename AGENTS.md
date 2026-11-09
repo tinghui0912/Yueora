@@ -59,11 +59,13 @@ Before creating or styling any UI element:
      - Primary Nav: `bg-surface-panel` (clean white)
      - Secondary Nav / Collection SubRail: `bg-surface-subrail`, `border-line-subrail`
      - Workspace Canvas: `bg-surface-canvas` (warm ivory)
-     - Featured Surfaces: `bg-brand-wash`, `border-brand-washBorder` (Pick up where you left off, editorial highlight)
+     - Full-Width Page Sections: Strictly alternate between `surface-canvas` (warm ivory) and `surface-panel` (clean white). Banned on full-width sections: `bg-brand`, `bg-brand-wash`, `bg-surface-paper`, `bg-surface-paper-warm`, `bg-neutral-muted`. Brand is an accent, not a background system.
+     - Featured Surfaces: `bg-brand-wash`, `border-brand-washBorder` (contained modules like Pick up where you left off, editorial highlight; NEVER full-width)
      - Archival Sheets & Content Cards: `bg-surface-paper`, `bg-surface-paper-warm` with `shadow-paper`
      - Overlays / Popovers: `bg-surface-raised` with `shadow-overlay`
    - Lines: `border-line-subtle`, `border-surface-paper-edge`, `border-line-subrail`
-   - Brand active context: `bg-brand-soft` (pale green, strictly for selected/active items), `text-brand-soft-foreground`
+   - Navigation Active Contract: Strictly neutral active: `bg-neutral-muted font-semibold text-ink-primary shadow-xs` with subtle `text-brand` icon cue. Inactive is `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`. NEVER use `bg-brand-soft` for navigation items.
+   - Brand active context: `bg-brand-soft` (pale green, strictly for selected CONTENT objects: ChoiceCard, selected row in table, measure range loop, selected option), `text-brand-soft-foreground`
    - Featured Brand Surface: `bg-brand-wash` (subtle brand tint for recommendations, NOT selected state)
    - Primary CTA: `bg-brand` (deep forest green), `text-white`, `hover:bg-brand-hover`
    - Neutral hovers & muted items: `bg-neutral-muted`, `hover:bg-neutral-hover` (warm ivory-gray, NEVER green)

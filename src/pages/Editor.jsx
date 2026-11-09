@@ -235,8 +235,16 @@ export default function Editor() {
       {/* Mobile tool bar */}
       <div className="flex items-center gap-1 overflow-x-auto border-b border-line-subtle bg-surface-panel px-2 py-1.5 md:hidden no-scrollbar">
         {tools.map((t) => (
-          <button key={t.id} onClick={() => setTool(t.id)} className={`flex shrink-0 items-center gap-1.5 rounded-control px-2.5 py-1.5 text-xs font-medium ${tool === t.id ? 'bg-brand-soft font-semibold text-brand-soft-foreground shadow-xs' : 'text-ink-secondary hover:bg-neutral-hover'}`}>
-            <t.icon className="h-4 w-4" /> {t.label}
+          <button
+            key={t.id}
+            onClick={() => setTool(t.id)}
+            className={`flex shrink-0 items-center gap-1.5 rounded-control px-2.5 py-1.5 text-xs font-medium transition-colors ${
+              tool === t.id
+                ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
+            }`}
+          >
+            <t.icon className={`h-4 w-4 ${tool === t.id ? 'text-brand' : ''}`} /> {t.label}
           </button>
         ))}
         <div className="ml-auto flex items-center gap-1">
@@ -257,8 +265,16 @@ export default function Editor() {
         {/* Tool rail */}
         <div className="hidden w-16 shrink-0 flex-col items-center gap-1.5 border-r border-line-subtle bg-surface-panel py-3 md:flex">
           {tools.map((t) => (
-            <button key={t.id} onClick={() => setTool(t.id)} className={`flex h-12 w-12 flex-col items-center justify-center gap-0.5 rounded-control transition-colors ${tool === t.id ? 'bg-brand-soft font-semibold text-brand-soft-foreground shadow-xs' : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'}`}>
-              <t.icon className="h-4 w-4" />
+            <button
+              key={t.id}
+              onClick={() => setTool(t.id)}
+              className={`flex h-12 w-12 flex-col items-center justify-center gap-0.5 rounded-control transition-colors ${
+                tool === t.id
+                  ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                  : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
+              }`}
+            >
+              <t.icon className={`h-4 w-4 ${tool === t.id ? 'text-brand' : ''}`} />
               <span className="text-xs font-medium">{t.label}</span>
             </button>
           ))}

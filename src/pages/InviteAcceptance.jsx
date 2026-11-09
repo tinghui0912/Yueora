@@ -72,7 +72,7 @@ export default function InviteAcceptance() {
             <p className="type-body-small text-ink-secondary">{invitedBy} invited you to</p>
             <h1 className="mt-1 type-page-title">{score?.title || 'Score'}</h1>
             <p className="mt-1 type-body-small text-ink-secondary">{score?.composer}</p>
-            <span className="mt-4 rounded-control bg-brand-soft px-3 py-1.5 type-body-small font-medium text-brand-soft-foreground border border-line-subtle">{permission}</span>
+            <span className="mt-4 rounded-control border border-line-subtle bg-surface-panel px-3 py-1.5 type-body-small font-medium text-ink-primary shadow-xs">{permission}</span>
 
             {isAuthenticated ? (
               wrongAccount ? (

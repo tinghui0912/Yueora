@@ -29,4 +29,5 @@ dist-ssr
 
 .env
 .vite
+.taste-skill
 base44/.app.jsonc

@@ -56,6 +56,18 @@ export default function DesignSystemPreview() {
         />
         <Surface tone="panel" elevation="paper" padding="md" className="space-y-4">
           <div className="border-b border-line-subtle pb-3">
+            <span className="type-caption text-ink-secondary/70">type-hero-title (Editorial / Marketing Hero)</span>
+            <p className="type-hero-title text-ink-primary">Play what you love.</p>
+          </div>
+          <div className="border-b border-line-subtle pb-3">
+            <span className="type-caption text-ink-secondary/70">type-marketing-title (Marketing Section Titles)</span>
+            <p className="type-marketing-title text-ink-primary">Your music, not ours.</p>
+          </div>
+          <div className="border-b border-line-subtle pb-3">
+            <span className="type-caption text-ink-secondary/70">type-editorial-quote (Philosophy &amp; Brand Quotes)</span>
+            <p className="type-editorial-quote text-ink-primary">&ldquo;The music already on your piano stand is the music that deserves your devotion.&rdquo;</p>
+          </div>
+          <div className="border-b border-line-subtle pb-3">
             <span className="type-caption text-ink-secondary/70">type-display</span>
             <p className="type-display text-ink-primary">Play what you love.</p>
           </div>
@@ -139,7 +151,7 @@ export default function DesignSystemPreview() {
               </div>
               <div className="rounded-control border border-brand bg-brand-soft p-3 text-center">
                 <span className="type-caption text-brand-soft-foreground">Brand Soft</span>
-                <p className="type-metadata text-brand-soft-foreground/80">Active / Selected</p>
+                <p className="type-metadata text-brand-soft-foreground/80">Selected Content State</p>
               </div>
               <div className="rounded-control border border-brand-washBorder bg-brand-wash p-3 text-center">
                 <span className="type-caption text-brand font-semibold">Brand Wash</span>
@@ -163,7 +175,7 @@ export default function DesignSystemPreview() {
           {/* State Matrix */}
           <div className="space-y-3 border-t border-line-subtle pt-4">
             <span className="type-caption text-ink-secondary/70">Component State Matrix</span>
-            <div className="grid gap-3 sm:grid-cols-4">
+            <div className="grid gap-3 sm:grid-cols-5">
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
                 <p className="type-caption text-ink-tertiary uppercase">Default</p>
                 <div className="mt-2 rounded-control border border-line-subtle bg-surface-panel px-3 py-1.5 type-body-small text-ink-primary">
@@ -177,9 +189,16 @@ export default function DesignSystemPreview() {
                 </div>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
-                <p className="type-caption text-brand uppercase font-semibold">Selected (Brand Soft)</p>
+                <p className="type-caption text-ink-primary uppercase font-semibold">Nav Active (Neutral)</p>
+                <div className="mt-2 flex items-center justify-center gap-1.5 rounded-control bg-neutral-muted px-3 py-1.5 type-body-small font-semibold text-ink-primary shadow-xs">
+                  <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+                  Nav Active
+                </div>
+              </div>
+              <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
+                <p className="type-caption text-brand uppercase font-semibold">Selected (Content)</p>
                 <div className="mt-2 rounded-control border border-brand bg-brand-soft px-3 py-1.5 type-body-small font-medium text-brand-soft-foreground">
-                  Item Selected
+                  Content Selected
                 </div>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
@@ -344,7 +363,7 @@ export default function DesignSystemPreview() {
         <div className="rounded-container border border-brand-washBorder bg-brand-wash p-5 shadow-xs transition-shadow hover:shadow-paper">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-soft text-brand-soft-foreground">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-brand-washBorder bg-surface-panel text-brand">
                 <Sparkles className="icon-sm" />
               </span>
               <div>

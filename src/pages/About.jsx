@@ -12,7 +12,7 @@ export default function About() {
       <div className="mx-auto max-w-3xl px-5 py-12 md:px-8 md:py-20">
         {/* Hero */}
         <div className="text-center">
-          <h1 className="font-display text-[clamp(2rem,5vw,3.5rem)] font-medium leading-tight text-ink-primary">
+          <h1 className="type-hero-title text-ink-primary">
             Music is meant to be enjoyed.
           </h1>
           <p className="mt-4 font-display text-2xl text-brand">乐，是为了悦。</p>
@@ -97,7 +97,7 @@ export default function About() {
 
         {/* Final CTA */}
         <section className="mt-20 rounded-container border border-line-subtle bg-surface-panel p-8 text-center md:p-12 shadow-xs">
-          <h2 className="font-display text-[clamp(1.75rem,4vw,2.5rem)] font-medium text-ink-primary">Play what you love.</h2>
+          <h2 className="type-marketing-title text-ink-primary">Play what you love.</h2>
           <p className="mt-3 text-lg text-ink-secondary">Bring in something you've been wanting to play.</p>
           <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             {isAuthenticated ? (

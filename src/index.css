@@ -148,6 +148,32 @@
   }
 
   /* ---- Typography scale ---- */
+  .type-hero-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+  }
+  .type-marketing-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.875rem, 3.5vw, 2.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .type-editorial-quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    line-height: 1.5;
+  }
+  .type-marketing-body {
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    line-height: 1.65;
+  }
   .type-display {
     font-family: var(--font-display);
     font-weight: 500;
