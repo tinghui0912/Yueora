@@ -187,7 +187,7 @@ Practice runtime conveys musical feedback without looking like a rainbow arcade 
 Authenticated application layout converges on a simplified 4-surface model:
 
 1. **App Canvas (`bg-surface-canvas`):** `hsl(44 19% 97%)`. Warm ivory backdrop for all application views.
-2. **Standard Content Panel (`bg-surface-panel`):** `hsl(0 0% 100%)` with `border border-line-subtle`, `rounded-container`, and `shadow-xs`. All application cards, list containers, resume modules, stats, pricing cards, and forms use this universal container.
+2. **Standard Content Panel (`bg-surface-panel`):** `hsl(0 0% 100%)` with `border border-line-subtle` and `rounded-container` (flat by default, no shadow). All application cards, list containers, resume modules, stats, pricing cards, and forms use this universal container.
 3. **Floating Raised Overlays (`bg-surface-raised`):** `hsl(0 0% 100%)` with `shadow-overlay` (popovers, menus, modal dialogs, search trigger).
 4. **Notation Canvas Surface (`bg-surface-paper`):** `hsl(44 19% 97%)` (`MusicPaper`). Strictly reserved for literal sheet music score and stave notation rendering canvases. Banned on generic UI.
 
@@ -227,6 +227,16 @@ One visual decision has one owner. All interactive controls, inputs, and icon el
 | `md` | `36px` (`2.25rem`) | `--control-height-md` | `.h-control-md` / `.min-h-control-md` | `.w-control-md` / `.min-w-control-md` | `18px` (`1.125rem`) | `.icon-md` |
 | `lg` | `40px` (`2.5rem`) | `--control-height-lg` | `.h-control-lg` / `.min-h-control-lg` | `.w-control-lg` / `.min-w-control-lg` | `20px` (`1.25rem`) | `.icon-lg` |
 | `xl` | `44px` (`2.75rem`) | `--control-height-xl` | `.h-control-xl` / `.min-h-control-xl` | `.w-control-xl` / `.min-w-control-xl` | `24px` (`1.5rem`) | `.icon-xl` |
+
+### 2.6 Shadow Language & Elevation Contract
+
+Yueora is a tactile, calm, planar environment. Shadows are strictly functional:
+
+- **Primary & Danger Actions:** Subtle `shadow-xs` on primary CTA buttons (`Button intent="primary|danger"` and `IconButton tone="primary"`).
+- **Core Form Controls:** Subtle `shadow-xs` on interactive input controls (`Input`, `Select`, `Textarea`, `Checkbox`, `RadioGroup`, `Switch`, `Slider`, `InputOTP`).
+- **Floating Overlays:** `shadow-raised` / `shadow-overlay` on dropdown menus, popovers, and modal dialogs (`bg-surface-raised`).
+- **Notation Paper:** `shadow-paper` on literal sheet music canvases (`MusicPaper`).
+- **Everything Else (Flat by Default):** Standard panels, cards, list views, sticky headers (`PublicHeader`), navigation rails (`Sidebar`, `SubRail`), segmented tabs (`TabsList` neutral track, `TabsTrigger` active `bg-surface-panel`), secondary buttons, and outline icon buttons are **strictly planar (no drop shadow)**.
 
 ---
 

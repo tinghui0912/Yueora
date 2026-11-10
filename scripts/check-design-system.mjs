@@ -1049,6 +1049,32 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   });
 
+  const tabsPath = path.resolve('src/components/ui/tabs.jsx');
+  if (fs.existsSync(tabsPath)) {
+    const code = fs.readFileSync(tabsPath, 'utf8');
+    if (code.includes('shadow-xs')) {
+      issues.push({
+        file: 'src/components/ui/tabs.jsx',
+        line: 1,
+        matched: 'shadow-xs in tabs.jsx',
+        message: 'TabsTrigger active state must be planar (no shadow-xs).',
+      });
+    }
+  }
+
+  const publicHeaderPath = path.resolve('src/components/public/PublicHeader.jsx');
+  if (fs.existsSync(publicHeaderPath)) {
+    const code = fs.readFileSync(publicHeaderPath, 'utf8');
+    if (code.includes('shadow-xs')) {
+      issues.push({
+        file: 'src/components/public/PublicHeader.jsx',
+        line: 1,
+        matched: 'shadow-xs in PublicHeader.jsx',
+        message: 'PublicHeader sticky shell must be planar (no shadow-xs).',
+      });
+    }
+  }
+
   // 16. Neutral Active Shadow Guard (Rule 25)
   // Recursive scan across src/pages and src/components: bg-neutral-muted must NEVER pair with shadow-xs or shadow-sm
   function scanNeutralActiveShadow(dir) {
@@ -1083,11 +1109,13 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
   }
 
   // 17. Standard Panel Shadow Allowlist (Rule 27)
-  // Content panels, sections, and list containers must be flat by default.
+  // Content panels, sections, headers, and list containers must be flat by default.
   // shadow-xs is restricted strictly to primary action primitives and core form controls.
   const ALLOWED_SHADOW_XS_FILES = new Set([
+    // Primary / danger CTA action primitives
     path.normalize('src/components/ui/button.jsx'),
     path.normalize('src/components/ui/icon-button.jsx'),
+    // Core form controls with subtle affordance
     path.normalize('src/components/ui/checkbox.jsx'),
     path.normalize('src/components/ui/input.jsx'),
     path.normalize('src/components/ui/input-otp.jsx'),
@@ -1095,11 +1123,7 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     path.normalize('src/components/ui/select.jsx'),
     path.normalize('src/components/ui/slider.jsx'),
     path.normalize('src/components/ui/switch.jsx'),
-    path.normalize('src/components/ui/tabs.jsx'),
     path.normalize('src/components/ui/textarea.jsx'),
-    path.normalize('src/components/patterns/TransportControl.jsx'),
-    path.normalize('src/components/public/PublicHeader.jsx'),
-    path.normalize('src/components/visuals/HeroProductVisual.jsx'),
   ]);
 
   function scanStandardPanelShadows(dir) {
@@ -1123,7 +1147,7 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
               file: rel,
               line: idx + 1,
               matched: 'shadow-xs on standard panel/page element',
-              message: `${rel}:${idx + 1} Standard panels, cards, and page elements must be planar. shadow-xs is reserved exclusively for primary CTA/form control primitives in ALLOWED_SHADOW_XS_FILES.`,
+              message: `${rel}:${idx + 1} Standard panels, cards, and page elements must be planar. shadow-xs is restricted to approved action CTAs and form control primitives in ALLOWED_SHADOW_XS_FILES.`,
             });
           }
         });
@@ -1211,10 +1235,11 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified brand-soft vs brand-wash integrity (zero arbitrary bg-brand/opacity in application code)`);
   console.log(`   - Verified prohibited brand-soft contexts in named shared components (ChoiceCard, ImportDropzone, OptionGroup, TransportControl, VirtualKeyboard, SidebarNavItem, LibrarySubRail, Settings)`);
   console.log(`   - Verified zero dead chart-* tokens and zero retired tokens in tailwind.config.js`);
-  console.log(`   - Verified planar navigation active states and planar secondary/outline buttons (Button, IconButton, Sidebar, Library, Performances, Pricing, Preview)
-   - Verified Neutral Active Shadow Guard (zero bg-neutral-muted with shadow across all pages and components)
-   - Verified Standard Panel planar standard & ALLOWED_SHADOW_XS_FILES allowlist (zero shadow-xs on standard panels, cards, or page elements)
-   - Verified planar container integrity across core application pages (Notifications, Imports, About, Help, Library, DesignSystemPreview)`);
+  console.log(`   - Verified planar navigation active states and planar secondary/outline buttons (Button, IconButton, Sidebar, Library, Performances, Pricing, Preview)`);
+  console.log(`   - Verified planar shell & tab triggers (TabsTrigger, PublicHeader)`);
+  console.log(`   - Verified Neutral Active Shadow Guard (zero bg-neutral-muted with shadow across all pages and components)`);
+  console.log(`   - Verified Standard Panel planar standard & ALLOWED_SHADOW_XS_FILES allowlist (shadow-xs restricted to approved CTA & form control primitives)`);
+  console.log(`   - Verified planar container integrity across core application pages (Notifications, Imports, About, Help, Library, DesignSystemPreview)`);
   console.log(`   - Verified Surface API simplification (zero paper tone/elevation in Surface component or consumers)`);
   console.log(`   - Verified consolidated PAPER_VISUAL_ALLOWLIST (strictly 10 notation-related files; zero paper vocabulary in generic UI)`);
   console.log(`   - Verified zero DialogTitle typography overrides & zero conflicting font-size overrides on semantic typography`);

@@ -153,10 +153,6 @@ export default function DesignSystemPreview() {
                 <span className="type-caption text-brand-soft-foreground">Brand Soft</span>
                 <p className="type-metadata text-brand-soft-foreground/80">Compact Selection</p>
               </div>
-              <div className="rounded-control border border-line-subtle bg-neutral-muted p-3 text-center">
-                <span className="type-caption text-ink-primary font-semibold">Standard Panel</span>
-                <p className="type-metadata text-ink-secondary">Unified Container</p>
-              </div>
               <div className="rounded-control border border-line-subrail bg-surface-subrail p-3 text-center">
                 <span className="type-caption text-ink-primary font-medium">SubRail</span>
                 <p className="type-metadata text-ink-tertiary">Secondary Nav</p>
@@ -235,7 +231,7 @@ export default function DesignSystemPreview() {
               <Button intent="subtle">Subtle Action</Button>
               <Button intent="danger">Danger Action</Button>
               <Button intent="transport" size="md">
-                <Music className="h-4 w-4" /> Transport
+                <Music /> Transport
               </Button>
               <Button intent="link">Text Link</Button>
             </div>
