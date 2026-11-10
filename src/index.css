@@ -182,9 +182,19 @@
   .type-hero-title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(3.5rem, 9.5vw, 8.5rem);
-    line-height: 0.9;
+    font-size: 19vw;
+    line-height: 0.88;
     letter-spacing: -0.025em;
+  }
+  @media (min-width: 640px) {
+    .type-hero-title {
+      font-size: 13vw;
+    }
+  }
+  @media (min-width: 1024px) {
+    .type-hero-title {
+      font-size: clamp(9rem, 10.5vw, 9.5rem);
+    }
   }
   .type-marketing-title {
     font-family: var(--font-display);

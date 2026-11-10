@@ -233,12 +233,13 @@ export default function DesignSystemPreview() {
           </div>
 
           <div className="space-y-2">
-            <span className="type-caption text-ink-secondary/70">Sizes (xs, sm, md, lg)</span>
+            <span className="type-caption text-ink-secondary/70">Sizes (xs, sm, md, lg, xl)</span>
             <div className="flex flex-wrap items-center gap-3">
               <Button intent="primary" size="xs">Size XS</Button>
               <Button intent="primary" size="sm">Size SM</Button>
               <Button intent="primary" size="md">Size MD (Default)</Button>
               <Button intent="primary" size="lg">Size LG</Button>
+              <Button intent="primary" size="xl">Size XL (52px Hero CTA)</Button>
             </div>
           </div>
 

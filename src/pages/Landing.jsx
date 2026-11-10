@@ -111,7 +111,7 @@ export default function Landing() {
       <section id="top" className="relative min-h-screen flex items-center overflow-hidden">
         {/* ambient oversized background typography */}
         <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <span className="font-display italic text-[24vw] leading-none text-ink-primary/[0.035] select-none whitespace-nowrap">
+          <span className="font-display italic text-[26vw] leading-none text-ink-primary/[0.035] select-none whitespace-nowrap">
             music
           </span>
         </div>
@@ -132,7 +132,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display font-medium leading-[0.88] tracking-tight text-[18vw] sm:text-[13vw] lg:text-[7.5rem] xl:text-[8.5rem] text-ink-primary"
+              className="type-hero-title text-ink-primary"
             >
               Play what
               <br />
@@ -159,20 +159,20 @@ export default function Landing() {
               judgment, and preserves the musical moments worth keeping.
             </motion.p>
 
-            {/* Tactile Actions */}
+            {/* Tactile Actions — UGC Hero CTA scale: 52px high, 28px horizontal padding */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.4 }}
               className="mt-10 flex flex-col sm:flex-row gap-4"
             >
-              <Button asChild intent="primary" size="lg">
+              <Button asChild intent="primary" size="xl">
                 <Link to={primary}>
                   <span>Start your repertoire</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
-              <Button asChild intent="secondary" size="lg">
+              <Button asChild intent="secondary" size="xl">
                 <a href="#lifecycle">
                   <span>See the lifecycle</span>
                   <ArrowDown className="w-4 h-4 text-ink-tertiary" />
@@ -199,13 +199,13 @@ export default function Landing() {
             </motion.div>
           </div>
 
-          {/* Right 5 Columns — Elevated Musical Media Object */}
+          {/* Right 5 Columns — Elevated Musical Media Object (Harmonized with headline hierarchy) */}
           <div className="lg:col-span-5 order-1 lg:order-2 flex justify-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-[85vw] max-w-[420px] sm:w-[380px] lg:w-full rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.25)] border border-line-subtle/80 bg-surface-panel p-2 sm:p-3"
+              className="relative w-[85vw] max-w-[380px] sm:w-[350px] lg:w-full lg:max-w-[390px] rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.25)] border border-line-subtle/80 bg-surface-panel p-2 sm:p-3"
             >
               <HeroProductVisual />
               <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
@@ -611,19 +611,19 @@ export default function Landing() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
-            {/* Free Tier */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl">
+            {/* Free Plan (White Panel) */}
             <Reveal delay={0.05}>
-              <div className="h-full rounded-[2rem] p-8 md:p-10 flex flex-col justify-between bg-surface-panel border border-line-subtle hover:border-line-strong transition-all duration-300">
+              <div className="h-full rounded-[2rem] p-8 md:p-9 flex flex-col justify-between bg-surface-panel border border-line-subtle hover:border-line-strong transition-all duration-300">
                 <div>
                   <span className="type-eyebrow text-ink-tertiary">
                     Starter
                   </span>
                   <h3 className="font-display text-3xl md:text-4xl tracking-tight leading-none text-ink-primary mt-4">
-                    Free
+                    {plans.free.name}
                   </h3>
                   <p className="mt-3 text-sm text-ink-secondary leading-relaxed">
-                    A personal starter library to begin your musical journey.
+                    A personal starter library to begin your musical journey calmly.
                   </p>
                   <div className="mt-6 font-display text-4xl md:text-5xl tracking-tight text-ink-primary">
                     {formatPrice(plans.free.priceMonthly)}
@@ -632,73 +632,126 @@ export default function Landing() {
 
                   <ul className="mt-8 space-y-3.5 border-t border-line-subtle pt-6 text-sm text-ink-secondary">
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> Up to 5 interactive scores
+                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> {plans.free.scores} in your library
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> {plans.free.imports}
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> {plans.free.storage} storage
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> {plans.free.sharing} sharing
                     </li>
                     <li className="flex items-center gap-3">
                       <Check className="h-4 w-4 text-ink-primary shrink-0" /> Acoustic phrase following
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> Audio take recording
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> Practice history and journal
                     </li>
                   </ul>
                 </div>
 
                 <div className="mt-10">
-                  <Button asChild intent="secondary" size="lg" className="w-full">
+                  <Button asChild intent="secondary" size="xl" className="w-full rounded-full">
                     <Link to={primary}>Get Started Free</Link>
                   </Button>
                 </div>
               </div>
             </Reveal>
 
-            {/* Pro Tier — Featured Inverse Dark Card */}
+            {/* Plus Plan — Featured Middle Inverse Dark Card (Most Popular) */}
             <Reveal delay={0.1}>
-              <div className="h-full rounded-[2rem] p-8 md:p-10 flex flex-col justify-between bg-ink-primary text-surface-canvas border border-ink-primary shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] transition-all duration-300 hover:-translate-y-1">
+              <div className="h-full rounded-[2rem] p-8 md:p-9 flex flex-col justify-between bg-ink-primary text-surface-canvas border border-ink-primary shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] transition-all duration-300 hover:-translate-y-1">
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="type-eyebrow text-surface-canvas/60">
-                      Musician Choice
+                      Regular Musician
                     </span>
                     <span className="rounded-full bg-surface-canvas/15 px-3 py-1 type-metadata uppercase text-surface-canvas font-semibold">
-                      Pro Tier
+                      Most Popular
                     </span>
                   </div>
                   <h3 className="font-display text-3xl md:text-4xl tracking-tight leading-none text-surface-canvas mt-4">
-                    Pro Repertoire
+                    {plans.plus.name}
                   </h3>
                   <p className="mt-3 text-sm text-surface-canvas/75 leading-relaxed">
-                    Unlimited scores, phrase looping, and deep performance archives.
+                    For active players building their repertoire with practice insights.
                   </p>
                   <div className="mt-6 font-display text-4xl md:text-5xl tracking-tight text-surface-canvas">
-                    {formatPrice(plans.pro.priceMonthly)}
+                    {formatPrice(plans.plus.priceMonthly)}
                     <span className="text-sm font-normal text-surface-canvas/60 ml-2">/ month</span>
                   </div>
 
                   <ul className="mt-8 space-y-3.5 border-t border-surface-canvas/20 pt-6 text-sm text-surface-canvas/85">
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> Unlimited interactive scores &amp; scans
+                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> <strong>{plans.plus.scores}</strong> in your library
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> Phrase looping &amp; custom tempo
+                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> <strong>{plans.plus.imports}</strong>
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> Audio &amp; video take archive
+                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> <strong>{plans.plus.storage}</strong> storage
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> Original audio &amp; video downloads
+                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> {plans.plus.sharing} sharing
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> Intimate sharing with teachers &amp; friends
+                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> Practice insights &amp; journal
                     </li>
                   </ul>
                 </div>
 
                 <div className="mt-10">
-                  <Button asChild size="lg" className="w-full bg-surface-canvas text-ink-primary hover:bg-white font-semibold">
-                    <Link to={primary}>Start Free Trial</Link>
+                  <Button asChild size="xl" className="w-full bg-surface-canvas text-ink-primary hover:bg-white font-semibold rounded-full">
+                    <Link to={primary}>Start Plus</Link>
+                  </Button>
+                </div>
+              </div>
+            </Reveal>
+
+            {/* Pro Plan — Highest Capability Tier (White Panel) */}
+            <Reveal delay={0.15}>
+              <div className="h-full rounded-[2rem] p-8 md:p-9 flex flex-col justify-between bg-surface-panel border border-line-subtle hover:border-line-strong transition-all duration-300">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="type-eyebrow text-ink-tertiary">
+                      Devoted Repertoire
+                    </span>
+                    <span className="type-metadata text-ink-tertiary uppercase tracking-wider">
+                      Unlimited
+                    </span>
+                  </div>
+                  <h3 className="font-display text-3xl md:text-4xl tracking-tight leading-none text-ink-primary mt-4">
+                    {plans.pro.name}
+                  </h3>
+                  <p className="mt-3 text-sm text-ink-secondary leading-relaxed">
+                    Unlimited scores, phrase looping, and deep performance archives.
+                  </p>
+                  <div className="mt-6 font-display text-4xl md:text-5xl tracking-tight text-ink-primary">
+                    {formatPrice(plans.pro.priceMonthly)}
+                    <span className="text-sm font-normal text-ink-tertiary ml-2">/ month</span>
+                  </div>
+
+                  <ul className="mt-8 space-y-3.5 border-t border-line-subtle pt-6 text-sm text-ink-secondary">
+                    <li className="flex items-center gap-3">
+                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> <strong>{plans.pro.scores}</strong> in your library
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> <strong>{plans.pro.imports}</strong>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> <strong>{plans.pro.storage}</strong> storage
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> {plans.pro.sharing} sharing
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> <strong>Full recording downloads</strong>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="mt-10">
+                  <Button asChild intent="primary" size="xl" className="w-full rounded-full">
+                    <Link to={primary}>Start Pro</Link>
                   </Button>
                 </div>
               </div>
@@ -782,7 +835,7 @@ export default function Landing() {
                       Upload your first score in under two minutes.
                     </p>
                     <div className="mt-8 flex flex-col gap-3">
-                      <Button asChild size="lg" className="w-full bg-surface-canvas text-ink-primary hover:bg-white font-semibold">
+                      <Button asChild size="xl" className="w-full bg-surface-canvas text-ink-primary hover:bg-white font-semibold rounded-full">
                         <Link to={primary}>
                           <span>Begin Your Repertoire</span>
                           <ArrowRight className="h-4 w-4" />

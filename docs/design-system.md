@@ -35,7 +35,7 @@ Repeated product hierarchy roles use semantic typography roles. Do not override 
 
 | Semantic Class | Target Role | Baseline Size | Line Height | Tracking | Font Family |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `.type-hero-title` | Marketing page primary hero headline | `clamp(3.5rem, 9.5vw, 8.5rem)` | `0.9` | `-0.025em` | Cormorant Garamond (500) |
+| `.type-hero-title` | Marketing page primary hero headline | `19vw` (mobile) / `13vw` (sm) / `clamp(9rem, 10.5vw, 9.5rem)` (desktop) | `0.88` | `-0.025em` | Cormorant Garamond (500) |
 | `.type-marketing-title` | Marketing chapter / section titles | `clamp(2.25rem, 5vw, 3.75rem)` | `1.02` | `-0.02em` | Cormorant Garamond (500) |
 | `.type-eyebrow` | Public and editorial overlines & chapter tags | `11px` (`0.6875rem`) | `1.4` | `0.34em` | Inter (500, uppercase) |
 | `.type-editorial-quote` | Philosophy, pull quotes & reflections | `clamp(1.25rem, 2vw, 1.625rem)` | `1.5` | Normal | Cormorant Garamond (400, italic) |

@@ -229,6 +229,11 @@ export const plans = {
     scores: '5 scores', imports: '10 imports / month', analytics: false,
     storage: '500 MB', sharing: 'View only', export: false, practice: true,
   },
+  plus: {
+    id: 'plus', name: 'Plus', priceMonthly: 3, priceYearly: 30,
+    scores: '30 scores', imports: '50 imports / month', analytics: true,
+    storage: '3 GB', sharing: 'View & edit', export: false, practice: true,
+  },
   pro: {
     id: 'pro', name: 'Pro', priceMonthly: 6, priceYearly: 60,
     scores: 'Unlimited', imports: 'Unlimited', analytics: true,

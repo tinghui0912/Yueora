@@ -13,11 +13,15 @@ const PORT = process.env.PORT || 5350;
 const BASE_URL = `http://localhost:${PORT}`;
 
 const TARGETS = [
-  // Public & Commercial Pages (No demo auth needed)
-  { name: 'landing-desktop', category: 'Public', path: '/', w: 1440, h: 900 },
-  { name: 'landing-mobile', category: 'Public', path: '/', w: 390, h: 844 },
-  { name: 'pricing-desktop', category: 'Public', path: '/pricing', w: 1440, h: 900 },
-  { name: 'about-desktop', category: 'Public', path: '/about', w: 1440, h: 900 },
+  // Public & Commercial Pages across calibrated viewports
+  { name: 'landing-1440', category: 'Public', path: '/', w: 1440, h: 900 },
+  { name: 'landing-1280', category: 'Public', path: '/', w: 1280, h: 800 },
+  { name: 'landing-1024', category: 'Public', path: '/', w: 1024, h: 768 },
+  { name: 'landing-390', category: 'Public', path: '/', w: 390, h: 844 },
+  { name: 'pricing-1440', category: 'Public', path: '/pricing', w: 1440, h: 900 },
+  { name: 'pricing-1024', category: 'Public', path: '/pricing', w: 1024, h: 768 },
+  { name: 'pricing-390', category: 'Public', path: '/pricing', w: 390, h: 844 },
+  { name: 'about-1440', category: 'Public', path: '/about', w: 1440, h: 900 },
   { name: 'login-desktop', category: 'Public', path: '/login', w: 1440, h: 900 },
 
   // Authenticated Application (Dev Demo Boundary: local dev preview only)

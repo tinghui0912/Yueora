@@ -81,7 +81,7 @@ export default function Checkout() {
           </div>
 
           <ul className="mt-5 space-y-2 type-body-small text-ink-secondary">
-            <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> Pro features switch on for this prototype account immediately.</li>
+            <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> {plan.name} features switch on for this prototype account immediately.</li>
             <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> A demo record is added to Billing history, clearly marked as demo.</li>
             <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" /> You can cancel, downgrade, or resume later from Plan &amp; billing.</li>
           </ul>

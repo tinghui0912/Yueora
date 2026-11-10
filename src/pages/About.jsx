@@ -3,8 +3,9 @@ import { useAuth } from '@/lib/AuthContext';
 import PublicShell from '@/components/public/PublicShell';
 import AppPage from '@/components/patterns/AppPage';
 import Reveal from '@/components/public/Reveal';
+import ScorePreview from '@/components/library/ScorePreview';
 import { Button } from '@/components/ui/button';
-import { Music2, Heart, Eye, TrendingUp, Sparkles, Shield, ArrowRight } from 'lucide-react';
+import { Music2, Heart, Eye, TrendingUp, Shield, ArrowRight } from 'lucide-react';
 
 export default function About() {
   const { isAuthenticated } = useAuth();
@@ -16,7 +17,7 @@ export default function About() {
         {/* 1. Asymmetric Editorial Hero — UGC 12-Column (5 Media / 7 Copy) */}
         <section className="py-24 md:py-36">
           <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            {/* Left 5 Columns: Framed Real Score Artwork */}
+            {/* Left 5 Columns: Framed Real Domain Score Preview */}
             <Reveal className="lg:col-span-5" y={36}>
               <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.25)] border border-line-subtle bg-surface-panel p-6 sm:p-8 flex flex-col justify-between select-none">
                 {/* Score Header */}
@@ -31,43 +32,9 @@ export default function About() {
                   <p className="mt-0.5 text-xs text-ink-secondary">Claude Debussy · Suite bergamasque</p>
                 </div>
 
-                {/* Score Notation Impression */}
-                <div className="my-auto py-4 space-y-4">
-                  <div className="flex items-center justify-between text-xs text-ink-tertiary italic font-serif">
-                    <span>Andante très expressif</span>
-                    <span className="font-sans type-metadata bg-neutral-muted px-2 py-0.5 rounded-full text-ink-secondary">
-                      4/4 · D♭ Major
-                    </span>
-                  </div>
-
-                  {/* Staves simulation */}
-                  <div className="space-y-3">
-                    <div className="relative h-14 rounded-lg bg-surface-canvas/60 border border-line-subtle/60 p-2 flex items-center justify-between">
-                      <span className="font-serif text-lg text-ink-primary">𝄞</span>
-                      <div className="flex-1 mx-3 h-px bg-line-subtle/80 flex items-center justify-around">
-                        <div className="w-2 h-2 rounded-full bg-ink-primary -translate-y-1.5" />
-                        <div className="w-2 h-2 rounded-full bg-ink-primary translate-y-1" />
-                        <div className="w-2 h-2 rounded-full bg-ink-primary -translate-y-2" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-ink-primary translate-y-0.5 ring-2 ring-surface-panel" />
-                      </div>
-                      <span className="text-xs text-ink-tertiary font-serif italic">pp</span>
-                    </div>
-
-                    <div className="relative h-14 rounded-lg bg-surface-canvas/60 border border-line-subtle/60 p-2 flex items-center justify-between">
-                      <span className="font-serif text-lg text-ink-primary">𝄢</span>
-                      <div className="flex-1 mx-3 h-px bg-line-subtle/80 flex items-center justify-around">
-                        <div className="w-2 h-2 rounded-full bg-ink-secondary -translate-y-0.5" />
-                        <div className="w-2 h-2 rounded-full bg-ink-secondary translate-y-1.5" />
-                        <div className="w-2 h-2 rounded-full bg-ink-secondary -translate-y-1" />
-                      </div>
-                      <span className="type-metadata text-ink-tertiary font-mono">con sordina</span>
-                    </div>
-                  </div>
-
-                  <div className="rounded-xl border border-line-subtle bg-neutral-muted/40 p-3 text-xs text-ink-secondary flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-ink-primary shrink-0" />
-                    <span>&ldquo;Sometimes, loving a piece is reason enough to sit down and play.&rdquo;</span>
-                  </div>
+                {/* Real Domain Score Preview */}
+                <div className="my-auto overflow-hidden rounded-2xl border border-line-subtle bg-white">
+                  <ScorePreview id="about-score-clair" className="aspect-[16/11] w-full object-cover" />
                 </div>
 
                 {/* Score Footer Details */}
@@ -75,7 +42,7 @@ export default function About() {
                   <span className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-practice-following" /> Acoustic Listener Ready
                   </span>
-                  <span>Personal Library · Page 1</span>
+                  <span>Personal Repertoire · Page 1</span>
                 </div>
               </div>
             </Reveal>
@@ -340,8 +307,8 @@ export default function About() {
                   <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4">
                     <Button
                       asChild
-                      size="lg"
-                      className="w-full bg-surface-canvas text-ink-primary hover:bg-surface-canvas/90 font-medium py-3 rounded-full flex items-center justify-center gap-2"
+                      size="xl"
+                      className="w-full bg-surface-canvas text-ink-primary hover:bg-surface-canvas/90 font-medium rounded-full flex items-center justify-center gap-2"
                     >
                       <Link to={ctaDestination}>
                         <span>Start playing free</span>
@@ -352,7 +319,7 @@ export default function About() {
                       <Button
                         asChild
                         variant="outline"
-                        size="lg"
+                        size="xl"
                         className="w-full border-surface-canvas/20 text-surface-canvas hover:bg-surface-canvas/10 rounded-full"
                       >
                         <Link to="/login">Sign into your repertoire</Link>

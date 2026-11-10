@@ -52,7 +52,7 @@ export default function OrderSummary({ plan, interval, className = '' }) {
           <li>{plan.sharing} sharing</li>
         </ul>
         <p className="mt-3 type-metadata text-ink-tertiary">
-          Pro features would begin immediately and the subscription would renew every {intervalNoun(interval)}.
+          {plan.name} features would begin immediately and the subscription would renew every {intervalNoun(interval)}.
         </p>
       </div>
     </div>

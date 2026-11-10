@@ -1028,11 +1028,6 @@ export const usePrototypeStore = create(
         set((st) => ({ notifications: st.notifications.map((n) => ({ ...n, unread: false })) })),
 
       // ---- Subscription actions ----
-      upgradeToPro: () =>
-        set((st) => ({
-          subscription: { ...st.subscription, plan: 'pro', status: 'active', cancelAt: null, pendingPlan: null },
-        })),
-
       cancelSubscription: () =>
         set((st) => ({
           subscription: { ...st.subscription, status: 'cancelling', cancelAt: st.subscription.renewal, pendingPlan: 'free' },
@@ -1048,7 +1043,7 @@ export const usePrototypeStore = create(
           subscription: { ...st.subscription, status: 'cancelling', cancelAt: st.subscription.renewal, pendingPlan: 'free' },
         })),
 
-      // The only path to Pro. It records a demo purchase, never a payment.
+      // Canonical path to complete a demo purchase for paid plans (Plus, Pro).
       // sessionKey makes repeat clicks on the same checkout a no-op.
       completeDemoCheckout: ({ planId, interval, sessionKey }) =>
         set((st) => {
@@ -1146,12 +1141,17 @@ export const usePrototypeStore = create(
     }),
     {
       name: 'yueora-prototype',
-      version: 8,
+      version: 9,
       migrate: (persistedState, version) => {
         // Merge any missing keys from defaults
         const raw = (persistedState && typeof persistedState === 'object') ? persistedState : {};
         /** @type {Record<string, any>} */
         const merged = { ...raw };
+        // Ensure canonical product plans (free, plus, pro) are always synchronized
+        merged.plans = {
+          ...(merged.plans || {}),
+          ...seedPlans,
+        };
         if (!Array.isArray(merged.performanceComments)) merged.performanceComments = [];
         // Independent permissions and the performance permission model arrived
         // together; older saved state gets explicit defaults instead of the

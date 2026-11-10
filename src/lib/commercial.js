@@ -6,6 +6,7 @@
  */
 
 export const INTERVALS = ['monthly', 'yearly'];
+export const PLAN_ORDER = ['free', 'plus', 'pro'];
 
 export function intervalLabel(interval) {
   return interval === 'yearly' ? 'Yearly' : 'Monthly';

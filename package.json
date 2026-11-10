@@ -9,6 +9,7 @@
     "lint": "eslint . --quiet",
     "lint:fix": "eslint . --fix",
     "check:design-system": "node scripts/check-design-system.mjs",
+    "verify:commercial": "node scripts/verify-commercial-flow.mjs",
     "verify:auth-boundary": "node --experimental-websocket scripts/verify-auth-boundary.mjs",
     "capture:shots": "node scripts/capture-visual-qa.mjs",
     "typecheck": "tsc -p ./jsconfig.json",

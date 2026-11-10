@@ -26,8 +26,13 @@ export default function Pricing() {
   const subscription = usePrototypeStore((s) => s.subscription);
 
   const interval = yearly ? 'yearly' : 'monthly';
-  const saving = yearlySavingPercent(plans.pro);
+  const saving = yearlySavingPercent(plans.plus || plans.pro);
+  const onPlus = subscription.plan === 'plus' && subscription.status === 'active';
   const onPro = subscription.plan === 'pro' && subscription.status === 'active';
+
+  const plusDestination = isAuthenticated
+    ? checkoutPath('plus', interval)
+    : `/register?returnTo=${encodeURIComponent(checkoutPath('plus', interval))}`;
 
   const proDestination = isAuthenticated
     ? checkoutPath('pro', interval)
@@ -77,56 +82,56 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* 2. 2-Column Plan Cards Section — UGC Parity */}
+        {/* 2. 3-Column Plan Cards Section — UGC Services Parity (Free | Plus | Pro) */}
         <section className="pb-24 md:pb-36">
-          <div className="max-w-5xl mx-auto px-6 md:px-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Free Plan */}
+          <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Free Plan (White Panel) */}
             <Reveal delay={0.05} y={32}>
-              <div className="h-full rounded-[2rem] p-8 md:p-10 bg-surface-panel border border-line-subtle flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
+              <div className="h-full rounded-[2rem] p-8 md:p-9 bg-surface-panel border border-line-subtle flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <span className="type-eyebrow text-ink-tertiary">
-                      Personal Starter
+                      Starter
                     </span>
                     <span className="type-metadata text-ink-tertiary uppercase tracking-wider">
                       Free Tier
                     </span>
                   </div>
 
-                  <h3 className="font-display text-3xl md:text-4xl font-medium text-ink-primary">
-                    Free
+                  <h3 className="font-display text-3xl font-medium text-ink-primary">
+                    {plans.free.name}
                   </h3>
-                  <p className="mt-3 text-sm text-ink-secondary leading-relaxed">
-                    Everything you need to keep your personal sheet music and practice calmly.
+                  <p className="mt-2.5 text-sm text-ink-secondary leading-relaxed">
+                    A personal starter library to begin your musical journey calmly.
                   </p>
 
                   <div className="mt-6 flex items-baseline gap-1">
-                    <span className="font-display text-4xl md:text-5xl font-medium text-ink-primary">$0</span>
+                    <span className="font-display text-4xl font-medium text-ink-primary">$0</span>
                     <span className="text-sm text-ink-tertiary">/month</span>
                   </div>
                   <p className="mt-1 type-metadata text-ink-tertiary">
-                    No credit card required. Free forever.
+                    Free forever. No credit card required.
                   </p>
 
-                  <div className="mt-8 pt-6 border-t border-line-subtle">
-                    <ul className="space-y-3.5 text-sm text-ink-secondary">
-                      <li className="flex items-start gap-3">
+                  <div className="mt-7 pt-5 border-t border-line-subtle">
+                    <ul className="space-y-3 text-sm text-ink-secondary">
+                      <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
                         <span>{plans.free.scores} in your library</span>
                       </li>
-                      <li className="flex items-start gap-3">
+                      <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
                         <span>{plans.free.imports}</span>
                       </li>
-                      <li className="flex items-start gap-3">
+                      <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
                         <span>{plans.free.storage} storage</span>
                       </li>
-                      <li className="flex items-start gap-3">
+                      <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
-                        <span>{plans.free.sharing} private sharing</span>
+                        <span>{plans.free.sharing} sharing</span>
                       </li>
-                      <li className="flex items-start gap-3">
+                      <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
                         <span>Acoustic score listener &amp; practice stand</span>
                       </li>
@@ -134,8 +139,8 @@ export default function Pricing() {
                   </div>
                 </div>
 
-                <div className="mt-10">
-                  <Button asChild intent="secondary" size="lg" className="w-full rounded-full">
+                <div className="mt-8">
+                  <Button asChild intent="secondary" size="xl" className="w-full rounded-full">
                     <Link to={isAuthenticated ? '/library' : '/register'}>
                       Start free
                     </Link>
@@ -144,34 +149,34 @@ export default function Pricing() {
               </div>
             </Reveal>
 
-            {/* Pro Plan — Near-Black Inverse Card Parity */}
-            <Reveal delay={0.12} y={32}>
-              <div className="relative h-full rounded-[2rem] p-8 md:p-10 bg-ink-primary text-surface-canvas border border-ink-primary shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+            {/* Plus Plan — Featured Middle Near-Black Inverse Card (Most Popular) */}
+            <Reveal delay={0.1} y={32}>
+              <div className="relative h-full rounded-[2rem] p-8 md:p-9 bg-ink-primary text-surface-canvas border border-ink-primary shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                 {/* Ambient glow decoration */}
                 <div aria-hidden className="pointer-events-none absolute -bottom-8 -right-8 select-none">
-                  <Sparkles className="w-48 h-48 text-surface-canvas/[0.04]" />
+                  <Sparkles className="w-40 h-40 text-surface-canvas/[0.04]" />
                 </div>
 
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-6">
                     <span className="type-eyebrow text-surface-canvas/60">
-                      Most Devoted Repertoire
+                      Regular Musician
                     </span>
-                    <span className="rounded-full border border-surface-canvas/20 bg-surface-canvas/10 px-3 py-0.5 type-metadata font-medium text-surface-canvas">
-                      Popular
+                    <span className="rounded-full border border-surface-canvas/20 bg-surface-canvas/15 px-3 py-0.5 type-metadata font-medium text-surface-canvas">
+                      Most Popular
                     </span>
                   </div>
 
-                  <h3 className="font-display text-3xl md:text-4xl font-medium text-surface-canvas">
-                    Pro Repertoire
+                  <h3 className="font-display text-3xl font-medium text-surface-canvas">
+                    {plans.plus.name}
                   </h3>
-                  <p className="mt-3 text-sm text-surface-canvas/75 leading-relaxed">
-                    For devoted musicians who play regularly, preserve their takes, and cherish insights.
+                  <p className="mt-2.5 text-sm text-surface-canvas/75 leading-relaxed">
+                    For active players who build a solid repertoire and value practice insights.
                   </p>
 
                   <div className="mt-6 flex items-baseline gap-1.5">
-                    <span className="font-display text-4xl md:text-5xl font-medium text-surface-canvas">
-                      {formatPrice(yearly ? plans.pro.priceYearly : plans.pro.priceMonthly)}
+                    <span className="font-display text-4xl font-medium text-surface-canvas">
+                      {formatPrice(yearly ? plans.plus.priceYearly : plans.plus.priceMonthly)}
                     </span>
                     <span className="text-sm text-surface-canvas/70">
                       /{intervalNoun(interval)}
@@ -179,46 +184,42 @@ export default function Pricing() {
                   </div>
                   <p className="mt-1 type-metadata text-surface-canvas/60">
                     {yearly
-                      ? `${formatPrice(monthlyEquivalent(plans.pro, 'yearly'))} a month, billed once a year`
+                      ? `${formatPrice(monthlyEquivalent(plans.plus, 'yearly'))} a month, billed annually`
                       : 'Billed monthly. Change or cancel anytime.'}
                   </p>
 
-                  <div className="mt-8 pt-6 border-t border-surface-canvas/15">
-                    <ul className="space-y-3.5 text-sm text-surface-canvas/85">
-                      <li className="flex items-start gap-3">
+                  <div className="mt-7 pt-5 border-t border-surface-canvas/15">
+                    <ul className="space-y-3 text-sm text-surface-canvas/85">
+                      <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-surface-canvas shrink-0" />
-                        <span><strong>{plans.pro.scores}</strong> in your library</span>
+                        <span><strong>{plans.plus.scores}</strong> in your library</span>
                       </li>
-                      <li className="flex items-start gap-3">
+                      <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-surface-canvas shrink-0" />
-                        <span><strong>{plans.pro.imports}</strong></span>
+                        <span><strong>{plans.plus.imports}</strong></span>
                       </li>
-                      <li className="flex items-start gap-3">
+                      <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-surface-canvas shrink-0" />
-                        <span><strong>{plans.pro.storage}</strong> high-resolution storage</span>
+                        <span><strong>{plans.plus.storage}</strong> storage</span>
                       </li>
-                      <li className="flex items-start gap-3">
+                      <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-surface-canvas shrink-0" />
-                        <span>{plans.pro.sharing} sharing</span>
+                        <span>{plans.plus.sharing} sharing</span>
                       </li>
-                      <li className="flex items-start gap-3">
+                      <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-surface-canvas shrink-0" />
                         <span>Practice insights &amp; progress journal</span>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <Check className="w-4 h-4 mt-0.5 text-surface-canvas shrink-0" />
-                        <span>Full recording export with synchronized score</span>
                       </li>
                     </ul>
                   </div>
                 </div>
 
-                <div className="relative z-10 mt-10">
-                  {onPro ? (
+                <div className="relative z-10 mt-8">
+                  {onPlus ? (
                     <Button
                       asChild
                       variant="outline"
-                      size="lg"
+                      size="xl"
                       className="w-full border-surface-canvas/30 text-surface-canvas hover:bg-surface-canvas/10 rounded-full"
                     >
                       <Link to="/settings/plan">Manage your plan</Link>
@@ -227,16 +228,112 @@ export default function Pricing() {
                     <>
                       <Button
                         asChild
-                        size="lg"
-                        className="w-full bg-surface-canvas text-ink-primary hover:bg-surface-canvas/90 font-medium py-3 rounded-full flex items-center justify-center gap-2"
+                        size="xl"
+                        className="w-full bg-surface-canvas text-ink-primary hover:bg-surface-canvas/90 font-medium rounded-full flex items-center justify-center gap-2"
+                      >
+                        <Link to={plusDestination}>
+                          <span>Start Plus</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </Link>
+                      </Button>
+                      <p className="mt-2 text-center type-metadata text-surface-canvas/50">
+                        {isAuthenticated ? 'Continues to demo checkout.' : 'Create an account, then continue.'}
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </Reveal>
+
+            {/* Pro Plan — Highest Capability Tier (White Panel) */}
+            <Reveal delay={0.15} y={32}>
+              <div className="h-full rounded-[2rem] p-8 md:p-9 bg-surface-panel border border-line-subtle flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="type-eyebrow text-ink-tertiary">
+                      Devoted Repertoire
+                    </span>
+                    <span className="type-metadata text-ink-tertiary uppercase tracking-wider">
+                      Unlimited
+                    </span>
+                  </div>
+
+                  <h3 className="font-display text-3xl font-medium text-ink-primary">
+                    {plans.pro.name}
+                  </h3>
+                  <p className="mt-2.5 text-sm text-ink-secondary leading-relaxed">
+                    For devoted musicians who play regularly, preserve takes, and archive recordings.
+                  </p>
+
+                  <div className="mt-6 flex items-baseline gap-1.5">
+                    <span className="font-display text-4xl font-medium text-ink-primary">
+                      {formatPrice(yearly ? plans.pro.priceYearly : plans.pro.priceMonthly)}
+                    </span>
+                    <span className="text-sm text-ink-tertiary">
+                      /{intervalNoun(interval)}
+                    </span>
+                  </div>
+                  <p className="mt-1 type-metadata text-ink-tertiary">
+                    {yearly
+                      ? `${formatPrice(monthlyEquivalent(plans.pro, 'yearly'))} a month, billed annually`
+                      : 'Billed monthly. Change or cancel anytime.'}
+                  </p>
+
+                  <div className="mt-7 pt-5 border-t border-line-subtle">
+                    <ul className="space-y-3 text-sm text-ink-secondary">
+                      <li className="flex items-start gap-2.5">
+                        <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
+                        <span><strong>{plans.pro.scores}</strong> in your library</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
+                        <span><strong>{plans.pro.imports}</strong></span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
+                        <span><strong>{plans.pro.storage}</strong> high-resolution storage</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
+                        <span>{plans.pro.sharing} sharing</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
+                        <span>Practice insights &amp; progress journal</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
+                        <span><strong>Full recording downloads</strong></span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="mt-8">
+                  {onPro ? (
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="xl"
+                      className="w-full rounded-full"
+                    >
+                      <Link to="/settings/plan">Manage your plan</Link>
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        asChild
+                        intent="primary"
+                        size="xl"
+                        className="w-full rounded-full flex items-center justify-center gap-2"
                       >
                         <Link to={proDestination}>
                           <span>Start Pro</span>
                           <ArrowRight className="w-4 h-4" />
                         </Link>
                       </Button>
-                      <p className="mt-2.5 text-center type-metadata text-surface-canvas/50">
-                        {isAuthenticated ? 'Continues to preview checkout.' : 'Create an account, then review preview checkout.'}
+                      <p className="mt-2 text-center type-metadata text-ink-tertiary">
+                        {isAuthenticated ? 'Continues to demo checkout.' : 'Create an account, then continue.'}
                       </p>
                     </>
                   )}
@@ -245,7 +342,7 @@ export default function Pricing() {
             </Reveal>
           </div>
 
-          {/* 3. Detailed Side-by-Side Comparison */}
+          {/* 3. Detailed Side-by-Side Comparison (Feature | Free | Plus | Pro) */}
           <div className="max-w-4xl mx-auto px-6 md:px-10 mt-24">
             <Reveal>
               <div className="text-center mb-8">
@@ -261,6 +358,7 @@ export default function Pricing() {
                     <tr className="border-b border-line-subtle bg-neutral-muted/40">
                       <th className="px-6 py-4 text-left font-medium text-ink-secondary">Feature</th>
                       <th className="px-6 py-4 text-center font-medium text-ink-primary">Free</th>
+                      <th className="px-6 py-4 text-center font-medium text-ink-primary bg-neutral-muted/30">Plus</th>
                       <th className="px-6 py-4 text-center font-medium text-ink-primary">Pro</th>
                     </tr>
                   </thead>
@@ -269,6 +367,7 @@ export default function Pricing() {
                       <tr key={f.key} className="hover:bg-neutral-hover/50 transition-colors">
                         <td className="px-6 py-4 text-ink-secondary">{f.label}</td>
                         <td className="px-6 py-4 text-center text-ink-primary">{renderVal(plans.free[f.key])}</td>
+                        <td className="px-6 py-4 text-center font-medium text-ink-primary bg-neutral-muted/20">{renderVal(plans.plus[f.key])}</td>
                         <td className="px-6 py-4 text-center font-medium text-ink-primary">{renderVal(plans.pro[f.key])}</td>
                       </tr>
                     ))}
@@ -289,7 +388,7 @@ export default function Pricing() {
 
                 <p className="type-body-small text-ink-secondary">
                   Already have an account?{' '}
-                  <Link to={`/login?returnTo=${encodeURIComponent(checkoutPath('pro', interval))}`} className="font-medium text-brand hover:underline">
+                  <Link to={`/login?returnTo=${encodeURIComponent(checkoutPath('plus', interval))}`} className="font-medium text-brand hover:underline">
                     Log in
                   </Link>
                 </p>
