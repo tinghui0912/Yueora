@@ -111,7 +111,19 @@ async function runShoot(target) {
       { stdio: 'inherit' }
     );
 
+    const timer = setTimeout(() => {
+      try {
+        if (process.platform === 'win32') {
+          spawn('taskkill', ['/pid', String(child.pid), '/f', '/t']);
+        } else {
+          child.kill('SIGKILL');
+        }
+      } catch {}
+      reject(new Error(`Timeout capturing ${target.name}`));
+    }, 45000);
+
     child.on('exit', (code) => {
+      clearTimeout(timer);
       if (code === 0) {
         console.log(`✓ [${target.category}] ${target.name} (${target.w}x${target.h}) -> ${path.relative(process.cwd(), outFile)}`);
         resolve(outFile);

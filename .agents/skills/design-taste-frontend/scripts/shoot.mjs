@@ -318,12 +318,12 @@ const profile = inProject(profileArg, 'shoot');
 fs.mkdirSync(profile, { recursive: true });
 const portFile = path.join(profile, 'DevToolsActivePort');
 try { fs.rmSync(portFile); } catch { /* none */ }
-const child = spawn(findChrome(), ['--headless=new', `--user-data-dir=${profile}`, '--remote-debugging-port=0', '--no-first-run',
+const child = spawn(findChrome(), ['--headless=new', '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', `--user-data-dir=${profile}`, '--remote-debugging-port=0', '--no-first-run',
   '--no-default-browser-check', '--disable-extensions', '--hide-scrollbars', '--mute-audio', '--disable-gpu', '--use-angle=swiftshader', '--enable-unsafe-swiftshader',
   `--window-size=${W},${VH}`, 'about:blank'], { stdio: 'ignore', windowsHide: true });
 const kill = () => { if (child.exitCode != null) return; try { execFileSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { stdio: 'ignore' }); } catch { try { child.kill(); } catch { /* gone */ } } };
 const noTiles = !!opt('no-tiles'), tilesDir = opt('tiles', null);
-const guard = setTimeout(() => { console.error('shoot: timed out'); kill(); process.exit(2); }, noTiles ? 300000 : 480000); // screens wait for their pictures and effects: a long page needs the time
+const guard = setTimeout(() => { console.error('shoot: timed out'); kill(); process.exit(2); }, noTiles ? 60000 : 120000); // screens wait for their pictures and effects: a long page needs the time
 
 try {
   let port = null;
