@@ -44,7 +44,6 @@ jobs:
 
       - name: Capture Visual QA Screenshots
         run: npm run capture:shots
-        continue-on-error: true
 
       - name: Upload Visual QA Artifacts
         uses: actions/upload-artifact@v4
@@ -52,4 +51,4 @@ jobs:
         with:
           name: visual-qa-screenshots
           path: .taste-skill/shots/
-          if-no-files-found: ignore
+          if-no-files-found: error

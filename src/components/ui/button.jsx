@@ -38,8 +38,9 @@ const buttonVariants = cva(
         sm: "h-control-sm min-h-control-sm px-4 type-body-small font-medium rounded-full gap-1.5 [&_svg]:icon-sm",
         md: "h-control-md min-h-control-md px-5 type-body-small font-medium rounded-full gap-2 [&_svg]:icon-sm",
         default: "h-control-md min-h-control-md px-5 type-body-small font-medium rounded-full gap-2 [&_svg]:icon-sm",
-        lg: "h-control-xl min-h-control-xl px-6 type-body-small font-semibold rounded-full gap-2.5 [&_svg]:icon-md",
-        xl: "h-[3.25rem] min-h-[3.25rem] px-7 text-sm font-medium tracking-wide rounded-full gap-2.5 [&_svg]:icon-md",
+        lg: "h-control-lg min-h-control-lg px-5 type-body-small font-semibold rounded-full gap-2.5 [&_svg]:icon-md",
+        xl: "h-control-xl min-h-control-xl px-6 type-body-small font-semibold rounded-full gap-2.5 [&_svg]:icon-md",
+        hero: "h-[3.25rem] min-h-[3.25rem] px-7 text-sm font-medium tracking-wide rounded-full gap-2.5 [&_svg]:icon-md",
       },
     },
     defaultVariants: {
@@ -53,7 +54,7 @@ const buttonVariants = cva(
  * @typedef {React.ButtonHTMLAttributes<HTMLButtonElement> & {
  *   variant?: 'primary' | 'secondary' | 'quiet' | 'danger' | 'subtle' | 'link' | 'default' | 'destructive' | 'outline' | 'ghost';
  *   intent?: 'primary' | 'secondary' | 'quiet' | 'danger' | 'subtle' | 'link';
- *   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'default';
+ *   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'hero' | 'default';
  *   asChild?: boolean;
  *   children?: React.ReactNode;
  * }} ButtonProps

@@ -22,7 +22,7 @@ export default function HelpArticle() {
   if (!article) {
     return (
       <PublicShell>
-        <AppPage size="form" className="py-16 text-center">
+        <AppPage size="form" className="pt-28 md:pt-32 pb-16 text-center">
           <h1 className="type-section-title text-ink-primary">Article not found</h1>
           <Link to="/help" className="mt-4 inline-block type-body-small text-brand hover:underline">Back to help center</Link>
         </AppPage>
@@ -32,7 +32,7 @@ export default function HelpArticle() {
 
   return (
     <PublicShell>
-      <AppPage size="form" className="py-12">
+      <AppPage size="form" className="pt-28 md:pt-32 pb-12">
         <nav className="flex items-center gap-1.5 text-sm text-ink-tertiary">
           <Link to="/help" className="hover:text-ink-primary">Help</Link>
           <ChevronRight className="h-3.5 w-3.5" />

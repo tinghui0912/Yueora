@@ -227,7 +227,7 @@ Yueora defines a strict boundary between the **Canonical Product API** and the *
 #### Canonical Yueora Button API
 - **Geometry:** Pill buttons (`rounded-full`). Planar (no `shadow-xs`).
 - **Intents:** `primary` (near-black `#121212` CTA), `secondary` (planar white panel with subtle line), `quiet` (subtle action), `danger` (terracotta alert), `subtle` (neutral muted action), `link` (inline text action).
-- **Sizes:** `xs` (`28px`), `sm` (`32px`), `md` (`36px`, default), `lg` (`44px`).
+- **Sizes:** `xs` (`28px`), `sm` (`32px`), `md` (`36px`, default), `lg` (`40px`), `xl` (`44px`), and `hero` (`52px`).
 - **Icon-Only Actions:** Dedicated primitive `<IconButton>` is used for all icon-only triggers.
 
 | Size Key | Height Token | Typography Token | Icon Token | Usage |
@@ -235,7 +235,9 @@ Yueora defines a strict boundary between the **Canonical Product API** and the *
 | `xs` | `h-control-xs` (`28px`) | `.type-caption` | `icon-xs` (`14px`) | Miniature inline action chips |
 | `sm` | `h-control-sm` (`32px`) | `.type-body-small font-medium` | `icon-sm` (`16px`) | Compact secondary actions |
 | `md` | `h-control-md` (`36px`) | `.type-body-small font-medium` | `icon-sm` (`16px`) | Standard buttons, dialog actions |
-| `lg` | `h-control-xl` (`44px`) | `.type-body-small font-semibold`| `icon-md` (`18px`) | Hero CTAs, large stand buttons |
+| `lg` | `h-control-lg` (`40px`) | `.type-body-small font-semibold`| `icon-md` (`18px`) | Large buttons, public header CTA |
+| `xl` | `h-control-xl` (`44px`) | `.type-body-small font-semibold`| `icon-md` (`18px`) | Stand buttons, large dialog actions |
+| `hero` | `h-[3.25rem]` (`52px`) | `text-sm font-medium tracking-wide` | `icon-md` (`18px`) | Major marketing/landing hero CTAs |
 
 ```jsx
 import { Button } from '@/components/ui/button';

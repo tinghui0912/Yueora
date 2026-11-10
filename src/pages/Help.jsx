@@ -30,7 +30,7 @@ export default function Help() {
 
   return (
     <PublicShell>
-      <AppPage size="form" className="py-12">
+      <AppPage size="form" className="pt-28 md:pt-32 pb-12">
         <h1 className="type-page-title text-ink-primary">Help center</h1>
         <p className="mt-1 type-body text-ink-secondary">Find guides, tips, and answers about Yueora.</p>
 

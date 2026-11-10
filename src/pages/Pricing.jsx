@@ -140,7 +140,7 @@ export default function Pricing() {
                 </div>
 
                 <div className="mt-8">
-                  <Button asChild intent="secondary" size="xl" className="w-full rounded-full">
+                  <Button asChild intent="secondary" size="hero" className="w-full rounded-full">
                     <Link to={isAuthenticated ? '/library' : '/register'}>
                       Start free
                     </Link>
@@ -219,7 +219,7 @@ export default function Pricing() {
                     <Button
                       asChild
                       variant="outline"
-                      size="xl"
+                      size="hero"
                       className="w-full border-surface-canvas/30 text-surface-canvas hover:bg-surface-canvas/10 rounded-full"
                     >
                       <Link to="/settings/plan">Manage your plan</Link>
@@ -228,7 +228,7 @@ export default function Pricing() {
                     <>
                       <Button
                         asChild
-                        size="xl"
+                        size="hero"
                         className="w-full bg-surface-canvas text-ink-primary hover:bg-surface-canvas/90 font-medium rounded-full flex items-center justify-center gap-2"
                       >
                         <Link to={plusDestination}>
@@ -314,7 +314,7 @@ export default function Pricing() {
                     <Button
                       asChild
                       variant="outline"
-                      size="xl"
+                      size="hero"
                       className="w-full rounded-full"
                     >
                       <Link to="/settings/plan">Manage your plan</Link>
@@ -324,7 +324,7 @@ export default function Pricing() {
                       <Button
                         asChild
                         intent="primary"
-                        size="xl"
+                        size="hero"
                         className="w-full rounded-full flex items-center justify-center gap-2"
                       >
                         <Link to={proDestination}>
@@ -388,7 +388,7 @@ export default function Pricing() {
 
                 <p className="type-body-small text-ink-secondary">
                   Already have an account?{' '}
-                  <Link to={`/login?returnTo=${encodeURIComponent(checkoutPath('plus', interval))}`} className="font-medium text-brand hover:underline">
+                  <Link to="/login?returnTo=/pricing" className="font-medium text-brand hover:underline">
                     Log in
                   </Link>
                 </p>

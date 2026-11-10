@@ -307,7 +307,7 @@ export default function About() {
                   <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4">
                     <Button
                       asChild
-                      size="xl"
+                      size="hero"
                       className="w-full bg-surface-canvas text-ink-primary hover:bg-surface-canvas/90 font-medium rounded-full flex items-center justify-center gap-2"
                     >
                       <Link to={ctaDestination}>
@@ -319,7 +319,7 @@ export default function About() {
                       <Button
                         asChild
                         variant="outline"
-                        size="xl"
+                        size="hero"
                         className="w-full border-surface-canvas/20 text-surface-canvas hover:bg-surface-canvas/10 rounded-full"
                       >
                         <Link to="/login">Sign into your repertoire</Link>

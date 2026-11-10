@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import SettingsSection from '@/components/patterns/SettingsSection';
-import { checkoutPath, formatPrice, intervalLabel, intervalNoun, PLAN_ORDER } from '@/lib/commercial';
+import { checkoutPath, formatPrice, intervalLabel, intervalNoun, PLAN_ORDER, yearlySavingPercent } from '@/lib/commercial';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -39,6 +39,8 @@ export default function PlanSettings() {
 
   // Alternative plans user can transition to
   const availablePlans = PLAN_ORDER.filter((id) => id !== 'free' && id !== currentPlanId).map((id) => plans[id]);
+  const targetPlanForSaving = availablePlans[0] || plans.plus || plans.pro;
+  const saving = yearlySavingPercent(targetPlanForSaving);
 
   return (
     <div className="divide-y divide-line-subtle">
@@ -121,7 +123,7 @@ export default function PlanSettings() {
             <div className="flex items-center gap-2">
               <span className={`type-metadata ${!annual ? 'text-ink-primary font-medium' : 'text-ink-secondary'}`}>Monthly</span>
               <Switch checked={annual} onCheckedChange={setAnnual} aria-label="Choose yearly billing" />
-              <span className={`type-metadata ${annual ? 'text-ink-primary font-medium' : 'text-ink-secondary'}`}>Yearly (save 17%)</span>
+              <span className={`type-metadata ${annual ? 'text-ink-primary font-medium' : 'text-ink-secondary'}`}>Yearly{saving > 0 ? ` (save ${saving}%)` : ''}</span>
             </div>
           </div>
 
@@ -224,17 +226,23 @@ export default function PlanSettings() {
 }
 
 function UsageBar({ label, value, limit }) {
+  const numValue = typeof value === 'number' ? value : parseFloat(value);
+  const numLimit = typeof limit === 'number' ? limit : parseFloat(limit);
   const isUnlimited = typeof limit === 'string' && limit.toLowerCase().includes('unlimited');
-  const pct = isUnlimited ? 12 : 45;
+  const hasNumericLimit = !isUnlimited && !Number.isNaN(numValue) && !Number.isNaN(numLimit) && numLimit > 0;
+  const pct = hasNumericLimit ? Math.min(100, Math.max(0, Math.round((numValue / numLimit) * 100))) : null;
+
   return (
     <div>
       <div className="flex justify-between type-body-small">
         <span className="text-ink-secondary">{label}</span>
         <span className="text-ink-primary">{value} / {limit}</span>
       </div>
-      <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-neutral-muted">
-        <div className="h-full rounded-full bg-brand" style={{ width: `${pct}%` }} />
-      </div>
+      {pct !== null && (
+        <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-neutral-muted">
+          <div className="h-full rounded-full bg-brand" style={{ width: `${pct}%` }} />
+        </div>
+      )}
     </div>
   );
 }

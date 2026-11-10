@@ -11,7 +11,14 @@ import {
   plans as seedPlans,
   billingHistory as seedBillingHistory,
 } from '@/lib/mockData';
-import { addBillingPeriod, demoReference, formatDate, planPrice } from '@/lib/commercial';
+import {
+  addBillingPeriod,
+  demoReference,
+  formatDate,
+  planPrice,
+  applyDemoCheckout,
+  migratePrototypeState,
+} from '@/lib/commercial';
 
 /**
  * @typedef {Object} DifficultSection
@@ -1046,48 +1053,7 @@ export const usePrototypeStore = create(
       // Canonical path to complete a demo purchase for paid plans (Plus, Pro).
       // sessionKey makes repeat clicks on the same checkout a no-op.
       completeDemoCheckout: ({ planId, interval, sessionKey }) =>
-        set((st) => {
-          const plan = st.plans[planId];
-          if (!plan || planId === 'free') return st;
-          if (st.checkout?.sessionKey === sessionKey) return st;
-
-          const now = new Date();
-          const amount = planPrice(plan, interval);
-          const reference = demoReference();
-          const renewal = formatDate(addBillingPeriod(now, interval));
-
-          return {
-            subscription: {
-              ...st.subscription,
-              plan: planId,
-              status: 'active',
-              billingInterval: interval,
-              renewal,
-              cancelAt: null,
-              pendingPlan: null,
-            },
-            billingHistory: [
-              {
-                id: `demo-${Date.now()}`,
-                date: formatDate(now),
-                amount: `$${amount}.00`,
-                plan: `${plan.name} ${interval === 'yearly' ? 'yearly' : 'monthly'}`,
-                invoice: reference,
-                demo: true,
-              },
-              ...st.billingHistory,
-            ],
-            checkout: {
-              status: 'complete',
-              reference,
-              planId,
-              interval,
-              amount,
-              completedAt: now.toISOString(),
-              sessionKey,
-            },
-          };
-        }),
+        set((st) => applyDemoCheckout(st, { planId, interval, sessionKey })),
 
       // ---- Account actions ----
       setAvatar: (avatar) => set((st) => ({ account: { ...st.account, avatar } })),
@@ -1142,88 +1108,7 @@ export const usePrototypeStore = create(
     {
       name: 'yueora-prototype',
       version: 9,
-      migrate: (persistedState, version) => {
-        // Merge any missing keys from defaults
-        const raw = (persistedState && typeof persistedState === 'object') ? persistedState : {};
-        /** @type {Record<string, any>} */
-        const merged = { ...raw };
-        // Ensure canonical product plans (free, plus, pro) are always synchronized
-        merged.plans = {
-          ...(merged.plans || {}),
-          ...seedPlans,
-        };
-        if (!Array.isArray(merged.performanceComments)) merged.performanceComments = [];
-        // Independent permissions and the performance permission model arrived
-        // together; older saved state gets explicit defaults instead of the
-        // inherited ones it used to rely on.
-        if (merged.notificationPrefs) {
-          if (!merged.notificationPrefs.performances) merged.notificationPrefs.performances = { inApp: true, email: true };
-          if (!merged.notificationPrefs.comments) merged.notificationPrefs.comments = { inApp: true, email: true };
-        }
-        if (Array.isArray(merged.savedPerformances)) {
-          merged.savedPerformances = merged.savedPerformances.map((p) => ({
-            allowComments: true,
-            sharedCommenters: [],
-            positionTimeline: null,
-            ...p,
-          }));
-        }
-        if (!merged.invitations) merged.invitations = [];
-        if (!merged.revokedShareTokens) merged.revokedShareTokens = [];
-        if (!merged.sharing) merged.sharing = {};
-        if (!Array.isArray(merged.practiceActivities)) merged.practiceActivities = clone(seedPracticeActivities);
-        if (!Array.isArray(merged.savedPerformances)) merged.savedPerformances = clone(seedSavedPerformances);
-        if (!Array.isArray(merged.teamMembers)) merged.teamMembers = clone(seedTeamMembers);
-        // Old sessions carried note scores, reports and media references that no
-        // longer belong to a practice record. Start the prototype on the new model.
-        delete merged.practiceSessions;
-        delete merged.practicePerformances;
-        // Practice activity is private: revoke any legacy sharing grant without
-        // deleting the underlying record.
-        if (Array.isArray(merged.practiceActivities)) {
-          merged.practiceActivities = merged.practiceActivities.map((a) => {
-            const { visibility, sharedWith, teamId, ...rest } = a;
-            return rest;
-          });
-        }
-        // Performances saved while media was a placeholder pointed at files that
-        // never existed. Keep only recordings that really have a stored file.
-        if (Array.isArray(merged.savedPerformances)) {
-          merged.savedPerformances = merged.savedPerformances
-            .filter((p) => !!p.fileUri)
-            .map(({ mediaRef, ...rest }) => rest);
-        }
-        if (!merged.preflight) merged.preflight = { modelReady: false, micGranted: false, midiConnected: false, cameraGranted: false };
-        if (merged.subscription && merged.subscription.renewal === 'Sep 15, 2026') {
-          merged.subscription.renewal = 'Nov 15, 2026';
-        }
-        // Normalize the seed saved score (it was saved from a fully-permitted link).
-        // User-saved scores without recorded permissions stay denied by default.
-        if (Array.isArray(merged.scores)) {
-          merged.scores = merged.scores.map((s) => {
-            if (s.id === 'gymnopedie-1' && !s.savedPermission) {
-              return { ...s, savedPermission: { canPractice: true, canDownload: true } };
-            }
-            // Scores shared before permissions were separate kept their abilities
-            // implicitly. Record what they actually had, once, as explicit grants.
-            if (s.ownership === 'shared' && !s.permissions) {
-              return { ...s, permissions: { practice: true, download: s.permission === 'Can edit' } };
-            }
-            return s;
-          });
-        }
-        // Ensure sharing links have token field
-        if (merged.sharing) {
-          for (const [sid, sh] of Object.entries(merged.sharing)) {
-            if (sh.link && !sh.link.token) {
-              sh.link.token = null;
-              sh.link.createdAt = null;
-              sh.link.expiresAt = null;
-            }
-          }
-        }
-        return merged;
-      },
+      migrate: (persistedState, version) => migratePrototypeState(persistedState, version),
     }
   )
 );

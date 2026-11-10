@@ -1,3 +1,12 @@
+import {
+  plans as canonicalPlans,
+  practiceActivities as seedPracticeActivities,
+  savedPerformances as seedSavedPerformances,
+  teamMembers as seedTeamMembers,
+} from './mockData.js';
+
+const clone = (v) => (typeof structuredClone === 'function' ? structuredClone(v) : JSON.parse(JSON.stringify(v)));
+
 /**
  * Commercial helpers — one place for prices, intervals and checkout URLs.
  *
@@ -79,4 +88,127 @@ export function addBillingPeriod(date, interval) {
 
 export function formatDate(date) {
   return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+/**
+ * Canonical checkout state mutation for completing a demo purchase.
+ * Pure state transition function consumed by prototypeStore completeDemoCheckout.
+ */
+export function applyDemoCheckout(state, { planId, interval, sessionKey }) {
+  const plan = state.plans?.[planId];
+  if (!plan || planId === 'free') return state;
+  if (state.checkout?.sessionKey === sessionKey) return state;
+
+  const now = new Date();
+  const amount = planPrice(plan, interval);
+  const reference = demoReference();
+  const renewal = formatDate(addBillingPeriod(now, interval));
+
+  return {
+    ...state,
+    subscription: {
+      ...state.subscription,
+      plan: planId,
+      status: 'active',
+      billingInterval: interval,
+      renewal,
+      cancelAt: null,
+      pendingPlan: null,
+    },
+    billingHistory: [
+      {
+        id: `demo-${Date.now()}`,
+        date: formatDate(now),
+        amount: `$${amount}.00`,
+        plan: `${plan.name} ${interval === 'yearly' ? 'yearly' : 'monthly'}`,
+        invoice: reference,
+        demo: true,
+      },
+      ...(state.billingHistory || []),
+    ],
+    checkout: {
+      status: 'complete',
+      reference,
+      planId,
+      interval,
+      amount,
+      completedAt: now.toISOString(),
+      sessionKey,
+    },
+  };
+}
+
+/**
+ * Production Zustand persistence migration logic (v8 -> v9+).
+ * Pure state transition function consumed by prototypeStore persist.migrate.
+ */
+export function migratePrototypeState(persistedState, version) {
+  const raw = (persistedState && typeof persistedState === 'object') ? persistedState : {};
+  /** @type {Record<string, any>} */
+  const merged = { ...raw };
+
+  // Ensure canonical product plans (free, plus, pro) are always synchronized
+  merged.plans = {
+    ...(merged.plans || {}),
+    ...canonicalPlans,
+  };
+
+  if (!Array.isArray(merged.performanceComments)) merged.performanceComments = [];
+  if (merged.notificationPrefs) {
+    if (!merged.notificationPrefs.performances) merged.notificationPrefs.performances = { inApp: true, email: true };
+    if (!merged.notificationPrefs.comments) merged.notificationPrefs.comments = { inApp: true, email: true };
+  }
+  if (Array.isArray(merged.savedPerformances)) {
+    merged.savedPerformances = merged.savedPerformances.map((p) => ({
+      allowComments: true,
+      sharedCommenters: [],
+      positionTimeline: null,
+      ...p,
+    }));
+  }
+  if (!merged.invitations) merged.invitations = [];
+  if (!merged.revokedShareTokens) merged.revokedShareTokens = [];
+  if (!merged.sharing) merged.sharing = {};
+  if (!Array.isArray(merged.practiceActivities)) merged.practiceActivities = clone(seedPracticeActivities);
+  if (!Array.isArray(merged.savedPerformances)) merged.savedPerformances = clone(seedSavedPerformances);
+  if (!Array.isArray(merged.teamMembers)) merged.teamMembers = clone(seedTeamMembers);
+  delete merged.practiceSessions;
+  delete merged.practicePerformances;
+  if (Array.isArray(merged.practiceActivities)) {
+    merged.practiceActivities = merged.practiceActivities.map((a) => {
+      const { visibility, sharedWith, teamId, ...rest } = a;
+      return rest;
+    });
+  }
+  if (Array.isArray(merged.savedPerformances)) {
+    merged.savedPerformances = merged.savedPerformances
+      .filter((p) => !!p.fileUri)
+      .map(({ mediaRef, ...rest }) => rest);
+  }
+  if (!merged.preflight) merged.preflight = { modelReady: false, micGranted: false, midiConnected: false, cameraGranted: false };
+  if (merged.subscription && merged.subscription.renewal === 'Sep 15, 2026') {
+    merged.subscription.renewal = 'Nov 15, 2026';
+  }
+  if (Array.isArray(merged.scores)) {
+    merged.scores = merged.scores.map((s) => {
+      if (s.id === 'gymnopedie-1' && !s.savedPermission) {
+        return { ...s, savedPermission: { canPractice: true, canDownload: true } };
+      }
+      if (s.ownership === 'shared' && !s.permissions) {
+        return { ...s, permissions: { practice: true, download: s.permission === 'Can edit' } };
+      }
+      return s;
+    });
+  }
+  if (merged.sharing) {
+    for (const [sid, sh] of Object.entries(merged.sharing)) {
+      if (sh.link && !sh.link.token) {
+        sh.link.token = null;
+        sh.link.createdAt = null;
+        sh.link.expiresAt = null;
+      }
+    }
+  }
+
+  return merged;
 }

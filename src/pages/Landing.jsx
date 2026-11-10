@@ -19,12 +19,18 @@ import MockScanPage from '@/components/visuals/MockScanPage';
 import { ScoreSheetGlyph } from '@/components/brand/MusicalGlyphs';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { Button } from '@/components/ui/button';
-import { formatPrice } from '@/lib/commercial';
+import { formatPrice, checkoutPath } from '@/lib/commercial';
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
   const plans = usePrototypeStore((s) => s.plans);
-  const primary = isAuthenticated ? '/library' : '/register';
+  const freeDestination = isAuthenticated ? '/library' : '/register';
+  const plusDestination = isAuthenticated
+    ? checkoutPath('plus', 'monthly')
+    : `/register?returnTo=${encodeURIComponent(checkoutPath('plus', 'monthly'))}`;
+  const proDestination = isAuthenticated
+    ? checkoutPath('pro', 'monthly')
+    : `/register?returnTo=${encodeURIComponent(checkoutPath('pro', 'monthly'))}`;
 
   // Active step in the continuous "Life of a Piece" journey
   const [activeStep, setActiveStep] = useState(0);
@@ -166,13 +172,13 @@ export default function Landing() {
               transition={{ duration: 0.7, delay: 0.4 }}
               className="mt-10 flex flex-col sm:flex-row gap-4"
             >
-              <Button asChild intent="primary" size="xl">
-                <Link to={primary}>
+              <Button asChild intent="primary" size="hero">
+                <Link to={freeDestination}>
                   <span>Start your repertoire</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
-              <Button asChild intent="secondary" size="xl">
+              <Button asChild intent="secondary" size="hero">
                 <a href="#lifecycle">
                   <span>See the lifecycle</span>
                   <ArrowDown className="w-4 h-4 text-ink-tertiary" />
@@ -606,7 +612,7 @@ export default function Landing() {
                 Simple, transparent <span className="italic">pricing.</span>
               </h2>
               <p className="mt-4 text-base text-ink-secondary leading-relaxed">
-                Start for free with your favorite pieces. Upgrade to Pro when your repertoire expands.
+                Start free. Upgrade when your repertoire grows.
               </p>
             </div>
           </Reveal>
@@ -650,8 +656,8 @@ export default function Landing() {
                 </div>
 
                 <div className="mt-10">
-                  <Button asChild intent="secondary" size="xl" className="w-full rounded-full">
-                    <Link to={primary}>Get Started Free</Link>
+                  <Button asChild intent="secondary" size="hero" className="w-full rounded-full">
+                    <Link to={freeDestination}>Get Started Free</Link>
                   </Button>
                 </div>
               </div>
@@ -700,8 +706,8 @@ export default function Landing() {
                 </div>
 
                 <div className="mt-10">
-                  <Button asChild size="xl" className="w-full bg-surface-canvas text-ink-primary hover:bg-white font-semibold rounded-full">
-                    <Link to={primary}>Start Plus</Link>
+                  <Button asChild size="hero" className="w-full bg-surface-canvas text-ink-primary hover:bg-white font-semibold rounded-full">
+                    <Link to={plusDestination}>Start Plus</Link>
                   </Button>
                 </div>
               </div>
@@ -750,8 +756,8 @@ export default function Landing() {
                 </div>
 
                 <div className="mt-10">
-                  <Button asChild intent="primary" size="xl" className="w-full rounded-full">
-                    <Link to={primary}>Start Pro</Link>
+                  <Button asChild intent="primary" size="hero" className="w-full rounded-full">
+                    <Link to={proDestination}>Start Pro</Link>
                   </Button>
                 </div>
               </div>
@@ -835,8 +841,8 @@ export default function Landing() {
                       Upload your first score in under two minutes.
                     </p>
                     <div className="mt-8 flex flex-col gap-3">
-                      <Button asChild size="xl" className="w-full bg-surface-canvas text-ink-primary hover:bg-white font-semibold rounded-full">
-                        <Link to={primary}>
+                      <Button asChild size="hero" className="w-full bg-surface-canvas text-ink-primary hover:bg-white font-semibold rounded-full">
+                        <Link to={freeDestination}>
                           <span>Begin Your Repertoire</span>
                           <ArrowRight className="h-4 w-4" />
                         </Link>

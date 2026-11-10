@@ -58,12 +58,12 @@ export default function PublicHeader() {
           : 'border-b border-transparent bg-transparent'
       }`}
     >
-      <nav className="mx-auto flex h-16 md:h-20 max-w-7xl items-center justify-between px-6 md:px-10">
+      <nav className="mx-auto flex h-16 md:h-20 max-w-7xl items-center justify-between px-4 sm:px-6 md:px-10">
         {/* Brand Logo */}
         <Link
           to="/"
           aria-label="Yueora home"
-          className="inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full py-1"
+          className="inline-flex shrink-0 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full py-1"
         >
           <Logo variant="full" size="md" />
         </Link>
@@ -133,9 +133,9 @@ export default function PublicHeader() {
           <div className="mx-2 hidden h-4 w-px bg-line-subtle md:block" aria-hidden="true" />
 
           {/* Action Area — UGC desktop Nav CTA scale: 40px high, 20px padding */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             {isAuthenticated ? (
-              <Button asChild intent="primary" className="h-control-lg min-h-control-lg px-5 text-sm font-medium tracking-wide">
+              <Button asChild intent="primary" className="h-9 sm:h-control-lg px-3.5 sm:px-5 text-xs sm:text-sm font-medium tracking-wide shrink-0">
                 <Link to="/library">
                   Go to Library
                 </Link>
@@ -147,7 +147,7 @@ export default function PublicHeader() {
                     Log in
                   </Link>
                 </Button>
-                <Button asChild intent="primary" className="h-control-lg min-h-control-lg px-5 text-sm font-medium tracking-wide">
+                <Button asChild intent="primary" className="h-9 sm:h-control-lg px-3.5 sm:px-5 text-xs sm:text-sm font-medium tracking-wide shrink-0">
                   <Link to="/register">
                     Start playing
                   </Link>
@@ -159,8 +159,9 @@ export default function PublicHeader() {
             <button
               type="button"
               onClick={() => setMobileOpen((o) => !o)}
+              aria-expanded={mobileOpen}
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-              className="grid place-items-center w-10 h-10 rounded-full border border-line-subtle text-ink-secondary hover:text-ink-primary hover:border-line-strong transition-colors md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+              className="grid place-items-center w-10 h-10 shrink-0 rounded-full border border-line-subtle text-ink-secondary hover:text-ink-primary hover:border-line-strong transition-colors md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>

@@ -423,7 +423,7 @@ try {
   if (Math.abs(shift) > 400) shift = 0; // not a header settling: something else moved
   const H1raw = await ev('Math.ceil(Math.max(document.documentElement.scrollHeight, document.body.scrollHeight))');
   const H1 = Math.min(CAP, H1raw);
-  const HI = Math.min(CAP, Math.max(VH, H1 + shift)); // the stitched picture's height
+  let HI = Math.min(CAP, Math.max(VH, H1 + shift)); // the stitched picture's height
   const cut = Math.max(fullH, H1raw + shift) > CAP ? Math.max(fullH, H1raw + shift) : 0;
   // a held stage (sticky, nearly the screen): the scroll positions where it starts and stops being held; a screen is
   // put on each, so the stage shows whole every time (as the visitor sees it held), never cut at a seam
@@ -454,6 +454,8 @@ try {
     if (top + VH >= HI || top <= prev) break; // the end, or a page that will not scroll further
     prev = top; p = top + VH;
   }
+  const reachedBottom = Math.max(VH, ...covered.map(([, b]) => b));
+  if (reachedBottom < HI) HI = reachedBottom;
   // rows no screen covered (the page scrolled elsewhere than asked): shot again where they start
   const gaps = [];
   for (let tries = 0, g; (g = firstGap()) !== null && tries < 12; tries++) {
@@ -471,6 +473,9 @@ try {
   fs.mkdirSync(path.dirname(path.resolve(out)), { recursive: true });
   fs.writeFileSync(out, encodePNG(W, HI, px));
   console.log(`saved ${out} (${W}x${HI}, ${shots.length} screens)${overflowX ? '\nWARNING: the page scrolls sideways at this width' : ''}${gaps.length ? `\nWARNING: rows ${gaps.map(([a, b]) => `${a}-${b}`).join(', ')} could not be scrolled to (drawn hatched red)` : ''}${slow.size ? `\nWARNING: still loading 3 s after they came on screen (their frames may show empty): ${[...slow].join(', ')}` : ''}${ghosts.size ? `\nWARNING: loaded but invisible on screen (under 0.1 opacity or hidden: their frames show only the ground): ${[...ghosts].join(', ')}` : ''}${cut ? `\nWARNING: the page is ${cut}px tall and the picture stops at ${CAP}px: its end (the closing call, the footer) is not in it` : ''}${tileLine}`);
+  if (overflowX || gaps.length > 0) {
+    process.exitCode = 1;
+  }
   if (logs.length) console.log(logs.slice(0, 8).join('\n'));
 } catch (e) {
   console.error('shoot:', e.message);

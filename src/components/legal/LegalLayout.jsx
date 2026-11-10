@@ -7,7 +7,7 @@ import AppPage from '@/components/patterns/AppPage';
  */
 export default function LegalLayout({ title, updated = undefined, intro = undefined, sections = [], children = null }) {
   return (
-    <AppPage size="form" className="py-12 md:py-16">
+    <AppPage size="form" className="pt-28 md:pt-32 pb-12 md:pb-16">
       <h1 className="type-page-title text-ink-primary">{title}</h1>
       {updated && <p className="mt-2 type-body-small text-ink-tertiary">Last updated {updated}</p>}
       {intro && <p className="mt-5 type-body text-ink-secondary leading-relaxed">{intro}</p>}
