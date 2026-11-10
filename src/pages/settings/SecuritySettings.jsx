@@ -84,7 +84,7 @@ export default function SecuritySettings() {
                 <li key={p.id} className="flex items-center justify-between py-3">
                   <div className="flex items-center gap-3">
                     <KeyRound className="icon-md text-ink-secondary" />
-                    <div><p className="type-body-small font-medium text-ink-primary">{p.name}</p><p className="type-caption text-ink-secondary">Added {p.addedAt}</p></div>
+                    <div><p className="type-body-small font-medium text-ink-primary">{p.name}</p><p className="type-metadata text-ink-tertiary">Added {p.addedAt}</p></div>
                   </div>
                   <Button intent="quiet" size="sm" onClick={() => removePasskey(p.id)} className="text-danger hover:text-danger hover:bg-danger/10"><Trash2 className="mr-1.5" /> Remove</Button>
                 </li>
@@ -101,7 +101,7 @@ export default function SecuritySettings() {
             <li key={s.id} className="flex items-center justify-between py-3">
               <div className="flex items-center gap-3">
                 {s.device?.includes('iPhone') ? <Smartphone className="h-5 w-5 text-ink-secondary" /> : <Monitor className="h-5 w-5 text-ink-secondary" />}
-                <div><p className="type-body-small font-medium text-ink-primary">{s.device} · {s.browser}</p><p className="type-caption text-ink-secondary">{s.location}</p></div>
+                <div><p className="type-body-small font-medium text-ink-primary">{s.device} · {s.browser}</p><p className="type-metadata text-ink-tertiary">{s.location}</p></div>
               </div>
               {s.current ? <span className="type-caption text-brand">This device</span> : <Button variant="ghost" size="sm" onClick={() => signOutSession(s.id)}>Sign out</Button>}
             </li>
@@ -114,8 +114,8 @@ export default function SecuritySettings() {
 
       <SettingsSection title="Security activity" desc="Recent sign-ins and account changes.">
         <ul className="space-y-2 type-body-small">
-          <li className="flex justify-between"><span>New sign-in on Chrome</span><span className="type-caption text-ink-secondary">1 day ago</span></li>
-          <li className="flex justify-between"><span>Password updated</span><span className="type-caption text-ink-secondary">2 weeks ago</span></li>
+          <li className="flex justify-between"><span>New sign-in on Chrome</span><span className="type-metadata text-ink-tertiary">1 day ago</span></li>
+          <li className="flex justify-between"><span>Password updated</span><span className="type-metadata text-ink-tertiary">2 weeks ago</span></li>
         </ul>
       </SettingsSection>
 

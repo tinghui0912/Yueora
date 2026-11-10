@@ -39,7 +39,7 @@ export default function Copyright() {
           {sent ? (
             <div className="py-6 text-center">
               <p className="font-medium">Request received</p>
-              <p className="mt-1 type-caption text-ink-secondary">We’ll review it and follow up by email.</p>
+              <p className="mt-1 type-metadata text-ink-tertiary">We’ll review it and follow up by email.</p>
             </div>
           ) : (
             <div className="space-y-3">

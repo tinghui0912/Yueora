@@ -91,7 +91,7 @@ export default function AccountSettings() {
             <option>English</option>
             <option>中文</option>
           </select>
-          <p className="type-caption text-ink-secondary">Some pages may not be fully translated yet.</p>
+          <p className="type-metadata text-ink-tertiary">Some pages may not be fully translated yet.</p>
         </div>
       </SettingsSection>
 

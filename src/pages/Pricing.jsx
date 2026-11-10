@@ -43,7 +43,7 @@ export default function Pricing() {
       <AppPage size="full" padding="none">
         {/* 1. Header Section */}
         <section className="pt-24 md:pt-36 pb-12">
-          <div className="max-w-7xl mx-auto px-6 md:px-10 text-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 text-center">
             <Reveal>
               <p className="type-eyebrow text-ink-tertiary mb-4">
                 Durable &amp; Fair · Pricing
@@ -84,10 +84,10 @@ export default function Pricing() {
 
         {/* 2. 3-Column Plan Cards Section — UGC Services Parity (Free | Plus | Pro) */}
         <section className="pb-24 md:pb-36">
-          <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Free Plan (White Panel) */}
             <Reveal delay={0.05} y={32}>
-              <div className="h-full rounded-[2rem] p-8 md:p-9 bg-surface-panel border border-line-subtle flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
+              <div className="h-full rounded-[2rem] p-6 sm:p-8 md:p-9 bg-surface-panel border border-line-subtle flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <span className="type-eyebrow text-ink-tertiary">
@@ -151,7 +151,7 @@ export default function Pricing() {
 
             {/* Plus Plan — Featured Middle Near-Black Inverse Card (Most Popular) */}
             <Reveal delay={0.1} y={32}>
-              <div className="relative h-full rounded-[2rem] p-8 md:p-9 bg-ink-primary text-surface-canvas border border-ink-primary shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div className="relative h-full rounded-[2rem] p-6 sm:p-8 md:p-9 bg-ink-primary text-surface-canvas border border-ink-primary shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                 {/* Ambient glow decoration */}
                 <div aria-hidden className="pointer-events-none absolute -bottom-8 -right-8 select-none">
                   <Sparkles className="w-40 h-40 text-surface-canvas/[0.04]" />
@@ -247,7 +247,7 @@ export default function Pricing() {
 
             {/* Pro Plan — Highest Capability Tier (White Panel) */}
             <Reveal delay={0.15} y={32}>
-              <div className="h-full rounded-[2rem] p-8 md:p-9 bg-surface-panel border border-line-subtle flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
+              <div className="h-full rounded-[2rem] p-6 sm:p-8 md:p-9 bg-surface-panel border border-line-subtle flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <span className="type-eyebrow text-ink-tertiary">
@@ -291,7 +291,7 @@ export default function Pricing() {
                       </li>
                       <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
-                        <span><strong>{plans.pro.storage}</strong> high-resolution storage</span>
+                        <span><strong>{plans.pro.storage}</strong> storage</span>
                       </li>
                       <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
@@ -343,7 +343,7 @@ export default function Pricing() {
           </div>
 
           {/* 3. Detailed Side-by-Side Comparison (Feature | Free | Plus | Pro) */}
-          <div className="max-w-4xl mx-auto px-6 md:px-10 mt-24">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-10 mt-24">
             <Reveal>
               <div className="text-center mb-8">
                 <p className="type-eyebrow text-ink-tertiary mb-2">Feature Matrix</p>

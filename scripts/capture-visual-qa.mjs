@@ -36,6 +36,8 @@ const TARGETS = [
   { name: 'setup-desktop', category: 'DEV Demo', path: '/score/clair-de-lune/setup?demo=true', w: 1440, h: 900 },
   { name: 'setup-mobile', category: 'DEV Demo', path: '/score/clair-de-lune/setup?demo=true', w: 390, h: 844 },
   { name: 'settings-desktop', category: 'DEV Demo', path: '/settings/account?demo=true', w: 1440, h: 900 },
+  { name: 'settings-preferences', category: 'DEV Demo', path: '/settings/preferences?demo=true', w: 1440, h: 900 },
+  { name: 'settings-privacy', category: 'DEV Demo', path: '/settings/privacy?demo=true', w: 1440, h: 900 },
 ];
 
 console.log('📸 Starting Yueora Automated Visual QA Screenshot Capture...');
@@ -241,6 +243,8 @@ async function verifyLandingViewports(baseUrl) {
     await new Promise((r) => setTimeout(r, 600));
 
     const viewports = [320, 375, 390, 430, 1024, 1280, 1440];
+    const verificationResults = [];
+
     for (const w of viewports) {
       const h = w < 768 ? 844 : 900;
       await S('Emulation.setDeviceMetricsOverride', {
@@ -248,45 +252,134 @@ async function verifyLandingViewports(baseUrl) {
         height: h,
         deviceScaleFactor: 1,
         mobile: w < 768,
+        dontSetVisibleSize: false,
       });
       await new Promise((r) => setTimeout(r, 200));
 
       const metrics = await ev(`(() => {
         const scrollWidth = document.documentElement.scrollWidth;
         const innerWidth = window.innerWidth;
+        const clientWidth = document.documentElement.clientWidth;
         const hasHorizontalOverflow = scrollWidth > innerWidth;
+
         const logo = document.querySelector('header a[aria-label="Yueora home"]');
         const logoRect = logo ? logo.getBoundingClientRect() : null;
-        const logoVisible = !!(logoRect && logoRect.width > 0 && logoRect.height > 0);
+        const logoValid = !!(
+          logoRect &&
+          logoRect.width > 0 &&
+          logoRect.height > 0 &&
+          logoRect.left >= 0 &&
+          logoRect.right <= innerWidth + 1
+        );
+
         const hamburger = document.querySelector('header button[aria-label*="menu"]');
         const hamburgerRect = hamburger ? hamburger.getBoundingClientRect() : null;
-        const isMobile = window.innerWidth < 768;
-        const hamburgerVisible = isMobile
-          ? !!(hamburgerRect && hamburgerRect.width > 0 && hamburgerRect.height > 0 && hamburgerRect.right <= window.innerWidth)
+        const isMobile = innerWidth < 768;
+        const hamburgerValid = isMobile
+          ? !!(
+              hamburgerRect &&
+              hamburgerRect.width >= 40 &&
+              hamburgerRect.height >= 40 &&
+              hamburgerRect.left >= 0 &&
+              hamburgerRect.right <= innerWidth + 1
+            )
           : true;
+
+        const cta = document.querySelector('header a[href="/register"], header a[href="/library"]');
+        const ctaEl = cta ? (cta.closest('button') || cta) : null;
+        const ctaVisible = !!(ctaEl && window.getComputedStyle(ctaEl).display !== 'none' && ctaEl.getBoundingClientRect().width > 0);
+        const ctaRect = ctaVisible ? ctaEl.getBoundingClientRect() : null;
+        const ctaValid = ctaVisible ? (ctaRect.right <= innerWidth + 1) : true;
+
         return {
+          requested: ${w},
           scrollWidth,
           innerWidth,
+          clientWidth,
           hasHorizontalOverflow,
-          logoVisible,
-          hamburgerVisible,
+          logoRect: logoRect ? { left: Math.round(logoRect.left), right: Math.round(logoRect.right), width: Math.round(logoRect.width) } : null,
+          logoValid,
+          hamburgerRect: hamburgerRect ? { left: Math.round(hamburgerRect.left), right: Math.round(hamburgerRect.right), width: Math.round(hamburgerRect.width) } : null,
+          hamburgerValid,
+          ctaVisible,
+          ctaRect: ctaRect ? { left: Math.round(ctaRect.left), right: Math.round(ctaRect.right), width: Math.round(ctaRect.width) } : null,
+          ctaValid,
           isMobile,
         };
       })()`);
 
-      console.log('Metrics at', w, 'px:', metrics);
+      verificationResults.push(metrics);
 
+      // Viewport-truth invariant: Math.abs(window.innerWidth - requestedWidth) <= 1
+      if (Math.abs(metrics.innerWidth - w) > 1) {
+        const culprits = await ev(`(() => {
+          const list = [];
+          document.querySelectorAll('*').forEach(el => {
+            const r = el.getBoundingClientRect();
+            if (r.right > ${w} + 1 || r.width > ${w} + 1) {
+              const hasOverflowChild = Array.from(el.children).some(c => {
+                const cr = c.getBoundingClientRect();
+                return cr.right > ${w} + 1 || cr.width > ${w} + 1;
+              });
+              if (!hasOverflowChild) {
+                list.push({
+                  tag: el.tagName,
+                  id: el.id,
+                  cls: (el.className?.slice ? el.className.slice(0, 60) : ''),
+                  text: (el.innerText || '').slice(0, 40).replace(/\\n/g, ' '),
+                  w: Math.round(r.width),
+                  r: Math.round(r.right),
+                  l: Math.round(r.left),
+                  scrollW: el.scrollWidth,
+                });
+              }
+            }
+          });
+          return list;
+        })()`);
+        console.error('Leaf culprit elements at', w, 'px:', culprits.slice(0, 10));
+        throw new Error(
+          `Viewport-truth invariant failed at ${w}px: innerWidth (${metrics.innerWidth}) !== requested (${w})`
+        );
+      }
       if (metrics.hasHorizontalOverflow) {
-        throw new Error(`Horizontal overflow at ${w}px: scrollWidth (${metrics.scrollWidth}) > innerWidth (${metrics.innerWidth})`);
+        throw new Error(
+          `Horizontal overflow at ${w}px: scrollWidth (${metrics.scrollWidth}) > innerWidth (${metrics.innerWidth})`
+        );
       }
-      if (!metrics.logoVisible) {
-        throw new Error(`Logo is not visible at ${w}px`);
+      if (!metrics.logoValid) {
+        throw new Error(
+          `Logo bounding box is invalid at ${w}px: left >= 0 and right <= ${w} (got left=${metrics.logoRect?.left}, right=${metrics.logoRect?.right})`
+        );
       }
-      if (!metrics.hamburgerVisible) {
-        throw new Error(`Hamburger is not properly positioned within viewport at ${w}px`);
+      if (!metrics.hamburgerValid) {
+        throw new Error(
+          `Hamburger is not properly positioned within [0, ${w}] with >= 40px touch target at ${w}px (got ${JSON.stringify(metrics.hamburgerRect)})`
+        );
       }
-      console.log(`  ✓ Viewport ${w}px: scrollWidth=${metrics.scrollWidth} <= innerWidth=${metrics.innerWidth}, logo visible, header clean.`);
+      if (!metrics.ctaValid) {
+        throw new Error(
+          `Header CTA right edge (${metrics.ctaRect?.right}) exceeded viewport at ${w}px`
+        );
+      }
+      console.log(
+        `  ✓ Viewport ${w}px: requested=${w}, innerWidth=${metrics.innerWidth}, clientWidth=${metrics.clientWidth}, scrollWidth=${metrics.scrollWidth}, logo & hamburger within bounds.`
+      );
     }
+
+    console.log('\n📊 Viewport Truth & Header Geometry Verification Table:');
+    console.table(
+      verificationResults.map((r) => ({
+        Requested: r.requested,
+        'innerWidth (CSS)': r.innerWidth,
+        clientWidth: r.clientWidth,
+        scrollWidth: r.scrollWidth,
+        'Overflow?': r.hasHorizontalOverflow ? 'FAIL' : 'PASS',
+        'Logo Bounds': r.logoValid ? 'PASS' : 'FAIL',
+        'Hamburger Bounds': r.hamburgerValid ? 'PASS' : 'FAIL',
+        'CTA Bounds': r.ctaValid ? 'PASS' : 'FAIL',
+      }))
+    );
 
     try { ws.close(); } catch {}
   } finally {
@@ -321,7 +414,7 @@ async function runShoot(target) {
     const timer = setTimeout(() => {
       killProcess(child);
       reject(new Error(`Timeout capturing ${target.name}`));
-    }, 45000);
+    }, 75000);
 
     child.on('exit', (code) => {
       clearTimeout(timer);

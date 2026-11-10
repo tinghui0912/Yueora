@@ -52,6 +52,9 @@ Repeated product hierarchy roles use semantic typography roles. Do not override 
 | `.type-metadata` | Timestamps, counters & helper text | `13px` (`0.8125rem`) | `1.45` | Normal | Inter (400) |
 | `.type-metric` | Large reflective numbers & hours | Mobile `28px` (`1.75rem`), Desktop `32px` (`2rem`) | `1.0` | Tabular | Cormorant Garamond (500) |
 
+> [!NOTE] Caption vs. Metadata Boundary
+> `.type-caption` is strictly for short uppercase micro-labels, category tags, table column headers, status badges, and overlines/eyebrows (uppercase, `0.2em` tracking). It must **never** be used for full sentences or toggle descriptions. For helper text, toggle descriptions, timestamps, and secondary explanatory sentences, always use `.type-metadata` (sentence case, natural tracking).
+
 ### 2.2 Color Vocabulary & Usage Contract (WCAG 2.2 AA)
 
 Yueora enforces **one canonical visual language**: a **Warm Editorial Music Workspace**.

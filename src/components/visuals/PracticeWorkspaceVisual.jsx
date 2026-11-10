@@ -8,7 +8,7 @@ import ScorePreview from '@/components/library/ScorePreview';
 
 export default function PracticeWorkspaceVisual() {
   return (
-    <div aria-hidden="true" className="rounded-container border border-line-subtle bg-surface-panel p-5 sm:p-6">
+    <div aria-hidden="true" className="rounded-container border border-line-subtle bg-surface-panel p-4 sm:p-6">
       {/* Stand Header: Piece & Non-judgmental Status */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-subtle pb-3">
         <div className="flex items-center gap-2.5">
@@ -22,9 +22,9 @@ export default function PracticeWorkspaceVisual() {
         </div>
 
         {/* Calm following state pill */}
-        <div className="inline-flex items-center gap-2 rounded-full bg-practice-following/15 px-3 py-1">
+        <div className="inline-flex items-center gap-2 rounded-full bg-practice-following/10 px-3 py-1">
           <span className="h-2 w-2 rounded-full bg-practice-following animate-pulse" />
-          <span className="type-metadata font-medium text-practice-following">
+          <span className="type-metadata font-medium text-ink-secondary">
             Following your phrasing · mm. 14–22
           </span>
         </div>
@@ -66,9 +66,9 @@ export default function PracticeWorkspaceVisual() {
       </div>
 
       {/* Minimal Tactile Transport */}
-      <div className="mt-4 flex items-center justify-between rounded-control border border-line-subtle bg-surface-canvas/60 px-4 py-2.5">
+      <div className="mt-4 flex flex-wrap items-center justify-between rounded-control border border-line-subtle bg-surface-canvas/60 px-3 sm:px-4 py-2.5 gap-2">
         <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-control bg-brand text-white shadow-sm hover:opacity-95">
+          <span className="flex h-8 w-8 items-center justify-center rounded-control bg-brand text-white shadow-sm hover:opacity-95 shrink-0">
             <Play className="h-4 w-4 fill-white" />
           </span>
           <span className="type-metadata font-medium text-ink-secondary">
@@ -76,12 +76,12 @@ export default function PracticeWorkspaceVisual() {
           </span>
         </div>
 
-        <div className="flex items-center gap-2 text-ink-tertiary">
+        <div className="flex flex-wrap items-center gap-2 text-ink-tertiary">
           <span className="inline-flex items-center gap-1.5 rounded-control px-2.5 py-1 text-xs border border-line-subtle bg-surface-panel">
-            <RotateCcw className="h-3 w-3" /> Loop mm. 14–22
+            <RotateCcw className="h-3 w-3 shrink-0" /> Loop mm. 14–22
           </span>
           <span className="inline-flex items-center gap-1.5 rounded-control px-2.5 py-1 text-xs border border-line-subtle bg-surface-panel">
-            <Volume2 className="h-3 w-3" /> Metronome off
+            <Volume2 className="h-3 w-3 shrink-0" /> Metronome off
           </span>
         </div>
       </div>

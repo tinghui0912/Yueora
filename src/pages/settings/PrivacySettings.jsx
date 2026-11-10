@@ -61,11 +61,11 @@ export default function PrivacySettings() {
       <SettingsSection title="Data sharing" desc="Control how your data is used to improve Yueora.">
         <div className="max-w-sm space-y-5">
           <div className="flex items-center justify-between">
-            <div><Label>Anonymous analytics</Label><p className="type-caption text-ink-secondary">Help improve Yueora with usage data — no personal content.</p></div>
+            <div><Label>Anonymous analytics</Label><p className="type-metadata text-ink-tertiary">Help improve Yueora with usage data — no personal content.</p></div>
             <Switch checked={analytics} onCheckedChange={setAnalytics} />
           </div>
           <div className="flex items-center justify-between">
-            <div><Label>Share practice stats with collaborators</Label><p className="type-caption text-ink-secondary">Let editors see your tempo and progress.</p></div>
+            <div><Label>Share practice stats with collaborators</Label><p className="type-metadata text-ink-tertiary">Let editors see your tempo and progress.</p></div>
             <Switch checked={practiceShare} onCheckedChange={setPracticeShare} />
           </div>
         </div>
@@ -92,7 +92,7 @@ export default function PrivacySettings() {
                 <CheckCircle2 className="h-6 w-6 text-brand" />
               </div>
               <p className="type-body-small font-medium text-ink-primary">Account scheduled for deletion</p>
-              <p className="mt-1 type-caption text-ink-secondary">Your account will be removed shortly. We're sorry to see you go.</p>
+              <p className="mt-1 type-metadata text-ink-tertiary">Your account will be removed shortly. We're sorry to see you go.</p>
               <Button onClick={signOutAfterDelete} className="mt-5 w-full">Sign out</Button>
             </div>
           ) : (

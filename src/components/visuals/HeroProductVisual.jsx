@@ -28,17 +28,17 @@ export default function HeroProductVisual() {
       <Surface
         tone="panel"
         elevation="raised"
-        className="ml-[30%] sm:ml-[28%] p-4 sm:p-5 relative z-20 transition-transform duration-slow hover:translate-y-[-2px]"
+        className="ml-[20%] sm:ml-[28%] p-3 sm:p-5 relative z-20 transition-transform duration-slow hover:translate-y-[-2px]"
       >
-        <div className="flex items-center justify-between border-b border-line-subtle pb-2.5 text-xs">
-          <div className="flex items-center gap-1.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas text-brand">
+        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between border-b border-line-subtle pb-2 text-xs gap-1">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas text-brand">
               <ScoreSheetGlyph className="h-3 w-3" />
             </span>
-            <span className="font-medium text-ink-primary">In your Repertoire</span>
+            <span className="font-medium text-ink-primary truncate">Repertoire</span>
           </div>
-          <span className="rounded-control border border-line-subtle bg-surface-panel px-2 py-0.5 type-caption font-semibold text-brand">
-            Interactive Score
+          <span className="rounded-control border border-line-subtle bg-surface-panel px-1.5 py-0.5 type-caption font-semibold text-brand shrink-0">
+            Interactive
           </span>
         </div>
 

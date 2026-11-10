@@ -122,7 +122,7 @@ export default function Landing() {
           </span>
         </div>
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center pt-28 pb-24 lg:py-0">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center pt-28 pb-24 lg:py-0">
           {/* Left 7 Columns — Identity & Editorial Statement */}
           <div className="lg:col-span-7 order-2 lg:order-1">
             <motion.p
@@ -211,7 +211,7 @@ export default function Landing() {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-[85vw] max-w-[380px] sm:w-[350px] lg:w-full lg:max-w-[390px] rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.25)] border border-line-subtle/80 bg-surface-panel p-2 sm:p-3"
+              className="relative w-full max-w-[300px] sm:max-w-[380px] lg:max-w-[390px] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.25)] border border-line-subtle/80 bg-surface-panel p-2 sm:p-3"
             >
               <HeroProductVisual />
               <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
@@ -246,7 +246,7 @@ export default function Landing() {
 
       {/* 2. REASSURANCE / PHILOSOPHY STRIP — UGC BrandTrustBar Parity */}
       <section id="trust" className="py-20 md:py-24 border-y border-line-subtle/80 bg-surface-panel/40">
-        <div className="max-w-7xl mx-auto px-6 md:px-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <p className="text-center type-eyebrow text-ink-tertiary mb-10">
               Built on patience and devotion · Your music, not ours
@@ -286,7 +286,7 @@ export default function Landing() {
 
       {/* 3. THE CONNECTED LIFECYCLE — UGC CaseStudies Parity */}
       <section id="lifecycle" className="py-24 md:py-36">
-        <div className="max-w-7xl mx-auto px-6 md:px-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
               <div>
@@ -422,7 +422,7 @@ export default function Landing() {
 
       {/* 4. PERSONAL REPERTOIRE — UGC SelectedWork Parity */}
       <section id="repertoire" className="py-24 md:py-36 bg-surface-panel/30 border-y border-line-subtle/80">
-        <div className="max-w-7xl mx-auto px-6 md:px-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
               <div>
@@ -503,7 +503,7 @@ export default function Landing() {
 
       {/* 5. THE PRACTICE STAND — UGC 5/7 Editorial Asymmetry */}
       <section id="practice" className="py-24 md:py-36">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left 5 Columns — Visual */}
           <Reveal className="lg:col-span-5" y={36}>
             <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.25)] border border-line-subtle bg-surface-panel p-4">
@@ -563,7 +563,7 @@ export default function Landing() {
 
       {/* 6. PRESERVED PERFORMANCES & INTIMATE SHARING */}
       <section id="performances" className="py-24 md:py-36 bg-surface-panel/30 border-y border-line-subtle/80">
-        <div className="max-w-7xl mx-auto px-6 md:px-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
               <div>
@@ -582,16 +582,16 @@ export default function Landing() {
             </div>
           </Reveal>
 
-          <div className="grid gap-8 lg:grid-cols-2">
-            <Reveal delay={0.05}>
-              <div className="rounded-[2rem] border border-line-subtle bg-surface-panel p-6 sm:p-8 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.15)]">
+          <div className="grid gap-8 lg:grid-cols-2 min-w-0">
+            <Reveal delay={0.05} className="min-w-0">
+              <div className="rounded-[2rem] border border-line-subtle bg-surface-panel p-3 sm:p-8 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.15)] min-w-0 overflow-hidden">
                 <p className="type-eyebrow text-ink-tertiary mb-4">Reflective Immersion</p>
                 <ProgressVisual />
               </div>
             </Reveal>
 
-            <Reveal delay={0.1}>
-              <div className="rounded-[2rem] border border-line-subtle bg-surface-panel p-6 sm:p-8 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.15)]">
+            <Reveal delay={0.1} className="min-w-0">
+              <div className="rounded-[2rem] border border-line-subtle bg-surface-panel p-3 sm:p-8 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.15)] min-w-0 overflow-hidden">
                 <p className="type-eyebrow text-ink-tertiary mb-4">Intimate Sharing Door</p>
                 <SharingVisual />
               </div>
@@ -602,7 +602,7 @@ export default function Landing() {
 
       {/* 7. TRANSPARENT PRICING — UGC Services Parity */}
       <section id="pricing" className="py-24 md:py-36">
-        <div className="max-w-7xl mx-auto px-6 md:px-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <div className="mb-16 max-w-2xl">
               <p className="type-eyebrow text-ink-tertiary mb-4">
@@ -768,7 +768,7 @@ export default function Landing() {
 
       {/* 8. EDITORIAL FAQ */}
       <section className="py-24 md:py-36 border-t border-line-subtle/80 bg-surface-panel/30">
-        <div className="max-w-3xl mx-auto px-6 md:px-10">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <div className="text-center">
               <p className="type-eyebrow text-ink-tertiary mb-4">
@@ -800,7 +800,7 @@ export default function Landing() {
 
       {/* 9. FINAL INVERSE CONVERSION BLOCK — UGC ContactCTA Parity */}
       <section className="py-24 md:py-36">
-        <div className="max-w-7xl mx-auto px-6 md:px-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <div className="rounded-[2.5rem] bg-ink-primary text-surface-canvas overflow-hidden relative shadow-[0_40px_80px_-20px_rgba(0,0,0,0.35)]">
             {/* ambient oversized word */}
             <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">

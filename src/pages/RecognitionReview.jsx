@@ -106,7 +106,7 @@ export default function RecognitionReview() {
               {active && (
                 <div className="mt-3 rounded-md border border-warning/40 bg-warning/10 px-3 py-2">
                   <p className="text-sm font-medium text-warning">Measure {active.measure}: {active.type}</p>
-                  <p className="type-caption text-ink-secondary">{active.detail}</p>
+                  <p className="type-metadata text-ink-secondary">{active.detail}</p>
                 </div>
               )}
             </div>

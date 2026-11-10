@@ -66,7 +66,7 @@ export default function PreferencesSettings() {
 function Toggle({ label, desc, checked, onChange }) {
   return (
     <div className="flex items-center justify-between">
-      <div><Label>{label}</Label><p className="type-caption text-ink-secondary">{desc}</p></div>
+      <div><Label>{label}</Label><p className="type-metadata text-ink-tertiary">{desc}</p></div>
       <Switch checked={checked} onCheckedChange={onChange} />
     </div>
   );

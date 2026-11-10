@@ -341,7 +341,7 @@ try {
   const ev = async x => (await S('Runtime.evaluate', { expression: x, awaitPromise: true, returnByValue: true })).result.value;
   subs.push(m => { if (m.method === 'Runtime.exceptionThrown') logs.push('exception: ' + (m.params.exceptionDetails.exception?.description || m.params.exceptionDetails.text).split('\n')[0]); });
   await S('Page.enable'); await S('Runtime.enable');
-  await S('Emulation.setDeviceMetricsOverride', { width: W, height: VH, deviceScaleFactor: 1, mobile: W < 600 });
+  await S('Emulation.setDeviceMetricsOverride', { width: W, height: VH, deviceScaleFactor: 1, mobile: W < 600, dontSetVisibleSize: false });
   const media = [];
   if (opt('reduced')) media.push({ name: 'prefers-reduced-motion', value: 'reduce' });
   if (opt('dark')) media.push({ name: 'prefers-color-scheme', value: 'dark' });

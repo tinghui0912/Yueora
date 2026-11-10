@@ -135,7 +135,7 @@ export default function PublicHeader() {
           {/* Action Area — UGC desktop Nav CTA scale: 40px high, 20px padding */}
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             {isAuthenticated ? (
-              <Button asChild intent="primary" className="h-9 sm:h-control-lg px-3.5 sm:px-5 text-xs sm:text-sm font-medium tracking-wide shrink-0">
+              <Button asChild intent="primary" className="hidden sm:inline-flex h-9 sm:h-control-lg px-3.5 sm:px-5 text-xs sm:text-sm font-medium tracking-wide shrink-0">
                 <Link to="/library">
                   Go to Library
                 </Link>
@@ -147,7 +147,7 @@ export default function PublicHeader() {
                     Log in
                   </Link>
                 </Button>
-                <Button asChild intent="primary" className="h-9 sm:h-control-lg px-3.5 sm:px-5 text-xs sm:text-sm font-medium tracking-wide shrink-0">
+                <Button asChild intent="primary" className="hidden sm:inline-flex h-9 sm:h-control-lg px-3.5 sm:px-5 text-xs sm:text-sm font-medium tracking-wide shrink-0">
                   <Link to="/register">
                     Start playing
                   </Link>
