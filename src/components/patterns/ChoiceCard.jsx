@@ -60,8 +60,8 @@ export function ChoiceCard({
       className={cn(
         'group flex flex-col items-start gap-2.5 rounded-container border p-5 text-left transition-[color,background-color,border-color,box-shadow,transform] duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-canvas active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50 select-none',
         selected
-          ? 'border-brand bg-neutral-hover text-ink-primary shadow-xs'
-          : 'border-surface-paper-edge bg-surface-panel hover:bg-neutral-hover hover:border-line-strong/80 hover:shadow-xs',
+          ? 'border-brand bg-neutral-hover text-ink-primary'
+          : 'border-line-subtle bg-surface-panel hover:bg-neutral-hover hover:border-line-strong',
         className
       )}
       {...props}
@@ -72,7 +72,7 @@ export function ChoiceCard({
             className={cn(
               'flex h-control-md w-control-md shrink-0 items-center justify-center rounded-control transition-colors duration-base',
               selected
-                ? 'border border-brand/50 bg-surface-panel text-brand shadow-xs'
+                ? 'border border-brand/50 bg-surface-panel text-brand'
                 : 'border border-line-subtle bg-surface-canvas text-ink-secondary group-hover:text-brand group-hover:bg-neutral-hover'
             )}
           >

@@ -125,7 +125,7 @@ export default function Landing() {
         <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
           <div>
             {/* Subtle brand eyebrow */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-line-subtle bg-surface-paper px-3 py-1 text-xs text-brand shadow-xs">
+            <div className="inline-flex items-center gap-2 rounded-full border border-line-subtle bg-surface-panel px-3 py-1 text-xs text-brand">
               <Sparkles className="h-3 w-3" />
               <span className="font-medium tracking-wide uppercase">A personal musical journey</span>
             </div>
@@ -151,7 +151,7 @@ export default function Landing() {
                   <ArrowRight className="icon-sm" />
                 </Link>
               </Button>
-              <Button asChild intent="secondary" size="lg" className="shadow-xs">
+              <Button asChild intent="secondary" size="lg">
                 <a href="#lifecycle">
                   <span>See the lifecycle</span>
                   <ChevronRight className="icon-sm text-ink-tertiary" />
@@ -281,12 +281,12 @@ export default function Landing() {
                     onClick={() => setActiveStep(idx)}
                     className={`w-full text-left rounded-lg p-4 transition-[color,background-color,border-color,box-shadow] duration-fast ${
                       isActive
-                        ? 'music-paper shadow-paper border-l-4 border-l-brand'
-                        : 'border border-transparent hover:bg-surface-panel/80'
+                        ? 'bg-surface-panel border border-line-subtle border-l-4 border-l-brand'
+                        : 'border border-transparent hover:bg-neutral-hover'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="type-caption font-mono text-xs font-semibold text-brand">
+                      <span className="type-caption font-mono font-semibold text-brand">
                         {s.step}
                       </span>
                       <span className="type-metadata rounded-full bg-surface-canvas px-2.5 py-0.5 text-ink-tertiary">
@@ -312,7 +312,7 @@ export default function Landing() {
             {/* Dynamic Stage Preview Visual */}
             <div className="relative">
               {activeStep === 0 && (
-                <div className="music-paper rounded-lg p-6 shadow-paper">
+                <div className="rounded-container border border-line-subtle bg-surface-panel p-6">
                   <div className="flex items-center justify-between border-b border-line-subtle pb-3">
                     <p className="type-caption text-ink-tertiary">Step 01 · Original Paper Scan</p>
                     <span className="type-metadata text-ink-secondary">Debussy · Clair de Lune</span>
@@ -327,7 +327,7 @@ export default function Landing() {
               )}
 
               {activeStep === 1 && (
-                <div className="music-paper rounded-lg p-6 shadow-paper">
+                <div className="rounded-container border border-line-subtle bg-surface-panel p-6">
                   <div className="flex items-center justify-between border-b border-line-subtle pb-3">
                     <p className="type-caption text-ink-tertiary">Step 02 · Interactive Score Review</p>
                     <span className="rounded-control border border-line-subtle bg-surface-panel px-2 py-0.5 type-caption font-semibold text-brand">
@@ -345,7 +345,7 @@ export default function Landing() {
               )}
 
               {activeStep === 2 && (
-                <div className="music-paper rounded-lg p-6 shadow-paper">
+                <div className="rounded-container border border-line-subtle bg-surface-panel p-6">
                   <div className="flex items-center justify-between border-b border-line-subtle pb-3">
                     <p className="type-caption text-ink-tertiary">Step 03 · Living Repertoire</p>
                     <span className="type-metadata text-ink-secondary">Curated Collection</span>
@@ -436,7 +436,7 @@ export default function Landing() {
 
             {/* Repertoire visual showcase */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs transition-colors hover:border-line-strong">
+              <div className="rounded-container border border-line-subtle bg-surface-panel p-4 transition-colors hover:border-line-strong">
                 <div className="aspect-[4/3] overflow-hidden rounded border border-line-subtle bg-surface-paper">
                   <ScorePreview id="rep-clair" className="h-full w-full" />
                 </div>
@@ -447,7 +447,7 @@ export default function Landing() {
                 </div>
               </div>
 
-              <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs transition-colors hover:border-line-strong">
+              <div className="rounded-container border border-line-subtle bg-surface-panel p-4 transition-colors hover:border-line-strong">
                 <div className="aspect-[4/3] overflow-hidden rounded border border-line-subtle bg-surface-paper">
                   <ScorePreview id="rep-gymno" className="h-full w-full" />
                 </div>
@@ -605,7 +605,7 @@ export default function Landing() {
 
           <div className="mt-14 grid gap-8 md:grid-cols-2 max-w-3xl mx-auto">
             {/* Free Plan */}
-            <div className="rounded-container border border-line-subtle bg-surface-panel p-6 sm:p-8 flex flex-col justify-between shadow-xs">
+            <div className="rounded-container border border-line-subtle bg-surface-panel p-6 sm:p-8 flex flex-col justify-between">
               <div>
                 <p className="font-display text-xl font-medium text-ink-primary">Free</p>
                 <p className="mt-1 text-sm text-ink-secondary">
@@ -634,7 +634,7 @@ export default function Landing() {
                 </ul>
               </div>
 
-              <Button asChild intent="secondary" size="lg" className="mt-8 w-full shadow-xs">
+              <Button asChild intent="secondary" size="lg" className="mt-8 w-full">
                 <Link to={primary}>
                   Get Started Free
                 </Link>
@@ -642,7 +642,7 @@ export default function Landing() {
             </div>
 
             {/* Pro Plan */}
-            <div className="rounded-container border-2 border-brand bg-surface-panel p-6 sm:p-8 flex flex-col justify-between shadow-xs">
+            <div className="rounded-container border-2 border-brand bg-surface-panel p-6 sm:p-8 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between">
                   <p className="font-display text-xl font-medium text-ink-primary">Pro Repertoire</p>

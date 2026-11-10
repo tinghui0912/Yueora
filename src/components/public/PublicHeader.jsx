@@ -29,7 +29,7 @@ export default function PublicHeader() {
     <header
       className={`sticky top-0 z-40 shrink-0 transition-[background-color,border-color,backdrop-filter] duration-base ${
         scrolled
-          ? 'border-b border-surface-paper-edge bg-surface-canvas/92 backdrop-blur-md shadow-xs'
+          ? 'border-b border-line-subtle bg-surface-canvas/92 backdrop-blur-md shadow-xs'
           : 'border-b border-transparent bg-surface-canvas/60 backdrop-blur-xs'
       }`}
     >
@@ -98,7 +98,7 @@ export default function PublicHeader() {
             </Link>
           </div>
 
-          <div className="mx-1 hidden h-4 w-px bg-surface-paper-edge md:block" aria-hidden="true" />
+          <div className="mx-1 hidden h-4 w-px bg-line-subtle md:block" aria-hidden="true" />
 
           {/* Action Area */}
           <div className="flex items-center gap-2">

@@ -54,7 +54,7 @@ export default function DesignSystemPreview() {
           title="Semantic Typography Scale"
           description="Every role owns font family, weight, size, line-height, and responsive optical scaling."
         />
-        <Surface tone="panel" elevation="paper" padding="md" className="space-y-4">
+        <Surface tone="panel" padding="md" className="space-y-4">
           <div className="border-b border-line-subtle pb-3">
             <span className="type-caption text-ink-secondary/70">type-hero-title (Editorial / Marketing Hero)</span>
             <p className="type-hero-title text-ink-primary">Play what you love.</p>
@@ -124,7 +124,7 @@ export default function DesignSystemPreview() {
           title="Color System & Interaction Matrix"
           description="One canonical visual language. Brand is an accent; compact selection uses brand-soft, large selection uses neutral selection."
         />
-        <Surface tone="panel" elevation="paper" padding="md" className="space-y-6">
+        <Surface tone="panel" padding="md" className="space-y-6">
           {/* Swatches */}
           <div className="space-y-2">
             <span className="type-caption text-ink-secondary/70">Canonical Color Roles</span>
@@ -225,7 +225,7 @@ export default function DesignSystemPreview() {
           title="Buttons & Intents"
           description="Semantic button roles with centralized sizing and accessible active states."
         />
-        <Surface tone="panel" elevation="paper" padding="md" className="space-y-6">
+        <Surface tone="panel" padding="md" className="space-y-6">
           <div className="space-y-2">
             <span className="type-caption text-ink-secondary/70">Intents</span>
             <div className="flex flex-wrap items-center gap-3">
@@ -269,7 +269,7 @@ export default function DesignSystemPreview() {
           title="Form Field Composition"
           description="Consistent typography, label placement, error styling, and control heights."
         />
-        <Surface tone="panel" elevation="paper" padding="md">
+        <Surface tone="panel" padding="md">
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
               label="Piece Title"
@@ -307,7 +307,7 @@ export default function DesignSystemPreview() {
           title="Flow Components: Stepper & ChoiceCard"
           description="Reusable multi-step flows and tactile option selection."
         />
-        <Surface tone="panel" elevation="paper" padding="md" className="space-y-6">
+        <Surface tone="panel" padding="md" className="space-y-6">
           <Stepper
             current={activeStep}
             steps={['Source', 'Files', 'Details', 'Confirm']}
@@ -367,7 +367,7 @@ export default function DesignSystemPreview() {
         </div>
 
         {/* Live Pick up where you left off sample */}
-        <div className="rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs transition-colors hover:border-line-strong">
+        <div className="rounded-container border border-line-subtle bg-surface-panel p-5 transition-colors hover:border-line-strong">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-full border border-line-subtle bg-surface-panel text-brand">
@@ -418,7 +418,7 @@ export default function DesignSystemPreview() {
           title="Shell Primitives"
           description="Search triggers, badges, and status indicators."
         />
-        <Surface tone="panel" elevation="paper" padding="md" className="space-y-4">
+        <Surface tone="panel" padding="md" className="space-y-4">
           <div className="flex flex-wrap items-center gap-4">
             <SearchTrigger label="Search" shortcut="⌘K" />
             <Badge variant="brand">Musician Choice</Badge>

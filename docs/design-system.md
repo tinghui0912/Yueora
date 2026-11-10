@@ -77,15 +77,15 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
     - **Large Selection Contract:** Wide horizontal rows, large selectable options (e.g. Practice Setup option rows), and full-width list items are **banned** from `bg-brand-soft`. They must use neutral selected surface (`bg-neutral-hover` or `bg-surface-panel`) paired with a brand indicator (`border-brand`, green radio dot, or `text-brand` checkmark).
     - **Maximum 2 Brand Signals per selection state:** Never stack green background + green border + green text + green icon. Selection should be understood, not painted.
     - **Drag Targets:** Dragging state is not selection; use `border-brand bg-surface-canvas text-brand`, never `bg-brand-soft`.
-    - **Control Toggles:** Loop/toggle buttons use `border-brand bg-neutral-muted text-ink-primary shadow-xs` with `text-brand` icon, not `bg-brand-soft`.
+    - **Control Toggles:** Loop/toggle buttons use `border-brand bg-neutral-muted text-ink-primary` with `text-brand` icon, not `bg-brand-soft`.
     - It remains **BANNED** on navigation active items, ordinary hovers, buttons/actions, status/verification icons, popular badges, chart bars, and decorative icon circles.
   - `text-brand-soft-foreground` (`hsl(148 36% 27%)`): Contrast foreground text on pale green surfaces.
 - **Neutral Quiet & Hover & Navigation Active:**
-  - `bg-neutral-muted` (`hsl(44 14% 92%)`): Warm ivory-neutral for **Navigation Active items** (`bg-neutral-muted font-semibold text-ink-primary shadow-xs`), passive badges, tab tracks, progress backgrounds.
+  - `bg-neutral-muted` (`hsl(44 14% 92%)`): Warm ivory-neutral for **Navigation Active items** (`bg-neutral-muted font-semibold text-ink-primary` - NO shadow), passive badges, tab tracks, progress backgrounds.
   - `bg-neutral-hover` (`hsl(44 16% 91%)`): Warm neutral hover state for all interactive items, navigation links, and dropdown items (warm ivory-gray, NEVER green).
 - **Navigation Active Contract:**
   - Inactive: `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`
-  - Active: `bg-neutral-muted font-semibold text-ink-primary shadow-xs` with subtle `text-brand` icon cue.
+  - Active: `bg-neutral-muted font-semibold text-ink-primary` with subtle `text-brand` icon cue (NO shadow).
   - Uniform across `SidebarNavItem`, `LibrarySubRail`, `Settings`, and `Help`.
 - **Semantic Feedback:**
   - `text-success` / `bg-success`: Subdued musical confirmation green (`hsl(148 40% 32%)`).

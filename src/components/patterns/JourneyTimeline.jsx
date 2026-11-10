@@ -81,7 +81,7 @@ export default function JourneyTimeline({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="relative pl-6 before:absolute before:bottom-3 before:left-[11px] before:top-2 before:w-[1.5px] before:bg-surface-paper-edge">
+      <div className="relative pl-6 before:absolute before:bottom-3 before:left-[11px] before:top-2 before:w-[1.5px] before:bg-line-subtle">
         {steps.map((step) => {
           const Icon = step.icon;
           return (
@@ -89,8 +89,8 @@ export default function JourneyTimeline({
               <div
                 className={`absolute -left-6 top-0.5 flex h-5 w-5 items-center justify-center rounded-full border ${
                   step.active
-                    ? 'border-brand/40 bg-surface-paper text-brand shadow-xs'
-                    : 'border-surface-paper-edge bg-surface-canvas text-ink-tertiary'
+                    ? 'border-brand/40 bg-surface-panel text-brand'
+                    : 'border-line-subtle bg-surface-canvas text-ink-tertiary'
                 }`}
               >
                 <Icon className="h-3 w-3" />

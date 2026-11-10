@@ -9,7 +9,7 @@ export default function MobileNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-surface-paper-edge bg-surface-panel/95 backdrop-blur-md lg:hidden shadow-overlay"
+      className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-line-subtle bg-surface-panel/95 backdrop-blur-md lg:hidden shadow-overlay"
       style={{ paddingBottom: 'max(0.35rem, env(safe-area-inset-bottom))' }}
       aria-label="Mobile navigation"
     >

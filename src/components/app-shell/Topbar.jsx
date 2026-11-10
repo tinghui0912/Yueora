@@ -53,7 +53,7 @@ export default function Topbar() {
               )}
             </div>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80 border-surface-paper-edge bg-surface-panel shadow-overlay">
+          <DropdownMenuContent align="end" className="w-80 border-line-subtle bg-surface-panel shadow-overlay">
             <DropdownMenuLabel className="type-caption text-ink-secondary/70">Activity</DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-line-subtle" />
             {notifications.slice(0, 4).map((n) => (

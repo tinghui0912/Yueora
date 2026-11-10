@@ -58,7 +58,7 @@ export default function TempoPopover({
             >
               <Minus className="h-3.5 w-3.5" />
             </button>
-            <span className="type-metric text-lg text-ink-primary" aria-live="polite">{bpm} BPM</span>
+            <span className="type-metric text-ink-primary" aria-live="polite">{bpm} BPM</span>
             <button
               type="button"
               onClick={() => nudge(5)}

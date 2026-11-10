@@ -39,7 +39,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
         {/* Status badges overlay */}
         <div className="absolute top-2.5 left-3 flex flex-wrap gap-1.5 z-10">
           {sharedText && (
-            <span className="rounded-control bg-surface-panel/90 backdrop-blur-xs px-2 py-0.5 type-caption font-medium text-ink-secondary shadow-xs">
+            <span className="rounded-control bg-surface-panel/90 backdrop-blur-xs px-2 py-0.5 type-caption font-medium text-ink-secondary">
               {sharedText}
             </span>
           )}
@@ -47,7 +47,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
 
         {score.favorite && (
           <div className="absolute top-2.5 right-2.5 z-10">
-            <span className="flex h-control-xs w-control-xs items-center justify-center rounded-full bg-surface-panel/90 backdrop-blur-xs shadow-xs">
+            <span className="flex h-control-xs w-control-xs items-center justify-center rounded-full bg-surface-panel/90 backdrop-blur-xs">
               <Star className="icon-xs fill-gold text-gold" />
             </span>
           </div>
@@ -80,8 +80,8 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
                 className={cn(
                   'flex h-control-xs w-control-xs shrink-0 items-center justify-center rounded-control border transition-[color,background-color,border-color] duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:ring-offset-surface-panel',
                   selected
-                    ? 'border-brand bg-brand text-white shadow-xs'
-                    : 'border-surface-paper-edge bg-surface-canvas/50 text-transparent hover:border-line-strong'
+                    ? 'border-brand bg-brand text-white'
+                    : 'border-line-subtle bg-surface-canvas/50 text-transparent hover:border-line-strong'
                 )}
                 aria-label={`Select ${score.title}`}
               >

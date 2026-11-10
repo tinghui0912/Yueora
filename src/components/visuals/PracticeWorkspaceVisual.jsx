@@ -40,7 +40,7 @@ export default function PracticeWorkspaceVisual() {
         <div 
           className="absolute left-[42%] top-[18%] h-[64%] w-[26%] rounded border border-practice-current/40 bg-practice-current/15 transition-all"
         >
-          <div className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-surface-paper px-2 py-0.5 text-xs font-medium text-ink-secondary shadow-sm border border-line-subtle">
+          <div className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-surface-panel px-2 py-0.5 text-xs font-medium text-ink-secondary shadow-sm border border-line-subtle">
             Bar 14 · Andante très expressif
           </div>
         </div>
@@ -77,10 +77,10 @@ export default function PracticeWorkspaceVisual() {
         </div>
 
         <div className="flex items-center gap-2 text-ink-tertiary">
-          <span className="inline-flex items-center gap-1.5 rounded-control px-2.5 py-1 text-xs border border-line-subtle bg-surface-paper">
+          <span className="inline-flex items-center gap-1.5 rounded-control px-2.5 py-1 text-xs border border-line-subtle bg-surface-panel">
             <RotateCcw className="h-3 w-3" /> Loop mm. 14–22
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-control px-2.5 py-1 text-xs border border-line-subtle bg-surface-paper">
+          <span className="inline-flex items-center gap-1.5 rounded-control px-2.5 py-1 text-xs border border-line-subtle bg-surface-panel">
             <Volume2 className="h-3 w-3" /> Metronome off
           </span>
         </div>

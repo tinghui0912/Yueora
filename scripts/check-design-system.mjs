@@ -346,16 +346,24 @@ const FORBIDDEN_PATTERNS = [
     message: 'Raw hex color found in JSX. Use semantic color tokens (e.g. text-ink-*, bg-surface-*, text-brand).',
   },
   {
-    regex: /type-(?:page-title|section-title|experience-title)\s+text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|\[\w+\])/g,
+    regex: /type-[a-z-]+(?:\s+[a-z0-9:-]+)*\s+text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|\[\w+\])/g,
     message: 'Conflicting font-size override on semantic heading. The semantic heading class owns the font size.',
   },
   {
-    regex: /text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|\[\w+\])\s+type-(?:page-title|section-title|experience-title)/g,
+    regex: /text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|\[\w+\])(?:\s+[a-z0-9:-]+)*\s+type-[a-z-]+/g,
     message: 'Conflicting font-size override before semantic heading. The semantic heading class owns the font size.',
   },
   {
     regex: /(?:bg|text|border|ring|fill|stroke)-primitive-/g,
     message: 'Direct consumption of primitive tokens found in JSX. Application code must only consume semantic tokens (e.g. text-ink-*, bg-surface-*, text-brand).',
+  },
+  {
+    regex: /<DialogTitle[^>]*className=["'][^"']*(?:font-display|text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|\[\w+\]))[^"']*["']/g,
+    message: 'DialogTitle font-size or font-display override. DialogTitle already defines canonical type-section-title.',
+  },
+  {
+    regex: /<Surface[^>]*\b(?:tone=["']paper["']|elevation=["']paper["']|border=["']paper["'])/g,
+    message: 'Surface component is for general UI only (panel, canvas, raised). Sheet music uses MusicPaper exclusively.',
   },
 ];
 
@@ -639,7 +647,7 @@ verifyBrandSoftVsWashIntegrity(totalViolations);
 
 // Phase 7: Semantic Navigation, Selection & Surface Contract Verification
 function verifyNavigationAndSurfaceContracts(issues = []) {
-  // 1. SidebarNavItem: assert NO bg-brand-soft
+  // 1. SidebarNavItem: assert NO bg-brand-soft and NO shadow
   const sidebarNavItemPath = path.resolve('src/components/app-shell/SidebarNavItem.jsx');
   if (fs.existsSync(sidebarNavItemPath)) {
     const code = fs.readFileSync(sidebarNavItemPath, 'utf8');
@@ -648,12 +656,20 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
         file: 'src/components/app-shell/SidebarNavItem.jsx',
         line: 1,
         matched: 'bg-brand-soft in SidebarNavItem',
-        message: 'SidebarNavItem must use neutral active navigation (bg-neutral-muted text-ink-primary font-semibold shadow-xs) instead of bg-brand-soft.',
+        message: 'SidebarNavItem must use neutral active navigation (bg-neutral-muted text-ink-primary font-semibold) instead of bg-brand-soft.',
+      });
+    }
+    if (code.includes('shadow-xs') || code.includes('shadow-sm')) {
+      issues.push({
+        file: 'src/components/app-shell/SidebarNavItem.jsx',
+        line: 1,
+        matched: 'shadow in SidebarNavItem active state',
+        message: 'SidebarNavItem active navigation state must be planar (no shadow-xs or shadow-sm).',
       });
     }
   }
 
-  // 2. LibrarySubRail: assert NO bg-brand-soft
+  // 2. LibrarySubRail: assert NO bg-brand-soft and NO shadow
   const librarySubRailPath = path.resolve('src/components/library/LibrarySubRail.jsx');
   if (fs.existsSync(librarySubRailPath)) {
     const code = fs.readFileSync(librarySubRailPath, 'utf8');
@@ -665,9 +681,17 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
         message: 'LibrarySubRail navigation items must use neutral active styling (bg-neutral-muted) instead of bg-brand-soft.',
       });
     }
+    if (code.includes('shadow-xs') || code.includes('shadow-sm')) {
+      issues.push({
+        file: 'src/components/library/LibrarySubRail.jsx',
+        line: 1,
+        matched: 'shadow in LibrarySubRail navigation item',
+        message: 'LibrarySubRail active items must be planar (no shadow-xs or shadow-sm).',
+      });
+    }
   }
 
-  // 3. Settings.jsx: assert NO bg-brand-soft on navigation tabs
+  // 3. Settings.jsx: assert NO bg-brand-soft and NO shadow on navigation tabs
   const settingsPath = path.resolve('src/pages/Settings.jsx');
   if (fs.existsSync(settingsPath)) {
     const code = fs.readFileSync(settingsPath, 'utf8');
@@ -677,6 +701,14 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
         line: 1,
         matched: 'bg-brand-soft in Settings navigation',
         message: 'Settings navigation tabs must use neutral active styling (bg-neutral-muted) instead of bg-brand-soft.',
+      });
+    }
+    if (code.includes('shadow-xs') && code.includes('navTabs')) {
+      issues.push({
+        file: 'src/pages/Settings.jsx',
+        line: 1,
+        matched: 'shadow in Settings navigation tabs',
+        message: 'Settings navigation tabs must be planar (no shadow-xs).',
       });
     }
   }
@@ -751,7 +783,7 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   }
 
-  // 9. tailwind.config.js: assert NO dead chart tokens
+  // 9. tailwind.config.js: assert NO dead chart tokens and NO retired tokens
   const tailwindConfigPath = path.resolve('tailwind.config.js');
   if (fs.existsSync(tailwindConfigPath)) {
     const code = fs.readFileSync(tailwindConfigPath, 'utf8');
@@ -763,6 +795,17 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
         message: 'tailwind.config.js contains dead chart-* token mappings without canonical CSS variables or consumers.',
       });
     }
+    const retiredTailwindTokens = ['wash:', 'washBorder:', 'washForeground:', 'paper-warm:'];
+    retiredTailwindTokens.forEach((tok) => {
+      if (code.includes(tok)) {
+        issues.push({
+          file: 'tailwind.config.js',
+          line: 1,
+          matched: `retired token ${tok} in tailwind.config.js`,
+          message: `tailwind.config.js must not define retired token '${tok}'.`,
+        });
+      }
+    });
   }
 
   // 10. Landing.jsx top-level sections: assert NO banned full-width section surfaces
@@ -904,6 +947,95 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   });
 
+  // 15. Planar Navigation & Flat Secondary Action in Sidebar
+  const sidebarPath = path.resolve('src/components/app-shell/Sidebar.jsx');
+  if (fs.existsSync(sidebarPath)) {
+    const code = fs.readFileSync(sidebarPath, 'utf8');
+    if (code.includes('Add sheet or file') && /Add sheet or file[\s\S]*?shadow-xs/.test(code)) {
+      issues.push({
+        file: 'src/components/app-shell/Sidebar.jsx',
+        line: 1,
+        matched: 'shadow-xs on Add sheet or file',
+        message: 'Sidebar "Add sheet or file" button must be a flat secondary button (no shadow-xs).',
+      });
+    }
+  }
+
+  const performancesPath = path.resolve('src/pages/Performances.jsx');
+  if (fs.existsSync(performancesPath)) {
+    const code = fs.readFileSync(performancesPath, 'utf8');
+    if (/activeTab === tab\.id[\s\S]*?shadow-xs/.test(code) || /selectedFilter === f\.id[\s\S]*?shadow-xs/.test(code)) {
+      issues.push({
+        file: 'src/pages/Performances.jsx',
+        line: 1,
+        matched: 'shadow-xs on segmented tab/filter',
+        message: 'Performances tablist and filter pills must be planar (no shadow-xs).',
+      });
+    }
+  }
+
+  const pricingPath = path.resolve('src/pages/Pricing.jsx');
+  if (fs.existsSync(pricingPath)) {
+    const code = fs.readFileSync(pricingPath, 'utf8');
+    if (/billingPeriod === 'monthly'[\s\S]*?shadow-xs/.test(code) || /billingPeriod === 'yearly'[\s\S]*?shadow-xs/.test(code)) {
+      issues.push({
+        file: 'src/pages/Pricing.jsx',
+        line: 1,
+        matched: 'shadow-xs on billing toggle',
+        message: 'Pricing billing toggle buttons must be planar (no shadow-xs).',
+      });
+    }
+  }
+
+  // 16. Surface component API governance (only panel, canvas, raised)
+  const surfacePath = path.resolve('src/components/patterns/Surface.jsx');
+  if (fs.existsSync(surfacePath)) {
+    const code = fs.readFileSync(surfacePath, 'utf8');
+    if (code.includes("tone: 'paper'") || code.includes("elevation: 'paper'") || code.includes("border: 'paper'") || code.includes("tone === 'paper'") || code.includes("elevation === 'paper'")) {
+      issues.push({
+        file: 'src/components/patterns/Surface.jsx',
+        line: 1,
+        matched: 'paper in Surface.jsx CVA',
+        message: 'Surface component is for general UI only (panel, canvas, raised). Sheet music uses MusicPaper exclusively.',
+      });
+    }
+  }
+
+  // 17. Paper vocabulary strictly reserved for notation canvas
+  const PAPER_VOCABULARY_ALLOWLIST = new Set([
+    path.normalize('src/components/patterns/MusicPaper.jsx'),
+    path.normalize('src/components/library/ScoreCard.jsx'),
+    path.normalize('src/components/visuals/HeroProductVisual.jsx'),
+    path.normalize('src/pages/DesignSystemPreview.jsx'),
+  ]);
+
+  function scanPaperVocabulary(dir) {
+    if (!fs.existsSync(dir)) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanPaperVocabulary(full);
+      } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
+        const rel = path.normalize(path.relative(process.cwd(), full));
+        if (PAPER_VOCABULARY_ALLOWLIST.has(rel)) continue;
+
+        const code = fs.readFileSync(full, 'utf8');
+        if (code.includes('border-surface-paper-edge')) {
+          issues.push({
+            file: rel,
+            line: 1,
+            matched: 'border-surface-paper-edge in generic UI',
+            message: `${rel} uses border-surface-paper-edge. Generic UI must use border-line-subtle or border-line-strong.`,
+          });
+        }
+      }
+    }
+  }
+  for (const dir of SCAN_DIRECTORIES) {
+    scanPaperVocabulary(dir);
+  }
+
   return issues;
 }
 verifyNavigationAndSurfaceContracts(totalViolations);
@@ -923,7 +1055,12 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified zero direct primitive-* token utilities consumed in application JSX`);
   console.log(`   - Verified brand-soft vs brand-wash integrity (zero arbitrary bg-brand/opacity in application code)`);
   console.log(`   - Verified prohibited brand-soft contexts in named shared components (ChoiceCard, ImportDropzone, OptionGroup, TransportControl, VirtualKeyboard, SidebarNavItem, LibrarySubRail, Settings)`);
-  console.log(`   - Verified zero dead chart-* tokens in tailwind.config.js`);
+  console.log(`   - Verified zero dead chart-* tokens and zero retired tokens in tailwind.config.js`);
+  console.log(`   - Verified planar navigation active states (zero shadow-xs on nav tabs, sidebar items, subrail, segmented filters)`);
+  console.log(`   - Verified flat secondary action on Sidebar "Add sheet or file"`);
+  console.log(`   - Verified Surface API simplification (zero paper tone/elevation in Surface component or consumers)`);
+  console.log(`   - Verified strict paper vocabulary allowlist (zero border-surface-paper-edge in generic UI)`);
+  console.log(`   - Verified zero DialogTitle typography overrides & zero conflicting font-size overrides on semantic typography`);
   console.log(`   - Verified zero banned full-width Landing surfaces`);
   console.log(`   - Verified recursive MusicPaper allowlist (strictly notation canvases only)`);
   console.log(`   - Verified zero hover:bg-surface-paper in core UI primitives (Button, IconButton, Topbar)`);

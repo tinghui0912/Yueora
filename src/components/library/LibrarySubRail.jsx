@@ -39,7 +39,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
               className={cn(
                 'flex w-full min-w-0 items-center rounded-control px-2.5 py-1.5 text-left type-body-small transition-colors',
                 active === item.key
-                  ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                  ? 'bg-neutral-muted font-semibold text-ink-primary'
                   : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
               )}
             >
@@ -68,7 +68,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && submitCreate()}
                 placeholder="Folder name"
-                className="h-control-xs w-full min-w-0 rounded-control border border-surface-paper-edge bg-surface-paper px-2 type-caption text-ink-primary outline-none focus:border-brand"
+                className="h-control-xs w-full min-w-0 rounded-control border border-line-subtle bg-surface-panel px-2 type-caption text-ink-primary outline-none focus:border-brand"
               />
               <IconButton
                 icon={Check}
@@ -97,7 +97,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && submitRename(f.id)}
-                    className="h-control-xs w-full min-w-0 rounded-control border border-surface-paper-edge bg-surface-paper px-2 type-caption text-ink-primary outline-none focus:border-brand"
+                    className="h-control-xs w-full min-w-0 rounded-control border border-line-subtle bg-surface-panel px-2 type-caption text-ink-primary outline-none focus:border-brand"
                   />
                   <IconButton
                     icon={Check}
@@ -123,7 +123,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
                     className={cn(
                       'flex w-full min-w-0 items-center gap-2 rounded-control px-2.5 py-1.5 pr-14 text-left type-body-small transition-colors',
                       active === `folder:${f.id}`
-                        ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                        ? 'bg-neutral-muted font-semibold text-ink-primary'
                         : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
                     )}
                   >

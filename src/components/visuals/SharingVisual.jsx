@@ -35,7 +35,7 @@ export default function SharingVisual() {
               Includes synchronized sheet score + your private reflection audio
             </p>
           </div>
-          <span className="flex h-8 w-8 items-center justify-center rounded-control border border-line-subtle bg-surface-paper text-ink-tertiary">
+          <span className="flex h-8 w-8 items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-tertiary">
             <Heart className="h-4 w-4 fill-brand/15 text-brand" />
           </span>
         </div>
@@ -48,7 +48,7 @@ export default function SharingVisual() {
           <span className="text-ink-secondary font-medium">1 person invited</span>
         </div>
 
-        <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-paper px-3.5 py-2.5 shadow-sm">
+        <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-3.5 py-2.5">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-xs font-semibold text-white">
               E

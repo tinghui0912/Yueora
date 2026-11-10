@@ -46,13 +46,13 @@ export default function Pricing() {
           <div className="mt-6 inline-flex items-center gap-1 rounded-control border border-line-subtle bg-surface-panel p-0.5">
             <button
               onClick={() => setYearly(false)}
-              className={`rounded-control px-3 py-1.5 text-sm transition-colors ${!yearly ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs border border-line-subtle' : 'text-ink-secondary hover:text-ink-primary'}`}
+              className={`rounded-control px-3 py-1.5 text-sm transition-colors ${!yearly ? 'bg-neutral-muted font-semibold text-ink-primary border border-line-subtle' : 'text-ink-secondary hover:text-ink-primary'}`}
             >
               Monthly
             </button>
             <button
               onClick={() => setYearly(true)}
-              className={`rounded-control px-3 py-1.5 text-sm transition-colors ${yearly ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs border border-line-subtle' : 'text-ink-secondary hover:text-ink-primary'}`}
+              className={`rounded-control px-3 py-1.5 text-sm transition-colors ${yearly ? 'bg-neutral-muted font-semibold text-ink-primary border border-line-subtle' : 'text-ink-secondary hover:text-ink-primary'}`}
             >
               Yearly <span className="ml-1 text-xs text-brand">save {saving}%</span>
             </button>

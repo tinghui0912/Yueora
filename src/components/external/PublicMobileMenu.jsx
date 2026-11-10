@@ -67,7 +67,7 @@ export default function PublicMobileMenu() {
             </nav>
 
             {/* Secondary Destinations */}
-            <div className="mt-8 border-t border-surface-paper-edge pt-4 space-y-1" onClick={() => setOpen(false)}>
+            <div className="mt-8 border-t border-line-subtle pt-4 space-y-1" onClick={() => setOpen(false)}>
               <p className="px-3 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70 mb-1">
                 About &amp; Support
               </p>
@@ -84,11 +84,11 @@ export default function PublicMobileMenu() {
           </div>
 
           {/* Action Footer */}
-          <div className="pt-6 border-t border-surface-paper-edge" onClick={() => setOpen(false)}>
+          <div className="pt-6 border-t border-line-subtle" onClick={() => setOpen(false)}>
             {isAuthenticated ? (
               <Link
                 to="/library"
-                className="flex w-full items-center justify-center gap-2 rounded-control bg-brand px-4 py-3 text-xs font-semibold text-white shadow-xs hover:bg-brand-hover transition-colors"
+                className="flex w-full items-center justify-center gap-2 rounded-control bg-brand px-4 py-3 text-xs font-semibold text-white hover:bg-brand-hover transition-colors"
               >
                 <span>Go to Yueora</span>
                 <ArrowRight className="h-4 w-4" />
@@ -97,14 +97,14 @@ export default function PublicMobileMenu() {
               <div className="space-y-2">
                 <Link
                   to="/register"
-                  className="flex w-full items-center justify-center gap-2 rounded-control bg-brand px-4 py-3 text-xs font-semibold text-white shadow-xs hover:bg-brand-hover transition-colors"
+                  className="flex w-full items-center justify-center gap-2 rounded-control bg-brand px-4 py-3 text-xs font-semibold text-white hover:bg-brand-hover transition-colors"
                 >
                   <span>Start playing</span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
                   to="/login"
-                  className="flex w-full items-center justify-center rounded-control border border-surface-paper-edge bg-surface-paper px-4 py-2.5 text-xs font-medium text-ink-secondary hover:text-ink-primary transition-colors"
+                  className="flex w-full items-center justify-center rounded-control border border-line-subtle bg-surface-panel px-4 py-2.5 text-xs font-medium text-ink-secondary hover:text-ink-primary transition-colors"
                 >
                   Log in
                 </Link>

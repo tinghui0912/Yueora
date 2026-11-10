@@ -93,7 +93,7 @@ export default function SharedScore() {
           <button
             type="button"
             onClick={() => setReportOpen(true)}
-            className="flex items-center gap-1.5 rounded-control border border-line-subtle bg-surface-panel px-3 py-1.5 type-body-small text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary shadow-xs transition-colors"
+            className="flex items-center gap-1.5 rounded-control border border-line-subtle bg-surface-panel px-3 py-1.5 type-body-small text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors"
           >
             <Flag className="icon-sm" aria-hidden="true" /> Report
           </button>
@@ -177,7 +177,7 @@ export default function SharedScore() {
 
       <Dialog open={reportOpen} onOpenChange={setReportOpen}>
         <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle className="type-section-title text-ink-primary">Report this score</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Report this score</DialogTitle></DialogHeader>
           {reportSubmitted ? (
             <div className="flex flex-col items-center gap-2 py-4 text-center">
               <Check className="icon-xl text-brand" aria-hidden="true" />
@@ -196,7 +196,7 @@ export default function SharedScore() {
                       onClick={() => setReportReason(r)}
                       className={`flex w-full items-center rounded-control border px-3 py-2 text-left type-body-small transition-colors ${
                         reportReason === r
-                          ? 'border-brand bg-neutral-hover text-ink-primary font-medium shadow-xs'
+                          ? 'border-brand bg-neutral-hover text-ink-primary font-medium'
                           : 'border-line-subtle bg-surface-panel hover:bg-neutral-hover text-ink-primary'
                       }`}
                     >

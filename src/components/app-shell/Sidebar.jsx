@@ -21,12 +21,12 @@ export default function Sidebar() {
         </NavLink>
       </div>
 
-      {/* Add score - refined paper action */}
+      {/* Add score - refined secondary action */}
       <div className="mt-6 px-1">
         <Button
           intent="secondary"
           size="md"
-          className="w-full justify-center gap-2 border-line-subtle bg-surface-panel text-ink-primary shadow-xs hover:bg-neutral-hover hover:border-line-strong active:translate-y-px"
+          className="w-full justify-center gap-2 border-line-subtle bg-surface-panel text-ink-primary hover:bg-neutral-hover hover:border-line-strong active:translate-y-px"
           onClick={() => navigate('/add-score')}
         >
           <Plus className="h-4 w-4 text-brand" />

@@ -183,7 +183,7 @@ export default function Performances() {
               onClick={() => setTab(t.value)}
               className={`rounded px-3 py-1.5 text-xs transition-colors ${
                 tab === t.value
-                  ? 'bg-surface-panel font-semibold text-brand shadow-xs'
+                  ? 'bg-surface-panel font-semibold text-ink-primary'
                   : 'text-ink-secondary hover:text-ink-primary'
               }`}
             >
@@ -202,7 +202,7 @@ export default function Performances() {
                   onClick={() => setKind(f.value)}
                   className={`rounded px-2.5 py-1 text-xs transition-colors ${
                     kind === f.value
-                      ? 'bg-surface-panel font-semibold text-brand shadow-xs'
+                      ? 'bg-surface-panel font-semibold text-ink-primary'
                       : 'text-ink-secondary hover:text-ink-primary'
                   }`}
                 >
@@ -279,7 +279,7 @@ export default function Performances() {
       {/* Delete confirmation dialog */}
       <Dialog open={!!pendingDelete} onOpenChange={(o) => !o && setPendingDelete(null)}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
-          <DialogHeader><DialogTitle className="font-display text-lg">Delete preserved moment?</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Delete preserved moment?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">
             This will permanently remove the preserved recording of {pendingDelete?.scoreTitleSnapshot}.
           </p>

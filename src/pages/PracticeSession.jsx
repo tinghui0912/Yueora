@@ -420,7 +420,7 @@ export default function PracticeSession() {
         <div className="w-full max-w-4xl">
           {/* Section range selector notification bar */}
           {selecting && (
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-container border border-line-subtle bg-surface-panel p-3 shadow-xs">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-container border border-line-subtle bg-surface-panel p-3">
               <p className="text-xs text-ink-primary font-medium">
                 {sectionPhase === 'start'
                   ? 'Choose starting measure on score.'
@@ -637,7 +637,7 @@ export default function PracticeSession() {
               onClick={selecting ? () => { setSectionPhase('idle'); setPendingStart(null); } : startSectionPick}
               className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
                 selectedRange.kind === 'section'
-                  ? 'border-brand bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                  ? 'border-brand bg-neutral-muted font-semibold text-ink-primary'
                   : 'border-line-subtle text-ink-secondary hover:bg-neutral-hover'
               }`}
             >
@@ -650,7 +650,7 @@ export default function PracticeSession() {
                 onClick={() => setLoop((l) => !l)}
                 aria-pressed={loop}
                 className={`hidden h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium sm:flex transition-colors ${
-                  loop ? 'border-brand bg-neutral-muted font-semibold text-ink-primary shadow-xs' : 'border-line-subtle text-ink-secondary hover:bg-neutral-hover'
+                  loop ? 'border-brand bg-neutral-muted font-semibold text-ink-primary' : 'border-line-subtle text-ink-secondary hover:bg-neutral-hover'
                 }`}
               >
                 <Repeat className={`h-4 w-4 ${loop ? 'text-brand' : ''}`} />
@@ -720,7 +720,7 @@ export default function PracticeSession() {
       {/* Exit confirmation dialog */}
       <Dialog open={exitOpen} onOpenChange={setExitOpen}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
-          <DialogHeader><DialogTitle className="font-display text-lg">Leave practice?</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Leave practice?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">You can preserve this session in your repertoire history, or discard it.</p>
           <DialogFooter className="mt-4 gap-2">
             <Button variant="ghost" size="sm" onClick={() => setExitOpen(false)}>Keep playing</Button>

@@ -220,7 +220,7 @@ export default function ScoreDetail() {
                 style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
                 className="aspect-[16/10] w-full max-w-2xl transition-transform duration-fast"
               >
-                <ScorePreview id={score.id} className="h-full w-full object-cover shadow-xs" />
+                <ScorePreview id={score.id} className="h-full w-full object-cover" />
               </div>
             </div>
 
@@ -272,8 +272,8 @@ export default function ScoreDetail() {
         {/* Right Column: Journey Hub & Musical Relationship */}
         <div className="lg:col-span-4 space-y-6">
           {/* Journey of this Piece */}
-          <div className="rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs">
-            <h2 className="font-display text-base font-medium text-ink-primary">
+          <div className="rounded-container border border-line-subtle bg-surface-panel p-5">
+            <h2 className="type-subsection text-ink-primary">
               The Journey of this Piece
             </h2>
             <p className="mt-1 text-xs text-ink-secondary leading-relaxed">
@@ -300,7 +300,7 @@ export default function ScoreDetail() {
                 No practice recorded yet. When you play, your sessions will quietly appear here.
               </p>
             ) : (
-              <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel shadow-xs">
+              <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
                 {sessions.slice(0, 4).map((a) => {
                   const saved = scorePerformances.find((p) => p.activityId === a.id);
                   return (
@@ -337,7 +337,7 @@ export default function ScoreDetail() {
       {/* Move to folder dialog */}
       <Dialog open={moveFolderOpen} onOpenChange={setMoveFolderOpen}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
-          <DialogHeader><DialogTitle className="font-display text-lg">Move to folder</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Move to folder</DialogTitle></DialogHeader>
           <div className="space-y-1 mt-2">
             {folders.map((f) => (
               <button
@@ -358,7 +358,7 @@ export default function ScoreDetail() {
       {/* Versions dialog */}
       <Dialog open={versionsOpen} onOpenChange={setVersionsOpen}>
         <DialogContent className="max-w-md border-line-subtle bg-surface-panel shadow-overlay">
-          <DialogHeader><DialogTitle className="font-display text-lg">Version history</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Version history</DialogTitle></DialogHeader>
           <div className="space-y-2 mt-2">
             {(() => {
               const versions = [
@@ -371,7 +371,7 @@ export default function ScoreDetail() {
                 const isCurrent = v.isCurrent && !restoredLabel;
                 const isRestored = restoredLabel === v.label;
                 return (
-                  <div key={v.label} className={`flex items-center justify-between rounded-control border px-3 py-2 text-xs transition-colors ${isCurrent || isRestored ? 'border-brand bg-neutral-hover shadow-xs' : 'border-line-subtle'}`}>
+                  <div key={v.label} className={`flex items-center justify-between rounded-control border px-3 py-2 text-xs transition-colors ${isCurrent || isRestored ? 'border-brand bg-neutral-hover' : 'border-line-subtle'}`}>
                     <div>
                       <p className="font-medium text-ink-primary">{v.label}{isRestored ? ' · Restored' : ''}</p>
                       <p className="text-xs text-ink-secondary/70">{isRestored ? `Restored ${score.versionRestoredAt}` : v.date}</p>
@@ -393,7 +393,7 @@ export default function ScoreDetail() {
       {/* Delete confirm */}
       <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
-          <DialogHeader><DialogTitle className="font-display text-lg">Move to trash?</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Move to trash?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">{score.title} will move to Trash for 30 days before permanent deletion.</p>
           <DialogFooter className="mt-4">
             <Button variant="outline" size="sm" onClick={() => setConfirmDelete(false)}>Cancel</Button>
@@ -405,7 +405,7 @@ export default function ScoreDetail() {
       {/* Leave confirm */}
       <Dialog open={confirmLeave} onOpenChange={setConfirmLeave}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
-          <DialogHeader><DialogTitle className="font-display text-lg">Leave shared score?</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Leave shared score?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">You will lose access to {score.title}.</p>
           <DialogFooter className="mt-4">
             <Button variant="outline" size="sm" onClick={() => setConfirmLeave(false)}>Cancel</Button>
@@ -417,7 +417,7 @@ export default function ScoreDetail() {
       {/* Remove saved confirm */}
       <Dialog open={confirmRemove} onOpenChange={setConfirmRemove}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
-          <DialogHeader><DialogTitle className="font-display text-lg">Remove from library?</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Remove from library?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">{score.title} will be removed from your repertoire.</p>
           <DialogFooter className="mt-4">
             <Button variant="outline" size="sm" onClick={() => setConfirmRemove(false)}>Cancel</Button>

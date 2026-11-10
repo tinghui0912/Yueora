@@ -9,20 +9,17 @@ const surfaceVariants = cva(
     variants: {
       tone: {
         panel: 'bg-surface-panel',
-        paper: 'bg-surface-paper',
         canvas: 'bg-surface-canvas',
-        raised: 'bg-surface-panel',
+        raised: 'bg-surface-raised',
       },
       elevation: {
         none: '',
-        paper: 'shadow-paper',
         raised: 'shadow-raised',
         overlay: 'shadow-overlay',
       },
       border: {
         true: 'border border-line-subtle',
         subtle: 'border border-line-subtle',
-        paper: 'border border-surface-paper-edge',
         none: 'border-0',
       },
       padding: {
@@ -32,7 +29,7 @@ const surfaceVariants = cva(
         lg: 'p-6 sm:p-8',
       },
       interactive: {
-        true: 'hover:border-line-strong hover:shadow-xs cursor-pointer',
+        true: 'hover:border-line-strong cursor-pointer',
       },
     },
     defaultVariants: {
@@ -47,9 +44,9 @@ const surfaceVariants = cva(
 
 /**
  * @typedef {React.HTMLAttributes<HTMLDivElement> & {
- *   tone?: 'panel' | 'paper' | 'canvas' | 'raised';
- *   elevation?: 'none' | 'paper' | 'raised' | 'overlay';
- *   border?: boolean | 'subtle' | 'paper' | 'none';
+ *   tone?: 'panel' | 'canvas' | 'raised';
+ *   elevation?: 'none' | 'raised' | 'overlay';
+ *   border?: boolean | 'subtle' | 'none';
  *   padding?: 'none' | 'sm' | 'md' | 'lg';
  *   interactive?: boolean;
  *   asChild?: boolean;

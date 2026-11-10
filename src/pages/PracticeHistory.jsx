@@ -52,7 +52,7 @@ export default function PracticeHistory() {
           {Object.entries(groups).map(([date, items]) => (
             <section key={date}>
               <h2 className="mb-2 type-caption text-ink-tertiary">{date}</h2>
-              <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel shadow-xs overflow-hidden">
+              <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel overflow-hidden">
                 {items.map((a) => (
                   <button
                     key={a.id}

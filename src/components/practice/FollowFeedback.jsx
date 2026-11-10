@@ -48,7 +48,7 @@ export default function FollowFeedback({
     <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-left">
       {/* Current note & calm state */}
       <div className="flex items-center gap-3.5">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-container border border-surface-paper-edge bg-surface-paper shadow-xs">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-container border border-line-subtle bg-surface-panel">
           <span className="font-display text-2xl font-medium text-ink-primary">{current}</span>
         </div>
         <div>

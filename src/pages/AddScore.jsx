@@ -367,7 +367,7 @@ export default function AddScore() {
         {/* Step 4 — Confirmation */}
         {step === 4 && (
           <div className="space-y-6">
-            <Surface tone="panel" elevation="paper" padding="md" className="space-y-4">
+            <Surface tone="panel" padding="md" className="space-y-4">
               <SectionHeader
                 title="Confirm and begin"
                 description="Review summary before optical recognition begins."
@@ -416,7 +416,7 @@ export default function AddScore() {
 
         {/* Step 5 — Recognition Started */}
         {step === 5 && (
-          <Surface tone="panel" elevation="paper" padding="lg" className="space-y-5 text-center sm:text-left">
+          <Surface tone="panel" padding="lg" className="space-y-5 text-center sm:text-left">
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas text-brand">
                 <Check className="icon-lg" />

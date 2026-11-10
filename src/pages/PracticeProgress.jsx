@@ -86,7 +86,7 @@ export default function PracticeProgress() {
 
           <section className="mt-8">
             <SectionHeader title="Pieces you return to" />
-            <div className="mt-3 divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel shadow-xs overflow-hidden">
+            <div className="mt-3 divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel overflow-hidden">
               {pieces.map((p) => (
                 <div key={p.id} className="flex items-center justify-between gap-3 p-4 transition-colors hover:bg-neutral-hover">
                   <div className="min-w-0">

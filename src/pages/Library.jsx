@@ -274,7 +274,7 @@ export default function Library() {
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && setParam('search', searchInput.trim())}
                   placeholder="Filter by title, composer…"
-                  className="h-control-md w-44 rounded-control border border-surface-paper-edge bg-surface-paper/70 px-3 type-body-small text-ink-primary outline-none placeholder:text-ink-tertiary focus:border-brand focus:bg-surface-paper md:w-56 shadow-xs"
+                  className="h-control-md w-44 rounded-control border border-line-subtle bg-surface-panel px-3 type-body-small text-ink-primary outline-none placeholder:text-ink-tertiary focus:border-brand md:w-56"
                 />
               </div>
 
@@ -293,7 +293,7 @@ export default function Library() {
                   )}
                 </Button>
                 {showFilters && (
-                  <div className="absolute right-0 z-20 mt-1 w-56 rounded-container border border-surface-paper-edge bg-surface-panel p-3 shadow-overlay">
+                  <div className="absolute right-0 z-20 mt-1 w-56 rounded-container border border-line-subtle bg-surface-panel p-3 shadow-overlay">
                     <p className="type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Instrument</p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {instruments.map((ins) => (
@@ -347,7 +347,7 @@ export default function Library() {
                   <span className="hidden sm:inline">Sort</span>
                 </Button>
                 {showSort && (
-                  <div className="absolute right-0 z-20 mt-1 w-44 rounded-container border border-surface-paper-edge bg-surface-panel p-1 shadow-overlay">
+                  <div className="absolute right-0 z-20 mt-1 w-44 rounded-container border border-line-subtle bg-surface-panel p-1 shadow-overlay">
                     {sortOptions.map((o) => (
                       <button
                         key={o.key}
@@ -365,14 +365,14 @@ export default function Library() {
               </div>
 
               {/* Grid / List switch */}
-              <div className="flex h-control-md items-center rounded-control border border-surface-paper-edge bg-surface-paper p-0.5">
+              <div className="flex h-control-md items-center rounded-control border border-line-subtle bg-neutral-muted p-0.5">
                 <IconButton
                   icon={LayoutGrid}
                   size="xs"
                   tone={view === 'grid' ? 'surface' : 'quiet'}
                   label="Grid view"
                   onClick={() => setParam('layout', 'grid')}
-                  className={view === 'grid' ? 'text-brand shadow-xs' : 'text-ink-tertiary hover:text-ink-primary'}
+                  className={view === 'grid' ? 'text-brand' : 'text-ink-tertiary hover:text-ink-primary'}
                 />
                 <IconButton
                   icon={List}
@@ -380,7 +380,7 @@ export default function Library() {
                   tone={view === 'list' ? 'surface' : 'quiet'}
                   label="List view"
                   onClick={() => setParam('layout', 'list')}
-                  className={view === 'list' ? 'text-brand shadow-xs' : 'text-ink-tertiary hover:text-ink-primary'}
+                  className={view === 'list' ? 'text-brand' : 'text-ink-tertiary hover:text-ink-primary'}
                 />
               </div>
             </div>
@@ -538,7 +538,7 @@ export default function Library() {
       {/* Move to folder dialog */}
       <Dialog open={moveOpen} onOpenChange={setMoveOpen}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
-          <DialogHeader><DialogTitle className="font-display text-lg">Move to folder</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Move to folder</DialogTitle></DialogHeader>
           <div className="space-y-1 mt-2">
             {folders.map((f) => (
               <button
@@ -561,7 +561,7 @@ export default function Library() {
       {/* Folder delete confirmation */}
       <Dialog open={!!folderDelete} onOpenChange={(o) => !o && setFolderDelete(null)}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
-          <DialogHeader><DialogTitle className="font-display text-lg">Delete folder?</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">Scores in this folder will stay in your library — only the folder is removed.</p>
           <DialogFooter className="mt-4">
             <Button variant="outline" size="sm" onClick={() => setFolderDelete(null)}>Cancel</Button>
@@ -573,7 +573,7 @@ export default function Library() {
       {/* Bulk remove confirmation */}
       <Dialog open={!!trashConfirm} onOpenChange={(o) => !o && setTrashConfirm(null)}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
-          <DialogHeader><DialogTitle className="font-display text-lg">{removeLabel}?</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{removeLabel}?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">
             {allMine && 'These pieces will move to Trash for 30 days.'}
             {allShared && 'You will lose access to these shared scores.'}
@@ -590,7 +590,7 @@ export default function Library() {
       {/* Manage folders dialog (mobile) */}
       <Dialog open={manageFoldersOpen} onOpenChange={setManageFoldersOpen}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
-          <DialogHeader><DialogTitle className="font-display text-lg">Manage folders</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Manage folders</DialogTitle></DialogHeader>
           <div className="space-y-2 mt-2">
             {folders.length === 0 && <p className="py-4 text-center text-xs text-ink-tertiary">No folders created yet.</p>}
             {folders.map((f) => (
@@ -637,7 +637,7 @@ export default function Library() {
       {/* Folder delete confirmation (mobile) */}
       <Dialog open={!!folderToDelete} onOpenChange={(o) => !o && setFolderToDelete(null)}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
-          <DialogHeader><DialogTitle className="font-display text-lg">Delete folder?</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">Scores in this folder will remain in your library.</p>
           <DialogFooter className="mt-4">
             <Button variant="outline" size="sm" onClick={() => setFolderToDelete(null)}>Cancel</Button>

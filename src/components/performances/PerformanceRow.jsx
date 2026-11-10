@@ -19,7 +19,7 @@ export default function PerformanceRow({
   const progress = durationSeconds ? Math.min(100, (position / durationSeconds) * 100) : 0;
 
   return (
-    <div className="rounded-container border border-line-subtle bg-surface-panel p-4 sm:p-5 shadow-xs transition-colors hover:border-line-strong duration-base">
+    <div className="rounded-container border border-line-subtle bg-surface-panel p-4 sm:p-5 transition-colors hover:border-line-strong duration-base">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -92,7 +92,7 @@ export default function PerformanceRow({
           onClick={onToggle}
           disabled={!canPlay || loading}
           aria-label={playing ? `Pause ${performance.scoreTitleSnapshot}` : `Play ${performance.scoreTitleSnapshot}`}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line-subtle bg-surface-panel text-brand shadow-xs transition-[color,background-color,border-color,transform] hover:bg-brand hover:text-white active:scale-95 disabled:opacity-40"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line-subtle bg-surface-panel text-brand transition-[color,background-color,border-color,transform] hover:bg-brand hover:text-white active:scale-95 disabled:opacity-40"
         >
           {loading ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />

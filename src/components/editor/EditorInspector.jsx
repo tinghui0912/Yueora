@@ -50,7 +50,7 @@ export default function EditorInspector({ note, onChange }) {
   return (
     <div>
       <p className="text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Inspector</p>
-      <div className="mt-3 rounded-control border border-surface-paper-edge bg-surface-paper/70 px-3.5 py-2.5">
+      <div className="mt-3 rounded-control border border-line-subtle bg-surface-panel px-3.5 py-2.5">
         <p className="text-sm font-semibold text-ink-primary">{isRest ? 'Rest' : pitch} · {durations.find((d) => d.v === note.duration)?.label}{note.dotted ? ' (dotted)' : ''}</p>
         <p className="text-xs text-ink-secondary mt-0.5">Staff {note.staff + 1} · Measure {note.measure + 1}</p>
       </div>
@@ -84,7 +84,7 @@ export default function EditorInspector({ note, onChange }) {
             <SelectContent>{durations.map((d) => <SelectItem key={d.v} value={d.v}>{d.label}</SelectItem>)}</SelectContent>
           </Select>
         </Field>
-        <div className="flex items-center justify-between rounded-control border border-surface-paper-edge bg-surface-paper/40 px-3 py-2">
+        <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-3 py-2">
           <Label className="type-label font-medium text-ink-secondary">Dotted</Label>
           <Switch checked={!!note.dotted} onCheckedChange={(v) => onChange({ ...note, dotted: v || undefined })} />
         </div>
@@ -109,7 +109,7 @@ export default function EditorInspector({ note, onChange }) {
           </Field>
         )}
         {!isRest && (
-          <div className="rounded-control border border-surface-paper-edge bg-surface-paper/40 px-3 py-2.5">
+          <div className="rounded-control border border-line-subtle bg-surface-panel px-3 py-2.5">
             <div className="flex items-center justify-between">
               <Label className="type-label font-medium text-ink-secondary">Tie</Label>
               <span className={`type-metadata ${note.tieTo ? 'text-brand font-medium' : 'text-ink-secondary/70'}`}>{note.tieTo ? 'Connected' : 'Not set'}</span>
@@ -118,7 +118,7 @@ export default function EditorInspector({ note, onChange }) {
           </div>
         )}
         {!isRest && (
-          <div className="rounded-control border border-surface-paper-edge bg-surface-paper/40 px-3 py-2.5">
+          <div className="rounded-control border border-line-subtle bg-surface-panel px-3 py-2.5">
             <div className="flex items-center justify-between">
               <Label className="type-label font-medium text-ink-secondary">Slur</Label>
               <span className={`type-metadata ${note.slurTo ? 'text-brand font-medium' : 'text-ink-secondary/70'}`}>{note.slurTo ? 'Connected' : 'Not set'}</span>

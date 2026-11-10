@@ -93,7 +93,7 @@ export default function SharingDialog({ score, open, onOpenChange }) {
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-lg gap-0 p-0">
           <DialogHeader className="border-b border-line-subtle px-5 py-4">
-            <DialogTitle className="type-section-title font-semibold text-ink-primary">Share “{sharing.title}”</DialogTitle>
+            <DialogTitle>Share “{sharing.title}”</DialogTitle>
             <DialogDescription className="type-body-small text-ink-secondary">Decide who can access this score.</DialogDescription>
           </DialogHeader>
 

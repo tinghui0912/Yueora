@@ -48,13 +48,12 @@ module.exports = {
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
 				gold: 'hsl(var(--gold))',
-				/* ---- Surface semantic ---- */
+				/* ---- Surface semantic (Simplified 4-Surface Model) ---- */
 				surface: {
 					canvas: 'hsl(var(--surface-canvas))',
 					panel: 'hsl(var(--surface-panel))',
 					raised: 'hsl(var(--surface-raised))',
 					paper: 'hsl(var(--surface-paper))',
-					'paper-warm': 'hsl(var(--surface-paper-warm))',
 					'paper-edge': 'hsl(var(--surface-paper-edge))',
 					subrail: 'hsl(var(--surface-subrail))',
 					'subrail-border': 'hsl(var(--surface-subrail-border))',
@@ -77,9 +76,6 @@ module.exports = {
 					DEFAULT: 'hsl(var(--brand))',
 					hover: 'hsl(var(--brand-hover))',
 					soft: 'hsl(var(--brand-soft))',
-					wash: 'hsl(var(--brand-wash))',
-					washBorder: 'hsl(var(--brand-wash-border))',
-					washForeground: 'hsl(var(--brand-wash-foreground))',
 				},
 				/* ---- Neutral quiet & hover ---- */
 				neutral: {
