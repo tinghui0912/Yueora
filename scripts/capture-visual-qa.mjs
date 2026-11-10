@@ -64,7 +64,7 @@ function killProcess(proc) {
     if (process.platform === 'win32') {
       spawn('taskkill', ['/pid', String(proc.pid), '/f', '/t']);
     } else {
-      proc.kill();
+      try { process.kill(-proc.pid, 'SIGKILL'); } catch { proc.kill('SIGKILL'); }
     }
   } catch {}
 }
@@ -80,7 +80,7 @@ async function ensureServerRunning(port) {
   const isWin = process.platform === 'win32';
   const serverProc = isWin
     ? spawn('cmd.exe', ['/d', '/s', '/c', `npm.cmd run dev -- --port ${port} --strictPort`], { stdio: 'pipe' })
-    : spawn('npm', ['run', 'dev', '--', '--port', String(port), '--strictPort'], { stdio: 'pipe' });
+    : spawn('npm', ['run', 'dev', '--', '--port', String(port), '--strictPort'], { stdio: 'ignore', detached: true });
 
   const healthy = await waitForHealthy(`http://localhost:${port}/`, 15000);
   if (!healthy) {
@@ -165,6 +165,7 @@ async function main() {
   }
 
   console.log('\n✅ Automated screenshot capture complete. All targets captured successfully in .taste-skill/shots/');
+  process.exit(0);
 }
 
 main();

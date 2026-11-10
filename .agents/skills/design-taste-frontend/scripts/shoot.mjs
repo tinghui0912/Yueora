@@ -478,6 +478,8 @@ try {
 } finally {
   clearTimeout(guard);
   await sleep(400);
+  try { ws?.close(); } catch {}
   kill();
   server?.close();
+  process.exit(process.exitCode || 0);
 }
