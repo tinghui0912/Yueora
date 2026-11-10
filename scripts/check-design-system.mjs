@@ -105,7 +105,7 @@ const SEMANTIC_TOKENS_MAPPING_PRIMITIVES = [
   { token: '--practice-current-foreground', expectedPrimitive: '--primitive-ink-900' },
 ];
 
-// WCAG AA Contrast Verification
+// WCAG AA Contrast Verification (Dynamic Resolution from src/index.css)
 function hslToRgb(h, s, l) {
   s /= 100; l /= 100;
   const k = (n) => (n + h / 30) % 12;
@@ -127,30 +127,75 @@ function getContrastRatio(hsl1, hsl2) {
   return (l1 + 0.05) / (l2 + 0.05);
 }
 
+function parseCssCustomProperties(cssContent) {
+  const tokenMap = new Map();
+  const propRegex = /(--[a-zA-Z0-9-]+)\s*:\s*([^;]+);/g;
+  let m;
+  while ((m = propRegex.exec(cssContent)) !== null) {
+    tokenMap.set(m[1].trim(), m[2].trim());
+  }
+  return tokenMap;
+}
+
+function resolveCssTokenHsl(tokenName, tokenMap, visited = new Set()) {
+  if (visited.has(tokenName)) {
+    throw new Error(`Cyclic CSS variable reference detected: ${tokenName}`);
+  }
+  visited.add(tokenName);
+  const raw = tokenMap.get(tokenName);
+  if (!raw) {
+    throw new Error(`Missing CSS variable in src/index.css: ${tokenName}`);
+  }
+  const varMatch = raw.match(/var\((--[a-zA-Z0-9-]+)\)/);
+  if (varMatch) {
+    return resolveCssTokenHsl(varMatch[1], tokenMap, visited);
+  }
+  const hslMatch = raw.match(/^([0-9.]+)\s+([0-9.]+)%\s+([0-9.]+)%$/);
+  if (!hslMatch) {
+    throw new Error(`Unparseable HSL triplet for ${tokenName}: '${raw}'`);
+  }
+  return [parseFloat(hslMatch[1]), parseFloat(hslMatch[2]), parseFloat(hslMatch[3])];
+}
+
 const CANONICAL_CONTRAST_PAIRS = [
-  { name: 'ink-primary on panel', fg: [220, 5, 13], bg: [0, 0, 100], min: 4.5 },
-  { name: 'ink-primary on canvas', fg: [220, 5, 13], bg: [44, 19, 97], min: 4.5 },
-  { name: 'ink-secondary on panel', fg: [223, 4, 36], bg: [0, 0, 100], min: 4.5 },
-  { name: 'ink-secondary on canvas', fg: [223, 4, 36], bg: [44, 19, 97], min: 4.5 },
-  { name: 'ink-tertiary on panel', fg: [220, 4, 44], bg: [0, 0, 100], min: 4.5 },
-  { name: 'ink-tertiary on canvas', fg: [220, 4, 44], bg: [44, 19, 97], min: 4.5 },
-  { name: 'white on brand', fg: [0, 0, 100], bg: [148, 36, 27], min: 4.5 },
-  { name: 'white on success', fg: [0, 0, 100], bg: [148, 30, 38], min: 4.5 },
-  { name: 'ink-900 on warning', fg: [220, 5, 13], bg: [38, 58, 45], min: 4.5 },
-  { name: 'white on danger', fg: [0, 0, 100], bg: [0, 65, 45], min: 4.5 },
-  { name: 'white on info', fg: [0, 0, 100], bg: [210, 30, 45], min: 4.5 },
-  { name: 'ink-900 on gold/current', fg: [220, 5, 13], bg: [44, 67, 46], min: 4.5 },
+  { name: 'ink-primary on panel', fg: '--ink-primary', bg: '--surface-panel', min: 4.5 },
+  { name: 'ink-primary on canvas', fg: '--ink-primary', bg: '--surface-canvas', min: 4.5 },
+  { name: 'ink-secondary on panel', fg: '--ink-secondary', bg: '--surface-panel', min: 4.5 },
+  { name: 'ink-secondary on canvas', fg: '--ink-secondary', bg: '--surface-canvas', min: 4.5 },
+  { name: 'ink-tertiary on panel', fg: '--ink-tertiary', bg: '--surface-panel', min: 4.5 },
+  { name: 'ink-tertiary on canvas', fg: '--ink-tertiary', bg: '--surface-canvas', min: 4.5 },
+  { name: 'white on brand', fg: '--primitive-neutral-0', bg: '--brand', min: 4.5 },
+  { name: 'white on success', fg: '--primitive-neutral-0', bg: '--primitive-success-500', min: 4.5 },
+  { name: 'ink-primary on warning', fg: '--ink-primary', bg: '--primitive-warning-500', min: 4.5 },
+  { name: 'white on danger', fg: '--primitive-neutral-0', bg: '--primitive-danger-500', min: 4.5 },
+  { name: 'white on info', fg: '--primitive-neutral-0', bg: '--primitive-info-500', min: 4.5 },
+  { name: 'ink-primary on gold', fg: '--ink-primary', bg: '--primitive-gold-500', min: 4.5 },
 ];
 
 function verifyContrastIntegrity(issues = []) {
+  if (!fs.existsSync(INDEX_CSS_PATH)) return issues;
+  const css = fs.readFileSync(INDEX_CSS_PATH, 'utf8');
+  const tokenMap = parseCssCustomProperties(css);
+
   CANONICAL_CONTRAST_PAIRS.forEach((pair) => {
-    const ratio = getContrastRatio(pair.fg, pair.bg);
-    if (ratio < pair.min) {
+    try {
+      const fgHsl = resolveCssTokenHsl(pair.fg, tokenMap);
+      const bgHsl = resolveCssTokenHsl(pair.bg, tokenMap);
+      const ratio = getContrastRatio(fgHsl, bgHsl);
+      if (ratio < pair.min) {
+        issues.push({
+          file: 'src/index.css',
+          line: 1,
+          matched: `Contrast failure: ${pair.name} (${ratio.toFixed(2)}:1)`,
+          message: `Token pair '${pair.name}' (${pair.fg} on ${pair.bg}) has contrast ${ratio.toFixed(2)}:1, which fails WCAG AA minimum (${pair.min}:1).`,
+        });
+      }
+    } catch (err) {
       issues.push({
         file: 'src/index.css',
         line: 1,
-        matched: `Contrast failure: ${pair.name} (${ratio.toFixed(2)}:1)`,
-        message: `Token pair '${pair.name}' has contrast ${ratio.toFixed(2)}:1, which fails WCAG AA minimum (${pair.min}:1).`,
+        matched: `Contrast token resolution error: ${pair.name}`,
+        message: err.message,
       });
     }
   });
@@ -282,6 +327,24 @@ function verifyFoundations(issues = []) {
         line: 1,
         matched: token,
         message: `Semantic token ${token} must reference primitive ${expectedPrimitive} (found no var(${expectedPrimitive}) assignment).`,
+      });
+    }
+  });
+
+  // Verify retired tokens are absent from src/index.css source of truth
+  const RETIRED_CSS_TOKENS = [
+    '--brand-wash',
+    '--brand-wash-border',
+    '--brand-wash-foreground',
+    '--surface-paper-warm',
+  ];
+  RETIRED_CSS_TOKENS.forEach((tok) => {
+    if (css.includes(tok)) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: tok,
+        message: `Retired CSS token '${tok}' must not exist in src/index.css source of truth.`,
       });
     }
   });

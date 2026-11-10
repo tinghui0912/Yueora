@@ -134,42 +134,42 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
 
 #### Primitive Physical Palette (15 Core Colors + 4 Status = 19 Primitives):
 
-Yueora's visual vocabulary is rich in semantic roles, but strictly restrained in underlying physical colors. Pages and domain components **never** consume primitive tokens directly; they compose semantic tokens.
+Yueora's visual vocabulary is rich in semantic roles, but strictly restrained in underlying physical colors. Pages and domain components **never** consume primitive tokens directly; they compose semantic tokens. Physical HSL definitions reside exclusively in `src/index.css`.
 
-| Primitive Color Token | Physical Value (HSL) | Semantic Consumers | Design System Role |
-| :--- | :--- | :--- | :--- |
-| `--primitive-neutral-0` | `0 0% 100%` | `surface-panel`, `surface-raised`, `*-foreground` | Pure White: panels, clean cards, overlay popovers, button text |
-| `--primitive-neutral-25` | `44 19% 97%` | `surface-canvas`, `surface-paper` | Warm Ivory Canvas: global page backdrop, tactile archival paper |
-| `--primitive-neutral-50` | `44 18% 95%` | `surface-subrail` | Warm Neutral: secondary navigation rail, preserved takes |
-| `--primitive-neutral-75` | `44 16% 91%` | `neutral-hover` | Neutral Hover: perceptible interactive hover contrast |
-| `--primitive-neutral-100` | `44 14% 92%` | `neutral-muted`, `line-subtle`, `surface-paper-edge`, `subrail-border` | Neutral Muted: quiet borders, passive tracks, nav active background |
-| `--primitive-neutral-200` | `47 13% 80%` | `line-strong` | Neutral Strong: control borders, checkboxes, switches |
-| `--primitive-neutral-300` | `220 3% 62%` | `ink-subtle` | Neutral Subtle: quiet dividers, passive iconography |
-| `--primitive-ink-500` | `220 4% 44%` | `ink-tertiary` | Ink Tertiary: readable muted metadata (>=4.5:1 WCAG AA contrast) |
-| `--primitive-ink-700` | `223 4% 36%` | `ink-secondary`, `neutral-muted-foreground`, `practice-waiting` | Ink Secondary: secondary body copy, timestamps (>6.5:1 contrast) |
-| `--primitive-ink-900` | `220 5% 13%` | `ink-primary`, `neutral-hover-foreground` | Ink Primary: main page headings, high-emphasis copy (>10:1 contrast) |
-| `--primitive-forest-50` | `148 24% 96%` | internal fallback | Internal Forest: legacy compatibility fallback |
-| `--primitive-forest-100` | `148 36% 93%` | `brand-soft`, `selection` | Brand Soft: compact selected content only (≤ 32px), score highlights |
-| `--primitive-forest-700` | `148 36% 27%` | `brand`, `brand-soft-foreground` | Forest Green Accent: primary CTA, active cues, brand dots |
-| `--primitive-forest-800` | `148 36% 22%` | `brand-hover` | Forest Dark: primary CTA pressed/hover state |
-| `--primitive-gold-500` | `44 67% 46%` | `gold`, `practice-current` | Musical Accent: favorite stars, sounding key / notation accent |
-| `--primitive-success-500` | `148 30% 38%` | `success`, `practice-following`, `practice-correct` | Functional Success: positive feedback (>=4.5:1 WCAG AA contrast) |
-| `--primitive-warning-500` | `38 58% 45%` | `warning`, `practice-resyncing` | Functional Warning: pending device access, resyncing tempo |
-| `--primitive-danger-500` | `0 65% 45%` | `danger`, `practice-error` | Functional Alert: terracotta destructive action (>=4.5:1 contrast) |
-| `--primitive-info-500` | `210 30% 45%` | `info` | Functional Info: instructional notices, guidance callouts (>=4.5:1) |
+| Primitive Color Token | Semantic Consumers | Design System Role |
+| :--- | :--- | :--- |
+| `--primitive-neutral-0` | `surface-panel`, `surface-raised`, `*-foreground` | Pure White: panels, clean cards, overlay popovers, button text |
+| `--primitive-neutral-25` | `surface-canvas`, `surface-paper` | Warm Ivory Canvas: global page backdrop, tactile archival paper |
+| `--primitive-neutral-50` | `surface-subrail` | Warm Neutral: secondary navigation rail, preserved takes |
+| `--primitive-neutral-75` | `neutral-hover` | Neutral Hover: perceptible interactive hover contrast |
+| `--primitive-neutral-100` | `neutral-muted`, `line-subtle`, `surface-paper-edge`, `subrail-border` | Neutral Muted: quiet borders, passive tracks, nav active background |
+| `--primitive-neutral-200` | `line-strong` | Neutral Strong: control borders, checkboxes, switches |
+| `--primitive-neutral-300` | `ink-subtle` | Neutral Subtle: quiet dividers, passive iconography |
+| `--primitive-ink-500` | `ink-tertiary` | Ink Tertiary: readable muted metadata (>=4.5:1 WCAG AA contrast) |
+| `--primitive-ink-700` | `ink-secondary`, `neutral-muted-foreground`, `practice-waiting` | Ink Secondary: secondary body copy, timestamps (>6.5:1 contrast) |
+| `--primitive-ink-900` | `ink-primary`, `neutral-hover-foreground` | Ink Primary: main page headings, high-emphasis copy (>10:1 contrast) |
+| `--primitive-forest-50` | internal fallback | Internal Forest: legacy compatibility fallback |
+| `--primitive-forest-100` | `brand-soft`, `selection` | Brand Soft: compact selected content only (≤ 32px), score highlights |
+| `--primitive-forest-700` | `brand`, `brand-soft-foreground` | Forest Green Accent: primary CTA, active cues, brand dots |
+| `--primitive-forest-800` | `brand-hover` | Forest Dark: primary CTA pressed/hover state |
+| `--primitive-gold-500` | `gold`, `practice-current` | Musical Accent: favorite stars, sounding key / notation accent |
+| `--primitive-success-500` | `success`, `practice-following`, `practice-correct` | Functional Success: positive feedback (>=4.5:1 WCAG AA contrast) |
+| `--primitive-warning-500` | `warning`, `practice-resyncing` | Functional Warning: pending device access, resyncing tempo |
+| `--primitive-danger-500` | `danger`, `practice-error` | Functional Alert: terracotta destructive action (>=4.5:1 contrast) |
+| `--primitive-info-500` | `info` | Functional Info: instructional notices, guidance callouts (>=4.5:1) |
 
 #### Practice Domain Palette Mapping:
 
 Practice runtime conveys musical feedback without looking like a rainbow arcade game:
 
-| Practice Semantic Role | Mapped Primitive Token | Physical Value | Visual Purpose |
-| :--- | :--- | :--- | :--- |
-| `practice-following` | `--primitive-success-500` | `148 30% 38%` | Active listening lock on current note |
-| `practice-correct` | `--primitive-success-500` | `148 30% 38%` | Accurately played note confirmation |
-| `practice-waiting` | `--primitive-ink-700` | `223 4% 36%` | Paused / waiting for musician input |
-| `practice-resyncing` | `--primitive-warning-500` | `38 58% 45%` | Tempo drift / resyncing cursor cue |
-| `practice-current` | `--primitive-gold-500` | `44 67% 46%` | Active sounding note / piano key illumination |
-| `practice-error` | `--primitive-danger-500` | `0 65% 45%` | Pitch or rhythm correction prompt |
+| Practice Semantic Role | Mapped Primitive Token | Visual Purpose |
+| :--- | :--- | :--- |
+| `practice-following` | `--primitive-success-500` | Active listening lock on current note |
+| `practice-correct` | `--primitive-success-500` | Accurately played note confirmation |
+| `practice-waiting` | `--primitive-ink-700` | Paused / waiting for musician input |
+| `practice-resyncing` | `--primitive-warning-500` | Tempo drift / resyncing cursor cue |
+| `practice-current` | `--primitive-gold-500` | Active sounding note / piano key illumination |
+| `practice-error` | `--primitive-danger-500` | Pitch or rhythm correction prompt |
 
 ### 2.3 Unified Product Grammar & 3 General UI Surfaces (+ Notation Exception)
 
@@ -256,13 +256,19 @@ Pages compose using `<AppPage size="...">` rather than arbitrary `max-w-*` strin
 
 ### 4.1 Button
 
-All variants own their typography and consume canonical control/icon tokens:
+Yueora defines a strict boundary between the **Canonical Product API** and the **Legacy Compatibility API**:
 
-| Variant Key | Height Token | Typography Token | Icon Token | Usage |
+#### Canonical Yueora Button API (Product Code)
+All application code MUST use `intent` and canonical sizes:
+- **Intents:** `primary` (deep forest green CTA), `secondary` (planar white panel with subtle line), `quiet` (subtle action), `danger` (terracotta alert), `subtle` (canvas action), `link` (inline text action).
+- **Sizes:** `xs` (`28px`), `sm` (`32px`), `md` (`36px`, default), `lg` (`44px`).
+- **Icon-Only Actions:** Dedicated primitive `<IconButton>` is used for all icon-only triggers.
+
+| Size Key | Height Token | Typography Token | Icon Token | Usage |
 | :--- | :--- | :--- | :--- | :--- |
 | `xs` | `h-control-xs` (`28px`) | `.type-caption` | `icon-xs` (`14px`) | Miniature inline action chips |
 | `sm` | `h-control-sm` (`32px`) | `.type-body-small font-medium` | `icon-sm` (`16px`) | Compact secondary actions |
-| `md` / `default` | `h-control-md` (`36px`) | `.type-body-small font-medium` | `icon-sm` (`16px`) | Standard buttons, dialog actions |
+| `md` | `h-control-md` (`36px`) | `.type-body-small font-medium` | `icon-sm` (`16px`) | Standard buttons, dialog actions |
 | `lg` | `h-control-xl` (`44px`) | `.type-body-small font-semibold`| `icon-md` (`18px`) | Hero CTAs, large stand buttons |
 
 ```jsx
@@ -280,6 +286,13 @@ import { Button } from '@/components/ui/button';
 // Destructive action
 <Button intent="danger" size="md">Delete forever</Button>
 ```
+
+#### Legacy Compatibility API (Third-Party / Excluded UI Only)
+The following props are maintained strictly for backwards-compatibility with legacy scaffolding and excluded shadcn UI:
+- `variant`: `default`, `destructive`, `outline`, `ghost`
+- `size`: `default` (resolves to `md`)
+
+*These compatibility aliases must not be used in new Yueora product code.*
 
 ### 4.2 IconButton
 
