@@ -29,7 +29,7 @@ export default function Sidebar() {
           className="w-full justify-center gap-2 border-line-subtle bg-surface-panel text-ink-primary hover:bg-neutral-hover hover:border-line-strong active:translate-y-px"
           onClick={() => navigate('/add-score')}
         >
-          <Plus className="h-4 w-4 text-brand" />
+          <Plus className="text-brand" />
           <span>Add sheet or file</span>
         </Button>
       </div>

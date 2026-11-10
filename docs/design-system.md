@@ -53,45 +53,52 @@ All typography in application pages must use semantic typography roles. **Do not
 Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-accent`, `bg-muted`, `text-muted-foreground`, `bg-primary`, etc.) are retired from product code.
 
 #### Canonical Roles:
+
+> [!NOTE] Single Source of Truth for Physical Values
+> All physical HSL values are centrally defined and maintained in `src/index.css`. The Design System documentation defines token names, semantic roles, usage contracts, and boundaries.
+
 - **Ink (Text):**
-  - `text-ink-primary` (`hsl(220 5% 13%)`): Main titles and high-emphasis reading copy (>10:1 contrast).
-  - `text-ink-secondary` (`hsl(223 4% 36%)`): Readable secondary descriptions, timestamps, and labels (>6.5:1 contrast).
-  - `text-ink-tertiary` (`hsl(220 4% 48%)`): Readable muted copy (>4.5:1 contrast).
-  - `text-ink-subtle` (`hsl(220 3% 62%)`): Strictly non-textual dividers and subtle glyphs.
-- **Surfaces & Simplified 3-Surface Model:**
-  - `bg-surface-canvas` (`hsl(44 19% 97%)`): Global backdrop canvas — warm ivory off-white, never pure gray and never green.
-  - `bg-surface-panel` (`hsl(0 0% 100%)`): Pure white functional container surface for primary nav sidebar, dialogs, cards, forms, inputs, resume modules, list panels, and pricing cards.
-  - `bg-surface-subrail` (`hsl(44 18% 95%)`): Subtle, distinct secondary navigation rail surface for collection and folder exploration.
-  - `bg-surface-raised` (`hsl(0 0% 100%)`): Elevated overlay surface (menus, popovers, floating toolbars).
-  - `bg-surface-paper` (`hsl(44 26% 96%)`): Archival paper tone **strictly reserved for score artifacts and musical notation canvases**.
-  - **Retired Tokens:** `brand-wash` and `surface-paper-warm` are permanently retired from product code.
+  - `text-ink-primary`: Main titles and high-emphasis reading copy (>10:1 contrast).
+  - `text-ink-secondary`: Readable secondary descriptions, timestamps, and labels (>6.5:1 contrast).
+  - `text-ink-tertiary`: Readable muted copy (>4.5:1 contrast).
+  - `text-ink-subtle`: Strictly non-textual dividers and subtle glyphs.
+- **General UI Surfaces (3-Surface Model):**
+  - `bg-surface-canvas`: Global backdrop canvas — warm ivory off-white, never pure gray and never green.
+  - `bg-surface-panel`: Pure white functional container surface for primary nav sidebar, dialogs, cards, forms, inputs, resume modules, list panels, and pricing cards. Flat by default (NO `shadow-xs`).
+  - `bg-surface-raised`: Elevated overlay surface (menus, popovers, floating toolbars) with `shadow-overlay` or `shadow-raised`.
+- **Domain Exception (Notation Canvas Only):**
+  - `bg-surface-paper`: Archival paper tone **strictly reserved for score artifacts and musical notation canvases (`MusicPaper`)**. Banned on generic UI.
+- **Secondary Navigation Shell (Implementation Detail):**
+  - `bg-surface-subrail`, `border-line-subrail`: Subtle, distinct secondary navigation rail surface and border for collection/folder exploration.
+- **Retired Tokens:**
+  - `brand-wash` and `surface-paper-warm` are permanently retired from product code.
 - **Lines & Borders:**
-  - `border-line-subtle` (`hsl(47 14% 91%)`): Quiet structural dividers and panel borders.
-  - `border-line-strong` (`hsl(47 13% 80%)`): Stronger borders for unfocused controls, switches, checkboxes.
-  - `border-line-subrail` (`hsl(47 14% 88%)`): Distinctive divider for secondary navigation rails.
-  - `border-surface-paper-edge` (`hsl(44 16% 87%)`): Score paper boundary.
+  - `border-line-subtle`: Quiet structural dividers and panel borders.
+  - `border-line-strong`: Stronger borders for unfocused controls, switches, checkboxes.
+  - `border-line-subrail`: Distinctive divider for secondary navigation rails.
+  - `border-surface-paper-edge`: Score paper boundary (notation only).
 - **Brand & Active States:**
-  - `bg-brand` (`hsl(148 36% 27%)`): Deep forest green for primary CTA buttons, strong emphasis, and checkmark indicators. Brand is an accent, never a full-width background system.
-  - `bg-brand-hover` (`hsl(148 36% 22%)`): Darker forest green for primary CTA hover.
-  - `bg-brand-soft` (`hsl(148 36% 93%)`): **Compact Selected Content State Only.** Pale green is strictly reserved for compact selected content items (filter badges, small tags, compact ChoiceCard badges) where the small surface area keeps it visually subordinate.
+  - `bg-brand`: Deep forest green for primary CTA buttons, strong emphasis, and checkmark indicators. Brand is an accent, never a full-width background system.
+  - `bg-brand-hover`: Darker forest green for primary CTA hover.
+  - `bg-brand-soft`: **Compact Selected Content State Only.** Pale green is strictly reserved for compact selected content items (filter badges, small tags, compact ChoiceCard badges) where the small surface area keeps it visually subordinate.
     - **Large Selection Contract:** Wide horizontal rows, large selectable options (e.g. Practice Setup option rows), and full-width list items are **banned** from `bg-brand-soft`. They must use neutral selected surface (`bg-neutral-hover` or `bg-surface-panel`) paired with a brand indicator (`border-brand`, green radio dot, or `text-brand` checkmark).
     - **Maximum 2 Brand Signals per selection state:** Never stack green background + green border + green text + green icon. Selection should be understood, not painted.
     - **Drag Targets:** Dragging state is not selection; use `border-brand bg-surface-canvas text-brand`, never `bg-brand-soft`.
     - **Control Toggles:** Loop/toggle buttons use `border-brand bg-neutral-muted text-ink-primary` with `text-brand` icon, not `bg-brand-soft`.
     - It remains **BANNED** on navigation active items, ordinary hovers, buttons/actions, status/verification icons, popular badges, chart bars, and decorative icon circles.
-  - `text-brand-soft-foreground` (`hsl(148 36% 27%)`): Contrast foreground text on pale green surfaces.
+  - `text-brand-soft-foreground`: Contrast foreground text on pale green surfaces.
 - **Neutral Quiet & Hover & Navigation Active:**
-  - `bg-neutral-muted` (`hsl(44 14% 92%)`): Warm ivory-neutral for **Navigation Active items** (`bg-neutral-muted font-semibold text-ink-primary` - NO shadow), passive badges, tab tracks, progress backgrounds.
-  - `bg-neutral-hover` (`hsl(44 16% 91%)`): Warm neutral hover state for all interactive items, navigation links, and dropdown items (warm ivory-gray, NEVER green).
+  - `bg-neutral-muted`: Warm ivory-neutral for **Navigation Active items** (`bg-neutral-muted font-semibold text-ink-primary` - NO shadow), passive badges, tab tracks, progress backgrounds.
+  - `bg-neutral-hover`: Warm neutral hover state for all interactive items, navigation links, and dropdown items (warm ivory-gray, NEVER green).
 - **Navigation Active Contract:**
   - Inactive: `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`
   - Active: `bg-neutral-muted font-semibold text-ink-primary` with subtle `text-brand` icon cue (NO shadow).
   - Uniform across `SidebarNavItem`, `LibrarySubRail`, `Settings`, and `Help`.
 - **Semantic Feedback:**
-  - `text-success` / `bg-success`: Subdued musical confirmation green (`hsl(148 40% 32%)`).
-  - `text-warning` / `bg-warning`: Warm amber for pending or verification notices (`hsl(38 76% 40%)`).
-  - `text-danger` / `bg-danger`: Non-punitive alert terracotta red (`hsl(0 62% 44%)`).
-  - `text-info` / `bg-info`: Soft instructional slate blue (`hsl(204 45% 40%)`).
+  - `text-success` / `bg-success`: Subdued musical confirmation green.
+  - `text-warning` / `bg-warning`: Warm amber for pending or verification notices.
+  - `text-danger` / `bg-danger`: Non-punitive alert terracotta red.
+  - `text-info` / `bg-info`: Soft instructional slate blue.
 
 #### Color Usage Matrix:
 
@@ -257,7 +264,7 @@ import { Button } from '@/components/ui/button';
 // Primary call-to-action (deep green brand)
 <Button intent="primary" size="md">Save score</Button>
 
-// Secondary action with paper surface
+// Neutral secondary action
 <Button intent="secondary" size="md">Cancel</Button>
 
 // Quiet button for subtle inline actions
@@ -362,7 +369,7 @@ import { Upload } from 'lucide-react';
 ### 4.7 Surfaces: Surface & MusicPaper
 
 - Use `<MusicPaper>` when representing an **actual physical or living musical score**.
-- Use `<Surface tone="panel" elevation="paper">` for general application containers, dialogs, summaries, and cards.
+- Use `<Surface tone="panel">` for general application containers, dialogs, summaries, and cards (flat by default; use `elevation="raised"` or `elevation="overlay"` only when contextual elevation is required).
 - **Do not** wrap every trivial element in a card. Let whitespace separate content naturally.
 
 ---

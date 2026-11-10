@@ -13,7 +13,7 @@ const buttonVariants = cva(
         primary:
           "bg-brand text-white shadow-xs hover:bg-brand-hover active:scale-[0.98]",
         secondary:
-          "border border-line-strong/80 bg-surface-panel text-ink-primary shadow-xs hover:bg-neutral-hover hover:text-ink-primary active:scale-[0.98]",
+          "border border-line-strong/80 bg-surface-panel text-ink-primary hover:bg-neutral-hover hover:text-ink-primary active:scale-[0.98]",
         quiet:
           "text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]",
         danger:
@@ -31,7 +31,7 @@ const buttonVariants = cva(
         destructive:
           "bg-danger text-white shadow-xs hover:bg-danger/90 active:scale-[0.98]",
         outline:
-          "border border-line-strong/80 bg-surface-panel text-ink-primary shadow-xs hover:bg-neutral-hover hover:text-ink-primary active:scale-[0.98]",
+          "border border-line-strong/80 bg-surface-panel text-ink-primary hover:bg-neutral-hover hover:text-ink-primary active:scale-[0.98]",
         ghost:
           "text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]",
       },

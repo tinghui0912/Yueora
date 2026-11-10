@@ -836,41 +836,54 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     });
   }
 
-  // 11. MusicPaper Allowlist Check (Recursive across src/pages and src/components)
-  const MUSIC_PAPER_ALLOWLIST = new Set([
+  // 11. Consolidated Paper Vocabulary Allowlist (Recursive across src/pages and src/components)
+  const PAPER_VISUAL_ALLOWLIST = new Set([
     path.normalize('src/components/patterns/MusicPaper.jsx'),
-    path.normalize('src/components/library/ScoreCard.jsx'),
+    path.normalize('src/components/library/ScorePreview.jsx'),
     path.normalize('src/components/visuals/HeroProductVisual.jsx'),
+    path.normalize('src/components/visuals/PerformanceMemoryVisual.jsx'),
+    path.normalize('src/components/visuals/PracticeWorkspaceVisual.jsx'),
+    path.normalize('src/components/visuals/ProgressVisual.jsx'),
+    path.normalize('src/components/visuals/SharingVisual.jsx'),
     path.normalize('src/pages/DesignSystemPreview.jsx'),
     path.normalize('src/pages/PracticeSession.jsx'),
     path.normalize('src/pages/ScoreDetail.jsx'),
   ]);
 
-  function scanMusicPaper(dir) {
+  const PAPER_VOCABULARY_REGEX = /\b(MusicPaper|bg-surface-paper|border-surface-paper-edge|shadow-paper|shadow-paper-hover|music-paper|surface-paper\/)\b/;
+
+  function scanPaperVocabulary(dir) {
     if (!fs.existsSync(dir)) return;
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
-        scanMusicPaper(full);
+        scanPaperVocabulary(full);
       } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
         const rel = path.normalize(path.relative(process.cwd(), full));
+        if (PAPER_VISUAL_ALLOWLIST.has(rel)) continue;
+
         const code = fs.readFileSync(full, 'utf8');
-        if (code.includes('<MusicPaper') || code.includes("from '@/components/patterns/MusicPaper'")) {
-          if (!MUSIC_PAPER_ALLOWLIST.has(rel)) {
+        const lines = code.split('\n');
+        lines.forEach((line, idx) => {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+          if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
+          const match = line.match(PAPER_VOCABULARY_REGEX);
+          if (match) {
             issues.push({
               file: rel,
-              line: 1,
-              matched: 'Unauthorized MusicPaper consumer',
-              message: `${rel} consumes <MusicPaper>. MusicPaper is strictly reserved for literal score/notation canvases (ScoreCard, ScoreDetail, PracticeSession, HeroProductVisual). Generic cards must use surface-panel.`,
+              line: idx + 1,
+              matched: match[0],
+              message: `${rel} contains paper vocabulary ('${match[0]}'). Paper vocabulary is strictly reserved for literal score/notation canvases in PAPER_VISUAL_ALLOWLIST. Generic UI must use surface-panel and planar styling.`,
             });
           }
-        }
+        });
       }
     }
   }
   for (const dir of SCAN_DIRECTORIES) {
-    scanMusicPaper(dir);
+    scanPaperVocabulary(dir);
   }
 
   // 12. Button / IconButton / Topbar: assert NO hover:bg-surface-paper*
@@ -947,7 +960,7 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   });
 
-  // 15. Planar Navigation & Flat Secondary Action in Sidebar
+  // 15. Planar Navigation & Controls (Sidebar, Library, Performances, Pricing, Button, IconButton, Preview)
   const sidebarPath = path.resolve('src/components/app-shell/Sidebar.jsx');
   if (fs.existsSync(sidebarPath)) {
     const code = fs.readFileSync(sidebarPath, 'utf8');
@@ -987,6 +1000,58 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   }
 
+  const buttonPath = path.resolve('src/components/ui/button.jsx');
+  if (fs.existsSync(buttonPath)) {
+    const code = fs.readFileSync(buttonPath, 'utf8');
+    if (/secondary:\s*"[^"]*shadow-xs/.test(code) || /outline:\s*"[^"]*shadow-xs/.test(code)) {
+      issues.push({
+        file: 'src/components/ui/button.jsx',
+        line: 1,
+        matched: 'shadow-xs in secondary/outline button',
+        message: 'Button secondary and outline variants must be planar (no shadow-xs).',
+      });
+    }
+  }
+
+  const iconButtonPath = path.resolve('src/components/ui/icon-button.jsx');
+  if (fs.existsSync(iconButtonPath)) {
+    const code = fs.readFileSync(iconButtonPath, 'utf8');
+    if (/outline:\s*'[^']*shadow-xs/.test(code) || /surface:\s*'[^']*shadow-xs/.test(code) || /active:\s*\{[^}]*shadow-xs/.test(code)) {
+      issues.push({
+        file: 'src/components/ui/icon-button.jsx',
+        line: 1,
+        matched: 'shadow-xs in icon-button outline/surface/active',
+        message: 'IconButton outline, surface, and active variants must be planar (no shadow-xs).',
+      });
+    }
+  }
+
+  const libraryPath = path.resolve('src/pages/Library.jsx');
+  if (fs.existsSync(libraryPath)) {
+    const code = fs.readFileSync(libraryPath, 'utf8');
+    if (code.includes('shadow-xs')) {
+      issues.push({
+        file: 'src/pages/Library.jsx',
+        line: 1,
+        matched: 'shadow-xs in Library.jsx',
+        message: 'Library.jsx navigation items, resume module, and list containers must be planar (no shadow-xs).',
+      });
+    }
+  }
+
+  const previewPath = path.resolve('src/pages/DesignSystemPreview.jsx');
+  if (fs.existsSync(previewPath)) {
+    const code = fs.readFileSync(previewPath, 'utf8');
+    if (code.includes('shadow-xs')) {
+      issues.push({
+        file: 'src/pages/DesignSystemPreview.jsx',
+        line: 1,
+        matched: 'shadow-xs in DesignSystemPreview.jsx',
+        message: 'DesignSystemPreview must not showcase shadow-xs on Nav Active or Standard Panel samples.',
+      });
+    }
+  }
+
   // 16. Surface component API governance (only panel, canvas, raised)
   const surfacePath = path.resolve('src/components/patterns/Surface.jsx');
   if (fs.existsSync(surfacePath)) {
@@ -1001,39 +1066,47 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   }
 
-  // 17. Paper vocabulary strictly reserved for notation canvas
-  const PAPER_VOCABULARY_ALLOWLIST = new Set([
-    path.normalize('src/components/patterns/MusicPaper.jsx'),
-    path.normalize('src/components/library/ScoreCard.jsx'),
-    path.normalize('src/components/visuals/HeroProductVisual.jsx'),
-    path.normalize('src/pages/DesignSystemPreview.jsx'),
-  ]);
-
-  function scanPaperVocabulary(dir) {
-    if (!fs.existsSync(dir)) return;
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
-    for (const entry of entries) {
-      const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        scanPaperVocabulary(full);
-      } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
-        const rel = path.normalize(path.relative(process.cwd(), full));
-        if (PAPER_VOCABULARY_ALLOWLIST.has(rel)) continue;
-
-        const code = fs.readFileSync(full, 'utf8');
-        if (code.includes('border-surface-paper-edge')) {
-          issues.push({
-            file: rel,
-            line: 1,
-            matched: 'border-surface-paper-edge in generic UI',
-            message: `${rel} uses border-surface-paper-edge. Generic UI must use border-line-subtle or border-line-strong.`,
-          });
-        }
+  // 17. Documentation & AGENTS Truth Sync
+  const agentsPath = path.resolve('AGENTS.md');
+  if (fs.existsSync(agentsPath)) {
+    const code = fs.readFileSync(agentsPath, 'utf8');
+    const forbiddenAgentsPatterns = [
+      'tone="panel|paper',
+      'tone="paper"',
+      'elevation="paper"',
+      'border="paper"',
+    ];
+    forbiddenAgentsPatterns.forEach((p) => {
+      if (code.includes(p)) {
+        issues.push({
+          file: 'AGENTS.md',
+          line: 1,
+          matched: p,
+          message: `AGENTS.md exposes deprecated Surface API '${p}'. Real Surface component only supports panel, canvas, raised.`,
+        });
       }
-    }
+    });
   }
-  for (const dir of SCAN_DIRECTORIES) {
-    scanPaperVocabulary(dir);
+
+  const dsDocsPath = path.resolve('docs/design-system.md');
+  if (fs.existsSync(dsDocsPath)) {
+    const code = fs.readFileSync(dsDocsPath, 'utf8');
+    const forbiddenDocsPatterns = [
+      'elevation="paper"',
+      'tone="paper"',
+      'border="paper"',
+      'secondary action with paper surface',
+    ];
+    forbiddenDocsPatterns.forEach((p) => {
+      if (code.includes(p)) {
+        issues.push({
+          file: 'docs/design-system.md',
+          line: 1,
+          matched: p,
+          message: `docs/design-system.md mentions deprecated API or phrase '${p}'.`,
+        });
+      }
+    });
   }
 
   return issues;
@@ -1056,13 +1129,12 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified brand-soft vs brand-wash integrity (zero arbitrary bg-brand/opacity in application code)`);
   console.log(`   - Verified prohibited brand-soft contexts in named shared components (ChoiceCard, ImportDropzone, OptionGroup, TransportControl, VirtualKeyboard, SidebarNavItem, LibrarySubRail, Settings)`);
   console.log(`   - Verified zero dead chart-* tokens and zero retired tokens in tailwind.config.js`);
-  console.log(`   - Verified planar navigation active states (zero shadow-xs on nav tabs, sidebar items, subrail, segmented filters)`);
-  console.log(`   - Verified flat secondary action on Sidebar "Add sheet or file"`);
+  console.log(`   - Verified planar navigation active states and planar secondary/outline buttons (Button, IconButton, Sidebar, Library, Performances, Pricing, Preview)`);
   console.log(`   - Verified Surface API simplification (zero paper tone/elevation in Surface component or consumers)`);
-  console.log(`   - Verified strict paper vocabulary allowlist (zero border-surface-paper-edge in generic UI)`);
+  console.log(`   - Verified consolidated PAPER_VISUAL_ALLOWLIST (strictly 10 notation-related files; zero paper vocabulary in generic UI)`);
   console.log(`   - Verified zero DialogTitle typography overrides & zero conflicting font-size overrides on semantic typography`);
+  console.log(`   - Verified documentation and AI instruction truth sync (AGENTS.md & docs/design-system.md)`);
   console.log(`   - Verified zero banned full-width Landing surfaces`);
-  console.log(`   - Verified recursive MusicPaper allowlist (strictly notation canvases only)`);
   console.log(`   - Verified zero hover:bg-surface-paper in core UI primitives (Button, IconButton, Topbar)`);
   console.log(`   - Verified recursive retirement of brand-wash and surface-paper-warm across all components and pages`);
   console.log(`   - Verified standard AppPage adoption on core overview and detail pages`);

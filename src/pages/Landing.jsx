@@ -437,7 +437,7 @@ export default function Landing() {
             {/* Repertoire visual showcase */}
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-container border border-line-subtle bg-surface-panel p-4 transition-colors hover:border-line-strong">
-                <div className="aspect-[4/3] overflow-hidden rounded border border-line-subtle bg-surface-paper">
+                <div className="aspect-[4/3] overflow-hidden rounded border border-line-subtle">
                   <ScorePreview id="rep-clair" className="h-full w-full" />
                 </div>
                 <div className="mt-3">
@@ -448,7 +448,7 @@ export default function Landing() {
               </div>
 
               <div className="rounded-container border border-line-subtle bg-surface-panel p-4 transition-colors hover:border-line-strong">
-                <div className="aspect-[4/3] overflow-hidden rounded border border-line-subtle bg-surface-paper">
+                <div className="aspect-[4/3] overflow-hidden rounded border border-line-subtle">
                   <ScorePreview id="rep-gymno" className="h-full w-full" />
                 </div>
                 <div className="mt-3">

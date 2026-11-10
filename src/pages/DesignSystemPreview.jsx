@@ -138,8 +138,8 @@ export default function DesignSystemPreview() {
                 <p className="type-metadata text-ink-tertiary">#ffffff</p>
               </div>
               <div className="rounded-control border border-surface-paper-edge bg-surface-paper p-3 text-center">
-                <span className="type-caption text-ink-primary">Paper</span>
-                <p className="type-metadata text-ink-tertiary">Archival Sheet</p>
+                <span className="type-caption text-ink-primary">Paper (Notation)</span>
+                <p className="type-metadata text-ink-tertiary">Score Staves Only</p>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-raised p-3 text-center shadow-overlay">
                 <span className="type-caption text-ink-primary">Raised</span>
@@ -190,7 +190,7 @@ export default function DesignSystemPreview() {
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
                 <p className="type-caption text-ink-primary uppercase font-semibold">Nav Active</p>
-                <div className="mt-2 flex items-center justify-center gap-1.5 rounded-control bg-neutral-muted px-3 py-1.5 type-body-small font-semibold text-ink-primary shadow-xs">
+                <div className="mt-2 flex items-center justify-center gap-1.5 rounded-control bg-neutral-muted px-3 py-1.5 type-body-small font-semibold text-ink-primary">
                   <span className="h-1.5 w-1.5 rounded-full bg-brand" />
                   Nav Active
                 </div>
@@ -337,30 +337,30 @@ export default function DesignSystemPreview() {
       {/* 5. Unified Product Grammar & Surface Model */}
       <section className="space-y-4">
         <SectionHeader
-          title="Unified Product Grammar & Surface Model"
-          description="Same product, same visual grammar. When in doubt, use Standard Panel."
+          title="3 General UI Surfaces + 1 Notation Exception"
+          description="Same product, same visual grammar. Standard Panel is flat by default. MusicPaper strictly reserved for notation."
         />
         <div className="grid gap-4 sm:grid-cols-4">
-          <div className="rounded-container border border-line-subtle bg-surface-canvas p-4 shadow-xs">
+          <div className="rounded-container border border-line-subtle bg-surface-canvas p-4">
             <span className="type-caption text-ink-tertiary uppercase">1. App Canvas</span>
             <p className="type-subsection text-ink-primary mt-1">Surface Canvas</p>
             <p className="type-metadata text-ink-secondary mt-1">Warm ivory app backdrop (surface-canvas).</p>
           </div>
 
-          <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs">
+          <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
             <span className="type-caption text-brand uppercase font-semibold">2. Universal Container</span>
             <p className="type-subsection text-ink-primary mt-1">Standard Panel</p>
-            <p className="type-metadata text-ink-secondary mt-1">All cards, lists, and forms (surface-panel).</p>
+            <p className="type-metadata text-ink-secondary mt-1">All cards, lists, and forms (surface-panel). Flat by default.</p>
           </div>
 
-          <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-overlay">
+          <div className="rounded-container border border-line-subtle bg-surface-raised p-4 shadow-overlay">
             <span className="type-caption text-ink-tertiary uppercase">3. Elevated Overlay</span>
             <p className="type-subsection text-ink-primary mt-1">Raised Overlay</p>
             <p className="type-metadata text-ink-secondary mt-1">Menus, dialogs, popovers (surface-raised).</p>
           </div>
 
           <div className="rounded-container border border-surface-paper-edge bg-surface-paper p-4 shadow-paper">
-            <span className="type-caption text-brand uppercase font-semibold">4. Score Only</span>
+            <span className="type-caption text-brand uppercase font-semibold">Notation Exception</span>
             <p className="type-subsection text-ink-primary mt-1">Notation Surface</p>
             <p className="type-metadata text-ink-secondary mt-1">Sheet music staves only (MusicPaper).</p>
           </div>

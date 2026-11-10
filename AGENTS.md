@@ -46,7 +46,7 @@ Before creating or styling any UI element:
    - Icon Buttons: `<IconButton icon={Icon} label="Accessible name" tone="quiet|outline|surface|primary|danger" size="xs|sm|md|lg">`
    - Form Fields: `<Field label="..." htmlFor="..." description="..." error={...} required><Input ... /></Field>`
    - Selects: `<NativeSelect>` or Radix `<Select>`
-   - Containers & Surfaces: `<AppPage size="form|standard|wide|compact|full">`, `<Surface tone="panel|paper|canvas|raised" elevation="...">`, `<MusicPaper>`
+   - Containers & Surfaces: `<AppPage size="form|standard|wide|compact|full">`, `<Surface tone="panel|canvas|raised" elevation="none|raised|overlay">`, `<MusicPaper>`
    - Flow & Layout: `<PageHeader>`, `<SectionHeader>`, `<Stepper>`, `<ChoiceCard>`, `<RepertoireGrid>`
 2. **Use semantic typography roles instead of raw font sizes:**
    - Titles: `.type-display`, `.type-page-title`, `.type-section-title`, `.type-subsection`
@@ -55,11 +55,12 @@ Before creating or styling any UI element:
    - **Never combine** semantic typography with conflicting font sizes (e.g. do NOT write `type-page-title text-2xl`).
 3. **Use semantic colors & respect the Color Contract:**
    - Text: `text-ink-primary`, `text-ink-secondary`, `text-ink-tertiary`, `text-ink-subtle`
-   - Surfaces & Simplified 4-Surface Model:
+   - Surfaces & 3 General UI Surfaces (+ Notation Exception):
      - Workspace Canvas: `bg-surface-canvas` (warm ivory backdrop)
      - Standard Content Panel: `bg-surface-panel` (clean white, `border-line-subtle`, `rounded-container`). Flat by default; avoid automatic `shadow-xs` on static containers. All cards, list containers, sections, resume modules, pricing tiers, and stats use standard panel.
      - Elevated Overlays / Menus: `bg-surface-raised` with `shadow-overlay`
-     - Score Notation Canvas: `bg-surface-paper` (`MusicPaper`) strictly reserved ONLY for literal sheet music score and musical notation canvases. Banned on generic recommendation cards, practice statistics, pricing cards, empty states, and standard content cards.
+     - Score Notation Canvas (Domain Exception): `bg-surface-paper` (`MusicPaper`) strictly reserved ONLY for literal sheet music score and musical notation canvases. Banned on generic recommendation cards, practice statistics, pricing cards, empty states, and standard content cards.
+     - Secondary Navigation Shell (Implementation Detail): `bg-surface-subrail`, `border-line-subrail` for collection/folder subrails.
      - Retired Tokens: `brand-wash` and `surface-paper-warm` are permanently retired from product code. Brand color is an accent, not a background system.
    - Lines: `border-line-subtle`, `border-line-strong`, `border-line-subrail`
    - Navigation Active Contract: Strictly neutral active: `bg-neutral-muted font-semibold text-ink-primary` with subtle `text-brand` icon cue (NO shadow). Inactive is `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`. NEVER use `bg-brand-soft` for navigation items.
@@ -76,7 +77,7 @@ Before creating or styling any UI element:
    - **Legacy tokens are permanently retired from product code:** NEVER use `bg-accent`, `bg-muted`, `text-muted-foreground`, `bg-primary`, `text-primary`, `bg-card`, `bg-background`, `text-foreground`, `border-border`, `border-input`, `ring-ring` in pages or domain components.
    - Never use arbitrary `bg-brand/10` or raw hex colors (`#...`) in application JSX.
 4. **Appearance vs Composition Boundary:**
-   - **Design System Owns:** color tokens, typography roles, font family & scale, control size (`control-xs..xl`), icon size (`icon-xs..xl`), radius (`radius-control|container|overlay`), surface model (`canvas|panel|raised|paper`), border & line tokens, shadow language (`none|raised|overlay|paper`), interaction & hover states, button & input variants, page width system (`AppPage`), navigation states, selection contracts.
+   - **Design System Owns:** color tokens, typography roles, font family & scale, control size (`control-xs..xl`), icon size (`icon-xs..xl`), radius (`radius-control|container|overlay`), surface model (`canvas|panel|raised` + notation `MusicPaper`), border & line tokens, shadow language (`none|raised|overlay|paper`), interaction & hover states, button & input variants, page width system (`AppPage`), navigation states, selection contracts.
    - **Page Owns:** content, content order, grid/flex structure, responsive columns, domain geometry, local spacing (`gap-*`, `space-y-*`, `mt-*`), data rendering.
    - **Do not pursue "zero className":** Standard composition layout utilities (`grid gap-4`, `flex items-center`) are legitimate page responsibilities. Visual drift occurs only when pages invent custom colors, fonts, shadows, borders, radii, or interaction states.
 5. **Production Auth & Product Truth Principles:**

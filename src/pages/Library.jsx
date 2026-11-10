@@ -177,7 +177,7 @@ export default function Library() {
               onClick={() => { setParam('view', item.key); clearSelect(); }}
               className={`whitespace-nowrap rounded-control px-3 py-1.5 text-xs transition-colors ${
                 active === item.key
-                  ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                  ? 'bg-neutral-muted font-semibold text-ink-primary'
                   : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
               }`}
             >
@@ -190,7 +190,7 @@ export default function Library() {
               onClick={() => { setParam('view', `folder:${f.id}`); clearSelect(); }}
               className={`whitespace-nowrap rounded-control px-3 py-1.5 text-xs transition-colors ${
                 active === `folder:${f.id}`
-                  ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                  ? 'bg-neutral-muted font-semibold text-ink-primary'
                   : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
               }`}
             >
@@ -201,34 +201,34 @@ export default function Library() {
             onClick={() => setManageFoldersOpen(true)}
             className="flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 text-xs text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary"
           >
-            <Settings className="h-3.5 w-3.5" /> Manage
+            <Settings className="icon-xs" /> Manage
           </button>
           <button
             onClick={() => { setParam('view', 'trash'); clearSelect(); }}
             className={`flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 text-xs transition-colors ${
               active === 'trash'
-                ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                ? 'bg-neutral-muted font-semibold text-ink-primary'
                 : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
             }`}
           >
-            <Trash2 className="h-3.5 w-3.5" /> Trash
+            <Trash2 className="icon-xs" /> Trash
           </button>
         </div>
 
         {/* Hero: "Pick up where you left off" - Resume Playing Card */}
         {!isTrash && !search && active === 'all' && continueScore && (
           <div className="mx-4 mt-6 md:mx-8">
-            <div className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 shadow-xs transition-colors hover:border-line-strong sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 transition-colors hover:border-line-strong sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4 min-w-0">
                 <div className="hidden h-14 w-20 shrink-0 overflow-hidden rounded border border-line-subtle bg-white/90 sm:block">
                   <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
                 </div>
                 <div className="min-w-0">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-brand">
-                    <Sparkles className="h-3.5 w-3.5" />
+                  <span className="inline-flex items-center gap-1.5 type-caption font-semibold uppercase tracking-wider text-brand">
+                    <Sparkles className="icon-xs" />
                     <span>Pick up where you left off</span>
                   </span>
-                  <h2 className="truncate font-display text-lg font-medium text-ink-primary mt-0.5 sm:text-xl">
+                  <h2 className="truncate type-section-title text-ink-primary mt-0.5">
                     {continueScore.title}
                   </h2>
                   <p className="truncate type-metadata text-ink-secondary mt-0.5">
@@ -388,7 +388,7 @@ export default function Library() {
 
           {/* Multi-select bar */}
           {selected.length > 0 && !isTrash && (
-            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-control border border-line-subtle bg-neutral-muted px-3 py-2 shadow-xs">
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-control border border-line-subtle bg-neutral-muted px-3 py-2">
               <span className="text-sm font-semibold text-ink-primary">
                 <span className="text-brand font-bold mr-1.5">●</span>
                 {selected.length} piece{selected.length > 1 ? 's' : ''} selected
@@ -444,7 +444,7 @@ export default function Library() {
                   <Trash2 className="mr-1.5 h-3.5 w-3.5" /> Empty trash
                 </Button>
               </div>
-              <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel shadow-xs">
+              <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
                 {filtered.map((s) => (
                   <div key={s.id} className="flex items-center gap-4 p-3.5">
                     <div className="h-12 w-16 shrink-0 overflow-hidden rounded border border-line-subtle bg-white">
@@ -482,7 +482,7 @@ export default function Library() {
               ))}
             </RepertoireGrid>
           ) : (
-            <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel shadow-xs">
+            <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
               {filtered.map((s) => (
                 <div
                   key={s.id}

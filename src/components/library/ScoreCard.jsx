@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Play, Star, Check } from 'lucide-react';
 import ScorePreview from './ScorePreview';
-import MusicPaper from '@/components/patterns/MusicPaper';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -18,22 +17,19 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
   const sharedText = ownershipLabel[score.ownership]?.(score);
 
   return (
-    <MusicPaper
-      interactive
+    <div
       className={cn(
-        'group relative flex flex-col overflow-hidden transition-[box-shadow,border-color,transform] duration-base',
-        selected && 'ring-2 ring-brand border-brand'
+        'group relative flex flex-col overflow-hidden rounded-container border border-line-subtle bg-surface-panel transition-[border-color,box-shadow] duration-base hover:border-line-strong',
+        selected && 'border-brand ring-2 ring-brand'
       )}
     >
       {/* Miniature score folio header */}
       <Link
         to={`/score/${score.id}`}
-        className="block relative aspect-[16/10] overflow-hidden border-b border-surface-paper-edge bg-white/95"
+        className="block relative aspect-[16/10] overflow-hidden border-b border-line-subtle"
         tabIndex={-1}
         aria-hidden="true"
       >
-        {/* Subtle folio binding line on left */}
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-surface-paper-edge/60 z-10" />
         <ScorePreview id={score.id} className="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.02]" />
 
         {/* Status badges overlay */}
@@ -104,7 +100,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
         </div>
 
         {/* Primary practice action & View score link */}
-        <div className="mt-1 flex items-center justify-between border-t border-surface-paper-edge/70 pt-2.5">
+        <div className="mt-1 flex items-center justify-between border-t border-line-subtle pt-2.5">
           <Button
             asChild
             intent="subtle"
@@ -132,6 +128,6 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
           </Button>
         </div>
       </div>
-    </MusicPaper>
+    </div>
   );
 }
