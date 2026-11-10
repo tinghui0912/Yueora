@@ -258,8 +258,8 @@ Pages compose using `<AppPage size="...">` rather than arbitrary `max-w-*` strin
 
 Yueora defines a strict boundary between the **Canonical Product API** and the **Legacy Compatibility API**:
 
-#### Canonical Yueora Button API (Product Code)
-All application code MUST use `intent` and canonical sizes:
+#### Canonical Yueora Button API
+Preferred for all new and modified Yueora product code. New Yueora product code MUST use `intent`. Existing legacy `variant` consumers may remain until naturally modified.
 - **Intents:** `primary` (deep forest green CTA), `secondary` (planar white panel with subtle line), `quiet` (subtle action), `danger` (terracotta alert), `subtle` (canvas action), `link` (inline text action).
 - **Sizes:** `xs` (`28px`), `sm` (`32px`), `md` (`36px`, default), `lg` (`44px`).
 - **Icon-Only Actions:** Dedicated primitive `<IconButton>` is used for all icon-only triggers.
@@ -287,12 +287,21 @@ import { Button } from '@/components/ui/button';
 <Button intent="danger" size="md">Delete forever</Button>
 ```
 
-#### Legacy Compatibility API (Third-Party / Excluded UI Only)
-The following props are maintained strictly for backwards-compatibility with legacy scaffolding and excluded shadcn UI:
+#### Legacy Compatibility API (Existing Consumers + Excluded UI)
+Existing compatibility aliases retained for legacy product consumers and excluded / third-party UI scaffolding:
 - `variant`: `default`, `destructive`, `outline`, `ghost`
 - `size`: `default` (resolves to `md`)
 
-*These compatibility aliases must not be used in new Yueora product code.*
+**Governance rules:**
+- Do not introduce new `variant="default|destructive|outline|ghost"` usage in Yueora product code.
+- Existing legacy compatibility consumers are not a Design System defect and do not justify another system-wide migration.
+- When an existing legacy consumer is naturally modified in future product work, prefer migrating it to the equivalent canonical `intent` API:
+  - `default` → `primary`
+  - `outline` → `secondary`
+  - `ghost` → `quiet`
+  - `destructive` → `danger`
+  - `size="default"` → `size="md"`
+- No dedicated migration pass is required; migrate opportunistically when touching the consumer.
 
 ### 4.2 IconButton
 
