@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { spawn } from 'node:child_process';
 import http from 'node:http';
 
 const PREVIEW_PORT = 5389;
-const BASE_URL = `http://localhost:${PREVIEW_PORT}`;
+const BASE_URL = process.env.BASE_URL || `http://127.0.0.1:${PREVIEW_PORT}`;
 
 console.log('🔒 Running Yueora Production Auth Boundary Verification...');
 
@@ -86,8 +87,10 @@ async function waitForServer(url, timeoutMs = 15000) {
 
 async function verifyBrowserRedirect(chromePath, targetPath, expectedPath = '/login') {
   return new Promise((resolve, reject) => {
-    const tempProfile = path.resolve('.taste-skill/auth-test-profile');
+    const tempProfile = path.join(os.tmpdir(), `yueora-auth-${process.pid}-${Math.random().toString(36).slice(2)}`);
     if (!fs.existsSync(tempProfile)) fs.mkdirSync(tempProfile, { recursive: true });
+    const portFile = path.join(tempProfile, 'DevToolsActivePort');
+    try { fs.rmSync(portFile); } catch {}
 
     const chromeProcess = spawn(chromePath, [
       '--headless=new',
@@ -102,29 +105,57 @@ async function verifyBrowserRedirect(chromePath, targetPath, expectedPath = '/lo
     ], { stdio: ['ignore', 'pipe', 'pipe'] });
 
     let wsUrl = '';
+    let connected = false;
     const stderrBuf = [];
 
+    const handleConnect = (url) => {
+      if (connected) return;
+      connected = true;
+      clearInterval(portInterval);
+      clearTimeout(timer);
+      runCdpSession(url)
+        .then(resolve)
+        .catch(reject)
+        .finally(() => {
+          try { chromeProcess.kill(); } catch {}
+          try { fs.rmSync(tempProfile, { recursive: true, force: true }); } catch {}
+        });
+    };
+
+    // 1. Listen on DevToolsActivePort (Chrome standard handoff)
+    const portInterval = setInterval(() => {
+      try {
+        if (fs.existsSync(portFile)) {
+          const lines = fs.readFileSync(portFile, 'utf8').trim().split('\n');
+          if (lines[0]) {
+            const port = lines[0].trim();
+            const bPath = lines[1] ? lines[1].trim() : '';
+            wsUrl = `ws://127.0.0.1:${port}/${bPath.replace(/^\/?/, '')}`;
+            handleConnect(wsUrl);
+          }
+        }
+      } catch {}
+    }, 100);
+
+    // 2. Fallback to stderr parsing
     chromeProcess.stderr.on('data', (d) => {
       stderrBuf.push(d);
       const str = d.toString();
       const match = str.match(/ws:\/\/127\.0\.0\.1:\d+\/devtools\/browser\/[a-zA-Z0-9-]+/);
       if (match && !wsUrl) {
         wsUrl = match[0];
-        runCdpSession(wsUrl)
-          .then(resolve)
-          .catch(reject)
-          .finally(() => {
-            try { chromeProcess.kill(); } catch {}
-          });
+        handleConnect(wsUrl);
       }
     });
 
-    setTimeout(() => {
-      if (!wsUrl) {
+    const timer = setTimeout(() => {
+      if (!connected) {
+        clearInterval(portInterval);
         try { chromeProcess.kill(); } catch {}
+        try { fs.rmSync(tempProfile, { recursive: true, force: true }); } catch {}
         reject(new Error(`Timed out waiting for Chrome CDP WebSocket: ${Buffer.concat(stderrBuf).toString()}`));
       }
-    }, 10000);
+    }, 20000);
 
     async function runCdpSession(browserWs) {
       // Connect to CDP via Node WebSocket
@@ -228,8 +259,8 @@ async function main() {
     // Spawn Vite preview server
     const isWin = process.platform === 'win32';
     const previewProc = isWin
-      ? spawn('cmd.exe', ['/d', '/s', '/c', `npm.cmd run preview -- --port ${PREVIEW_PORT} --strictPort`], { stdio: 'pipe', shell: false })
-      : spawn('npm', ['run', 'preview', '--', '--port', String(PREVIEW_PORT), '--strictPort'], { stdio: 'pipe' });
+      ? spawn('cmd.exe', ['/d', '/s', '/c', `npx.cmd vite preview --host 127.0.0.1 --port ${PREVIEW_PORT} --strictPort`], { stdio: 'ignore' })
+      : spawn('npx', ['vite', 'preview', '--host', '127.0.0.1', '--port', String(PREVIEW_PORT), '--strictPort'], { stdio: 'ignore', detached: true });
 
     try {
       const healthy = await waitForServer(`${BASE_URL}/`);
