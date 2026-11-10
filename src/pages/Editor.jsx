@@ -240,7 +240,7 @@ export default function Editor() {
             onClick={() => setTool(t.id)}
             className={`flex shrink-0 items-center gap-1.5 rounded-control px-2.5 py-1.5 text-xs font-medium transition-colors ${
               tool === t.id
-                ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                ? 'bg-neutral-muted font-semibold text-ink-primary'
                 : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
             }`}
           >
@@ -270,7 +270,7 @@ export default function Editor() {
               onClick={() => setTool(t.id)}
               className={`flex h-12 w-12 flex-col items-center justify-center gap-0.5 rounded-control transition-colors ${
                 tool === t.id
-                  ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                  ? 'bg-neutral-muted font-semibold text-ink-primary'
                   : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
               }`}
             >
@@ -288,7 +288,7 @@ export default function Editor() {
         {/* Canvas area */}
         <div className="min-w-0 flex-1 overflow-auto bg-surface-canvas p-6">
           {view === 'original' ? (
-            <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs">
+            <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-4">
               <div className="staff-bg aspect-[3/4] w-full rounded border border-line-subtle opacity-60" />
               <p className="mt-2 text-center text-xs text-ink-secondary">Original scan · Page 1</p>
             </div>
@@ -296,19 +296,19 @@ export default function Editor() {
             <div className="flex gap-4">
               <div className="flex-1">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Original</p>
-                <div className="rounded-container border border-line-subtle bg-surface-panel p-4 shadow-xs">
+                <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
                   <div className="staff-bg aspect-[3/4] w-full rounded border border-line-subtle opacity-60" />
                 </div>
               </div>
               <div className="flex-1">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Score</p>
-                <div className="mx-auto max-w-3xl rounded-container border border-line-subtle bg-surface-panel p-6 shadow-xs">
+                <div className="mx-auto max-w-3xl rounded-container border border-line-subtle bg-surface-panel p-6">
                   <ScoreCanvas notes={notes} selectedIds={selectedIds} onSelect={handleSelect} onAddNote={addNote} onDelete={deleteNote} tool={tool} zoom={zoom} activeIssueMeasure={activeIssue?.measure} />
                 </div>
               </div>
             </div>
           ) : (
-            <div className="mx-auto max-w-3xl rounded-container border border-line-subtle bg-surface-panel p-6 shadow-xs">
+            <div className="mx-auto max-w-3xl rounded-container border border-line-subtle bg-surface-panel p-6">
               <ScoreCanvas notes={notes} selectedIds={selectedIds} onSelect={handleSelect} onAddNote={addNote} onDelete={deleteNote} tool={tool} zoom={zoom} activeIssueMeasure={activeIssue?.measure} />
               <p className="mt-4 text-center text-sm text-ink-secondary">Page 1 of {score.pages}</p>
             </div>
@@ -321,8 +321,8 @@ export default function Editor() {
           {selectedIds.size > 1 && (
             <div className="mt-4 space-y-2.5 border-t border-line-subtle pt-3.5">
               <p className="text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">{selectedIds.size} notes selected</p>
-              <Button variant="outline" size="sm" className="w-full text-xs font-medium" onClick={deleteSelected}><Trash2 className="mr-1.5 h-3.5 w-3.5" /> Delete selected</Button>
-              <Button variant="outline" size="sm" className="w-full text-xs font-medium" onClick={copySelected}><Copy className="mr-1.5 h-3.5 w-3.5" /> Copy selected</Button>
+              <Button intent="secondary" size="sm" className="w-full text-xs font-medium" onClick={deleteSelected}><Trash2 className="mr-1.5" /> Delete selected</Button>
+              <Button intent="secondary" size="sm" className="w-full text-xs font-medium" onClick={copySelected}><Copy className="mr-1.5" /> Copy selected</Button>
               <div className="flex gap-1.5">
                 {['1', '2', '4', '8'].map((d) => (
                   <button key={d} onClick={() => changeDurationSelected(d)} className="flex-1 rounded-control border border-line-subtle py-1 text-xs font-medium text-ink-primary hover:bg-neutral-hover">{d}</button>
@@ -344,7 +344,7 @@ export default function Editor() {
       {/* Playback bar */}
       <div className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 text-sm text-ink-secondary">
         <div className="flex items-center gap-2">
-          <button className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-white shadow-xs hover:bg-brand-hover transition-colors" aria-label="Play"><Play className="h-4 w-4 fill-current" /></button>
+          <button className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-white hover:bg-brand-hover transition-colors" aria-label="Play"><Play className="h-4 w-4 fill-current" /></button>
           <span className="font-medium text-ink-primary">Playback</span>
         </div>
         <div className="flex items-center gap-2">
@@ -373,7 +373,7 @@ export default function Editor() {
 
 function ViewTab({ active, onClick, icon: Icon, label }) {
   return (
-    <button onClick={onClick} className={`flex items-center gap-1.5 rounded-control px-3.5 py-1.5 text-sm transition-colors ${active ? 'bg-surface-panel font-semibold text-brand shadow-xs' : 'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover'}`}>
+    <button onClick={onClick} className={`flex items-center gap-1.5 rounded-control px-3.5 py-1.5 text-sm transition-colors ${active ? 'bg-surface-panel font-semibold text-ink-primary' : 'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover'}`}>
       <Icon className="h-4 w-4" /> {label}
     </button>
   );

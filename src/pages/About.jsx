@@ -25,12 +25,12 @@ export default function About() {
         {/* Why Yueora exists */}
         <section className="mt-20">
           <div className="grid gap-8 md:grid-cols-2">
-            <div className="rounded-container border border-line-subtle bg-surface-panel p-6 shadow-xs">
+            <div className="rounded-container border border-line-subtle bg-surface-panel p-6">
               <p className="type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Most practice tools</p>
               <p className="mt-3 font-display text-xl font-medium leading-snug text-ink-primary">Here's what you should practice.</p>
               <p className="mt-2 type-body-small text-ink-secondary">They begin with a curriculum, a syllabus, a list of things you must do.</p>
             </div>
-            <div className="rounded-container border border-line-subtle bg-surface-panel p-6 shadow-xs">
+            <div className="rounded-container border border-line-subtle bg-surface-panel p-6">
               <p className="type-caption font-semibold uppercase tracking-wider text-brand">Yueora</p>
               <p className="mt-3 font-display text-xl font-medium leading-snug text-ink-primary">What do you feel like playing?</p>
               <p className="mt-2 type-body-small text-ink-secondary">We begin with what you want to play. Everything else follows from that.</p>
@@ -97,20 +97,20 @@ export default function About() {
         </section>
 
         {/* Final CTA */}
-        <section className="mt-20 rounded-container border border-line-subtle bg-surface-panel p-8 text-center md:p-12 shadow-xs">
+        <section className="mt-20 rounded-container border border-line-subtle bg-surface-panel p-8 text-center md:p-12">
           <h2 className="type-marketing-title text-ink-primary">Play what you love.</h2>
           <p className="mt-3 text-lg text-ink-secondary">Bring in something you've been wanting to play.</p>
           <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             {isAuthenticated ? (
-              <Button asChild intent="primary" size="lg" className="shadow-xs">
+              <Button asChild intent="primary" size="lg">
                 <Link to="/library">Start playing</Link>
               </Button>
             ) : (
               <>
-                <Button asChild intent="primary" size="lg" className="shadow-xs">
+                <Button asChild intent="primary" size="lg">
                   <Link to="/register">Start playing</Link>
                 </Button>
-                <Button asChild intent="secondary" size="lg" className="shadow-xs">
+                <Button asChild intent="secondary" size="lg">
                   <Link to="/login">Log in</Link>
                 </Button>
               </>

@@ -87,7 +87,7 @@ export default function AccountSettings() {
       <SettingsSection title="Language & region" desc="Interface language and regional formatting.">
         <div className="max-w-sm space-y-1.5">
           <Label htmlFor="lang">Language</Label>
-          <select id="lang" className="h-9 w-full rounded-control border border-line-subtle bg-surface-panel px-3 type-body-small text-ink-primary shadow-xs">
+          <select id="lang" className="h-9 w-full rounded-control border border-line-subtle bg-surface-panel px-3 type-body-small text-ink-primary">
             <option>English</option>
             <option>中文</option>
           </select>

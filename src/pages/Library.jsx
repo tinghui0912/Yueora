@@ -440,8 +440,8 @@ export default function Library() {
           ) : isTrash ? (
             <div className="space-y-3">
               <div className="flex justify-end">
-                <Button variant="outline" size="sm" onClick={emptyTrash} className="text-xs">
-                  <Trash2 className="mr-1.5 h-3.5 w-3.5" /> Empty trash
+                <Button intent="secondary" size="sm" onClick={emptyTrash}>
+                  <Trash2 className="mr-1.5" /> Empty trash
                 </Button>
               </div>
               <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
@@ -454,18 +454,21 @@ export default function Library() {
                       <p className="truncate font-display font-medium text-ink-primary">{s.title}</p>
                       <p className="truncate text-xs text-ink-secondary">{s.composer} · deleted {s.deletedAt}</p>
                     </div>
-                    <button
+                    <Button
+                      intent="secondary"
+                      size="xs"
                       onClick={() => restoreScore(s.id)}
-                      className="rounded-control border border-line-subtle bg-surface-panel px-3 py-1.5 text-xs font-semibold text-ink-primary hover:bg-neutral-hover"
                     >
                       Restore
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      intent="quiet"
+                      size="xs"
                       onClick={() => deleteScoreForever(s.id)}
-                      className="rounded-control px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10"
+                      className="text-danger hover:text-danger hover:bg-danger/10"
                     >
                       Delete
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>

@@ -103,7 +103,7 @@ export default function PublicHeader() {
           {/* Action Area */}
           <div className="flex items-center gap-2">
             {isAuthenticated ? (
-              <Button asChild intent="primary" size="sm" className="shadow-xs font-semibold">
+              <Button asChild intent="primary" size="sm" className="font-semibold">
                 <Link to="/library">
                   Go to Yueora
                 </Link>
@@ -115,7 +115,7 @@ export default function PublicHeader() {
                     Log in
                   </Link>
                 </Button>
-                <Button asChild intent="primary" size="sm" className="shadow-xs font-semibold">
+                <Button asChild intent="primary" size="sm" className="font-semibold">
                   <Link to="/register">
                     Start playing
                   </Link>

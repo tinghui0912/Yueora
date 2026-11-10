@@ -1026,30 +1026,112 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   }
 
-  const libraryPath = path.resolve('src/pages/Library.jsx');
-  if (fs.existsSync(libraryPath)) {
-    const code = fs.readFileSync(libraryPath, 'utf8');
-    if (code.includes('shadow-xs')) {
-      issues.push({
-        file: 'src/pages/Library.jsx',
-        line: 1,
-        matched: 'shadow-xs in Library.jsx',
-        message: 'Library.jsx navigation items, resume module, and list containers must be planar (no shadow-xs).',
-      });
+  const PLANAR_PAGES = [
+    'src/pages/Notifications.jsx',
+    'src/pages/Imports.jsx',
+    'src/pages/About.jsx',
+    'src/pages/Help.jsx',
+    'src/pages/Library.jsx',
+    'src/pages/DesignSystemPreview.jsx',
+  ];
+  PLANAR_PAGES.forEach((rel) => {
+    const p = path.resolve(rel);
+    if (fs.existsSync(p)) {
+      const code = fs.readFileSync(p, 'utf8');
+      if (code.includes('shadow-xs')) {
+        issues.push({
+          file: rel,
+          line: 1,
+          matched: `shadow-xs in ${rel}`,
+          message: `${rel} content panels, navigation items, and list containers must be planar (no shadow-xs).`,
+        });
+      }
+    }
+  });
+
+  // 16. Neutral Active Shadow Guard (Rule 25)
+  // Recursive scan across src/pages and src/components: bg-neutral-muted must NEVER pair with shadow-xs or shadow-sm
+  function scanNeutralActiveShadow(dir) {
+    if (!fs.existsSync(dir)) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanNeutralActiveShadow(full);
+      } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
+        const rel = path.normalize(path.relative(process.cwd(), full));
+        const code = fs.readFileSync(full, 'utf8');
+        const lines = code.split('\n');
+        lines.forEach((line, idx) => {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+          if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
+          if (line.includes('bg-neutral-muted') && (line.includes('shadow-xs') || line.includes('shadow-sm'))) {
+            issues.push({
+              file: rel,
+              line: idx + 1,
+              matched: 'bg-neutral-muted with shadow',
+              message: `${rel}:${idx + 1} Neutral active state (bg-neutral-muted) must be strictly planar (no shadow-xs or shadow-sm).`,
+            });
+          }
+        });
+      }
     }
   }
+  for (const dir of SCAN_DIRECTORIES) {
+    scanNeutralActiveShadow(dir);
+  }
 
-  const previewPath = path.resolve('src/pages/DesignSystemPreview.jsx');
-  if (fs.existsSync(previewPath)) {
-    const code = fs.readFileSync(previewPath, 'utf8');
-    if (code.includes('shadow-xs')) {
-      issues.push({
-        file: 'src/pages/DesignSystemPreview.jsx',
-        line: 1,
-        matched: 'shadow-xs in DesignSystemPreview.jsx',
-        message: 'DesignSystemPreview must not showcase shadow-xs on Nav Active or Standard Panel samples.',
-      });
+  // 17. Standard Panel Shadow Allowlist (Rule 27)
+  // Content panels, sections, and list containers must be flat by default.
+  // shadow-xs is restricted strictly to primary action primitives and core form controls.
+  const ALLOWED_SHADOW_XS_FILES = new Set([
+    path.normalize('src/components/ui/button.jsx'),
+    path.normalize('src/components/ui/icon-button.jsx'),
+    path.normalize('src/components/ui/checkbox.jsx'),
+    path.normalize('src/components/ui/input.jsx'),
+    path.normalize('src/components/ui/input-otp.jsx'),
+    path.normalize('src/components/ui/radio-group.jsx'),
+    path.normalize('src/components/ui/select.jsx'),
+    path.normalize('src/components/ui/slider.jsx'),
+    path.normalize('src/components/ui/switch.jsx'),
+    path.normalize('src/components/ui/tabs.jsx'),
+    path.normalize('src/components/ui/textarea.jsx'),
+    path.normalize('src/components/patterns/TransportControl.jsx'),
+    path.normalize('src/components/public/PublicHeader.jsx'),
+    path.normalize('src/components/visuals/HeroProductVisual.jsx'),
+  ]);
+
+  function scanStandardPanelShadows(dir) {
+    if (!fs.existsSync(dir)) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanStandardPanelShadows(full);
+      } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
+        const rel = path.normalize(path.relative(process.cwd(), full));
+        if (ALLOWED_SHADOW_XS_FILES.has(rel)) continue;
+        const code = fs.readFileSync(full, 'utf8');
+        const lines = code.split('\n');
+        lines.forEach((line, idx) => {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+          if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
+          if (line.includes('shadow-xs') && !line.includes('drop-shadow-xs')) {
+            issues.push({
+              file: rel,
+              line: idx + 1,
+              matched: 'shadow-xs on standard panel/page element',
+              message: `${rel}:${idx + 1} Standard panels, cards, and page elements must be planar. shadow-xs is reserved exclusively for primary CTA/form control primitives in ALLOWED_SHADOW_XS_FILES.`,
+            });
+          }
+        });
+      }
     }
+  }
+  for (const dir of SCAN_DIRECTORIES) {
+    scanStandardPanelShadows(dir);
   }
 
   // 16. Surface component API governance (only panel, canvas, raised)
@@ -1129,7 +1211,10 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified brand-soft vs brand-wash integrity (zero arbitrary bg-brand/opacity in application code)`);
   console.log(`   - Verified prohibited brand-soft contexts in named shared components (ChoiceCard, ImportDropzone, OptionGroup, TransportControl, VirtualKeyboard, SidebarNavItem, LibrarySubRail, Settings)`);
   console.log(`   - Verified zero dead chart-* tokens and zero retired tokens in tailwind.config.js`);
-  console.log(`   - Verified planar navigation active states and planar secondary/outline buttons (Button, IconButton, Sidebar, Library, Performances, Pricing, Preview)`);
+  console.log(`   - Verified planar navigation active states and planar secondary/outline buttons (Button, IconButton, Sidebar, Library, Performances, Pricing, Preview)
+   - Verified Neutral Active Shadow Guard (zero bg-neutral-muted with shadow across all pages and components)
+   - Verified Standard Panel planar standard & ALLOWED_SHADOW_XS_FILES allowlist (zero shadow-xs on standard panels, cards, or page elements)
+   - Verified planar container integrity across core application pages (Notifications, Imports, About, Help, Library, DesignSystemPreview)`);
   console.log(`   - Verified Surface API simplification (zero paper tone/elevation in Surface component or consumers)`);
   console.log(`   - Verified consolidated PAPER_VISUAL_ALLOWLIST (strictly 10 notation-related files; zero paper vocabulary in generic UI)`);
   console.log(`   - Verified zero DialogTitle typography overrides & zero conflicting font-size overrides on semantic typography`);

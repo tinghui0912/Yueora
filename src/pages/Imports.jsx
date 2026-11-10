@@ -6,6 +6,7 @@ import AppPage from '@/components/patterns/AppPage';
 import PageHeader from '@/components/patterns/PageHeader';
 import StateMessage from '@/components/patterns/StateMessage';
 import StatusIndicator from '@/components/patterns/StatusIndicator';
+import { Button } from '@/components/ui/button';
 
 const tabs = [
   { key: 'all', label: 'All' },
@@ -74,14 +75,16 @@ export default function Imports() {
             title="No imports yet"
             description="Scores you add will show recognition progress here."
             primaryAction={
-              <Link to="/add-score" className="rounded-control bg-brand px-4 py-2 type-body-small font-semibold text-white hover:bg-brand-hover">
-                Add a score
-              </Link>
+              <Button asChild intent="primary" size="md">
+                <Link to="/add-score">
+                  Add a score
+                </Link>
+              </Button>
             }
           />
         </div>
       ) : (
-        <div className="mt-4 divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel shadow-xs overflow-hidden">
+        <div className="mt-4 divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel overflow-hidden">
           {list.map((imp) => (
             <Link key={imp.id} to={`/imports/${imp.id}`} className="block p-4 transition-colors hover:bg-neutral-hover">
               <div className="flex items-center justify-between gap-3">

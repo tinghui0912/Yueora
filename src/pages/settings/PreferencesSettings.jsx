@@ -37,7 +37,7 @@ export default function PreferencesSettings() {
                   onClick={() => update({ pageFit: v })}
                   className={`rounded-sm px-3 py-1.5 type-body-small transition-all ${
                     prefs.pageFit === v
-                      ? 'bg-surface-panel font-medium text-ink-primary shadow-xs'
+                      ? 'bg-surface-panel font-medium text-ink-primary'
                       : 'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover'
                   }`}
                 >
@@ -53,7 +53,7 @@ export default function PreferencesSettings() {
         <select
           value={prefs.language}
           onChange={(e) => update({ language: e.target.value })}
-          className="h-9 w-full max-w-sm rounded-control border border-line-subtle bg-surface-panel px-3 type-body-small text-ink-primary shadow-xs"
+          className="h-9 w-full max-w-sm rounded-control border border-line-subtle bg-surface-panel px-3 type-body-small text-ink-primary"
         >
           <option>English</option>
           <option>中文</option>

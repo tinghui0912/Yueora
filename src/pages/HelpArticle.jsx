@@ -69,13 +69,13 @@ export default function HelpArticle() {
         <div className="mt-8 rounded-container border border-line-subtle bg-surface-panel p-5">
           <p className="text-sm font-medium text-ink-primary">Was this helpful?</p>
           <div className="mt-3 flex items-center gap-2">
-            <Button variant={feedback === 'up' ? 'default' : 'outline'} size="sm" onClick={() => setFeedback('up')}><ThumbsUp className="mr-1.5 h-4 w-4" /> Yes</Button>
-            <Button variant={feedback === 'down' ? 'default' : 'outline'} size="sm" onClick={() => setFeedback('down')}><ThumbsDown className="mr-1.5 h-4 w-4" /> No</Button>
+            <Button intent={feedback === 'up' ? 'primary' : 'secondary'} size="sm" onClick={() => setFeedback('up')}><ThumbsUp className="mr-1.5" /> Yes</Button>
+            <Button intent={feedback === 'down' ? 'primary' : 'secondary'} size="sm" onClick={() => setFeedback('down')}><ThumbsDown className="mr-1.5" /> No</Button>
             {feedback && <span className="text-sm text-ink-tertiary">Thanks for the feedback.</span>}
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" onClick={() => setSupportOpen(true)}><LifeBuoy className="mr-1.5 h-4 w-4" /> Contact support</Button>
-            <Button variant="ghost" size="sm" onClick={() => setSupportOpen(true)}><Flag className="mr-1.5 h-4 w-4" /> Report a problem</Button>
+            <Button intent="secondary" size="sm" onClick={() => setSupportOpen(true)}><LifeBuoy className="mr-1.5" /> Contact support</Button>
+            <Button intent="quiet" size="sm" onClick={() => setSupportOpen(true)}><Flag className="mr-1.5" /> Report a problem</Button>
           </div>
         </div>
       </AppPage>
@@ -101,7 +101,7 @@ export default function HelpArticle() {
               <Button onClick={() => { setSupportOpen(false); setSent(false); }}>Done</Button>
             ) : (
               <>
-                <Button variant="outline" onClick={() => setSupportOpen(false)}>Cancel</Button>
+                <Button intent="secondary" onClick={() => setSupportOpen(false)}>Cancel</Button>
                 <Button onClick={() => setSent(true)}>Send</Button>
               </>
             )}

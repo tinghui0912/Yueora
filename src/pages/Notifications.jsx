@@ -57,7 +57,7 @@ export default function Notifications() {
       <PageHeader
         title="Notifications"
         description={`${unreadCount} unread`}
-        primaryAction={unreadCount > 0 ? <Button variant="ghost" size="sm" onClick={markAllRead}><CheckCheck className="mr-1.5 h-4 w-4" /> Mark all read</Button> : undefined}
+        primaryAction={unreadCount > 0 ? <Button intent="quiet" size="sm" onClick={markAllRead}><CheckCheck className="mr-1.5" /> Mark all read</Button> : undefined}
       />
 
       <div className="mt-5 flex flex-wrap gap-1">
@@ -67,7 +67,7 @@ export default function Notifications() {
             onClick={() => setFilter(t.key)}
             className={`rounded-control px-3 py-1.5 type-body-small transition-colors ${
               filter === t.key
-                ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs'
+                ? 'bg-neutral-muted font-semibold text-ink-primary'
                 : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
             }`}
           >

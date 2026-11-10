@@ -74,8 +74,8 @@ export default function SecuritySettings() {
       <SettingsSection title="Passkeys" desc="Sign in faster with a passkey.">
         {account.passkeys.length === 0 ? (
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2"><KeyRound className="h-5 w-5 text-ink-secondary" /><span className="type-body-small text-ink-secondary">No passkeys yet</span></div>
-            <Button variant="outline" size="sm" onClick={() => setPasskeyOpen(true)}><Plus className="mr-1.5 h-4 w-4" /> Add passkey</Button>
+            <div className="flex items-center gap-2"><KeyRound className="icon-md text-ink-secondary" /><span className="type-body-small text-ink-secondary">No passkeys yet</span></div>
+            <Button intent="secondary" size="sm" onClick={() => setPasskeyOpen(true)}><Plus className="mr-1.5" /> Add passkey</Button>
           </div>
         ) : (
           <>
@@ -83,14 +83,14 @@ export default function SecuritySettings() {
               {account.passkeys.map((p) => (
                 <li key={p.id} className="flex items-center justify-between py-3">
                   <div className="flex items-center gap-3">
-                    <KeyRound className="h-5 w-5 text-ink-secondary" />
+                    <KeyRound className="icon-md text-ink-secondary" />
                     <div><p className="type-body-small font-medium text-ink-primary">{p.name}</p><p className="type-caption text-ink-secondary">Added {p.addedAt}</p></div>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => removePasskey(p.id)} className="text-danger hover:text-danger hover:bg-danger/10"><Trash2 className="mr-1.5 h-4 w-4" /> Remove</Button>
+                  <Button intent="quiet" size="sm" onClick={() => removePasskey(p.id)} className="text-danger hover:text-danger hover:bg-danger/10"><Trash2 className="mr-1.5" /> Remove</Button>
                 </li>
               ))}
             </ul>
-            <Button variant="outline" size="sm" className="mt-3" onClick={() => setPasskeyOpen(true)}><Plus className="mr-1.5 h-4 w-4" /> Add another</Button>
+            <Button intent="secondary" size="sm" className="mt-3" onClick={() => setPasskeyOpen(true)}><Plus className="mr-1.5" /> Add another</Button>
           </>
         )}
       </SettingsSection>
@@ -146,7 +146,7 @@ export default function SecuritySettings() {
               <div className="rounded-control border border-line-subtle bg-neutral-muted/40 p-3 font-mono type-body-small text-ink-primary">
                 {recoveryCodes.map((c) => <div key={c}>{c}</div>)}
               </div>
-              <Button variant="outline" size="sm" onClick={copyCodes} className="w-full">{copied ? <><Check className="mr-1.5 h-4 w-4 text-brand" /> Copied</> : <><Copy className="mr-1.5 h-4 w-4" /> Copy codes</>}</Button>
+              <Button intent="secondary" size="sm" onClick={copyCodes} className="w-full">{copied ? <><Check className="mr-1.5 text-brand" /> Copied</> : <><Copy className="mr-1.5" /> Copy codes</>}</Button>
               <DialogFooter><Button onClick={finishSetup}>I've saved them — finish</Button></DialogFooter>
             </div>
           )}

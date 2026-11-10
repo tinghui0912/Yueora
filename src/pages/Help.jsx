@@ -46,7 +46,7 @@ export default function Help() {
                 key={c}
                 onClick={() => setActive(c)}
                 className={`rounded-control px-3 py-1.5 type-body-small transition-colors ${
-                  active === c ? 'bg-neutral-muted font-semibold text-ink-primary shadow-xs' : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
+                  active === c ? 'bg-neutral-muted font-semibold text-ink-primary' : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
                 }`}
               >
                 {c}
@@ -86,7 +86,7 @@ export default function Help() {
         <div className="mt-10 rounded-container border border-line-subtle bg-surface-panel p-5">
           <h2 className="type-section-title font-medium text-ink-primary">Still need help?</h2>
           <p className="mt-0.5 type-body-small text-ink-secondary">Reach out and we’ll get back to you.</p>
-          <Button className="mt-3" onClick={() => { setSupportOpen(true); setSent(false); }}><LifeBuoy className="mr-1.5 h-4 w-4" /> Contact support</Button>
+          <Button className="mt-3" onClick={() => { setSupportOpen(true); setSent(false); }}><LifeBuoy className="mr-1.5" /> Contact support</Button>
         </div>
       </AppPage>
 

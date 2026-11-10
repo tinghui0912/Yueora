@@ -37,6 +37,9 @@ npx skills add base44/skills
 
 Yueora enforces a strict multi-layer Design System. **Pages compose; the Design System decides appearance.**
 
+### Architecture Freeze Policy
+> **The Design System architecture is formally frozen. Do not redesign the visual system when adding a page or feature. Reuse existing semantic tokens and primitives first.**
+
 ### Golden Rule for Coding Agents
 > **Do NOT manually create UI styles with arbitrary Tailwind when a Yueora primitive or semantic token exists.**
 

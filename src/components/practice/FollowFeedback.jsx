@@ -75,7 +75,7 @@ export default function FollowFeedback({
             type="button"
             onClick={() => onResolve('matched')}
             disabled={paused}
-            className="rounded-control border border-line-subtle bg-surface-panel px-2.5 py-1 text-xs font-medium text-ink-primary shadow-xs transition-colors hover:bg-neutral-hover disabled:opacity-40"
+            className="rounded-control border border-line-subtle bg-surface-panel px-2.5 py-1 text-xs font-medium text-ink-primary transition-colors hover:bg-neutral-hover disabled:opacity-40"
           >
             Play ({current})
           </button>

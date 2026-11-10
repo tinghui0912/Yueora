@@ -28,7 +28,7 @@ Page Composition (What information appears, order, business logic, state)
 
 ### 2.1 Typography Scale
 
-All typography in application pages must use semantic typography roles. **Do not combine a semantic class with manual Tailwind text sizes.**
+Repeated product hierarchy roles should use semantic typography roles. Do not override a semantic typography role with conflicting manual font sizes. Local utility text, compact control copy, marketing composition and domain-specific visual geometry may use constrained Tailwind typography when no reusable semantic role exists.
 
 | Semantic Class | Target Role | Baseline Size | Line Height | Tracking | Font Family |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -393,3 +393,17 @@ npm run build
 ```
 
 The Design System interactive preview is accessible in development mode at `/design-system` (strictly gated behind `import.meta.env.DEV`).
+
+---
+
+## 6. Architecture Freeze Policy
+
+The Yueora Design System architecture is **formally frozen**.
+
+- **No New Layers or Paradigms:** The 6-tier architecture (Foundations → Semantic Tokens → Primitives → Yueora Patterns → Domain Components → Page Composition) is locked.
+- **No Token Sprawl:** Do not introduce new color tokens, arbitrary surfaces, or redundant semantic variants. Reuse existing tokens.
+- **Planar Panel Standard:** Standard panels and content containers are flat by default (`bg-surface-panel border-line-subtle rounded-container`). Ordinary content panels, list views, and settings forms must not add `shadow-xs`.
+- **Neutral Active Navigation:** Navigation items and segmented controls use canonical neutral active states (`bg-neutral-muted text-ink-primary font-semibold`) with zero drop shadows.
+- **Bounded Domain Exceptions:** `MusicPaper` and paper tokens remain strictly reserved for literal musical notation canvases and sheet music representations.
+- **Pages Compose:** Future feature development and page additions must compose existing primitives and semantic tokens rather than inventing page-level visual styles.
+
