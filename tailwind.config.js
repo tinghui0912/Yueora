@@ -48,7 +48,7 @@ module.exports = {
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
 				gold: 'hsl(var(--gold))',
-				/* ---- Surface semantic (Simplified 4-Surface Model) ---- */
+				/* ---- Surface semantic (3 General UI Surfaces + Notation Exception) ---- */
 				surface: {
 					canvas: 'hsl(var(--surface-canvas))',
 					panel: 'hsl(var(--surface-panel))',

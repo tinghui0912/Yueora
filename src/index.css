@@ -48,8 +48,6 @@
     --surface-panel: var(--primitive-neutral-0);
     --surface-raised: var(--primitive-neutral-0);
     --surface-paper: var(--primitive-neutral-25);
-    /* @deprecated: Retired token. Internal alias to surface-paper. Application consumption forbidden. */
-    --surface-paper-warm: var(--primitive-neutral-25);
     --surface-paper-edge: var(--primitive-neutral-100);
     --surface-subrail: var(--primitive-neutral-50);
     --surface-subrail-border: var(--primitive-neutral-100);
@@ -69,10 +67,6 @@
     --brand-hover: var(--primitive-forest-800);
     --brand-soft: var(--primitive-forest-100);
     --brand-soft-foreground: var(--primitive-forest-700);
-    /* @deprecated: Retired token. Internal alias to surface-panel. Application consumption forbidden. */
-    --brand-wash: var(--primitive-neutral-0);
-    --brand-wash-border: var(--primitive-neutral-100);
-    --brand-wash-foreground: var(--primitive-ink-900);
 
     /* ---- Neutral quiet & hover (Warm ivory-gray, NOT green) ---- */
     --neutral-muted: var(--primitive-neutral-100);

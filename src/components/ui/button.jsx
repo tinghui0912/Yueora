@@ -18,8 +18,6 @@ const buttonVariants = cva(
           "text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]",
         danger:
           "bg-danger text-white shadow-xs hover:bg-danger/90 active:scale-[0.98]",
-        transport:
-          "rounded-full bg-brand text-white shadow-sm hover:bg-brand-hover active:scale-[0.97]",
         subtle:
           "border border-line-subtle bg-surface-canvas/60 text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]",
         link:
@@ -41,7 +39,6 @@ const buttonVariants = cva(
         md: "h-control-md min-h-control-md px-4 type-body-small font-medium rounded-control gap-2 [&_svg]:icon-sm",
         default: "h-control-md min-h-control-md px-4 type-body-small font-medium rounded-control gap-2 [&_svg]:icon-sm",
         lg: "h-control-xl min-h-control-xl px-6 type-body-small font-semibold rounded-control gap-2.5 [&_svg]:icon-md",
-        icon: "h-control-md w-control-md min-h-control-md min-w-control-md p-0 rounded-control [&_svg]:icon-sm",
       },
     },
     defaultVariants: {
@@ -53,9 +50,9 @@ const buttonVariants = cva(
 
 /**
  * @typedef {React.ButtonHTMLAttributes<HTMLButtonElement> & {
- *   variant?: 'primary' | 'secondary' | 'quiet' | 'danger' | 'transport' | 'subtle' | 'link' | 'default' | 'destructive' | 'outline' | 'ghost';
- *   intent?: 'primary' | 'secondary' | 'quiet' | 'danger' | 'transport' | 'subtle' | 'link';
- *   size?: 'xs' | 'sm' | 'md' | 'lg' | 'icon' | 'default';
+ *   variant?: 'primary' | 'secondary' | 'quiet' | 'danger' | 'subtle' | 'link' | 'default' | 'destructive' | 'outline' | 'ghost';
+ *   intent?: 'primary' | 'secondary' | 'quiet' | 'danger' | 'subtle' | 'link';
+ *   size?: 'xs' | 'sm' | 'md' | 'lg' | 'default';
  *   asChild?: boolean;
  *   children?: React.ReactNode;
  * }} ButtonProps

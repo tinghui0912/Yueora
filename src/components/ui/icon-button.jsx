@@ -17,7 +17,7 @@ const iconButtonVariants = cva(
         primary:
           'bg-brand text-white shadow-xs hover:bg-brand-hover active:scale-[0.98]',
         danger:
-          'text-danger hover:bg-destructive/10 hover:text-danger active:scale-[0.98]',
+          'text-danger hover:bg-danger/10 hover:text-danger active:scale-[0.98]',
       },
       size: {
         xs: 'h-control-xs w-control-xs min-h-control-xs min-w-control-xs p-1 [&_svg]:icon-xs',

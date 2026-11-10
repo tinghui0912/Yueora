@@ -6,7 +6,6 @@ import {
   Heart,
   Plus,
   Sparkles,
-  Music,
 } from 'lucide-react';
 import { AppPage } from '@/components/patterns/AppPage';
 import { PageHeader } from '@/components/patterns/PageHeader';
@@ -131,11 +130,11 @@ export default function DesignSystemPreview() {
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-4">
               <div className="rounded-control border border-line-subtle bg-surface-canvas p-3 text-center">
                 <span className="type-caption text-ink-secondary">Canvas</span>
-                <p className="type-metadata text-ink-tertiary">#fcfaf5</p>
+                <p className="type-metadata text-ink-tertiary">surface-canvas</p>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
                 <span className="type-caption text-ink-primary">Panel</span>
-                <p className="type-metadata text-ink-tertiary">#ffffff</p>
+                <p className="type-metadata text-ink-tertiary">surface-panel</p>
               </div>
               <div className="rounded-control border border-surface-paper-edge bg-surface-paper p-3 text-center">
                 <span className="type-caption text-ink-primary">Paper (Notation)</span>
@@ -230,9 +229,6 @@ export default function DesignSystemPreview() {
               <Button intent="quiet">Quiet Button</Button>
               <Button intent="subtle">Subtle Action</Button>
               <Button intent="danger">Danger Action</Button>
-              <Button intent="transport" size="md">
-                <Music /> Transport
-              </Button>
               <Button intent="link">Text Link</Button>
             </div>
           </div>

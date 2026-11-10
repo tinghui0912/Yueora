@@ -45,7 +45,7 @@ Yueora enforces a strict multi-layer Design System. **Pages compose; the Design 
 
 Before creating or styling any UI element:
 1. **Search existing Design System primitives:**
-   - Buttons: `<Button intent="primary|secondary|quiet|danger|transport|subtle" size="xs|sm|md|lg">`
+   - Buttons: `<Button intent="primary|secondary|quiet|danger|subtle|link" size="xs|sm|md|lg">`
    - Icon Buttons: `<IconButton icon={Icon} label="Accessible name" tone="quiet|outline|surface|primary|danger" size="xs|sm|md|lg">`
    - Form Fields: `<Field label="..." htmlFor="..." description="..." error={...} required><Input ... /></Field>`
    - Selects: `<NativeSelect>` or Radix `<Select>`
@@ -64,7 +64,7 @@ Before creating or styling any UI element:
      - Elevated Overlays / Menus: `bg-surface-raised` with `shadow-overlay`
      - Score Notation Canvas (Domain Exception): `bg-surface-paper` (`MusicPaper`) strictly reserved ONLY for literal sheet music score and musical notation canvases. Banned on generic recommendation cards, practice statistics, pricing cards, empty states, and standard content cards.
      - Secondary Navigation Shell (Implementation Detail): `bg-surface-subrail`, `border-line-subrail` for collection/folder subrails.
-     - Retired Tokens: `brand-wash` and `surface-paper-warm` are permanently retired from product code. Brand color is an accent, not a background system.
+     - Brand Color Contract: Brand color is an accent, not a background system.
    - Lines: `border-line-subtle`, `border-line-strong`, `border-line-subrail`
    - Navigation Active Contract: Strictly neutral active: `bg-neutral-muted font-semibold text-ink-primary` with subtle `text-brand` icon cue (NO shadow). Inactive is `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`. NEVER use `bg-brand-soft` for navigation items.
    - Selection Contract (Large vs Compact):

@@ -66,8 +66,6 @@ const REQUIRED_ICON_UTILITIES = [
 
 const REQUIRED_SURFACE_AND_BRAND_TOKENS = [
   '--brand-soft',
-  '--brand-wash',
-  '--brand-wash-border',
   '--surface-subrail',
   '--surface-subrail-border',
 ];
@@ -99,7 +97,6 @@ const SEMANTIC_TOKENS_MAPPING_PRIMITIVES = [
   { token: '--surface-panel', expectedPrimitive: '--primitive-neutral-0' },
   { token: '--brand', expectedPrimitive: '--primitive-forest-700' },
   { token: '--brand-soft', expectedPrimitive: '--primitive-forest-100' },
-  { token: '--brand-wash', expectedPrimitive: '--primitive-neutral-0' },
   { token: '--ink-primary', expectedPrimitive: '--primitive-ink-900' },
   { token: '--ink-tertiary', expectedPrimitive: '--primitive-ink-500' },
   { token: '--neutral-muted', expectedPrimitive: '--primitive-neutral-100' },
@@ -1246,7 +1243,7 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified documentation and AI instruction truth sync (AGENTS.md & docs/design-system.md)`);
   console.log(`   - Verified zero banned full-width Landing surfaces`);
   console.log(`   - Verified zero hover:bg-surface-paper in core UI primitives (Button, IconButton, Topbar)`);
-  console.log(`   - Verified recursive retirement of brand-wash and surface-paper-warm across all components and pages`);
+  console.log(`   - Verified retired tokens (brand-wash, surface-paper-warm) permanently removed and forbidden from product code`);
   console.log(`   - Verified standard AppPage adoption on core overview and detail pages`);
   console.log(`   - Verified WCAG AA contrast compliance across ${CANONICAL_CONTRAST_PAIRS.length} canonical foreground/background pairs via computed relative luminance`);
   console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} root directories\n`);

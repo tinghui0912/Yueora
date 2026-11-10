@@ -70,8 +70,6 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
   - `bg-surface-paper`: Archival paper tone **strictly reserved for score artifacts and musical notation canvases (`MusicPaper`)**. Banned on generic UI.
 - **Secondary Navigation Shell (Implementation Detail):**
   - `bg-surface-subrail`, `border-line-subrail`: Subtle, distinct secondary navigation rail surface and border for collection/folder exploration.
-- **Retired Tokens:**
-  - `brand-wash` and `surface-paper-warm` are permanently retired from product code.
 - **Lines & Borders:**
   - `border-line-subtle`: Quiet structural dividers and panel borders.
   - `border-line-strong`: Stronger borders for unfocused controls, switches, checkboxes.
@@ -173,7 +171,7 @@ Practice runtime conveys musical feedback without looking like a rainbow arcade 
 | `practice-current` | `--primitive-gold-500` | `44 67% 46%` | Active sounding note / piano key illumination |
 | `practice-error` | `--primitive-danger-500` | `0 65% 45%` | Pitch or rhythm correction prompt |
 
-### 2.3 Unified Product Grammar & 4-Surface Model
+### 2.3 Unified Product Grammar & 3 General UI Surfaces (+ Notation Exception)
 
 > **Golden Rule of Unified Product Grammar:**
 > *Same product, same visual grammar.*
@@ -184,12 +182,12 @@ Practice runtime conveys musical feedback without looking like a rainbow arcade 
 > *Visual differences must have functional necessity, not aesthetic preference.*
 > *When in doubt, use the standard panel.*
 
-Authenticated application layout converges on a simplified 4-surface model:
+Authenticated application layout converges on 3 general UI surfaces + 1 notation domain exception:
 
-1. **App Canvas (`bg-surface-canvas`):** `hsl(44 19% 97%)`. Warm ivory backdrop for all application views.
-2. **Standard Content Panel (`bg-surface-panel`):** `hsl(0 0% 100%)` with `border border-line-subtle` and `rounded-container` (flat by default, no shadow). All application cards, list containers, resume modules, stats, pricing cards, and forms use this universal container.
-3. **Floating Raised Overlays (`bg-surface-raised`):** `hsl(0 0% 100%)` with `shadow-overlay` (popovers, menus, modal dialogs, search trigger).
-4. **Notation Canvas Surface (`bg-surface-paper`):** `hsl(44 19% 97%)` (`MusicPaper`). Strictly reserved for literal sheet music score and stave notation rendering canvases. Banned on generic UI.
+1. **App Canvas (`bg-surface-canvas`):** Warm ivory backdrop for all application views.
+2. **Standard Content Panel (`bg-surface-panel`):** Universal clean white container with `border border-line-subtle` and `rounded-container` (flat by default, no shadow). All application cards, list containers, resume modules, stats, pricing cards, and forms use this universal container.
+3. **Floating Raised Overlays (`bg-surface-raised`):** Elevated overlay surface with `shadow-overlay` or `shadow-raised` (popovers, menus, modal dialogs, search trigger).
+4. **Score Notation Canvas Domain Exception (`bg-surface-paper` / `MusicPaper`):** Archival paper canvas strictly reserved for literal sheet music score and stave notation rendering. Banned on generic UI.
 
 ### 2.4 Marketing Surface Rhythm Contract (Landing Page)
 
@@ -198,7 +196,7 @@ Authenticated application layout converges on a simplified 4-surface model:
 > *Structure should be felt, not painted.*
 
 Full-width marketing page sections strictly alternate between two canonical surfaces: `surface-canvas` (warm ivory) and `surface-panel` (editorial white).
-**Banned on full-width sections:** `bg-brand-wash`, `bg-surface-paper`, `bg-surface-paper-warm`, `bg-neutral-muted`, `bg-brand`.
+**Banned on full-width sections:** `bg-surface-paper`, `bg-neutral-muted`, `bg-brand`.
 
 | Section | Content Role | Semantic Surface | Border Divider |
 | :--- | :--- | :--- | :--- |
@@ -266,7 +264,6 @@ All variants own their typography and consume canonical control/icon tokens:
 | `sm` | `h-control-sm` (`32px`) | `.type-body-small font-medium` | `icon-sm` (`16px`) | Compact secondary actions |
 | `md` / `default` | `h-control-md` (`36px`) | `.type-body-small font-medium` | `icon-sm` (`16px`) | Standard buttons, dialog actions |
 | `lg` | `h-control-xl` (`44px`) | `.type-body-small font-semibold`| `icon-md` (`18px`) | Hero CTAs, large stand buttons |
-| `icon` | `h-control-md w-control-md` (`36×36px`) | — | `icon-sm` (`16px`) | Square icon trigger |
 
 ```jsx
 import { Button } from '@/components/ui/button';

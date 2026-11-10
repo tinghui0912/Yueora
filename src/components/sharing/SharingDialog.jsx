@@ -25,6 +25,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 import { useToast } from '@/components/ui/use-toast';
 
 const expirations = [
@@ -115,7 +116,7 @@ export default function SharingDialog({ score, open, onOpenChange }) {
                   <SelectItem value="Can edit">Can edit</SelectItem>
                 </SelectContent>
               </Select>
-              <Button onClick={sendInvite} size="icon" aria-label="Send invite"><Send className="h-4 w-4" /></Button>
+              <IconButton icon={Send} label="Send invite" tone="primary" size="md" onClick={sendInvite} />
             </div>
 
             <p className="mt-5 type-label text-ink-primary">People</p>

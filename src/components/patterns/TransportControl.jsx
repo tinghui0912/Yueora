@@ -1,5 +1,6 @@
 import { Play, Pause, RotateCcw, Repeat } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 
 /**
  * TransportControl: Dedicated musical transport bar.
@@ -58,16 +59,13 @@ export default function TransportControl({
         )}
 
         {onReset && !isReady && (
-          <Button
-            type="button"
-            intent="secondary"
-            size="icon"
+          <IconButton
+            icon={RotateCcw}
+            label="Return to beginning"
+            tone="outline"
+            size="md"
             onClick={onReset}
-            title="Return to beginning"
-            aria-label="Return to beginning"
-          >
-            <RotateCcw />
-          </Button>
+          />
         )}
       </div>
 
