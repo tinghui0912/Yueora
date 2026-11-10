@@ -1192,63 +1192,64 @@ function verifyRenderingCodeTokens(issues = []) {
   const RENDERING_DIR = path.resolve('src/lib');
   if (!fs.existsSync(RENDERING_DIR)) return issues;
 
-  const entries = fs.readdirSync(RENDERING_DIR, { withFileTypes: true });
-  for (const entry of entries) {
-    if (!entry.isFile() || (!entry.name.endsWith('.js') && !entry.name.endsWith('.jsx'))) continue;
-    const full = path.join(RENDERING_DIR, entry.name);
-    const code = fs.readFileSync(full, 'utf8');
+  const RENDERING_SIGNALS = [
+    "getContext('2d')",
+    'getContext("2d")',
+    "createElement('canvas')",
+    'createElement("canvas")',
+    'createRoot',
+    'XMLSerializer',
+  ];
 
-    // Only inspect modules that perform off-screen canvas / SVG visual rendering
-    if (!code.includes("getContext('2d')") && !code.includes("createElement('canvas')") && !code.includes('createRoot')) {
-      continue;
-    }
+  const RAW_COLOR_REGEX = /#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b/g;
 
-    // Invariant: No duplicated token tables (e.g. hardcoded HSL mappings)
-    if (/const\s+TOKENS\s*=\s*\{/.test(code) || /--foreground:\s*['"]\d+/.test(code)) {
-      issues.push({
-        file: path.relative(process.cwd(), full),
-        line: 1,
-        matched: 'hardcoded TOKENS map',
-        message: 'Rendering code must not maintain a duplicate token map; resolve canonical CSS custom properties via resolveSemanticColor() or resolveRequiredSvgTokens().',
-      });
-    }
+  function scanRenderingDir(dir) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanRenderingDir(full);
+      } else if (entry.isFile() && /\.(js|jsx|ts|tsx)$/.test(entry.name)) {
+        const code = fs.readFileSync(full, 'utf8');
 
-    // Invariant: No hardcoded paper surface / score canvas background exceptions
-    if (/SCORE_CANVAS_BG\s*=/.test(code) || /#fffdf8/i.test(code)) {
-      issues.push({
-        file: path.relative(process.cwd(), full),
-        line: 1,
-        matched: 'paper/canvas background exception',
-        message: 'Rendering code must not hardcode paper surface colors (#fffdf8). Resolve --surface-panel instead.',
-      });
-    }
+        // Dynamically detect rendering modules without hardcoding specific filenames
+        const isRenderingModule = RENDERING_SIGNALS.some((sig) => code.includes(sig));
+        if (!isRenderingModule) continue;
 
-    // Invariant: No hardcoded duplicate copies of Yueora brand / ink / panel semantic colors
-    const lines = code.split('\n');
-    lines.forEach((line, idx) => {
-      const trimmed = line.trim();
-      if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
-      if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
-
-      const DUPLICATE_COLORS = [
-        { hex: /#23252a/i, name: 'ink-primary (#23252a)' },
-        { hex: /#2c5f47/i, name: 'brand (#2c5f47)' },
-        { hex: /#6f7370/i, name: 'ink-tertiary (#6f7370)' },
-        { hex: /#8fbfa6/i, name: 'brand-soft (#8fbfa6)' },
-      ];
-
-      for (const { hex, name } of DUPLICATE_COLORS) {
-        if (hex.test(line)) {
+        // Invariant 1: No duplicated token tables (e.g. hardcoded HSL mappings)
+        if (/const\s+TOKENS\s*=\s*\{/.test(code) || /--foreground:\s*['"]\d+/.test(code)) {
           issues.push({
             file: path.relative(process.cwd(), full),
-            line: idx + 1,
-            matched: line.trim(),
-            message: `Rendering code hardcodes duplicate Design System color for ${name}. Resolve canonical token via resolveSemanticColor() instead.`,
+            line: 1,
+            matched: 'hardcoded TOKENS map',
+            message: 'Rendering code must not maintain a duplicate token map; resolve canonical CSS custom properties via resolveSemanticColor() or resolveRequiredSvgTokens().',
           });
         }
+
+        // Invariant 2: No unannotated raw color literals
+        const lines = code.split('\n');
+        lines.forEach((line, idx) => {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+          if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
+
+          const matches = line.match(RAW_COLOR_REGEX);
+          if (matches) {
+            matches.forEach((m) => {
+              issues.push({
+                file: path.relative(process.cwd(), full),
+                line: idx + 1,
+                matched: m,
+                message: `Unannotated raw color literal '${m}' found in rendering module. Resolve canonical token via resolveSemanticColor(), or annotate intentional output-specific color with '// ds-allow: <reason>'.`,
+              });
+            });
+          }
+        });
       }
-    });
+    }
   }
+
+  scanRenderingDir(RENDERING_DIR);
   return issues;
 }
 verifyRenderingCodeTokens(totalViolations);

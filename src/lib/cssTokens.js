@@ -49,15 +49,23 @@ export function resolveCssVariable(name, rootStyle) {
 
 /**
  * Resolves a canonical semantic token to an HSL color string for Canvas 2D or SVG rendering.
+ * Does not silently provide a copied Design System fallback: if a required semantic token
+ * is missing or cannot be resolved, an error is thrown to guarantee single source of truth.
  * @param {string} name e.g. '--surface-panel', '--ink-primary', '--brand'
- * @param {string} [fallback] fallback color if DOM is unavailable
+ * @param {string} [fallback] optional explicit output fallback if document or token is unresolvable
  * @returns {string}
  */
-export function resolveSemanticColor(name, fallback = '#ffffff') {
-  if (typeof document === 'undefined') return fallback;
+export function resolveSemanticColor(name, fallback) {
+  if (typeof document === 'undefined') {
+    if (fallback !== undefined) return fallback;
+    throw new Error(`[cssTokens] Cannot resolve "${name}": document is undefined and no fallback provided.`);
+  }
   const rootStyle = window.getComputedStyle(document.documentElement);
   const raw = resolveCssVariable(name, rootStyle);
-  if (!raw) return fallback;
+  if (!raw) {
+    if (fallback !== undefined) return fallback;
+    throw new Error(`[cssTokens] Required semantic token "${name}" is missing or unresolvable in document styles.`);
+  }
   return `hsl(${raw})`;
 }
 

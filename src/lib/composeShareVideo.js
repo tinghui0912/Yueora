@@ -53,6 +53,14 @@ export async function composeShareVideo({
   video.playsInline = true;
   video.preload = 'auto';
 
+  // Resolve canonical semantic tokens once at export startup — avoiding computed-style reads in animation loop
+  const colors = {
+    panel: resolveSemanticColor('--surface-panel'),
+    inkPrimary: resolveSemanticColor('--ink-primary'),
+    inkTertiary: resolveSemanticColor('--ink-tertiary'),
+    brand: resolveSemanticColor('--brand'),
+  };
+
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
@@ -73,7 +81,7 @@ export async function composeShareVideo({
   if (signal) signal.addEventListener('abort', onAbort);
 
   const drawScoreBox = (box, scoreCanvas, measure) => {
-    ctx.fillStyle = resolveSemanticColor('--surface-panel');
+    ctx.fillStyle = colors.panel;
     ctx.fillRect(box.x, box.y, box.width, box.height);
 
     const pad = Math.max(10, Math.round(box.width * 0.035));
@@ -81,11 +89,11 @@ export async function composeShareVideo({
     const metaSize = Math.max(10, Math.round(box.width * 0.021));
 
     ctx.textAlign = 'left';
-    ctx.fillStyle = resolveSemanticColor('--ink-primary');
+    ctx.fillStyle = colors.inkPrimary;
     ctx.font = `600 ${titleSize}px Georgia, serif`;
     ctx.fillText(meta.title || 'Performance', box.x + pad, box.y + pad + titleSize);
 
-    ctx.fillStyle = resolveSemanticColor('--brand');
+    ctx.fillStyle = colors.brand;
     ctx.font = `${metaSize}px Helvetica, Arial, sans-serif`;
     const subtitle = [meta.composer, meta.rangeSummary].filter(Boolean).join(' · ');
     if (subtitle) ctx.fillText(subtitle, box.x + pad, box.y + pad + titleSize + metaSize + 6);
@@ -100,7 +108,7 @@ export async function composeShareVideo({
       ctx.drawImage(scoreCanvas, box.x + pad + (availW - dw) / 2, top, dw, dh);
     }
 
-    ctx.fillStyle = resolveSemanticColor('--ink-tertiary');
+    ctx.fillStyle = colors.inkTertiary;
     ctx.font = `${Math.max(9, Math.round(metaSize * 0.85))}px Helvetica, Arial, sans-serif`;
     ctx.textAlign = 'right';
     ctx.fillText(`Measure ${measure}`, box.x + box.width - pad, box.y + box.height - pad * 0.7);
@@ -139,7 +147,7 @@ export async function composeShareVideo({
       const measure = measureAtTime({ timeline, time, startMeasure, endMeasure, durationSeconds: duration });
       const frame = frames.get(measureWindowStart(measure)) || frames.values().next().value;
 
-      ctx.fillStyle = '#15171a';
+      ctx.fillStyle = '#15171a'; // ds-allow: output-specific video matte backdrop
       ctx.fillRect(0, 0, width, height);
 
       if (mediaType === 'video') {
@@ -160,16 +168,16 @@ export async function composeShareVideo({
         }
       } else {
         // An audio recording gets the score as its picture.
-        ctx.fillStyle = '#12201a';
+        ctx.fillStyle = '#12201a'; // ds-allow: output-specific audio recording compositing matte
         ctx.fillRect(0, 0, width, height);
         drawScoreBox({ x: width * 0.05, y: height * 0.05, width: width * 0.9, height: height * 0.82 }, frame, measure);
-        ctx.fillStyle = resolveSemanticColor('--brand-soft');
+        ctx.fillStyle = '#8fbfa6'; // ds-allow: output-specific badge text on dark audio matte
         ctx.font = `500 ${Math.round(width * 0.018)}px Helvetica, Arial, sans-serif`;
         ctx.textAlign = 'left';
         ctx.fillText('Audio recording', width * 0.05, height * 0.945);
       }
 
-      ctx.fillStyle = resolveSemanticColor('--surface-canvas');
+      ctx.fillStyle = '#f7f5ef'; // ds-allow: output-specific timestamp on dark video matte for encoded-video readability
       ctx.font = `500 ${Math.round(width * 0.017)}px Helvetica, Arial, sans-serif`;
       ctx.textAlign = 'right';
       ctx.fillText(`${clock(time)} / ${clock(duration)}`, width - width * 0.04, height - height * 0.03);

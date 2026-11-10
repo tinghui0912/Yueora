@@ -45,17 +45,21 @@ function findChrome() {
     'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe',
     local,
     'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
+    'C:/Program Files/Microsoft/Edge/Application/msedge.exe',
     '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     '/usr/bin/google-chrome',
+    '/usr/bin/google-chrome-stable',
     '/usr/bin/chromium',
+    '/usr/bin/chromium-browser',
   ];
   const found = candidates.find((p) => p && fs.existsSync(p));
   if (!found) {
-    console.warn('  ⚠️ Chrome/Edge not found in default paths; skipping browser CDP check.');
-    return null;
+    throw new Error('Chrome/Chromium binary not found in default paths. Browser auth boundary check cannot be skipped.');
   }
   return found;
 }
+
+let completedBrowserAssertions = 0;
 
 async function waitForServer(url, timeoutMs = 15000) {
   const start = Date.now();
@@ -87,6 +91,9 @@ async function verifyBrowserRedirect(chromePath, targetPath, expectedPath = '/lo
 
     const chromeProcess = spawn(chromePath, [
       '--headless=new',
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
       `--user-data-dir=${tempProfile}`,
       '--remote-debugging-port=0',
       '--no-first-run',
@@ -121,13 +128,12 @@ async function verifyBrowserRedirect(chromePath, targetPath, expectedPath = '/lo
 
     async function runCdpSession(browserWs) {
       // Connect to CDP via Node WebSocket
-      const WebSocket = globalThis.WebSocket;
-      if (!WebSocket) {
-        console.log('  ⚠️ globalThis.WebSocket not present in Node environment; skipping CDP redirect.');
-        return;
+      const WebSocketClient = globalThis.WebSocket;
+      if (!WebSocketClient) {
+        throw new Error('globalThis.WebSocket is missing in Node environment; WebSocket is required for CDP browser redirect assertions.');
       }
 
-      const ws = new WebSocket(browserWs);
+      const ws = new WebSocketClient(browserWs);
       await new Promise((res, rej) => {
         ws.onopen = res;
         ws.onerror = rej;
@@ -208,7 +214,8 @@ async function verifyBrowserRedirect(chromePath, targetPath, expectedPath = '/lo
         throw new Error(`Production auth bypass detected! Navigated to ${targetPath}, expected ${expectedPath}, but landed on ${pathname}`);
       }
 
-      console.log(`  ✓ Browser Assertion: Production preview navigated to ${targetPath} -> successfully rejected & redirected to ${pathname} ("${text.replace(/\s+/g, ' ').slice(0, 40)}…")`);
+      completedBrowserAssertions++;
+      console.log(`  ✓ Browser Assertion ${completedBrowserAssertions}: Production preview navigated to ${targetPath} -> successfully rejected & redirected to ${pathname} ("${text.replace(/\s+/g, ' ').slice(0, 40)}…")`);
     }
   });
 }
@@ -218,37 +225,43 @@ async function main() {
     verifyStaticBundle();
 
     const chromePath = findChrome();
-    if (chromePath) {
-      // Spawn Vite preview server
-      const isWin = process.platform === 'win32';
-      const previewProc = isWin
-        ? spawn('cmd.exe', ['/d', '/s', '/c', `npm.cmd run preview -- --port ${PREVIEW_PORT} --strictPort`], { stdio: 'pipe', shell: false })
-        : spawn('npm', ['run', 'preview', '--', '--port', String(PREVIEW_PORT), '--strictPort'], { stdio: 'pipe' });
+    // Spawn Vite preview server
+    const isWin = process.platform === 'win32';
+    const previewProc = isWin
+      ? spawn('cmd.exe', ['/d', '/s', '/c', `npm.cmd run preview -- --port ${PREVIEW_PORT} --strictPort`], { stdio: 'pipe', shell: false })
+      : spawn('npm', ['run', 'preview', '--', '--port', String(PREVIEW_PORT), '--strictPort'], { stdio: 'pipe' });
 
-      try {
-        const healthy = await waitForServer(`${BASE_URL}/`);
-        if (!healthy) {
-          throw new Error(`Vite preview server failed to become healthy on port ${PREVIEW_PORT}`);
-        }
-
-        // Test 1: /library?demo=true -> must redirect to /login
-        await verifyBrowserRedirect(chromePath, '/library?demo=true', '/login');
-
-        // Test 2: /settings?demo=true -> must redirect to /login
-        await verifyBrowserRedirect(chromePath, '/settings/account?demo=true', '/login');
-
-      } finally {
-        try {
-          if (process.platform === 'win32') {
-            spawn('taskkill', ['/pid', String(previewProc.pid), '/f', '/t']);
-          } else {
-            previewProc.kill();
-          }
-        } catch {}
+    try {
+      const healthy = await waitForServer(`${BASE_URL}/`);
+      if (!healthy) {
+        throw new Error(`Vite preview server failed to become healthy on port ${PREVIEW_PORT}`);
       }
+
+      // Test 1: /library?demo=true -> must redirect to /login
+      await verifyBrowserRedirect(chromePath, '/library?demo=true', '/login');
+
+      // Test 2: /settings/account?demo=true -> must redirect to /login
+      await verifyBrowserRedirect(chromePath, '/settings/account?demo=true', '/login');
+
+    } finally {
+      try {
+        if (process.platform === 'win32') {
+          spawn('taskkill', ['/pid', String(previewProc.pid), '/f', '/t']);
+        } else {
+          previewProc.kill();
+        }
+      } catch {}
     }
 
-    console.log('\n✅ Production auth boundary verification passed: 0 bypass vectors detected.\n');
+    if (completedBrowserAssertions !== 2) {
+      throw new Error(`Incomplete browser verification: expected 2 redirect assertions to execute, but only ${completedBrowserAssertions} ran.`);
+    }
+
+    console.log('\n✅ Production auth boundary verification passed:');
+    console.log('  ✓ Static bundle auth boundary verified.');
+    console.log('  ✓ Browser redirect assertion 1 passed (/library?demo=true -> /login).');
+    console.log('  ✓ Browser redirect assertion 2 passed (/settings/account?demo=true -> /login).');
+    console.log('  ✓ Production auth boundary verification passed: 0 bypass vectors detected.\n');
     process.exit(0);
   } catch (err) {
     console.error('\n❌ Production auth boundary verification failed:', err.message);

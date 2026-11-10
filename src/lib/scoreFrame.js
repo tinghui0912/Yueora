@@ -15,7 +15,7 @@ import { resolveSemanticColor, resolveRequiredSvgTokens } from '@/lib/cssTokens'
 const SCORE_WIDTH = 40 + 4 * 168 + 20;
 
 export async function rasterizeScoreWindow({ notes, measureStart, activeMeasure, width = 1200 }) {
-  const panelBg = resolveSemanticColor('--surface-panel', '#ffffff');
+  const panelBg = resolveSemanticColor('--surface-panel');
   const host = document.createElement('div');
   host.style.cssText = `position:fixed;left:-20000px;top:0;padding:20px;background:${panelBg};`;
   document.body.appendChild(host);
