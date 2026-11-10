@@ -35,10 +35,10 @@ const buttonVariants = cva(
       },
       size: {
         xs: "h-control-xs min-h-control-xs px-3 type-caption rounded-full gap-1.5 [&_svg]:icon-xs",
-        sm: "h-control-sm min-h-control-sm px-3.5 type-body-small font-medium rounded-full gap-1.5 [&_svg]:icon-sm",
-        md: "h-control-md min-h-control-md px-4.5 type-body-small font-medium rounded-full gap-2 [&_svg]:icon-sm",
-        default: "h-control-md min-h-control-md px-4.5 type-body-small font-medium rounded-full gap-2 [&_svg]:icon-sm",
-        lg: "h-control-xl min-h-control-xl px-6 type-body-small font-semibold rounded-full gap-2.5 [&_svg]:icon-md",
+        sm: "h-control-sm min-h-control-sm px-4 type-body-small font-medium rounded-full gap-1.5 [&_svg]:icon-sm",
+        md: "h-control-md min-h-control-md px-5 type-body-small font-medium rounded-full gap-2 [&_svg]:icon-sm",
+        default: "h-control-md min-h-control-md px-5 type-body-small font-medium rounded-full gap-2 [&_svg]:icon-sm",
+        lg: "h-control-xl min-h-control-xl px-7 type-body-small font-semibold rounded-full gap-2.5 [&_svg]:icon-md",
       },
     },
     defaultVariants: {

@@ -90,11 +90,11 @@ export async function composeShareVideo({
 
     ctx.textAlign = 'left';
     ctx.fillStyle = colors.inkPrimary;
-    ctx.font = `600 ${titleSize}px Georgia, serif`;
+    ctx.font = `600 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
     ctx.fillText(meta.title || 'Performance', box.x + pad, box.y + pad + titleSize);
 
     ctx.fillStyle = colors.brand;
-    ctx.font = `${metaSize}px Helvetica, Arial, sans-serif`;
+    ctx.font = `${metaSize}px "Inter", -apple-system, sans-serif`;
     const subtitle = [meta.composer, meta.rangeSummary].filter(Boolean).join(' · ');
     if (subtitle) ctx.fillText(subtitle, box.x + pad, box.y + pad + titleSize + metaSize + 6);
 
@@ -109,7 +109,7 @@ export async function composeShareVideo({
     }
 
     ctx.fillStyle = colors.inkTertiary;
-    ctx.font = `${Math.max(9, Math.round(metaSize * 0.85))}px Helvetica, Arial, sans-serif`;
+    ctx.font = `${Math.max(9, Math.round(metaSize * 0.85))}px "Inter", -apple-system, sans-serif`;
     ctx.textAlign = 'right';
     ctx.fillText(`Measure ${measure}`, box.x + box.width - pad, box.y + box.height - pad * 0.7);
     ctx.textAlign = 'left';
@@ -168,17 +168,17 @@ export async function composeShareVideo({
         }
       } else {
         // An audio recording gets the score as its picture.
-        ctx.fillStyle = '#12201a'; // ds-allow: output-specific audio recording compositing matte
+        ctx.fillStyle = '#121212'; // ds-allow: output-specific audio recording compositing matte
         ctx.fillRect(0, 0, width, height);
         drawScoreBox({ x: width * 0.05, y: height * 0.05, width: width * 0.9, height: height * 0.82 }, frame, measure);
-        ctx.fillStyle = '#8fbfa6'; // ds-allow: output-specific badge text on dark audio matte
-        ctx.font = `500 ${Math.round(width * 0.018)}px Helvetica, Arial, sans-serif`;
+        ctx.fillStyle = '#ece9e2'; // ds-allow: output-specific badge text on dark audio matte
+        ctx.font = `500 ${Math.round(width * 0.018)}px "Inter", -apple-system, sans-serif`;
         ctx.textAlign = 'left';
         ctx.fillText('Audio recording', width * 0.05, height * 0.945);
       }
 
       ctx.fillStyle = '#f7f5ef'; // ds-allow: output-specific timestamp on dark video matte for encoded-video readability
-      ctx.font = `500 ${Math.round(width * 0.017)}px Helvetica, Arial, sans-serif`;
+      ctx.font = `500 ${Math.round(width * 0.017)}px "Inter", -apple-system, sans-serif`;
       ctx.textAlign = 'right';
       ctx.fillText(`${clock(time)} / ${clock(duration)}`, width - width * 0.04, height - height * 0.03);
       ctx.textAlign = 'left';

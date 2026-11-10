@@ -182,16 +182,24 @@
   .type-hero-title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(2.75rem, 5.5vw, 4.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    font-size: clamp(3.5rem, 9.5vw, 8.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.025em;
   }
   .type-marketing-title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(2rem, 3.8vw, 3rem);
-    line-height: 1.15;
-    letter-spacing: -0.015em;
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+  }
+  .type-eyebrow {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.34em;
   }
   .type-editorial-quote {
     font-family: var(--font-display);

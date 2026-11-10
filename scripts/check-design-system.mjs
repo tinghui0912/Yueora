@@ -18,6 +18,7 @@ const REQUIRED_TYPOGRAPHY = [
   'type-body-small',
   'type-label',
   'type-caption',
+  'type-eyebrow',
   'type-metadata',
   'type-metric',
 ];
@@ -1231,12 +1232,14 @@ function verifyRenderingCodeTokens(issues = []) {
           });
         }
 
-        // Invariant 2: No unannotated raw color literals
+        // Invariant 2: No unannotated raw color literals (requires explicit // ds-allow: <reason>)
         const lines = code.split('\n');
         lines.forEach((line, idx) => {
           const trimmed = line.trim();
-          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
-          if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) {
+            if (/ds-allow:\s*\S+/.test(line)) return;
+          }
+          if (/ds-allow:\s*\S+/.test(line)) return;
 
           const matches = line.match(RAW_COLOR_REGEX);
           if (matches) {
@@ -1277,7 +1280,7 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified planar navigation active states and planar secondary/outline buttons (Button, IconButton, Sidebar, Library, Performances, Pricing, Preview)`);
   console.log(`   - Verified planar shell & tab triggers (TabsTrigger, PublicHeader)`);
   console.log(`   - Verified Neutral Active Shadow Guard (zero bg-neutral-muted with shadow across all pages and components)`);
-  console.log(`   - Verified Standard Panel planar standard & ALLOWED_SHADOW_XS_FILES allowlist (shadow-xs restricted to approved CTA & form control primitives)`);
+  console.log(`   - Verified Standard Panel planar standard & planar controls (buttons, inputs, and standard panels are flat by default)`);
   console.log(`   - Verified planar container integrity across core application pages (Notifications, Imports, About, Help, Library, DesignSystemPreview)`);
   console.log(`   - Verified Surface API simplification (zero paper tone/elevation in Surface component or consumers)`);
   console.log(`   - Verified retired paper tokens & MusicPaper completely removed from product code (zero exceptions)`);

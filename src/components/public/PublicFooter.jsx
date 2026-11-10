@@ -4,128 +4,127 @@ import { ScoreSheetGlyph } from '@/components/brand/MusicalGlyphs';
 
 /**
  * PublicFooter — shared marketing, product, and legal footer.
- * Editorial, calm, and warmly structured for a premium musical product.
+ * Matches UGC Footer simplicity & editorial calm:
+ * - max-w-7xl mx-auto px-6 md:px-10 py-16 md:py-20
+ * - prominent editorial brand block
+ * - quiet, high-legibility navigation columns
+ * - minimal bottom baseline with editorial sign-off
  */
 export default function PublicFooter() {
   return (
-    <footer className="border-t border-line-subtle bg-surface-panel/50 pt-16 pb-12">
-      <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-5 md:gap-8">
-          {/* Brand & Manifesto Column */}
-          <div className="md:col-span-2">
-            <Link to="/" className="inline-flex items-center gap-2">
-              <Logo variant="full" size="md" />
+    <footer className="border-t border-line-subtle/80 bg-surface-panel/40">
+      <div className="mx-auto max-w-7xl px-6 md:px-10 py-16 md:py-20">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-12 lg:gap-16">
+          {/* Brand & Editorial Manifesto Block */}
+          <div className="max-w-md">
+            <Link to="/" className="inline-flex items-center">
+              <Logo variant="full" size="lg" />
             </Link>
-            <p className="mt-4 max-w-sm font-display italic text-base leading-relaxed text-ink-secondary">
-              &ldquo;A personal musical journey. Bring the music that already matters to you. Keep it, play it, return to it, and preserve the moments you choose.&rdquo;
+            <p className="mt-5 font-display italic text-lg md:text-xl leading-relaxed text-ink-secondary">
+              &ldquo;Bring the music that already matters to you. Keep it, play it, return to it, and preserve the moments you choose.&rdquo;
             </p>
-            <div className="mt-5 flex items-center gap-2 text-xs text-ink-tertiary">
+            <div className="mt-6 flex items-center gap-2.5 text-xs tracking-wider uppercase text-ink-tertiary">
               <ScoreSheetGlyph className="h-4 w-4 text-ink-primary" />
               <span>喜欢，就弹。· Play what you love.</span>
             </div>
           </div>
 
-          {/* Product Column */}
-          <div>
-            <p className="type-caption font-semibold uppercase tracking-wider text-ink-primary">
-              Product
-            </p>
-            <ul className="mt-4 space-y-2.5 text-sm text-ink-secondary">
-              <li>
-                <a href="#lifecycle" className="hover:text-ink-primary transition-colors">
-                  The Musical Lifecycle
-                </a>
-              </li>
-              <li>
-                <a href="#repertoire" className="hover:text-ink-primary transition-colors">
-                  Personal Repertoire
-                </a>
-              </li>
-              <li>
-                <a href="#practice" className="hover:text-ink-primary transition-colors">
-                  Practice Stand
-                </a>
-              </li>
-              <li>
-                <a href="#performances" className="hover:text-ink-primary transition-colors">
-                  Preserved Takes
-                </a>
-              </li>
-              <li>
-                <Link to="/pricing" className="hover:text-ink-primary transition-colors">
-                  Simple Pricing
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Grouped Secondary Navigation */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 sm:gap-12 text-sm">
+            {/* Product */}
+            <div>
+              <p className="type-eyebrow text-ink-primary mb-4">
+                Product
+              </p>
+              <ul className="space-y-3 text-ink-secondary">
+                <li>
+                  <a href="/#lifecycle" className="hover:text-ink-primary transition-colors">
+                    The Lifecycle
+                  </a>
+                </li>
+                <li>
+                  <a href="/#repertoire" className="hover:text-ink-primary transition-colors">
+                    Repertoire
+                  </a>
+                </li>
+                <li>
+                  <a href="/#practice" className="hover:text-ink-primary transition-colors">
+                    Practice Stand
+                  </a>
+                </li>
+                <li>
+                  <a href="/#performances" className="hover:text-ink-primary transition-colors">
+                    Preserved Takes
+                  </a>
+                </li>
+                <li>
+                  <Link to="/pricing" className="hover:text-ink-primary transition-colors">
+                    Pricing
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* Philosophy Column */}
-          <div>
-            <p className="type-caption font-semibold uppercase tracking-wider text-ink-primary">
-              Philosophy
-            </p>
-            <ul className="mt-4 space-y-2.5 text-sm text-ink-secondary">
-              <li>
-                <a href="#philosophy" className="hover:text-ink-primary transition-colors">
-                  Your Music, Not Ours
-                </a>
-              </li>
-              <li>
-                <span className="text-ink-tertiary">No Gamification or Streaks</span>
-              </li>
-              <li>
-                <span className="text-ink-tertiary">Non-Judgmental Listening</span>
-              </li>
-              <li>
-                <span className="text-ink-tertiary">Private by Default</span>
-              </li>
-              <li>
-                <Link to="/about" className="hover:text-ink-primary transition-colors">
-                  About Yueora
-                </Link>
-              </li>
-            </ul>
-          </div>
+            {/* Philosophy */}
+            <div>
+              <p className="type-eyebrow text-ink-primary mb-4">
+                Philosophy
+              </p>
+              <ul className="space-y-3 text-ink-secondary">
+                <li>
+                  <a href="/#philosophy" className="hover:text-ink-primary transition-colors">
+                    Your Music, Not Ours
+                  </a>
+                </li>
+                <li>
+                  <span className="text-ink-tertiary">Zero Streak Shaming</span>
+                </li>
+                <li>
+                  <span className="text-ink-tertiary">Acoustic Following</span>
+                </li>
+                <li>
+                  <Link to="/about" className="hover:text-ink-primary transition-colors">
+                    About Yueora
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* Legal & Care Column */}
-          <div>
-            <p className="type-caption font-semibold uppercase tracking-wider text-ink-primary">
-              Care &amp; Legal
-            </p>
-            <ul className="mt-4 space-y-2.5 text-sm text-ink-secondary">
-              <li>
-                <Link to="/help" className="hover:text-ink-primary transition-colors">
-                  Help &amp; FAQ
-                </Link>
-              </li>
-              <li>
-                <Link to="/legal/privacy" className="hover:text-ink-primary transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link to="/legal/terms" className="hover:text-ink-primary transition-colors">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link to="/legal/copyright" className="hover:text-ink-primary transition-colors">
-                  Copyright &amp; Ownership
-                </Link>
-              </li>
-              <li>
-                <Link to="/legal/acceptable-use" className="hover:text-ink-primary transition-colors">
-                  Acceptable Use
-                </Link>
-              </li>
-            </ul>
+            {/* Care & Legal */}
+            <div className="col-span-2 sm:col-span-1">
+              <p className="type-eyebrow text-ink-primary mb-4">
+                Care &amp; Legal
+              </p>
+              <ul className="space-y-3 text-ink-secondary">
+                <li>
+                  <Link to="/help" className="hover:text-ink-primary transition-colors">
+                    Help &amp; FAQ
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/legal/privacy" className="hover:text-ink-primary transition-colors">
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/legal/terms" className="hover:text-ink-primary transition-colors">
+                    Terms of Service
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/legal/copyright" className="hover:text-ink-primary transition-colors">
+                    Copyright &amp; Ownership
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        {/* Bottom border & baseline */}
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-line-subtle pt-6 text-xs text-ink-tertiary sm:flex-row">
+        {/* Minimal Bottom Baseline */}
+        <div className="mt-16 pt-8 border-t border-line-subtle/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ink-tertiary">
           <p>© 2026 Yueora Inc. Made for musicians who love the pieces they play.</p>
-          <p className="font-display italic">Every piece has a life in Yueora.</p>
+          <p className="font-display italic text-sm text-ink-secondary">Every piece has a life in Yueora.</p>
         </div>
       </div>
     </footer>

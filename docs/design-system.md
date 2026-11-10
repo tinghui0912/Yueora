@@ -35,8 +35,9 @@ Repeated product hierarchy roles use semantic typography roles. Do not override 
 
 | Semantic Class | Target Role | Baseline Size | Line Height | Tracking | Font Family |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `.type-hero-title` | Marketing page primary hero headline | `clamp(2.75rem, 5.5vw, 4.5rem)` | `1.05` | `-0.02em` | Cormorant Garamond (500) |
-| `.type-marketing-title` | Marketing chapter / section titles | `clamp(2rem, 3.8vw, 3rem)` | `1.15` | `-0.015em` | Cormorant Garamond (500) |
+| `.type-hero-title` | Marketing page primary hero headline | `clamp(3.5rem, 9.5vw, 8.5rem)` | `0.9` | `-0.025em` | Cormorant Garamond (500) |
+| `.type-marketing-title` | Marketing chapter / section titles | `clamp(2.25rem, 5vw, 3.75rem)` | `1.02` | `-0.02em` | Cormorant Garamond (500) |
+| `.type-eyebrow` | Public and editorial overlines & chapter tags | `11px` (`0.6875rem`) | `1.4` | `0.34em` | Inter (500, uppercase) |
 | `.type-editorial-quote` | Philosophy, pull quotes & reflections | `clamp(1.25rem, 2vw, 1.625rem)` | `1.5` | Normal | Cormorant Garamond (400, italic) |
 | `.type-marketing-body` | Marketing lead paragraphs & introductory copy | `18px` (`1.125rem`) | `1.65` | Normal | Inter (400) |
 | `.type-display` | Editorial display titles & brand headlines | `clamp(2rem, 4vw, 3.25rem)` | `1.1` | `-0.02em` | Cormorant Garamond (500) |

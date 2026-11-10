@@ -4,10 +4,15 @@ import { Menu, ArrowRight } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useAuth } from '@/lib/AuthContext';
 import Logo from '@/components/brand/Logo';
+import { Button } from '@/components/ui/button';
 
 /**
  * PublicMobileMenu — Intentional, editorial mobile sheet navigation.
- * Clear product-first hierarchy with generous touch targets.
+ * Matches UGC Nav mobile menu rhythm:
+ * - Generous vertical link rows
+ * - Border-b separators
+ * - Warm translucent backdrop
+ * - Large pill CTAs
  */
 export default function PublicMobileMenu() {
   const [open, setOpen] = useState(false);
@@ -16,17 +21,18 @@ export default function PublicMobileMenu() {
   return (
     <>
       <button
+        type="button"
         onClick={() => setOpen(true)}
-        className="rounded-control p-2 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary md:hidden transition-colors"
-        aria-label="Open navigation menu"
+        aria-label={open ? 'Close menu' : 'Open menu'}
+        className="grid place-items-center w-10 h-10 rounded-full border border-line-subtle text-ink-secondary hover:text-ink-primary hover:border-line-strong transition-colors md:hidden"
       >
-        <Menu className="h-5 w-5" />
+        <Menu className="w-5 h-5" />
       </button>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="right" className="w-80 border-line-subtle bg-surface-canvas p-6 flex flex-col justify-between">
+        <SheetContent side="right" className="w-[85vw] max-w-sm border-l border-line-subtle/80 bg-surface-canvas/95 backdrop-blur-2xl p-6 md:p-8 flex flex-col justify-between">
           <div>
-            <SheetHeader className="text-left pb-4 border-b border-line-subtle">
+            <SheetHeader className="text-left pb-5 border-b border-line-subtle">
               <SheetTitle>
                 <Logo variant="full" size="md" />
               </SheetTitle>
@@ -36,48 +42,45 @@ export default function PublicMobileMenu() {
             </SheetHeader>
 
             {/* Primary Product Navigation */}
-            <nav className="mt-6 flex flex-col space-y-1" onClick={() => setOpen(false)}>
-              <p className="px-3 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70 mb-1">
-                Explore Yueora
-              </p>
+            <nav className="mt-6 flex flex-col" onClick={() => setOpen(false)}>
               <a
                 href="/#lifecycle"
-                className="rounded-control px-3 py-2.5 font-display text-lg font-medium text-ink-primary hover:bg-neutral-hover transition-colors"
+                className="py-4 text-lg tracking-wide text-ink-primary border-b border-line-subtle/50 hover:text-brand transition-colors"
               >
-                How it works
+                The Lifecycle
+              </a>
+              <a
+                href="/#repertoire"
+                className="py-4 text-lg tracking-wide text-ink-primary border-b border-line-subtle/50 hover:text-brand transition-colors"
+              >
+                Personal Repertoire
               </a>
               <a
                 href="/#practice"
-                className="rounded-control px-3 py-2.5 font-display text-lg font-medium text-ink-primary hover:bg-neutral-hover transition-colors"
+                className="py-4 text-lg tracking-wide text-ink-primary border-b border-line-subtle/50 hover:text-brand transition-colors"
               >
-                Practice without pressure
-              </a>
-              <a
-                href="/#performances"
-                className="rounded-control px-3 py-2.5 font-display text-lg font-medium text-ink-primary hover:bg-neutral-hover transition-colors"
-              >
-                Preserved moments
+                Practice Stand
               </a>
               <Link
-                to="/pricing"
-                className="rounded-control px-3 py-2.5 font-display text-lg font-medium text-ink-primary hover:bg-neutral-hover transition-colors"
+                to="/about"
+                className="py-4 text-lg tracking-wide text-ink-primary border-b border-line-subtle/50 hover:text-brand transition-colors"
               >
-                Pricing &amp; plans
+                About Yueora
+              </Link>
+              <Link
+                to="/pricing"
+                className="py-4 text-lg tracking-wide text-ink-primary border-b border-line-subtle/50 hover:text-brand transition-colors"
+              >
+                Pricing &amp; Plans
               </Link>
             </nav>
 
             {/* Secondary Destinations */}
-            <div className="mt-8 border-t border-line-subtle pt-4 space-y-1" onClick={() => setOpen(false)}>
-              <p className="px-3 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70 mb-1">
-                About &amp; Support
-              </p>
-              <Link to="/about" className="block rounded-control px-3 py-2 type-metadata text-ink-secondary hover:text-ink-primary">
-                About Yueora
+            <div className="mt-6 pt-2 space-y-1" onClick={() => setOpen(false)}>
+              <Link to="/help" className="block py-2 text-sm text-ink-secondary hover:text-ink-primary">
+                Help &amp; FAQ
               </Link>
-              <Link to="/help" className="block rounded-control px-3 py-2 type-metadata text-ink-secondary hover:text-ink-primary">
-                Help &amp; Guides
-              </Link>
-              <Link to="/legal/privacy" className="block rounded-control px-3 py-2 type-metadata text-ink-secondary hover:text-ink-primary">
+              <Link to="/legal/privacy" className="block py-2 text-sm text-ink-secondary hover:text-ink-primary">
                 Privacy policy
               </Link>
             </div>
@@ -86,28 +89,25 @@ export default function PublicMobileMenu() {
           {/* Action Footer */}
           <div className="pt-6 border-t border-line-subtle" onClick={() => setOpen(false)}>
             {isAuthenticated ? (
-              <Link
-                to="/library"
-                className="flex w-full items-center justify-center gap-2 rounded-control bg-brand px-4 py-3 text-xs font-semibold text-white hover:bg-brand-hover transition-colors"
-              >
-                <span>Go to Yueora</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            ) : (
-              <div className="space-y-2">
-                <Link
-                  to="/register"
-                  className="flex w-full items-center justify-center gap-2 rounded-control bg-brand px-4 py-3 text-xs font-semibold text-white hover:bg-brand-hover transition-colors"
-                >
-                  <span>Start playing</span>
+              <Button asChild intent="primary" size="lg" className="w-full">
+                <Link to="/library">
+                  <span>Go to Library</span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link
-                  to="/login"
-                  className="flex w-full items-center justify-center rounded-control border border-line-subtle bg-surface-panel px-4 py-2.5 text-xs font-medium text-ink-secondary hover:text-ink-primary transition-colors"
-                >
-                  Log in
-                </Link>
+              </Button>
+            ) : (
+              <div className="space-y-3">
+                <Button asChild intent="primary" size="lg" className="w-full">
+                  <Link to="/register">
+                    <span>Start playing</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild intent="secondary" size="lg" className="w-full">
+                  <Link to="/login">
+                    Log in
+                  </Link>
+                </Button>
               </div>
             )}
           </div>

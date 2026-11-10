@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useAuth } from '@/lib/AuthContext';
 import PublicMobileMenu from '@/components/external/PublicMobileMenu';
 import Logo from '@/components/brand/Logo';
@@ -7,115 +8,138 @@ import { Button } from '@/components/ui/button';
 
 /**
  * PublicHeader — Editorial, calm, product-led navigation.
- * At the page top: visually continuous with the warm canvas.
- * On scroll: gently strengthens backdrop blur and boundary.
+ * Matches UGC Nav grammar:
+ * - fixed top-0 inset-x-0 z-50
+ * - max-w-7xl mx-auto px-6 md:px-10 h-16 md:h-20
+ * - smooth scroll threshold at 40px
+ * - warm ivory translucent backdrop blur with subtle border
+ * - entrance motion
  */
 export default function PublicHeader() {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 40);
     };
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const isHome = location.pathname === '/';
 
+  const HeaderTag = shouldReduceMotion ? 'header' : motion.header;
+  const headerMotionProps = shouldReduceMotion
+    ? {}
+    : {
+        initial: { y: -80, opacity: 0 },
+        animate: { y: 0, opacity: 1 },
+        transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+      };
+
   return (
-    <header
-      className={`sticky top-0 z-40 shrink-0 transition-[background-color,border-color,backdrop-filter] duration-base ${
+    <HeaderTag
+      {...headerMotionProps}
+      className={`fixed top-0 inset-x-0 z-50 transition-colors duration-500 ${
         scrolled
-          ? 'border-b border-line-subtle bg-surface-canvas/92 backdrop-blur-md'
-          : 'border-b border-transparent bg-surface-canvas/60 backdrop-blur-xs'
+          ? 'border-b border-line-subtle/80 bg-surface-canvas/85 backdrop-blur-xl'
+          : 'border-b border-transparent bg-transparent'
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:px-8">
+      <nav className="mx-auto flex h-16 md:h-20 max-w-7xl items-center justify-between px-6 md:px-10">
         {/* Brand Logo */}
         <Link
           to="/"
           aria-label="Yueora home"
-          className="inline-flex focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded py-1"
+          className="inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full py-1"
         >
           <Logo variant="full" size="md" />
         </Link>
 
         {/* Primary Navigation — Focused on understanding the product */}
-        <nav className="flex items-center gap-2 sm:gap-3">
-          <div className="hidden items-center gap-2 md:flex lg:gap-4">
+        <div className="flex items-center gap-3">
+          <div className="hidden items-center gap-8 lg:gap-9 md:flex">
             {isHome ? (
               <>
                 <a
                   href="#lifecycle"
-                  className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
                 >
-                  How it works
+                  The Lifecycle
+                </a>
+                <a
+                  href="#repertoire"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+                >
+                  Repertoire
                 </a>
                 <a
                   href="#practice"
-                  className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
                 >
                   Practice
-                </a>
-                <a
-                  href="#performances"
-                  className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-                >
-                  Performances
                 </a>
               </>
             ) : (
               <>
                 <Link
                   to="/#lifecycle"
-                  className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
                 >
-                  How it works
+                  The Lifecycle
+                </Link>
+                <Link
+                  to="/#repertoire"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+                >
+                  Repertoire
                 </Link>
                 <Link
                   to="/#practice"
-                  className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
                 >
                   Practice
-                </Link>
-                <Link
-                  to="/#performances"
-                  className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-                >
-                  Performances
                 </Link>
               </>
             )}
 
             <Link
+              to="/about"
+              className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+            >
+              About
+            </Link>
+
+            <Link
               to="/pricing"
-              className="px-2.5 py-1 text-sm font-medium text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+              className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
             >
               Pricing
             </Link>
           </div>
 
-          <div className="mx-1 hidden h-4 w-px bg-line-subtle md:block" aria-hidden="true" />
+          <div className="mx-2 hidden h-4 w-px bg-line-subtle md:block" aria-hidden="true" />
 
           {/* Action Area */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             {isAuthenticated ? (
-              <Button asChild intent="primary" size="sm" className="font-semibold">
+              <Button asChild intent="primary" size="sm">
                 <Link to="/library">
-                  Go to Yueora
+                  Go to Library
                 </Link>
               </Button>
             ) : (
               <>
-                <Button asChild intent="quiet" size="sm" className="hidden md:inline-flex font-medium text-ink-secondary hover:text-ink-primary">
+                <Button asChild intent="quiet" size="sm" className="hidden md:inline-flex text-ink-secondary hover:text-ink-primary">
                   <Link to="/login">
                     Log in
                   </Link>
                 </Button>
-                <Button asChild intent="primary" size="sm" className="font-semibold">
+                <Button asChild intent="primary" size="sm">
                   <Link to="/register">
                     Start playing
                   </Link>
@@ -124,8 +148,8 @@ export default function PublicHeader() {
             )}
             <PublicMobileMenu />
           </div>
-        </nav>
-      </div>
-    </header>
+        </div>
+      </nav>
+    </HeaderTag>
   );
 }

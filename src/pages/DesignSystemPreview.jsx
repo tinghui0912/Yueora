@@ -62,6 +62,10 @@ export default function DesignSystemPreview() {
             <p className="type-marketing-title text-ink-primary">Your music, not ours.</p>
           </div>
           <div className="border-b border-line-subtle pb-3">
+            <span className="type-caption text-ink-secondary/70">type-eyebrow (Public &amp; Editorial Overline)</span>
+            <p className="type-eyebrow text-ink-tertiary">01 · Personal Repertoire Archive</p>
+          </div>
+          <div className="border-b border-line-subtle pb-3">
             <span className="type-caption text-ink-secondary/70">type-editorial-quote (Philosophy &amp; Brand Quotes)</span>
             <p className="type-editorial-quote text-ink-primary">&ldquo;The music already on your piano stand is the music that deserves your devotion.&rdquo;</p>
           </div>
@@ -120,7 +124,7 @@ export default function DesignSystemPreview() {
       <section className="space-y-4">
         <SectionHeader
           title="Color System & Interaction Matrix"
-          description="One canonical visual language. Brand is an accent; compact selection uses brand-soft, large selection uses neutral selection."
+          description="One canonical visual language. Near-black is identity. Chromatic color communicates functional meaning."
         />
         <Surface tone="panel" padding="md" className="space-y-6">
           {/* Swatches */}
@@ -247,6 +251,18 @@ export default function DesignSystemPreview() {
               <IconButton icon={Sparkles} size="lg" tone="primary" label="Sparkles LG" />
             </div>
           </div>
+
+          <div className="space-y-2">
+            <span className="type-caption text-ink-secondary/70">Pill Buttons (UGC Editorial Language)</span>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button intent="primary" className="rounded-full">Pill Primary</Button>
+              <Button intent="secondary" className="rounded-full">Pill Secondary</Button>
+              <div className="inline-flex items-center gap-1 rounded-full border border-line-subtle bg-surface-panel p-1">
+                <span className="rounded-full bg-neutral-muted px-4 py-1.5 text-xs font-semibold text-ink-primary border border-line-subtle">Active Toggle</span>
+                <span className="rounded-full px-4 py-1.5 text-xs font-medium text-ink-secondary">Inactive</span>
+              </div>
+            </div>
+          </div>
         </Surface>
       </section>
 
@@ -362,7 +378,7 @@ export default function DesignSystemPreview() {
                   Pick up where you left off · Clair de Lune
                 </p>
                 <p className="type-metadata text-ink-secondary">
-                  Continue from bar 14 · Standard surface-panel with brand accent indicator
+                  Continue from bar 14 · Standard surface-panel with near-black indicator
                 </p>
               </div>
             </div>
@@ -393,6 +409,34 @@ export default function DesignSystemPreview() {
             <BackLink to="/design-system" label="Back to Repertoire preview" />
           </div>
         </Surface>
+      </section>
+
+      {/* 7. Inverse Editorial Surface */}
+      <section className="space-y-4">
+        <SectionHeader
+          title="Inverse Editorial Surface (UGC Conversion Pattern)"
+          description="Dramatic near-black container (bg-ink-primary text-surface-canvas) with ambient background typography and high-contrast pill actions."
+        />
+        <div className="relative rounded-[2rem] bg-ink-primary text-surface-canvas p-8 md:p-10 overflow-hidden shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)]">
+          <div aria-hidden className="pointer-events-none absolute -bottom-6 -right-6 select-none">
+            <span className="font-display italic text-8xl text-surface-canvas/[0.04]">music</span>
+          </div>
+          <div className="relative z-10 max-w-xl">
+            <p className="type-eyebrow text-surface-canvas/60 mb-3">Sanctuary Callout</p>
+            <h3 className="font-display text-3xl font-medium text-surface-canvas">Play what you love.</h3>
+            <p className="mt-2 text-sm text-surface-canvas/75 leading-relaxed">
+              Near-black is identity. White / ivory is content surface. Chromatic color communicates functional status.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button size="sm" className="rounded-full bg-surface-canvas text-ink-primary hover:bg-surface-canvas/90">
+                White Pill Action
+              </Button>
+              <Button size="sm" variant="outline" className="rounded-full border-surface-canvas/30 text-surface-canvas hover:bg-surface-canvas/10">
+                Outlined Pill Action
+              </Button>
+            </div>
+          </div>
+        </div>
       </section>
     </AppPage>
   );
