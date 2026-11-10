@@ -723,10 +723,10 @@ export default function PracticeSession() {
           <DialogHeader><DialogTitle>Leave practice?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">You can preserve this session in your repertoire history, or discard it.</p>
           <DialogFooter className="mt-4 gap-2">
-            <Button variant="ghost" size="sm" onClick={() => setExitOpen(false)}>Keep playing</Button>
-            <Button variant="outline" size="sm" onClick={() => { setExitOpen(false); finish(); }}>Save &amp; finish</Button>
+            <Button intent="quiet" size="sm" onClick={() => setExitOpen(false)}>Keep playing</Button>
+            <Button intent="secondary" size="sm" onClick={() => { setExitOpen(false); finish(); }}>Save &amp; finish</Button>
             <Button
-              variant="destructive"
+              intent="danger"
               size="sm"
               onClick={() => { setExitOpen(false); recorder.cancel(); clearReport(); navigate(`/score/${scoreId}`); }}
             >

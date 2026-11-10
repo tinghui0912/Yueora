@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Play, Star, Check } from 'lucide-react';
+import { Play, Star } from 'lucide-react';
 import ScorePreview from './ScorePreview';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 
 const ownershipLabel = {
@@ -65,24 +66,12 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
             </Link>
 
             {onToggleSelect && (
-              <button
-                type="button"
-                role="checkbox"
-                aria-checked={selected}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onToggleSelect(score.id);
-                }}
-                className={cn(
-                  'flex h-control-xs w-control-xs shrink-0 items-center justify-center rounded-control border transition-[color,background-color,border-color] duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:ring-offset-surface-panel',
-                  selected
-                    ? 'border-brand bg-brand text-white'
-                    : 'border-line-subtle bg-surface-canvas/50 text-transparent hover:border-line-strong'
-                )}
+              <Checkbox
+                checked={selected}
+                onCheckedChange={() => onToggleSelect(score.id)}
                 aria-label={`Select ${score.title}`}
-              >
-                <Check className="icon-xs stroke-[2.5]" />
-              </button>
+                className="shrink-0"
+              />
             )}
           </div>
 

@@ -315,7 +315,7 @@ import { IconButton } from '@/components/ui/icon-button';
 import { Bell, Heart, X } from 'lucide-react';
 
 <IconButton icon={Bell} label="Notifications" tone="quiet" size="md" />
-<IconButton icon={Heart} label="Favorite" tone="surface" size="md" />
+<IconButton icon={Heart} label="Favorite" tone="outline" size="md" />
 <IconButton icon={X} label="Close" tone="danger" size="xs" />
 ```
 

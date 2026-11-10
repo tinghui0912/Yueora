@@ -270,8 +270,8 @@ export default function Performances() {
             This will permanently remove the preserved recording of {pendingDelete?.scoreTitleSnapshot}.
           </p>
           <DialogFooter className="mt-4">
-            <Button variant="outline" size="sm" onClick={() => setPendingDelete(null)}>Cancel</Button>
-            <Button variant="destructive" size="sm" onClick={confirmDelete}>Delete</Button>
+            <Button intent="secondary" size="sm" onClick={() => setPendingDelete(null)}>Cancel</Button>
+            <Button intent="danger" size="sm" onClick={confirmDelete}>Delete</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

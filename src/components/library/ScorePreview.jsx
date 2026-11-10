@@ -44,10 +44,10 @@ export default function ScorePreview({ id, className = '' }) {
       <line x1="1" y1="0" x2="1" y2={h} stroke="hsl(var(--line-subtle))" strokeWidth="2" opacity="0.6" />
 
       {/* Title placeholder */}
-      <text x={w / 2} y="14" textAnchor="middle" fill="#3A3528" fontSize="5" fontFamily="Georgia, serif" opacity="0.5">
+      <text x={w / 2} y="14" textAnchor="middle" fill="hsl(var(--ink-secondary))" fontSize="5" fontFamily="Georgia, serif" opacity="0.6">
         {seed % 3 === 0 ? 'Nocturne' : seed % 3 === 1 ? 'Prelude' : 'Sonata'}
       </text>
-      <text x={w / 2} y="22" textAnchor="middle" fill="#3A3528" fontSize="3.5" fontFamily="Georgia, serif" opacity="0.35">
+      <text x={w / 2} y="22" textAnchor="middle" fill="hsl(var(--ink-secondary))" fontSize="3.5" fontFamily="Georgia, serif" opacity="0.45">
         {seed % 4 === 0 ? 'Chopin' : seed % 4 === 1 ? 'Bach' : seed % 4 === 2 ? 'Beethoven' : 'Debussy'}
       </text>
 
@@ -58,19 +58,19 @@ export default function ScorePreview({ id, className = '' }) {
           <g key={si}>
             {/* Staff lines */}
             {staffLines.map((dy) => (
-              <line key={dy} x1="14" y1={yBase + dy} x2={w - 14} y2={yBase + dy} stroke="#C8C4B8" strokeWidth="0.5" />
+              <line key={dy} x1="14" y1={yBase + dy} x2={w - 14} y2={yBase + dy} stroke="hsl(var(--line-subtle))" strokeWidth="0.5" />
             ))}
             {/* Barlines */}
-            <line x1="14" y1={yBase} x2="14" y2={yBase + 20} stroke="#2A2518" strokeWidth="0.8" />
-            <line x1={w / 2} y1={yBase} x2={w / 2} y2={yBase + 20} stroke="#2A2518" strokeWidth="0.4" opacity="0.5" />
-            <line x1={w - 14} y1={yBase} x2={w - 14} y2={yBase + 20} stroke="#2A2518" strokeWidth="0.8" />
+            <line x1="14" y1={yBase} x2="14" y2={yBase + 20} stroke="hsl(var(--ink-primary))" strokeWidth="0.8" />
+            <line x1={w / 2} y1={yBase} x2={w / 2} y2={yBase + 20} stroke="hsl(var(--ink-primary))" strokeWidth="0.4" opacity="0.5" />
+            <line x1={w - 14} y1={yBase} x2={w - 14} y2={yBase + 20} stroke="hsl(var(--ink-primary))" strokeWidth="0.8" />
 
             {/* Notes */}
             {systemNotes[si].map((n, i) => (
-              <g key={i} fill="#1F2022">
+              <g key={i} fill="hsl(var(--ink-primary))">
                 <ellipse cx={n.x} cy={yBase + n.y + 6} rx="3" ry="2.2" transform={`rotate(-15 ${n.x} ${yBase + n.y + 6})`} />
-                <line x1={n.x + 2.8} y1={yBase + n.y + 6} x2={n.x + 2.8} y2={n.up ? yBase + n.y - 16 : yBase + n.y + 26} stroke="#1F2022" strokeWidth="0.9" />
-                {n.flag && <path d={`M ${n.x + 2.8} ${n.up ? yBase + n.y - 16 : yBase + n.y + 26} q 6 3 3 8`} fill="none" stroke="#1F2022" strokeWidth="0.8" />}
+                <line x1={n.x + 2.8} y1={yBase + n.y + 6} x2={n.x + 2.8} y2={n.up ? yBase + n.y - 16 : yBase + n.y + 26} stroke="hsl(var(--ink-primary))" strokeWidth="0.9" />
+                {n.flag && <path d={`M ${n.x + 2.8} ${n.up ? yBase + n.y - 16 : yBase + n.y + 26} q 6 3 3 8`} fill="none" stroke="hsl(var(--ink-primary))" strokeWidth="0.8" />}
               </g>
             ))}
           </g>
@@ -78,7 +78,7 @@ export default function ScorePreview({ id, className = '' }) {
       })}
 
       {/* Decorative marker — gold dot for some scores */}
-      {seed % 3 === 0 && <circle cx={w - 22} cy={h - 14} r="2" fill="#C59B27" opacity="0.6" />}
+      {seed % 3 === 0 && <circle cx={w - 22} cy={h - 14} r="2" fill="hsl(var(--gold))" opacity="0.6" />}
     </svg>
   );
 }

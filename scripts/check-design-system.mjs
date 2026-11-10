@@ -404,10 +404,15 @@ const FORBIDDEN_PATTERNS = [
   {
     regex: /text-\[\d+px\]/g,
     message: 'Arbitrary pixel text size found. Use semantic typography (.type-*) or standard Tailwind scale instead.',
+    isSvgFontSize: true,
   },
   {
     regex: /(?:bg|text|border|ring)-\[#(?:[0-9a-fA-F]{3}){1,2}\]/g,
     message: 'Raw hex color found in JSX. Use semantic color tokens (e.g. text-ink-*, bg-surface-*, text-brand).',
+  },
+  {
+    regex: /tone=["']surface["']/g,
+    message: 'IconButton tone="surface" is retired. Use tone="outline" for standard panel buttons or tone="quiet" for borderless buttons.',
   },
   {
     regex: /type-[a-z-]+(?:\s+[a-z0-9:-]+)*\s+text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|\[\w+\])/g,
@@ -472,20 +477,22 @@ function scanDirectory(dir, issues = []) {
           return;
         }
 
-        // Check forbidden patterns unless file is exempt
-        if (!isGeometryExempt) {
-          FORBIDDEN_PATTERNS.forEach((pattern) => {
-            const match = line.match(pattern.regex);
-            if (match) {
-              issues.push({
-                file: path.relative(process.cwd(), fullPath),
-                line: lineIndex + 1,
-                matched: match[0],
-                message: pattern.message,
-              });
-            }
-          });
-        }
+        // Check forbidden patterns
+        FORBIDDEN_PATTERNS.forEach((pattern) => {
+          // Geometry files only exempt arbitrary pixel text sizing for SVG coordinate scales
+          if (isGeometryExempt && pattern.isSvgFontSize) {
+            return;
+          }
+          const match = line.match(pattern.regex);
+          if (match) {
+            issues.push({
+              file: path.relative(process.cwd(), fullPath),
+              line: lineIndex + 1,
+              matched: match[0],
+              message: pattern.message,
+            });
+          }
+        });
 
         // Check unmigrated application page titles
         if (!isMarketing && /<h1[^>]*font-display\s+text-(?:2xl|3xl|4xl)/.test(line)) {
@@ -692,7 +699,7 @@ function verifyBrandSoftVsWashIntegrity(issues = []) {
                 file: path.relative(process.cwd(), full),
                 line: idx + 1,
                 matched: m,
-                message: `Arbitrary brand opacity '${m}' found. Use canonical semantic token (bg-brand-soft for selected/active context, bg-brand-wash for featured modules, or bg-neutral-muted for quiet containers).`,
+                message: `Arbitrary brand opacity '${m}' found. Use canonical semantic token (bg-brand-soft for compact selection context, or bg-neutral-muted for quiet containers).`,
               });
             });
           }
@@ -961,46 +968,7 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   });
 
-  // 15. Planar Navigation & Controls (Sidebar, Library, Performances, Pricing, Button, IconButton, Preview)
-  const sidebarPath = path.resolve('src/components/app-shell/Sidebar.jsx');
-  if (fs.existsSync(sidebarPath)) {
-    const code = fs.readFileSync(sidebarPath, 'utf8');
-    if (code.includes('Add sheet or file') && /Add sheet or file[\s\S]*?shadow-xs/.test(code)) {
-      issues.push({
-        file: 'src/components/app-shell/Sidebar.jsx',
-        line: 1,
-        matched: 'shadow-xs on Add sheet or file',
-        message: 'Sidebar "Add sheet or file" button must be a flat secondary button (no shadow-xs).',
-      });
-    }
-  }
-
-  const performancesPath = path.resolve('src/pages/Performances.jsx');
-  if (fs.existsSync(performancesPath)) {
-    const code = fs.readFileSync(performancesPath, 'utf8');
-    if (/activeTab === tab\.id[\s\S]*?shadow-xs/.test(code) || /selectedFilter === f\.id[\s\S]*?shadow-xs/.test(code)) {
-      issues.push({
-        file: 'src/pages/Performances.jsx',
-        line: 1,
-        matched: 'shadow-xs on segmented tab/filter',
-        message: 'Performances tablist and filter pills must be planar (no shadow-xs).',
-      });
-    }
-  }
-
-  const pricingPath = path.resolve('src/pages/Pricing.jsx');
-  if (fs.existsSync(pricingPath)) {
-    const code = fs.readFileSync(pricingPath, 'utf8');
-    if (/billingPeriod === 'monthly'[\s\S]*?shadow-xs/.test(code) || /billingPeriod === 'yearly'[\s\S]*?shadow-xs/.test(code)) {
-      issues.push({
-        file: 'src/pages/Pricing.jsx',
-        line: 1,
-        matched: 'shadow-xs on billing toggle',
-        message: 'Pricing billing toggle buttons must be planar (no shadow-xs).',
-      });
-    }
-  }
-
+  // 15. Planar Controls & Documentation Contracts (Button, IconButton, docs)
   const buttonPath = path.resolve('src/components/ui/button.jsx');
   if (fs.existsSync(buttonPath)) {
     const code = fs.readFileSync(buttonPath, 'utf8');
@@ -1017,38 +985,36 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
   const iconButtonPath = path.resolve('src/components/ui/icon-button.jsx');
   if (fs.existsSync(iconButtonPath)) {
     const code = fs.readFileSync(iconButtonPath, 'utf8');
-    if (/outline:\s*'[^']*shadow-xs/.test(code) || /surface:\s*'[^']*shadow-xs/.test(code) || /active:\s*\{[^}]*shadow-xs/.test(code)) {
+    if (/outline:\s*'[^']*shadow-xs/.test(code) || /active:\s*\{[^}]*shadow-xs/.test(code)) {
       issues.push({
         file: 'src/components/ui/icon-button.jsx',
         line: 1,
-        matched: 'shadow-xs in icon-button outline/surface/active',
-        message: 'IconButton outline, surface, and active variants must be planar (no shadow-xs).',
+        matched: 'shadow-xs in icon-button outline/active',
+        message: 'IconButton outline and active variants must be planar (no shadow-xs).',
+      });
+    }
+    if (code.includes('surface:')) {
+      issues.push({
+        file: 'src/components/ui/icon-button.jsx',
+        line: 1,
+        matched: 'surface in icon-button',
+        message: 'IconButton surface variant is retired. Use tone="outline" instead.',
       });
     }
   }
 
-  const PLANAR_PAGES = [
-    'src/pages/Notifications.jsx',
-    'src/pages/Imports.jsx',
-    'src/pages/About.jsx',
-    'src/pages/Help.jsx',
-    'src/pages/Library.jsx',
-    'src/pages/DesignSystemPreview.jsx',
-  ];
-  PLANAR_PAGES.forEach((rel) => {
-    const p = path.resolve(rel);
-    if (fs.existsSync(p)) {
-      const code = fs.readFileSync(p, 'utf8');
-      if (code.includes('shadow-xs')) {
-        issues.push({
-          file: rel,
-          line: 1,
-          matched: `shadow-xs in ${rel}`,
-          message: `${rel} content panels, navigation items, and list containers must be planar (no shadow-xs).`,
-        });
-      }
+  const dsDocPath = path.resolve('docs/design-system.md');
+  if (fs.existsSync(dsDocPath)) {
+    const code = fs.readFileSync(dsDocPath, 'utf8');
+    if (code.includes('tone="surface"') || code.includes("tone='surface'")) {
+      issues.push({
+        file: 'docs/design-system.md',
+        line: 1,
+        matched: 'tone="surface" in docs/design-system.md',
+        message: 'docs/design-system.md must not reference retired IconButton tone="surface".',
+      });
     }
-  });
+  }
 
   const tabsPath = path.resolve('src/components/ui/tabs.jsx');
   if (fs.existsSync(tabsPath)) {

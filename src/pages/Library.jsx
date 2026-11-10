@@ -11,6 +11,7 @@ import ScorePreview from '@/components/library/ScorePreview';
 import LibrarySubRail from '@/components/library/LibrarySubRail';
 import RepertoireGrid from '@/components/library/RepertoireGrid';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { IconButton } from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import {
@@ -492,18 +493,12 @@ export default function Library() {
                     selected.includes(s.id) ? 'bg-neutral-muted/70' : ''
                   }`}
                 >
-                  <button
-                    type="button"
-                    onClick={() => toggleSelect(s.id)}
-                    className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
-                      selected.includes(s.id)
-                        ? 'border-brand bg-brand text-white'
-                        : 'border-line-subtle hover:border-line-strong'
-                    }`}
+                  <Checkbox
+                    checked={selected.includes(s.id)}
+                    onCheckedChange={() => toggleSelect(s.id)}
                     aria-label={`Select ${s.title}`}
-                  >
-                    {selected.includes(s.id) && <Check className="h-3 w-3 stroke-[3]" />}
-                  </button>
+                    className="shrink-0"
+                  />
 
                   <Link to={`/score/${s.id}`} className="flex min-w-0 flex-1 items-center gap-4">
                     <div className="h-11 w-14 shrink-0 overflow-hidden rounded border border-line-subtle bg-white">
@@ -555,7 +550,7 @@ export default function Library() {
             {folders.length === 0 && <p className="py-4 text-center text-xs text-ink-tertiary">No folders yet.</p>}
           </div>
           <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setMoveOpen(false)}>Cancel</Button>
+            <Button intent="secondary" size="sm" onClick={() => setMoveOpen(false)}>Cancel</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -566,8 +561,8 @@ export default function Library() {
           <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">Scores in this folder will stay in your library — only the folder is removed.</p>
           <DialogFooter className="mt-4">
-            <Button variant="outline" size="sm" onClick={() => setFolderDelete(null)}>Cancel</Button>
-            <Button variant="destructive" size="sm" onClick={confirmDeleteFolder}>Delete folder</Button>
+            <Button intent="secondary" size="sm" onClick={() => setFolderDelete(null)}>Cancel</Button>
+            <Button intent="danger" size="sm" onClick={confirmDeleteFolder}>Delete folder</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -583,8 +578,8 @@ export default function Library() {
             {!allMine && !allShared && !allSaved && 'Selected pieces will be removed according to their ownership.'}
           </p>
           <DialogFooter className="mt-4">
-            <Button variant="outline" size="sm" onClick={() => setTrashConfirm(null)}>Cancel</Button>
-            <Button variant="destructive" size="sm" onClick={() => { removeSelected(); setTrashConfirm(null); }}>{removeLabel}</Button>
+            <Button intent="secondary" size="sm" onClick={() => setTrashConfirm(null)}>Cancel</Button>
+            <Button intent="danger" size="sm" onClick={() => { removeSelected(); setTrashConfirm(null); }}>{removeLabel}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -599,39 +594,63 @@ export default function Library() {
               <div key={f.id} className="flex items-center gap-2 rounded-control border border-line-subtle px-3 py-2">
                 {editingFolderId === f.id ? (
                   <>
-                    <input
+                    <Input
                       autoFocus
                       value={editFolderName}
                       onChange={(e) => setEditFolderName(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter') { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); } }}
-                      className="h-7 flex-1 rounded border border-line-subtle bg-surface-panel px-2 text-xs outline-none focus:border-brand"
+                      className="h-8 min-h-0 flex-1 px-2 text-xs"
                     />
-                    <button onClick={() => { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); }} className="rounded p-1 text-brand hover:bg-neutral-hover" aria-label="Confirm"><Check className="h-3.5 w-3.5" /></button>
-                    <button onClick={() => setEditingFolderId(null)} className="rounded p-1 text-ink-tertiary hover:bg-neutral-hover" aria-label="Cancel"><X className="h-3.5 w-3.5" /></button>
+                    <IconButton
+                      icon={Check}
+                      size="xs"
+                      tone="primary"
+                      label="Confirm"
+                      onClick={() => { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); }}
+                    />
+                    <IconButton
+                      icon={X}
+                      size="xs"
+                      tone="quiet"
+                      label="Cancel"
+                      onClick={() => setEditingFolderId(null)}
+                    />
                   </>
                 ) : (
                   <>
                     <Folder className="h-3.5 w-3.5 text-ink-tertiary" />
                     <span className="flex-1 text-xs font-medium text-ink-primary">{f.name}</span>
-                    <button onClick={() => { setEditingFolderId(f.id); setEditFolderName(f.name); }} className="rounded p-1 text-ink-tertiary hover:text-ink-primary hover:bg-neutral-hover" aria-label="Rename"><Pencil className="h-3 w-3" /></button>
-                    <button onClick={() => setFolderToDelete(f.id)} className="rounded p-1 text-ink-tertiary hover:text-destructive hover:bg-neutral-hover" aria-label="Delete"><Trash2 className="h-3 w-3" /></button>
+                    <IconButton
+                      icon={Pencil}
+                      size="xs"
+                      tone="quiet"
+                      label="Rename"
+                      onClick={() => { setEditingFolderId(f.id); setEditFolderName(f.name); }}
+                    />
+                    <IconButton
+                      icon={Trash2}
+                      size="xs"
+                      tone="danger"
+                      label="Delete"
+                      onClick={() => setFolderToDelete(f.id)}
+                    />
                   </>
                 )}
               </div>
             ))}
             <div className="flex items-center gap-2 pt-2">
-              <input
+              <Input
                 value={newFolderName}
                 onChange={(e) => setNewFolderName(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}
                 placeholder="New folder name"
-                className="h-7 flex-1 rounded border border-line-subtle bg-surface-panel px-2 text-xs outline-none focus:border-brand"
+                className="h-8 min-h-0 flex-1 px-2 text-xs"
               />
-              <Button size="sm" onClick={() => { if (newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}><Plus className="h-3.5 w-3.5" /></Button>
+              <Button intent="primary" size="sm" onClick={() => { if (newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}><Plus className="h-3.5 w-3.5" /></Button>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setManageFoldersOpen(false)}>Done</Button>
+            <Button intent="secondary" size="sm" onClick={() => setManageFoldersOpen(false)}>Done</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -642,8 +661,8 @@ export default function Library() {
           <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">Scores in this folder will remain in your library.</p>
           <DialogFooter className="mt-4">
-            <Button variant="outline" size="sm" onClick={() => setFolderToDelete(null)}>Cancel</Button>
-            <Button variant="destructive" size="sm" onClick={() => { deleteFolder(folderToDelete); if (activeFolderId === folderToDelete) setParam('view', 'all'); setFolderToDelete(null); }}>Delete folder</Button>
+            <Button intent="secondary" size="sm" onClick={() => setFolderToDelete(null)}>Cancel</Button>
+            <Button intent="danger" size="sm" onClick={() => { deleteFolder(folderToDelete); if (activeFolderId === folderToDelete) setParam('view', 'all'); setFolderToDelete(null); }}>Delete folder</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

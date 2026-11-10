@@ -351,7 +351,7 @@ export default function ScoreDetail() {
             ))}
             {folders.length === 0 && <p className="py-4 text-center text-xs text-ink-tertiary">No folders yet.</p>}
           </div>
-          <DialogFooter><Button variant="outline" size="sm" onClick={() => setMoveFolderOpen(false)}>Cancel</Button></DialogFooter>
+          <DialogFooter><Button intent="secondary" size="sm" onClick={() => setMoveFolderOpen(false)}>Cancel</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -379,14 +379,14 @@ export default function ScoreDetail() {
                     {isCurrent || isRestored ? (
                       <span className="text-xs font-semibold text-brand">{isRestored ? 'Restored' : 'Current'}</span>
                     ) : (
-                      <Button variant="outline" size="sm" onClick={() => { restoreVersion(score.id, v.label); toast({ title: 'Version restored', description: `Restored to ${v.label}.` }); setVersionsOpen(false); }}>Restore</Button>
+                      <Button intent="secondary" size="sm" onClick={() => { restoreVersion(score.id, v.label); toast({ title: 'Version restored', description: `Restored to ${v.label}.` }); setVersionsOpen(false); }}>Restore</Button>
                     )}
                   </div>
                 );
               });
             })()}
           </div>
-          <DialogFooter><Button variant="outline" size="sm" onClick={() => setVersionsOpen(false)}>Close</Button></DialogFooter>
+          <DialogFooter><Button intent="secondary" size="sm" onClick={() => setVersionsOpen(false)}>Close</Button></DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -396,8 +396,8 @@ export default function ScoreDetail() {
           <DialogHeader><DialogTitle>Move to trash?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">{score.title} will move to Trash for 30 days before permanent deletion.</p>
           <DialogFooter className="mt-4">
-            <Button variant="outline" size="sm" onClick={() => setConfirmDelete(false)}>Cancel</Button>
-            <Button variant="destructive" size="sm" onClick={confirmTrash}>Move to trash</Button>
+            <Button intent="secondary" size="sm" onClick={() => setConfirmDelete(false)}>Cancel</Button>
+            <Button intent="danger" size="sm" onClick={confirmTrash}>Move to trash</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -408,8 +408,8 @@ export default function ScoreDetail() {
           <DialogHeader><DialogTitle>Leave shared score?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">You will lose access to {score.title}.</p>
           <DialogFooter className="mt-4">
-            <Button variant="outline" size="sm" onClick={() => setConfirmLeave(false)}>Cancel</Button>
-            <Button variant="destructive" size="sm" onClick={confirmLeaveFn}>Leave</Button>
+            <Button intent="secondary" size="sm" onClick={() => setConfirmLeave(false)}>Cancel</Button>
+            <Button intent="danger" size="sm" onClick={confirmLeaveFn}>Leave</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -420,8 +420,8 @@ export default function ScoreDetail() {
           <DialogHeader><DialogTitle>Remove from library?</DialogTitle></DialogHeader>
           <p className="text-xs text-ink-secondary mt-1">{score.title} will be removed from your repertoire.</p>
           <DialogFooter className="mt-4">
-            <Button variant="outline" size="sm" onClick={() => setConfirmRemove(false)}>Cancel</Button>
-            <Button variant="destructive" size="sm" onClick={confirmRemoveFn}>Remove</Button>
+            <Button intent="secondary" size="sm" onClick={() => setConfirmRemove(false)}>Cancel</Button>
+            <Button intent="danger" size="sm" onClick={confirmRemoveFn}>Remove</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
