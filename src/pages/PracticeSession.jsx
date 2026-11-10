@@ -427,32 +427,33 @@ export default function PracticeSession() {
                   : 'Starting measure selected. Click ending measure.'}
               </p>
               <div className="flex items-center gap-1">
-                <button
+                <IconButton
+                  icon={ChevronLeft}
+                  size="xs"
+                  tone="outline"
+                  label="Previous measures"
                   onClick={() => setPickWindow((w) => Math.max(1, w - 4))}
                   disabled={pickWindow <= 1}
-                  className="rounded-control border border-line-subtle p-1 disabled:opacity-30"
-                  aria-label="Previous measures"
-                >
-                  <ChevronLeft className="h-3.5 w-3.5" />
-                </button>
+                />
                 <span className="px-1 text-xs text-ink-secondary">
                   Bars {pickWindow}–{Math.min(totalMeasures, pickWindow + 3)}
                 </span>
-                <button
+                <IconButton
+                  icon={ChevronRight}
+                  size="xs"
+                  tone="outline"
+                  label="Next measures"
                   onClick={() => setPickWindow((w) => Math.min(measureWindowStart(totalMeasures), w + 4))}
                   disabled={pickWindow + 4 > totalMeasures}
-                  className="rounded-control border border-line-subtle p-1 disabled:opacity-30"
-                  aria-label="Next measures"
-                >
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </button>
-                <button
+                />
+                <IconButton
+                  icon={X}
+                  size="xs"
+                  tone="outline"
+                  label="Cancel section"
                   onClick={() => { setSectionPhase('idle'); setPendingStart(null); }}
-                  className="ml-1 rounded-control border border-line-subtle p-1 text-ink-secondary hover:text-ink-primary"
-                  aria-label="Cancel section"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
+                  className="ml-1"
+                />
               </div>
             </div>
           )}
@@ -672,12 +673,12 @@ export default function PracticeSession() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button
-                  className="flex h-9 w-9 items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors"
-                  aria-label="More session actions"
-                >
-                  <MoreHorizontal className="h-4 w-4" />
-                </button>
+                <IconButton
+                  icon={MoreHorizontal}
+                  tone="outline"
+                  size="md"
+                  label="More session actions"
+                />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 border-line-subtle bg-surface-panel shadow-overlay">
                 <DropdownMenuItem onClick={() => setSettingsOpen(true)} className="text-sm">

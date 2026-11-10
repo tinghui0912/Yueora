@@ -1,14 +1,12 @@
 import { measureWindowStart } from '@/lib/practiceUtils';
 import { measureAtTime } from '@/lib/syncTimeline';
 import { rasterizeScoreWindow } from '@/lib/scoreFrame';
+import { resolveSemanticColor } from '@/lib/cssTokens';
 
 const SIZES = {
   landscape: { width: 1280, height: 720 },
   portrait: { width: 720, height: 1280 },
 };
-
-const INK = '#f7f5ef';
-const BRAND = '#8fbfa6';
 
 function drawCover(ctx, video, x, y, w, h) {
   const vw = video.videoWidth || 16;
@@ -75,7 +73,7 @@ export async function composeShareVideo({
   if (signal) signal.addEventListener('abort', onAbort);
 
   const drawScoreBox = (box, scoreCanvas, measure) => {
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = resolveSemanticColor('--surface-panel');
     ctx.fillRect(box.x, box.y, box.width, box.height);
 
     const pad = Math.max(10, Math.round(box.width * 0.035));
@@ -83,11 +81,11 @@ export async function composeShareVideo({
     const metaSize = Math.max(10, Math.round(box.width * 0.021));
 
     ctx.textAlign = 'left';
-    ctx.fillStyle = '#23252a';
+    ctx.fillStyle = resolveSemanticColor('--ink-primary');
     ctx.font = `600 ${titleSize}px Georgia, serif`;
     ctx.fillText(meta.title || 'Performance', box.x + pad, box.y + pad + titleSize);
 
-    ctx.fillStyle = '#2c5f47';
+    ctx.fillStyle = resolveSemanticColor('--brand');
     ctx.font = `${metaSize}px Helvetica, Arial, sans-serif`;
     const subtitle = [meta.composer, meta.rangeSummary].filter(Boolean).join(' · ');
     if (subtitle) ctx.fillText(subtitle, box.x + pad, box.y + pad + titleSize + metaSize + 6);
@@ -102,7 +100,7 @@ export async function composeShareVideo({
       ctx.drawImage(scoreCanvas, box.x + pad + (availW - dw) / 2, top, dw, dh);
     }
 
-    ctx.fillStyle = '#6f7370';
+    ctx.fillStyle = resolveSemanticColor('--ink-tertiary');
     ctx.font = `${Math.max(9, Math.round(metaSize * 0.85))}px Helvetica, Arial, sans-serif`;
     ctx.textAlign = 'right';
     ctx.fillText(`Measure ${measure}`, box.x + box.width - pad, box.y + box.height - pad * 0.7);
@@ -165,13 +163,13 @@ export async function composeShareVideo({
         ctx.fillStyle = '#12201a';
         ctx.fillRect(0, 0, width, height);
         drawScoreBox({ x: width * 0.05, y: height * 0.05, width: width * 0.9, height: height * 0.82 }, frame, measure);
-        ctx.fillStyle = BRAND;
+        ctx.fillStyle = resolveSemanticColor('--brand-soft');
         ctx.font = `500 ${Math.round(width * 0.018)}px Helvetica, Arial, sans-serif`;
         ctx.textAlign = 'left';
         ctx.fillText('Audio recording', width * 0.05, height * 0.945);
       }
 
-      ctx.fillStyle = INK;
+      ctx.fillStyle = resolveSemanticColor('--surface-canvas');
       ctx.font = `500 ${Math.round(width * 0.017)}px Helvetica, Arial, sans-serif`;
       ctx.textAlign = 'right';
       ctx.fillText(`${clock(time)} / ${clock(duration)}`, width - width * 0.04, height - height * 0.03);

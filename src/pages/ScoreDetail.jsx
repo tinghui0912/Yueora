@@ -228,37 +228,37 @@ export default function ScoreDetail() {
             <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line-subtle pt-3 text-xs text-ink-secondary">
               <span>Page {page} of {score.pages}</span>
               <div className="flex items-center gap-1">
-                <button
+                <IconButton
+                  icon={ZoomOut}
+                  size="sm"
+                  tone="outline"
+                  label="Zoom out"
                   onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))}
-                  className="rounded-control border border-line-subtle p-1.5 hover:bg-neutral-hover"
-                  aria-label="Zoom out"
-                >
-                  <ZoomOut className="h-3.5 w-3.5" />
-                </button>
-                <button
+                />
+                <IconButton
+                  icon={ZoomIn}
+                  size="sm"
+                  tone="outline"
+                  label="Zoom in"
                   onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))}
-                  className="rounded-control border border-line-subtle p-1.5 hover:bg-neutral-hover"
-                  aria-label="Zoom in"
-                >
-                  <ZoomIn className="h-3.5 w-3.5" />
-                </button>
+                />
                 <div className="mx-1 h-4 w-px bg-line-subtle" />
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="rounded-control border border-line-subtle p-1.5 hover:bg-neutral-hover disabled:opacity-40"
+                <IconButton
+                  icon={ChevronLeft}
+                  size="sm"
+                  tone="outline"
+                  label="Previous page"
                   disabled={page <= 1}
-                  aria-label="Previous page"
-                >
-                  <ChevronLeft className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  onClick={() => setPage((p) => Math.min(score.pages, p + 1))}
-                  className="rounded-control border border-line-subtle p-1.5 hover:bg-neutral-hover disabled:opacity-40"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                />
+                <IconButton
+                  icon={ChevronRight}
+                  size="sm"
+                  tone="outline"
+                  label="Next page"
                   disabled={page >= score.pages}
-                  aria-label="Next page"
-                >
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </button>
+                  onClick={() => setPage((p) => Math.min(score.pages, p + 1))}
+                />
               </div>
             </div>
 

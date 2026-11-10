@@ -1187,6 +1187,72 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
 verifyNavigationAndSurfaceContracts(totalViolations);
 verifyContrastIntegrity(totalViolations);
 
+// Phase 8: Verify Application Visual-Rendering Token Invariant (src/lib)
+function verifyRenderingCodeTokens(issues = []) {
+  const RENDERING_DIR = path.resolve('src/lib');
+  if (!fs.existsSync(RENDERING_DIR)) return issues;
+
+  const entries = fs.readdirSync(RENDERING_DIR, { withFileTypes: true });
+  for (const entry of entries) {
+    if (!entry.isFile() || (!entry.name.endsWith('.js') && !entry.name.endsWith('.jsx'))) continue;
+    const full = path.join(RENDERING_DIR, entry.name);
+    const code = fs.readFileSync(full, 'utf8');
+
+    // Only inspect modules that perform off-screen canvas / SVG visual rendering
+    if (!code.includes("getContext('2d')") && !code.includes("createElement('canvas')") && !code.includes('createRoot')) {
+      continue;
+    }
+
+    // Invariant: No duplicated token tables (e.g. hardcoded HSL mappings)
+    if (/const\s+TOKENS\s*=\s*\{/.test(code) || /--foreground:\s*['"]\d+/.test(code)) {
+      issues.push({
+        file: path.relative(process.cwd(), full),
+        line: 1,
+        matched: 'hardcoded TOKENS map',
+        message: 'Rendering code must not maintain a duplicate token map; resolve canonical CSS custom properties via resolveSemanticColor() or resolveRequiredSvgTokens().',
+      });
+    }
+
+    // Invariant: No hardcoded paper surface / score canvas background exceptions
+    if (/SCORE_CANVAS_BG\s*=/.test(code) || /#fffdf8/i.test(code)) {
+      issues.push({
+        file: path.relative(process.cwd(), full),
+        line: 1,
+        matched: 'paper/canvas background exception',
+        message: 'Rendering code must not hardcode paper surface colors (#fffdf8). Resolve --surface-panel instead.',
+      });
+    }
+
+    // Invariant: No hardcoded duplicate copies of Yueora brand / ink / panel semantic colors
+    const lines = code.split('\n');
+    lines.forEach((line, idx) => {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+      if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
+
+      const DUPLICATE_COLORS = [
+        { hex: /#23252a/i, name: 'ink-primary (#23252a)' },
+        { hex: /#2c5f47/i, name: 'brand (#2c5f47)' },
+        { hex: /#6f7370/i, name: 'ink-tertiary (#6f7370)' },
+        { hex: /#8fbfa6/i, name: 'brand-soft (#8fbfa6)' },
+      ];
+
+      for (const { hex, name } of DUPLICATE_COLORS) {
+        if (hex.test(line)) {
+          issues.push({
+            file: path.relative(process.cwd(), full),
+            line: idx + 1,
+            matched: line.trim(),
+            message: `Rendering code hardcodes duplicate Design System color for ${name}. Resolve canonical token via resolveSemanticColor() instead.`,
+          });
+        }
+      }
+    });
+  }
+  return issues;
+}
+verifyRenderingCodeTokens(totalViolations);
+
 if (totalViolations.length === 0) {
   console.log('✅ Design System integrity checks passed.');
   console.log(`   - Verified ${REQUIRED_TYPOGRAPHY.length} semantic typography roles in src/index.css`);
@@ -1214,6 +1280,7 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified zero banned full-width Landing surfaces`);
   console.log(`   - Verified retired tokens permanently removed and forbidden from product code`);
   console.log(`   - Verified standard AppPage adoption on core overview and detail pages`);
+  console.log(`   - Verified visual-rendering token invariant across application rendering modules (src/lib)`);
   console.log(`   - Verified WCAG AA contrast compliance across ${CANONICAL_CONTRAST_PAIRS.length} canonical foreground/background pairs via computed relative luminance`);
   console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} root directories\n`);
   process.exit(0);

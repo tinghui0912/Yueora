@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { flushSync } from 'react-dom';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
+import { resolveSemanticColor, resolveRequiredSvgTokens } from '@/lib/cssTokens';
 
 /**
  * Rasterises the real score canvas for the local share-video export.
@@ -11,48 +12,12 @@ import ScoreCanvas from '@/components/editor/ScoreCanvas';
  * staves are drawn by hand.
  */
 
-// The canvas refers to design tokens; a standalone SVG loaded into <img> has no
-// stylesheet, so token values are dynamically resolved from document.documentElement
-// and inlined on the root SVG element.
-const REQUIRED_SVG_TOKENS = [
-  '--foreground',
-  '--border',
-  '--muted-foreground',
-  '--primary',
-  '--practice-current',
-  '--selection',
-  '--warning',
-  '--card',
-  '--surface-panel',
-  '--ink-primary',
-  '--line-subtle',
-];
-
-function resolveCssVariable(name, rootStyle) {
-  let val = rootStyle.getPropertyValue(name).trim();
-  let depth = 0;
-  while (val.startsWith('var(') && depth < 5) {
-    const match = val.match(/var\((--[a-zA-Z0-9-]+)\)/);
-    if (!match) break;
-    val = rootStyle.getPropertyValue(match[1]).trim();
-    depth++;
-  }
-  return val;
-}
-
-function resolveRequiredCssTokens() {
-  if (typeof document === 'undefined') return '';
-  const rootStyle = window.getComputedStyle(document.documentElement);
-  return REQUIRED_SVG_TOKENS
-    .map((name) => `${name}:${resolveCssVariable(name, rootStyle)}`)
-    .join(';');
-}
-
 const SCORE_WIDTH = 40 + 4 * 168 + 20;
 
 export async function rasterizeScoreWindow({ notes, measureStart, activeMeasure, width = 1200 }) {
+  const panelBg = resolveSemanticColor('--surface-panel', '#ffffff');
   const host = document.createElement('div');
-  host.style.cssText = 'position:fixed;left:-20000px;top:0;padding:20px;background:#ffffff;';
+  host.style.cssText = `position:fixed;left:-20000px;top:0;padding:20px;background:${panelBg};`;
   document.body.appendChild(host);
   const root = createRoot(host);
 
@@ -82,7 +47,7 @@ export async function rasterizeScoreWindow({ notes, measureStart, activeMeasure,
     sourceHeight = Number(svg.getAttribute('height')) || 320;
 
     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    svg.setAttribute('style', resolveRequiredCssTokens());
+    svg.setAttribute('style', resolveRequiredSvgTokens());
     markup = new XMLSerializer().serializeToString(svg);
   } finally {
     root.unmount();
@@ -101,7 +66,7 @@ export async function rasterizeScoreWindow({ notes, measureStart, activeMeasure,
     canvas.height = Math.round(sourceHeight * scale);
 
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = panelBg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
     return canvas;

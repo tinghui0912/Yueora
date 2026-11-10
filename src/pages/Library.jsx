@@ -323,11 +323,10 @@ export default function Library() {
                       ))}
                     </div>
                     <label className="mt-3 flex items-center gap-2 type-label text-ink-primary cursor-pointer select-none">
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         checked={filterFav}
-                        onChange={(e) => setFilterFav(e.target.checked)}
-                        className="rounded accent-brand"
+                        onCheckedChange={(checked) => setFilterFav(Boolean(checked))}
+                        aria-label="Favorites only"
                       />
                       <span>Favorites only</span>
                     </label>
@@ -599,7 +598,7 @@ export default function Library() {
                       value={editFolderName}
                       onChange={(e) => setEditFolderName(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter') { renameFolder(f.id, editFolderName.trim()); setEditingFolderId(null); } }}
-                      className="h-8 min-h-0 flex-1 px-2 text-xs"
+                      className="flex-1"
                     />
                     <IconButton
                       icon={Check}
@@ -644,7 +643,7 @@ export default function Library() {
                 onChange={(e) => setNewFolderName(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}
                 placeholder="New folder name"
-                className="h-8 min-h-0 flex-1 px-2 text-xs"
+                className="flex-1"
               />
               <Button intent="primary" size="sm" onClick={() => { if (newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}><Plus className="h-3.5 w-3.5" /></Button>
             </div>
