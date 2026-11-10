@@ -145,7 +145,7 @@ export default function Landing() {
 
             {/* Tactile Actions */}
             <div className="mt-9 flex flex-wrap items-center gap-4">
-              <Button asChild intent="primary" size="lg" className="shadow-sm hover:shadow-md">
+              <Button asChild intent="primary" size="lg">
                 <Link to={primary}>
                   <span>Start your journey</span>
                   <ArrowRight className="icon-sm" />
@@ -679,7 +679,7 @@ export default function Landing() {
                 </ul>
               </div>
 
-              <Button asChild intent="primary" size="lg" className="mt-8 w-full shadow-sm">
+              <Button asChild intent="primary" size="lg" className="mt-8 w-full">
                 <Link to={primary}>
                   Start Free Trial
                 </Link>
@@ -741,7 +741,7 @@ export default function Landing() {
           </p>
 
           <div className="mt-8 flex justify-center gap-4">
-            <Button asChild intent="primary" size="lg" className="shadow-sm hover:shadow-md">
+            <Button asChild intent="primary" size="lg">
               <Link to={primary}>
                 <span>Begin Your Repertoire</span>
                 <ArrowRight className="icon-sm" />

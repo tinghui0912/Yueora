@@ -80,23 +80,19 @@ const CANONICAL_PRIMITIVE_TOKENS = [
   '--primitive-neutral-300',
   '--primitive-ink-500',
   '--primitive-ink-700',
+  '--primitive-ink-800',
   '--primitive-ink-900',
-  '--primitive-forest-50',
-  '--primitive-forest-100',
-  '--primitive-forest-700',
-  '--primitive-forest-800',
   '--primitive-gold-500',
   '--primitive-success-500',
   '--primitive-warning-500',
   '--primitive-danger-500',
-  '--primitive-info-500',
 ];
 
 const SEMANTIC_TOKENS_MAPPING_PRIMITIVES = [
   { token: '--surface-canvas', expectedPrimitive: '--primitive-neutral-25' },
   { token: '--surface-panel', expectedPrimitive: '--primitive-neutral-0' },
-  { token: '--brand', expectedPrimitive: '--primitive-forest-700' },
-  { token: '--brand-soft', expectedPrimitive: '--primitive-forest-100' },
+  { token: '--brand', expectedPrimitive: '--primitive-ink-900' },
+  { token: '--brand-soft', expectedPrimitive: '--primitive-neutral-75' },
   { token: '--ink-primary', expectedPrimitive: '--primitive-ink-900' },
   { token: '--ink-tertiary', expectedPrimitive: '--primitive-ink-500' },
   { token: '--neutral-muted', expectedPrimitive: '--primitive-neutral-100' },
@@ -168,7 +164,7 @@ const CANONICAL_CONTRAST_PAIRS = [
   { name: 'white on success', fg: '--primitive-neutral-0', bg: '--primitive-success-500', min: 4.5 },
   { name: 'ink-primary on warning', fg: '--ink-primary', bg: '--primitive-warning-500', min: 4.5 },
   { name: 'white on danger', fg: '--primitive-neutral-0', bg: '--primitive-danger-500', min: 4.5 },
-  { name: 'white on info', fg: '--primitive-neutral-0', bg: '--primitive-info-500', min: 4.5 },
+  { name: 'ink-primary on info', fg: '--ink-primary', bg: '--info', min: 4.5 },
   { name: 'ink-primary on gold', fg: '--ink-primary', bg: '--primitive-gold-500', min: 4.5 },
 ];
 
@@ -341,6 +337,11 @@ function verifyFoundations(issues = []) {
     '--surface-paper-edge',
     '--shadow-paper',
     '--shadow-paper-hover',
+    '--primitive-forest-50',
+    '--primitive-forest-100',
+    '--primitive-forest-700',
+    '--primitive-forest-800',
+    '--primitive-info-500',
   ];
   RETIRED_CSS_TOKENS.forEach((tok) => {
     if (css.includes(tok)) {
@@ -433,6 +434,10 @@ const FORBIDDEN_PATTERNS = [
   {
     regex: /<Surface[^>]*\b(?:tone=["']paper["']|elevation=["']paper["']|border=["']paper["'])/g,
     message: 'Surface component only supports canonical tones (panel, canvas, raised). Paper tokens are retired.',
+  },
+  {
+    regex: /(?:#2B58BF|#2b58bf|#2C5E43|#2c5e43)/g,
+    message: 'Forbidden color found. Royal blue (#2B58BF) and legacy forest green (#2C5E43) are strictly prohibited.',
   },
 ];
 

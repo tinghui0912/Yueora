@@ -43,18 +43,18 @@ export default function Pricing() {
             Start free. Upgrade when your library grows. Cancel or change your plan whenever you like.
           </p>
 
-          <div className="mt-6 inline-flex items-center gap-1 rounded-control border border-line-subtle bg-surface-panel p-0.5">
+          <div className="mt-6 inline-flex items-center gap-1 rounded-full border border-line-subtle bg-surface-panel p-1">
             <button
               onClick={() => setYearly(false)}
-              className={`rounded-control px-3 py-1.5 text-sm transition-colors ${!yearly ? 'bg-neutral-muted font-semibold text-ink-primary border border-line-subtle' : 'text-ink-secondary hover:text-ink-primary'}`}
+              className={`rounded-full px-4 py-1.5 text-sm transition-colors ${!yearly ? 'bg-neutral-muted font-semibold text-ink-primary border border-line-subtle' : 'text-ink-secondary hover:text-ink-primary'}`}
             >
               Monthly
             </button>
             <button
               onClick={() => setYearly(true)}
-              className={`rounded-control px-3 py-1.5 text-sm transition-colors ${yearly ? 'bg-neutral-muted font-semibold text-ink-primary border border-line-subtle' : 'text-ink-secondary hover:text-ink-primary'}`}
+              className={`rounded-full px-4 py-1.5 text-sm transition-colors ${yearly ? 'bg-neutral-muted font-semibold text-ink-primary border border-line-subtle' : 'text-ink-secondary hover:text-ink-primary'}`}
             >
-              Yearly <span className="ml-1 text-xs text-brand">save {saving}%</span>
+              Yearly <span className="ml-1 text-xs text-brand font-medium">save {saving}%</span>
             </button>
           </div>
         </div>
@@ -73,7 +73,7 @@ export default function Pricing() {
                 <div className="flex items-center justify-between">
                   <p className="font-display text-xl font-medium text-ink-primary">{p.name}</p>
                   {isPro && (
-                    <span className="rounded-control border border-line-subtle bg-surface-panel px-2.5 py-0.5 type-caption font-semibold text-brand">Popular</span>
+                    <span className="rounded-full border border-line-subtle bg-surface-panel px-3 py-0.5 type-caption font-semibold text-brand">Popular</span>
                   )}
                 </div>
 

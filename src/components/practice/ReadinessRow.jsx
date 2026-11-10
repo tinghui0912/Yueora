@@ -1,7 +1,7 @@
 import { AlertCircle, Check, Circle, Loader2 } from 'lucide-react';
 
 const tone = {
-  ready: { text: 'text-brand', label: 'Ready' },
+  ready: { text: 'text-success', label: 'Ready' },
   progress: { text: 'text-ink-secondary', label: 'Preparing' },
   error: { text: 'text-danger', label: 'Needs attention' },
   idle: { text: 'text-ink-tertiary', label: 'Not tested' },
@@ -31,7 +31,7 @@ export default function ReadinessRow({
     <div className="py-2.5">
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
         <div className="flex items-center gap-2.5 min-w-0">
-          <span className={`flex shrink-0 items-center justify-center ${isReady ? 'text-brand' : t.text}`}>
+          <span className={`flex shrink-0 items-center justify-center ${isReady ? 'text-success' : t.text}`}>
             <StatusIcon status={status} />
           </span>
           <span className="type-body-small text-ink-primary font-medium">{label}</span>

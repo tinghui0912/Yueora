@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const iconButtonVariants = cva(
-  'inline-flex items-center justify-center shrink-0 rounded-control transition-[color,background-color,border-color,box-shadow,transform] duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-canvas disabled:pointer-events-none disabled:opacity-40 select-none',
+  'inline-flex items-center justify-center shrink-0 rounded-full transition-[color,background-color,border-color,box-shadow,transform] duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-canvas disabled:pointer-events-none disabled:opacity-40 select-none',
   {
     variants: {
       tone: {
@@ -13,7 +13,7 @@ const iconButtonVariants = cva(
         outline:
           'border border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]',
         primary:
-          'bg-brand text-white shadow-xs hover:bg-brand-hover active:scale-[0.98]',
+          'bg-brand text-white hover:bg-brand-hover active:scale-[0.98]',
         danger:
           'text-danger hover:bg-danger/10 hover:text-danger active:scale-[0.98]',
       },

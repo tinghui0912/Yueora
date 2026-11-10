@@ -5,39 +5,33 @@
 @layer base {
   :root {
     /* ==========================================================================
-       1. PRIMITIVE PHYSICAL PALETTE (15 Core Physical Colors + 4 Status = 19 Primitives)
+       1. PRIMITIVE PHYSICAL PALETTE (15 Core Primitives)
        Restrained physical foundation. Pages compose semantic tokens;
        semantic tokens reference these primitives.
        Direct consumption of primitive-* in application code is strictly forbidden.
        ========================================================================== */
     /* Neutral / Warm Ivory */
     --primitive-neutral-0: 0 0% 100%;       /* Pure White: panels, cards, overlays */
-    --primitive-neutral-25: 44 19% 97%;     /* Warm Ivory Canvas: global page backdrop */
-    --primitive-neutral-50: 44 18% 95%;     /* Warm Neutral: subrail, passive tracks */
-    --primitive-neutral-75: 44 16% 91%;     /* Neutral Hover: interactive hover contrast */
-    --primitive-neutral-100: 44 14% 88%;    /* Neutral Muted: muted tracks, subtle lines */
-    --primitive-neutral-200: 47 13% 80%;    /* Neutral Strong: control borders, strong lines */
-    --primitive-neutral-300: 220 3% 62%;    /* Neutral Subtle: ink subtle, quiet dividers */
+    --primitive-neutral-25: 40 33% 96%;     /* Warm Ivory Canvas: global page backdrop (#F8F6F1) */
+    --primitive-neutral-50: 40 24% 94%;     /* Warm Neutral: subrail, passive tracks */
+    --primitive-neutral-75: 40 20% 91%;     /* Neutral Hover / Selected Soft (#ECE9E2) */
+    --primitive-neutral-100: 40 14% 86%;    /* Neutral Muted: muted tracks, subtle lines (#E0DDD6) */
+    --primitive-neutral-200: 40 12% 76%;    /* Neutral Strong: control borders, strong lines */
+    --primitive-neutral-300: 0 0% 60%;      /* Neutral Subtle: ink subtle, quiet dividers */
 
     /* Ink (Dark contrast hierarchy) */
-    --primitive-ink-500: 220 4% 44%;        /* Ink Tertiary: readable muted metadata (>=4.5:1 on white and canvas) */
-    --primitive-ink-700: 223 4% 36%;        /* Ink Secondary: readable secondary copy (>6.5:1) */
-    --primitive-ink-900: 220 5% 13%;        /* Ink Primary: primary titles/content (>10:1) */
-
-    /* Forest Green (Brand Accent, max 4 physical greens) */
-    --primitive-forest-50: 148 24% 96%;     /* Forest 50: internal compatibility fallback */
-    --primitive-forest-100: 148 36% 93%;    /* Brand Soft: compact selected content only */
-    --primitive-forest-700: 148 36% 27%;    /* Brand Accent: primary CTA, key indicator (>7:1 on white) */
-    --primitive-forest-800: 148 36% 22%;    /* Brand Hover / Pressed */
+    --primitive-ink-500: 0 0% 44%;          /* Ink Tertiary: readable muted metadata (>=4.5:1 on white and canvas) */
+    --primitive-ink-700: 0 0% 33%;          /* Ink Secondary: readable secondary copy (>7:1 on white and canvas) */
+    --primitive-ink-800: 0 0% 15%;          /* Ink Strong / Brand Hover: interactive CTA hover */
+    --primitive-ink-900: 0 0% 7%;           /* Ink Primary / Near-Black Identity (#121212) */
 
     /* Musical Accent */
     --primitive-gold-500: 44 67% 46%;       /* Gold: favorites, special musical detail */
 
     /* Functional Status */
-    --primitive-success-500: 148 30% 38%;   /* Success confirmation (>=4.5:1 on white) */
-    --primitive-warning-500: 38 58% 45%;    /* Warning notice */
+    --primitive-success-500: 148 30% 38%;   /* Success confirmation & practice following (>=4.5:1 on white) */
+    --primitive-warning-500: 38 58% 45%;    /* Warning notice & practice resyncing */
     --primitive-danger-500: 0 65% 45%;      /* Terracotta alert (>=4.5:1 on white) */
-    --primitive-info-500: 210 30% 45%;      /* Slate blue instructional notice (>=4.5:1 on white) */
 
     /* ==========================================================================
        2. SEMANTIC TOKENS (Product Meaning)
@@ -60,11 +54,11 @@
     --line-subtle: var(--primitive-neutral-100);
     --line-strong: var(--primitive-neutral-200);
 
-    /* ---- Brand ---- */
-    --brand: var(--primitive-forest-700);
-    --brand-hover: var(--primitive-forest-800);
-    --brand-soft: var(--primitive-forest-100);
-    --brand-soft-foreground: var(--primitive-forest-700);
+    /* ---- Brand (Near-black identity, warm-neutral soft) ---- */
+    --brand: var(--primitive-ink-900);
+    --brand-hover: var(--primitive-ink-800);
+    --brand-soft: var(--primitive-neutral-75);
+    --brand-soft-foreground: var(--primitive-ink-900);
 
     /* ---- Neutral quiet & hover (Warm ivory-gray, NOT green) ---- */
     --neutral-muted: var(--primitive-neutral-100);
@@ -79,11 +73,11 @@
     --warning-foreground: var(--primitive-ink-900);
     --danger: var(--primitive-danger-500);
     --danger-foreground: var(--primitive-neutral-0);
-    --info: var(--primitive-info-500);
-    --info-foreground: var(--primitive-neutral-0);
+    --info: var(--primitive-neutral-75);
+    --info-foreground: var(--primitive-ink-900);
 
     /* ---- Selection (Compact canvas selection alias) ---- */
-    --selection: var(--primitive-forest-100);
+    --selection: var(--primitive-neutral-75);
 
     /* ---- Practice semantic colors (non-judgmental) ---- */
     --practice-following: var(--primitive-success-500);
@@ -112,9 +106,9 @@
     --card-foreground: var(--primitive-ink-900);
     --popover: var(--primitive-neutral-0);
     --popover-foreground: var(--primitive-ink-900);
-    --primary: var(--primitive-forest-700);
+    --primary: var(--primitive-ink-900);
     --primary-foreground: var(--primitive-neutral-0);
-    --secondary: var(--primitive-neutral-100);
+    --secondary: var(--primitive-neutral-75);
     --secondary-foreground: var(--primitive-ink-900);
     --muted: var(--primitive-neutral-100);
     --muted-foreground: var(--primitive-ink-700);
@@ -124,24 +118,24 @@
     --destructive-foreground: var(--primitive-neutral-0);
     --border: var(--primitive-neutral-100);
     --input: var(--primitive-neutral-100);
-    --ring: var(--primitive-forest-700);
+    --ring: var(--primitive-ink-900);
 
-    --radius: 0.375rem;
-    --font-heading: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-    --font-body: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-    --font-display: "Newsreader", ui-serif, Georgia, serif;
+    --radius: 0.75rem;
+    --font-heading: "Cormorant Garamond", ui-serif, Georgia, serif;
+    --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
     /* ---- Radius semantic ---- */
-    --radius-control: 0.375rem;
-    --radius-container: 0.5rem;
-    --radius-overlay: 0.625rem;
+    --radius-control: 0.75rem;
+    --radius-container: 1.5rem;
+    --radius-overlay: 1rem;
 
     /* ---- Motion ---- */
-    --motion-fast: 120ms;
-    --motion-base: 180ms;
-    --motion-slow: 220ms;
-    --motion-easing: cubic-bezier(0.4, 0, 0.2, 1);
+    --motion-fast: 150ms;
+    --motion-base: 250ms;
+    --motion-slow: 350ms;
+    --motion-easing: cubic-bezier(0.22, 1, 0.36, 1);
 
     /* ---- Elevation ---- */
     --shadow-raised: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.03);
@@ -188,22 +182,22 @@
   .type-hero-title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-size: clamp(2.75rem, 5.5vw, 4.5rem);
     line-height: 1.05;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
   }
   .type-marketing-title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(1.875rem, 3.5vw, 2.75rem);
+    font-size: clamp(2rem, 3.8vw, 3rem);
     line-height: 1.15;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
   }
   .type-editorial-quote {
     font-family: var(--font-display);
     font-style: italic;
     font-weight: 400;
-    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    font-size: clamp(1.25rem, 2vw, 1.625rem);
     line-height: 1.5;
   }
   .type-marketing-body {
@@ -214,7 +208,7 @@
   .type-display {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: clamp(2rem, 4vw, 3.25rem);
     line-height: 1.1;
     letter-spacing: -0.02em;
   }
@@ -223,36 +217,36 @@
     font-weight: 500;
     font-size: 2rem; /* 32px mobile */
     line-height: 1.15;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
   }
   @media (min-width: 768px) {
     .type-experience-title {
-      font-size: 2.375rem; /* 38px desktop */
+      font-size: 2.5rem; /* 40px desktop */
     }
   }
   .type-page-title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 1.75rem;
+    font-size: 1.875rem;
     line-height: 1.2;
     letter-spacing: -0.015em;
   }
   @media (min-width: 768px) {
     .type-page-title {
-      font-size: 2.125rem;
+      font-size: 2.25rem;
       line-height: 1.15;
     }
   }
   .type-section-title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 1.25rem;
+    font-size: 1.375rem;
     line-height: 1.3;
     letter-spacing: -0.01em;
   }
   @media (min-width: 768px) {
     .type-section-title {
-      font-size: 1.375rem;
+      font-size: 1.5rem;
       line-height: 1.25;
     }
   }
@@ -283,10 +277,10 @@
   .type-caption {
     font-family: var(--font-body);
     font-weight: 600;
-    font-size: 0.75rem;
+    font-size: 0.6875rem; /* 11px editorial eyebrow */
     line-height: 1.4;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.2em;
   }
   .type-metadata {
     font-family: var(--font-body);

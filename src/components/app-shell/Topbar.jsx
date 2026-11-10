@@ -111,7 +111,7 @@ export default function Topbar() {
               <Settings className="mr-2 h-4 w-4 text-ink-secondary" /> Preferences
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-line-subtle" />
-            <DropdownMenuItem onClick={logout} className="type-body-small text-danger hover:bg-destructive/10 focus:bg-destructive/10">
+            <DropdownMenuItem onClick={logout} className="type-body-small text-danger hover:bg-danger/10 focus:bg-danger/10">
               <LogOut className="mr-2 h-4 w-4 text-danger" /> Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>

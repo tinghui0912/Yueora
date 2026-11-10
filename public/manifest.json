@@ -5,8 +5,8 @@
   "start_url": "/library",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#F9F8F6",
-  "theme_color": "#2C5E43",
+  "background_color": "#F8F6F1",
+  "theme_color": "#121212",
   "icons": [
     {
       "src": "/app-icon.svg",
