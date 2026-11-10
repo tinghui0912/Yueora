@@ -19,7 +19,7 @@ const surfaceVariants = cva(
       },
       border: {
         true: 'border border-line-subtle',
-        subtle: 'border border-line-subtle',
+        false: 'border-0',
         none: 'border-0',
       },
       padding: {
@@ -46,7 +46,7 @@ const surfaceVariants = cva(
  * @typedef {React.HTMLAttributes<HTMLDivElement> & {
  *   tone?: 'panel' | 'canvas' | 'raised';
  *   elevation?: 'none' | 'raised' | 'overlay';
- *   border?: boolean | 'subtle' | 'none';
+ *   border?: boolean | 'none';
  *   padding?: 'none' | 'sm' | 'md' | 'lg';
  *   interactive?: boolean;
  *   asChild?: boolean;

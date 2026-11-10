@@ -24,7 +24,7 @@ const TOKENS = {
   '--card': '0 0% 100%',
 };
 
-const PAPER = '#fffdf8';
+const SCORE_CANVAS_BG = '#fffdf8';
 const SCORE_WIDTH = 40 + 4 * 168 + 20;
 
 export async function rasterizeScoreWindow({ notes, measureStart, activeMeasure, width = 1200 }) {
@@ -78,7 +78,7 @@ export async function rasterizeScoreWindow({ notes, measureStart, activeMeasure,
     canvas.height = Math.round(sourceHeight * scale);
 
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = PAPER;
+    ctx.fillStyle = SCORE_CANVAS_BG;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
     return canvas;

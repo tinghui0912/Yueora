@@ -13,7 +13,6 @@ import { SectionHeader } from '@/components/patterns/SectionHeader';
 import { Stepper } from '@/components/patterns/Stepper';
 import { ChoiceCard } from '@/components/patterns/ChoiceCard';
 import { Surface } from '@/components/patterns/Surface';
-import MusicPaper from '@/components/patterns/MusicPaper';
 import BackLink from '@/components/patterns/BackLink';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
@@ -136,10 +135,6 @@ export default function DesignSystemPreview() {
                 <span className="type-caption text-ink-primary">Panel</span>
                 <p className="type-metadata text-ink-tertiary">surface-panel</p>
               </div>
-              <div className="rounded-control border border-surface-paper-edge bg-surface-paper p-3 text-center">
-                <span className="type-caption text-ink-primary">Paper (Notation)</span>
-                <p className="type-metadata text-ink-tertiary">Score Staves Only</p>
-              </div>
               <div className="rounded-control border border-line-subtle bg-surface-raised p-3 text-center shadow-overlay">
                 <span className="type-caption text-ink-primary">Raised</span>
                 <p className="type-metadata text-ink-tertiary">Overlay / Menu</p>
@@ -247,7 +242,7 @@ export default function DesignSystemPreview() {
             <span className="type-caption text-ink-secondary/70">Icon Buttons (IconButton)</span>
             <div className="flex flex-wrap items-center gap-3">
               <IconButton icon={Bell} size="xs" tone="quiet" label="Notifications XS" />
-              <IconButton icon={Heart} size="sm" tone="surface" label="Favorite SM" />
+              <IconButton icon={Heart} size="sm" tone="outline" label="Favorite SM" />
               <IconButton icon={Plus} size="md" tone="outline" label="Add MD" />
               <IconButton icon={Sparkles} size="lg" tone="primary" label="Sparkles LG" />
             </div>
@@ -329,10 +324,10 @@ export default function DesignSystemPreview() {
       {/* 5. Unified Product Grammar & Surface Model */}
       <section className="space-y-4">
         <SectionHeader
-          title="3 General UI Surfaces + 1 Notation Exception"
-          description="Same product, same visual grammar. Standard Panel is flat by default. MusicPaper strictly reserved for notation."
+          title="3 Canonical Surfaces"
+          description="Same product, same visual grammar. Standard Panel is flat by default."
         />
-        <div className="grid gap-4 sm:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-3">
           <div className="rounded-container border border-line-subtle bg-surface-canvas p-4">
             <span className="type-caption text-ink-tertiary uppercase">1. App Canvas</span>
             <p className="type-subsection text-ink-primary mt-1">Surface Canvas</p>
@@ -342,19 +337,13 @@ export default function DesignSystemPreview() {
           <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
             <span className="type-caption text-brand uppercase font-semibold">2. Universal Container</span>
             <p className="type-subsection text-ink-primary mt-1">Standard Panel</p>
-            <p className="type-metadata text-ink-secondary mt-1">All cards, lists, and forms (surface-panel). Flat by default.</p>
+            <p className="type-metadata text-ink-secondary mt-1">All cards, lists, forms, and musical notation containers (surface-panel). Flat by default.</p>
           </div>
 
           <div className="rounded-container border border-line-subtle bg-surface-raised p-4 shadow-overlay">
             <span className="type-caption text-ink-tertiary uppercase">3. Elevated Overlay</span>
             <p className="type-subsection text-ink-primary mt-1">Raised Overlay</p>
             <p className="type-metadata text-ink-secondary mt-1">Menus, dialogs, popovers (surface-raised).</p>
-          </div>
-
-          <div className="rounded-container border border-surface-paper-edge bg-surface-paper p-4 shadow-paper">
-            <span className="type-caption text-brand uppercase font-semibold">Notation Exception</span>
-            <p className="type-subsection text-ink-primary mt-1">Notation Surface</p>
-            <p className="type-metadata text-ink-secondary mt-1">Sheet music staves only (MusicPaper).</p>
           </div>
         </div>
 
@@ -382,25 +371,6 @@ export default function DesignSystemPreview() {
               <Button intent="secondary" size="sm">Score details</Button>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* 6. Notation Surface Primitive */}
-      <section className="space-y-4">
-        <SectionHeader
-          title="Notation Surface Primitive"
-          description="MusicPaper is strictly reserved for literal score reading, stave notation, and musical canvas viewports."
-        />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Surface tone="panel" padding="md" className="border-line-subtle">
-            <p className="type-subsection text-ink-primary">Standard Surface Panel</p>
-            <p className="type-metadata text-ink-secondary mt-1">Standard content container across the entire application.</p>
-          </Surface>
-
-          <MusicPaper elevation="paper" className="p-4">
-            <p className="type-subsection text-ink-primary">MusicPaper (Notation Canvas)</p>
-            <p className="type-metadata text-ink-secondary mt-1">Archival sheet music viewport with subtle tactile paper styling.</p>
-          </MusicPaper>
         </div>
       </section>
 

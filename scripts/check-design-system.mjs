@@ -337,6 +337,10 @@ function verifyFoundations(issues = []) {
     '--brand-wash-border',
     '--brand-wash-foreground',
     '--surface-paper-warm',
+    '--surface-paper',
+    '--surface-paper-edge',
+    '--shadow-paper',
+    '--shadow-paper-hover',
   ];
   RETIRED_CSS_TOKENS.forEach((tok) => {
     if (css.includes(tok)) {
@@ -423,7 +427,7 @@ const FORBIDDEN_PATTERNS = [
   },
   {
     regex: /<Surface[^>]*\b(?:tone=["']paper["']|elevation=["']paper["']|border=["']paper["'])/g,
-    message: 'Surface component is for general UI only (panel, canvas, raised). Sheet music uses MusicPaper exclusively.',
+    message: 'Surface component only supports canonical tones (panel, canvas, raised). Paper tokens are retired.',
   },
 ];
 
@@ -855,7 +859,7 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
         message: 'tailwind.config.js contains dead chart-* token mappings without canonical CSS variables or consumers.',
       });
     }
-    const retiredTailwindTokens = ['wash:', 'washBorder:', 'washForeground:', 'paper-warm:'];
+    const retiredTailwindTokens = ['wash:', 'washBorder:', 'washForeground:', 'paper-warm:', 'paper:', 'paper-edge:'];
     retiredTailwindTokens.forEach((tok) => {
       if (code.includes(tok)) {
         issues.push({
@@ -896,78 +900,9 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     });
   }
 
-  // 11. Consolidated Paper Vocabulary Allowlist (Recursive across src/pages and src/components)
-  const PAPER_VISUAL_ALLOWLIST = new Set([
-    path.normalize('src/components/patterns/MusicPaper.jsx'),
-    path.normalize('src/components/library/ScorePreview.jsx'),
-    path.normalize('src/components/visuals/HeroProductVisual.jsx'),
-    path.normalize('src/components/visuals/PerformanceMemoryVisual.jsx'),
-    path.normalize('src/components/visuals/PracticeWorkspaceVisual.jsx'),
-    path.normalize('src/components/visuals/ProgressVisual.jsx'),
-    path.normalize('src/components/visuals/SharingVisual.jsx'),
-    path.normalize('src/pages/DesignSystemPreview.jsx'),
-    path.normalize('src/pages/PracticeSession.jsx'),
-    path.normalize('src/pages/ScoreDetail.jsx'),
-  ]);
+  // 11. Retired tokens & visual exceptions: assert NO brand-wash, surface-paper, shadow-paper, or MusicPaper in ANY JSX file (Recursive, zero allowlist)
+  const RETIRED_TOKENS_REGEX = /\b(MusicPaper|bg-brand-wash|border-brand-washBorder|bg-surface-paper-warm|bg-surface-paper|border-surface-paper-edge|shadow-paper|shadow-paper-hover|music-paper)\b/;
 
-  const PAPER_VOCABULARY_REGEX = /\b(MusicPaper|bg-surface-paper|border-surface-paper-edge|shadow-paper|shadow-paper-hover|music-paper|surface-paper\/)\b/;
-
-  function scanPaperVocabulary(dir) {
-    if (!fs.existsSync(dir)) return;
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
-    for (const entry of entries) {
-      const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        scanPaperVocabulary(full);
-      } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
-        const rel = path.normalize(path.relative(process.cwd(), full));
-        if (PAPER_VISUAL_ALLOWLIST.has(rel)) continue;
-
-        const code = fs.readFileSync(full, 'utf8');
-        const lines = code.split('\n');
-        lines.forEach((line, idx) => {
-          const trimmed = line.trim();
-          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
-          if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
-          const match = line.match(PAPER_VOCABULARY_REGEX);
-          if (match) {
-            issues.push({
-              file: rel,
-              line: idx + 1,
-              matched: match[0],
-              message: `${rel} contains paper vocabulary ('${match[0]}'). Paper vocabulary is strictly reserved for literal score/notation canvases in PAPER_VISUAL_ALLOWLIST. Generic UI must use surface-panel and planar styling.`,
-            });
-          }
-        });
-      }
-    }
-  }
-  for (const dir of SCAN_DIRECTORIES) {
-    scanPaperVocabulary(dir);
-  }
-
-  // 12. Button / IconButton / Topbar: assert NO hover:bg-surface-paper*
-  const HOVER_PAPER_CHECKS = [
-    'src/components/ui/button.jsx',
-    'src/components/ui/icon-button.jsx',
-    'src/components/app-shell/Topbar.jsx',
-  ];
-  HOVER_PAPER_CHECKS.forEach((rel) => {
-    const p = path.resolve(rel);
-    if (fs.existsSync(p)) {
-      const code = fs.readFileSync(p, 'utf8');
-      if (code.includes('hover:bg-surface-paper')) {
-        issues.push({
-          file: rel,
-          line: 1,
-          matched: 'hover:bg-surface-paper in component',
-          message: `${rel} must use canonical hover token hover:bg-neutral-hover, not hover:bg-surface-paper*.`,
-        });
-      }
-    }
-  });
-
-  // 13. Retired tokens: assert NO brand-wash or surface-paper-warm in ANY JSX file (Recursive)
   function scanRetiredTokens(dir) {
     if (!fs.existsSync(dir)) return;
     const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -978,14 +913,20 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
       } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
         const rel = path.normalize(path.relative(process.cwd(), full));
         const code = fs.readFileSync(full, 'utf8');
-        if (code.includes('bg-brand-wash') || code.includes('border-brand-washBorder') || code.includes('bg-surface-paper-warm')) {
-          issues.push({
-            file: rel,
-            line: 1,
-            matched: 'Retired token in JSX',
-            message: `${rel} contains retired tokens (bg-brand-wash or bg-surface-paper-warm). Standard surfaces must use surface-panel or neutral-hover.`,
-          });
-        }
+        const lines = code.split('\n');
+        lines.forEach((line, idx) => {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+          const match = line.match(RETIRED_TOKENS_REGEX);
+          if (match) {
+            issues.push({
+              file: rel,
+              line: idx + 1,
+              matched: match[0],
+              message: `${rel} contains retired token/primitive '${match[0]}'. The Design System strictly enforces 3 canonical surfaces (canvas, panel, raised) with zero paper/notation visual exceptions. Use surface-panel or neutral-hover.`,
+            });
+          }
+        });
       }
     }
   }
@@ -1227,7 +1168,7 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
         file: 'src/components/patterns/Surface.jsx',
         line: 1,
         matched: 'paper in Surface.jsx CVA',
-        message: 'Surface component is for general UI only (panel, canvas, raised). Sheet music uses MusicPaper exclusively.',
+        message: 'Surface component only supports canonical tones (panel, canvas, raised). Paper tokens are retired.',
       });
     }
   }
@@ -1301,12 +1242,11 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified Standard Panel planar standard & ALLOWED_SHADOW_XS_FILES allowlist (shadow-xs restricted to approved CTA & form control primitives)`);
   console.log(`   - Verified planar container integrity across core application pages (Notifications, Imports, About, Help, Library, DesignSystemPreview)`);
   console.log(`   - Verified Surface API simplification (zero paper tone/elevation in Surface component or consumers)`);
-  console.log(`   - Verified consolidated PAPER_VISUAL_ALLOWLIST (strictly 10 notation-related files; zero paper vocabulary in generic UI)`);
+  console.log(`   - Verified retired paper tokens & MusicPaper completely removed from product code (zero exceptions)`);
   console.log(`   - Verified zero DialogTitle typography overrides & zero conflicting font-size overrides on semantic typography`);
   console.log(`   - Verified documentation and AI instruction truth sync (AGENTS.md & docs/design-system.md)`);
   console.log(`   - Verified zero banned full-width Landing surfaces`);
-  console.log(`   - Verified zero hover:bg-surface-paper in core UI primitives (Button, IconButton, Topbar)`);
-  console.log(`   - Verified retired tokens (brand-wash, surface-paper-warm) permanently removed and forbidden from product code`);
+  console.log(`   - Verified retired tokens permanently removed and forbidden from product code`);
   console.log(`   - Verified standard AppPage adoption on core overview and detail pages`);
   console.log(`   - Verified WCAG AA contrast compliance across ${CANONICAL_CONTRAST_PAIRS.length} canonical foreground/background pairs via computed relative luminance`);
   console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} root directories\n`);

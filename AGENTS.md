@@ -46,10 +46,10 @@ Yueora enforces a strict multi-layer Design System. **Pages compose; the Design 
 Before creating or styling any UI element:
 1. **Search existing Design System primitives:**
    - Buttons: `<Button intent="primary|secondary|quiet|danger|subtle|link" size="xs|sm|md|lg">`
-   - Icon Buttons: `<IconButton icon={Icon} label="Accessible name" tone="quiet|outline|surface|primary|danger" size="xs|sm|md|lg">`
+   - Icon Buttons: `<IconButton icon={Icon} label="Accessible name" tone="quiet|outline|primary|danger" size="xs|sm|md|lg">`
    - Form Fields: `<Field label="..." htmlFor="..." description="..." error={...} required><Input ... /></Field>`
    - Selects: `<NativeSelect>` or Radix `<Select>`
-   - Containers & Surfaces: `<AppPage size="form|standard|wide|compact|full">`, `<Surface tone="panel|canvas|raised" elevation="none|raised|overlay">`, `<MusicPaper>`
+   - Containers & Surfaces: `<AppPage size="form|standard|wide|compact|full">`, `<Surface tone="panel|canvas|raised" elevation="none|raised|overlay">`
    - Flow & Layout: `<PageHeader>`, `<SectionHeader>`, `<Stepper>`, `<ChoiceCard>`, `<RepertoireGrid>`
 2. **Use semantic typography roles instead of raw font sizes:**
    - Titles: `.type-display`, `.type-page-title`, `.type-section-title`, `.type-subsection`
@@ -58,11 +58,10 @@ Before creating or styling any UI element:
    - **Never combine** semantic typography with conflicting font sizes (e.g. do NOT write `type-page-title text-2xl`).
 3. **Use semantic colors & respect the Color Contract:**
    - Text: `text-ink-primary`, `text-ink-secondary`, `text-ink-tertiary`, `text-ink-subtle`
-   - Surfaces & 3 General UI Surfaces (+ Notation Exception):
+   - Surfaces & 3 Canonical Surfaces:
      - Workspace Canvas: `bg-surface-canvas` (warm ivory backdrop)
-     - Standard Content Panel: `bg-surface-panel` (clean white, `border-line-subtle`, `rounded-container`). Flat by default; avoid automatic `shadow-xs` on static containers. All cards, list containers, sections, resume modules, pricing tiers, and stats use standard panel.
-     - Elevated Overlays / Menus: `bg-surface-raised` with `shadow-overlay`
-     - Score Notation Canvas (Domain Exception): `bg-surface-paper` (`MusicPaper`) strictly reserved ONLY for literal sheet music score and musical notation canvases. Banned on generic recommendation cards, practice statistics, pricing cards, empty states, and standard content cards.
+     - Standard Content Panel: `bg-surface-panel` (clean white, `border-line-subtle`, `rounded-container`). Flat by default; avoid automatic `shadow-xs` on static containers. All cards, list containers, sections, resume modules, pricing tiers, stats, and musical notation/score containers use standard panel. Musical notation is domain content, not a separate Design System surface.
+     - Elevated Overlays / Menus: `bg-surface-raised` with `shadow-overlay` (or `shadow-raised`)
      - Secondary Navigation Shell (Implementation Detail): `bg-surface-subrail`, `border-line-subrail` for collection/folder subrails.
      - Brand Color Contract: Brand color is an accent, not a background system.
    - Lines: `border-line-subtle`, `border-line-strong`, `border-line-subrail`
@@ -73,25 +72,27 @@ Before creating or styling any UI element:
      - **Maximum 2 Brand Signals per selection state:** Never stack green background + green border + green text + green icon. Selection should be understood, not painted.
      - **Drag Targets:** Dragging state is not selection; use `border-brand bg-surface-canvas text-brand`, never `bg-brand-soft`.
      - **Control Toggles:** Loop/toggle buttons use `border-brand bg-neutral-muted text-ink-primary` with `text-brand` icon, not `bg-brand-soft`.
-   - Hover Contract: General interactive hover across all controls, buttons, dropdowns, list items, and links is strictly `bg-neutral-hover text-ink-primary`. Banned across generic UI: `hover:bg-surface-paper*`.
+   - Hover Contract: General interactive hover across all controls, buttons, dropdowns, list items, and links is strictly `bg-neutral-hover text-ink-primary`.
    - Primary CTA: `bg-brand` (deep forest green), `text-white`, `hover:bg-brand-hover`
    - Neutral hovers & muted items: `bg-neutral-muted`, `hover:bg-neutral-hover` (warm ivory-gray, NEVER green)
    - **Primitive Physical Palette:** 15 core physical colors + 4 status colors in `src/index.css` (19 primitives total). Pages and domain components MUST ONLY consume semantic tokens (`bg-surface-*`, `text-ink-*`, `text-brand`, etc.), NEVER primitive tokens directly (`bg-primitive-*` is banned in product code).
    - **Legacy tokens are permanently retired from product code:** NEVER use `bg-accent`, `bg-muted`, `text-muted-foreground`, `bg-primary`, `text-primary`, `bg-card`, `bg-background`, `text-foreground`, `border-border`, `border-input`, `ring-ring` in pages or domain components.
    - Never use arbitrary `bg-brand/10` or raw hex colors (`#...`) in application JSX.
 4. **Appearance vs Composition Boundary:**
-   - **Design System Owns:** color tokens, typography roles, font family & scale, control size (`control-xs..xl`), icon size (`icon-xs..xl`), radius (`radius-control|container|overlay`), surface model (`canvas|panel|raised` + notation `MusicPaper`), border & line tokens, shadow language (`none|raised|overlay|paper`), interaction & hover states, button & input variants, page width system (`AppPage`), navigation states, selection contracts.
+   - **Design System Owns:** color tokens, typography roles, font family & scale, control size (`control-xs..xl`), icon size (`icon-xs..xl`), radius (`radius-control|container|overlay`), surface model (`canvas|panel|raised`), border & line tokens, shadow language (`none|raised|overlay`), interaction & hover states, button & input variants, page width system (`AppPage`), navigation states, selection contracts.
    - **Page Owns:** content, content order, grid/flex structure, responsive columns, domain geometry, local spacing (`gap-*`, `space-y-*`, `mt-*`), data rendering.
    - **Do not pursue "zero className":** Standard composition layout utilities (`grid gap-4`, `flex items-center`) are legitimate page responsibilities. Visual drift occurs only when pages invent custom colors, fonts, shadows, borders, radii, or interaction states.
 5. **Production Auth & Product Truth Principles:**
    - **Production Auth Boundary:** Development conveniences (e.g. `?demo=true`, `loginViaDemo()`, `localStorage.yueora_demo_auth`) are strictly gated by `import.meta.env.DEV`. Production builds must never accept demo auth or fall back to demo sessions on login failure.
    - **Product Truth:** Product UI must never claim a capability that production code does not actually provide. Simulated readiness / progress must be strictly gated behind `import.meta.env.DEV`.
-5. **Unified Product Grammar & Anti-Overdesign Principle:**
+6. **Unified Product Grammar & Anti-Overdesign Principle:**
    - **Same product, same visual grammar.**
    - **Simple before expressive.**
    - **Consistent before distinctive.**
    - **If the standard treatment works, use it.**
    - **Semantic meaning does not automatically justify a different visual treatment.**
+   - **Domain meaning does not automatically justify a new visual primitive.**
+   - **A specialized content type is not automatically a specialized Design System surface.**
    - **Do not create a new surface, color, shadow, radius, card treatment, page width or component variant merely because a section is important, musical, premium, emotional, featured or memorable.**
    - **Visual differences must have functional necessity, not aesthetic preference.**
    - If two UI elements can look the same without hurting usability, they should look the same.

@@ -8,7 +8,7 @@ import ScorePreview from '@/components/library/ScorePreview';
 
 export default function PracticeWorkspaceVisual() {
   return (
-    <div aria-hidden="true" className="music-paper rounded-lg p-5 shadow-paper sm:p-6">
+    <div aria-hidden="true" className="rounded-container border border-line-subtle bg-surface-panel p-5 sm:p-6">
       {/* Stand Header: Piece & Non-judgmental Status */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-subtle pb-3">
         <div className="flex items-center gap-2.5">

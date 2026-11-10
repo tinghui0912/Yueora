@@ -14,7 +14,7 @@ import TempoPopover from '@/components/practice/TempoPopover';
 import FollowFeedback from '@/components/practice/FollowFeedback';
 import VirtualKeyboard from '@/components/practice/VirtualKeyboard';
 import PracticeSettingsDialog from '@/components/practice/PracticeSettingsDialog';
-import MusicPaper from '@/components/patterns/MusicPaper';
+import { Surface } from '@/components/patterns/Surface';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import {
@@ -457,9 +457,9 @@ export default function PracticeSession() {
             </div>
           )}
 
-          {/* Archival Music Paper Stand */}
-          <MusicPaper
-            elevation="paper"
+          {/* Musical Score Workspace */}
+          <Surface
+            tone="panel"
             className="p-4 sm:p-8 relative"
           >
             <ScoreCanvas
@@ -508,7 +508,7 @@ export default function PracticeSession() {
                 </div>
               )}
             </div>
-          </MusicPaper>
+          </Surface>
 
           {virtualKeyboard && (
             <div className="mt-3">

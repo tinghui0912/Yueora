@@ -12,6 +12,7 @@ import LibrarySubRail from '@/components/library/LibrarySubRail';
 import RepertoireGrid from '@/components/library/RepertoireGrid';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
+import { Input } from '@/components/ui/input';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -268,15 +269,13 @@ export default function Library() {
 
             {/* Filter, sort, view toggles */}
             <div className="flex items-center gap-2">
-              <div className="relative">
-                <input
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && setParam('search', searchInput.trim())}
-                  placeholder="Filter by title, composer…"
-                  className="h-control-md w-44 rounded-control border border-line-subtle bg-surface-panel px-3 type-body-small text-ink-primary outline-none placeholder:text-ink-tertiary focus:border-brand md:w-56"
-                />
-              </div>
+              <Input
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && setParam('search', searchInput.trim())}
+                placeholder="Filter by title, composer…"
+                className="w-44 md:w-56"
+              />
 
               {/* Filter dropdown */}
               <div className="relative">
@@ -369,7 +368,7 @@ export default function Library() {
                 <IconButton
                   icon={LayoutGrid}
                   size="xs"
-                  tone={view === 'grid' ? 'surface' : 'quiet'}
+                  tone={view === 'grid' ? 'outline' : 'quiet'}
                   label="Grid view"
                   onClick={() => setParam('layout', 'grid')}
                   className={view === 'grid' ? 'text-brand' : 'text-ink-tertiary hover:text-ink-primary'}
@@ -377,7 +376,7 @@ export default function Library() {
                 <IconButton
                   icon={List}
                   size="xs"
-                  tone={view === 'list' ? 'surface' : 'quiet'}
+                  tone={view === 'list' ? 'outline' : 'quiet'}
                   label="List view"
                   onClick={() => setParam('layout', 'list')}
                   className={view === 'list' ? 'text-brand' : 'text-ink-tertiary hover:text-ink-primary'}

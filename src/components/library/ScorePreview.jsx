@@ -36,12 +36,12 @@ export default function ScorePreview({ id, className = '' }) {
   });
 
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className={`bg-surface-paper ${className}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <svg viewBox={`0 0 ${w} ${h}`} className={`bg-surface-panel ${className}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
       {/* Page background */}
-      <rect width={w} height={h} fill="hsl(var(--surface-paper))" />
+      <rect width={w} height={h} fill="hsl(var(--surface-panel))" />
 
       {/* Subtle folio binding line on left */}
-      <line x1="1" y1="0" x2="1" y2={h} stroke="hsl(var(--surface-paper-edge))" strokeWidth="2" opacity="0.6" />
+      <line x1="1" y1="0" x2="1" y2={h} stroke="hsl(var(--line-subtle))" strokeWidth="2" opacity="0.6" />
 
       {/* Title placeholder */}
       <text x={w / 2} y="14" textAnchor="middle" fill="#3A3528" fontSize="5" fontFamily="Georgia, serif" opacity="0.5">

@@ -4,15 +4,15 @@
  */
 import MockScanPage from './MockScanPage';
 import ScorePreview from '@/components/library/ScorePreview';
-import MusicPaper from '@/components/patterns/MusicPaper';
+import { Surface } from '@/components/patterns/Surface';
 import { ScoreSheetGlyph, PracticeGlyph, MemoryGlyph } from '@/components/brand/MusicalGlyphs';
 
 export default function HeroProductVisual() {
   return (
     <div aria-hidden="true" className="relative select-none">
       {/* 1. Scanned paper page — tilted archival sheet */}
-      <div className="absolute -left-2 top-6 w-[45%] rotate-[-4deg] rounded-md border border-surface-paper-edge bg-surface-paper p-2.5 shadow-paper transition-transform duration-slow hover:rotate-[-2deg] z-10 sm:left-2">
-        <div className="flex items-center justify-between pb-1.5 px-0.5 border-b border-surface-paper-edge text-xs text-ink-secondary/70">
+      <div className="absolute -left-2 top-6 w-[45%] rotate-[-4deg] rounded-md border border-line-subtle bg-surface-panel p-2.5 shadow-raised transition-transform duration-slow hover:rotate-[-2deg] z-10 sm:left-2">
+        <div className="flex items-center justify-between pb-1.5 px-0.5 border-b border-line-subtle text-xs text-ink-secondary/70">
           <span>Physical scan</span>
           <span>PDF / Photo</span>
         </div>
@@ -25,11 +25,12 @@ export default function HeroProductVisual() {
       </div>
 
       {/* 2. Recognized interactive score in personal repertoire */}
-      <MusicPaper
-        elevation="paper"
+      <Surface
+        tone="panel"
+        elevation="raised"
         className="ml-[30%] sm:ml-[28%] p-4 sm:p-5 relative z-20 transition-transform duration-slow hover:translate-y-[-2px]"
       >
-        <div className="flex items-center justify-between border-b border-surface-paper-edge pb-2.5 text-xs">
+        <div className="flex items-center justify-between border-b border-line-subtle pb-2.5 text-xs">
           <div className="flex items-center gap-1.5">
             <span className="flex h-5 w-5 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas text-brand">
               <ScoreSheetGlyph className="h-3 w-3" />
@@ -42,12 +43,12 @@ export default function HeroProductVisual() {
         </div>
 
         {/* Score preview */}
-        <div className="aspect-[16/10] mt-3 overflow-hidden rounded border border-surface-paper-edge bg-white">
+        <div className="aspect-[16/10] mt-3 overflow-hidden rounded border border-line-subtle bg-surface-panel">
           <ScorePreview id="clair-de-lune" className="h-full w-full object-cover" />
         </div>
 
         {/* Piece info & living personal history */}
-        <div className="mt-3.5 flex items-start justify-between gap-2 border-t border-surface-paper-edge pt-3">
+        <div className="mt-3.5 flex items-start justify-between gap-2 border-t border-line-subtle pt-3">
           <div>
             <p className="font-display text-base font-medium text-ink-primary leading-tight">
               Clair de Lune
@@ -66,7 +67,7 @@ export default function HeroProductVisual() {
             <MemoryGlyph className="h-3 w-3" /> 1 take kept
           </span>
         </div>
-      </MusicPaper>
+      </Surface>
 
       {/* Musical resonance connector */}
       <svg

@@ -12,8 +12,6 @@ const iconButtonVariants = cva(
           'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]',
         outline:
           'border border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]',
-        surface:
-          'border border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]',
         primary:
           'bg-brand text-white shadow-xs hover:bg-brand-hover active:scale-[0.98]',
         danger:
@@ -40,7 +38,7 @@ const iconButtonVariants = cva(
  * @typedef {React.ButtonHTMLAttributes<HTMLButtonElement> & {
  *   icon?: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
  *   label: string;
- *   tone?: 'quiet' | 'outline' | 'surface' | 'primary' | 'danger';
+ *   tone?: 'quiet' | 'outline' | 'primary' | 'danger';
  *   size?: 'xs' | 'sm' | 'md' | 'lg';
  *   active?: boolean;
  *   asChild?: boolean;

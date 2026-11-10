@@ -9,7 +9,7 @@ import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
 import ScorePreview from '@/components/library/ScorePreview';
 import ListenControl from '@/components/score/ListenControl';
 import SharingDialog from '@/components/sharing/SharingDialog';
-import MusicPaper from '@/components/patterns/MusicPaper';
+import { Surface } from '@/components/patterns/Surface';
 import JourneyTimeline from '@/components/patterns/JourneyTimeline';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
@@ -172,7 +172,7 @@ export default function ScoreDetail() {
               <IconButton
                 icon={MoreHorizontal}
                 size="md"
-                tone="surface"
+                tone="outline"
                 label="More score options"
               />
             </DropdownMenuTrigger>
@@ -213,7 +213,7 @@ export default function ScoreDetail() {
       <div className="mt-8 grid gap-8 lg:grid-cols-12">
         {/* Left Column: Archival Score Reader Surface */}
         <div className="lg:col-span-8 space-y-6">
-          <MusicPaper elevation="paper" className="p-4 sm:p-6">
+          <Surface tone="panel" className="p-4 sm:p-6">
             {/* Score folio viewer */}
             <div className="flex justify-center overflow-auto rounded bg-surface-canvas/60 p-4">
               <div
@@ -266,7 +266,7 @@ export default function ScoreDetail() {
             <div id="listen" className="mt-4 border-t border-line-subtle pt-4">
               <ListenControl score={score} />
             </div>
-          </MusicPaper>
+          </Surface>
         </div>
 
         {/* Right Column: Journey Hub & Musical Relationship */}

@@ -47,8 +47,6 @@
     --surface-canvas: var(--primitive-neutral-25);
     --surface-panel: var(--primitive-neutral-0);
     --surface-raised: var(--primitive-neutral-0);
-    --surface-paper: var(--primitive-neutral-25);
-    --surface-paper-edge: var(--primitive-neutral-100);
     --surface-subrail: var(--primitive-neutral-50);
     --surface-subrail-border: var(--primitive-neutral-100);
 
@@ -148,8 +146,6 @@
     /* ---- Elevation ---- */
     --shadow-raised: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.03);
     --shadow-overlay: 0 10px 38px -10px rgb(0 0 0 / 0.16), 0 8px 20px -12px rgb(0 0 0 / 0.10);
-    --shadow-paper: 0 1px 3px 0 rgb(44 38 28 / 0.06), 0 4px 12px -2px rgb(44 38 28 / 0.05);
-    --shadow-paper-hover: 0 2px 6px 0 rgb(44 38 28 / 0.08), 0 10px 24px -4px rgb(44 38 28 / 0.10);
 
     /* ---- Control Heights ---- */
     --control-height-xs: 1.75rem; /* 28px */
@@ -317,21 +313,6 @@
   }
   .elevation-overlay {
     box-shadow: var(--shadow-overlay);
-  }
-  .music-paper {
-    background-color: hsl(var(--surface-paper));
-    border: 1px solid hsl(var(--surface-paper-edge));
-    box-shadow: var(--shadow-paper);
-  }
-  .music-paper-interactive {
-    background-color: hsl(var(--surface-paper));
-    border: 1px solid hsl(var(--surface-paper-edge));
-    box-shadow: var(--shadow-paper);
-    transition: transform var(--motion-fast) var(--motion-easing), box-shadow var(--motion-fast) var(--motion-easing);
-  }
-  .music-paper-interactive:hover {
-    box-shadow: var(--shadow-paper-hover);
-    transform: translateY(-2px);
   }
 
   /* ---- Control Heights, Widths, & Min-Dimensions ---- */

@@ -18,7 +18,7 @@ export default function ProgressVisual() {
   ];
 
   return (
-    <div aria-hidden="true" className="music-paper rounded-lg p-5 shadow-paper sm:p-6">
+    <div aria-hidden="true" className="rounded-container border border-line-subtle bg-surface-panel p-5 sm:p-6">
       {/* Reflective Overview Header */}
       <div className="flex items-center justify-between border-b border-line-subtle pb-3">
         <div>

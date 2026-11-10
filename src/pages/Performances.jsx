@@ -9,6 +9,7 @@ import StateMessage from '@/components/patterns/StateMessage';
 import AppPage from '@/components/patterns/AppPage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
@@ -174,50 +175,35 @@ export default function Performances() {
 
       {/* Tabs */}
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-b border-line-subtle pb-3">
-        <div role="tablist" aria-label="Performances view" className="inline-flex rounded-control border border-line-subtle bg-neutral-muted p-0.5">
-          {TABS.map((t) => (
-            <button
-              key={t.value}
-              role="tab"
-              aria-selected={tab === t.value}
-              onClick={() => setTab(t.value)}
-              className={`rounded px-3 py-1.5 text-xs transition-colors ${
-                tab === t.value
-                  ? 'bg-surface-panel font-semibold text-ink-primary'
-                  : 'text-ink-secondary hover:text-ink-primary'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
+        <Tabs value={tab} onValueChange={setTab}>
+          <TabsList aria-label="Performances view">
+            {TABS.map((t) => (
+              <TabsTrigger key={t.value} value={t.value}>
+                {t.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
 
         {source.length > 0 && (
           <div className="flex flex-wrap items-center gap-2">
-            <div role="group" aria-label="Filter media type" className="inline-flex rounded-control border border-line-subtle bg-neutral-muted/50 p-0.5">
-              {FILTERS.map((f) => (
-                <button
-                  key={f.value}
-                  type="button"
-                  onClick={() => setKind(f.value)}
-                  className={`rounded px-2.5 py-1 text-xs transition-colors ${
-                    kind === f.value
-                      ? 'bg-surface-panel font-semibold text-ink-primary'
-                      : 'text-ink-secondary hover:text-ink-primary'
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
+            <Tabs value={kind} onValueChange={setKind}>
+              <TabsList aria-label="Filter media type">
+                {FILTERS.map((f) => (
+                  <TabsTrigger key={f.value} value={f.value}>
+                    {f.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
 
             <div className="relative">
-              <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-tertiary" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-tertiary" />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search score title…"
-                className="h-7 w-44 rounded-control border-line-subtle bg-surface-panel pl-8 text-xs"
+                className="w-56 pl-9"
               />
             </div>
           </div>

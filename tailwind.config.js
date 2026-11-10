@@ -48,13 +48,11 @@ module.exports = {
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
 				gold: 'hsl(var(--gold))',
-				/* ---- Surface semantic (3 General UI Surfaces + Notation Exception) ---- */
+				/* ---- Surface semantic (3 Canonical Surfaces) ---- */
 				surface: {
 					canvas: 'hsl(var(--surface-canvas))',
 					panel: 'hsl(var(--surface-panel))',
 					raised: 'hsl(var(--surface-raised))',
-					paper: 'hsl(var(--surface-paper))',
-					'paper-edge': 'hsl(var(--surface-paper-edge))',
 					subrail: 'hsl(var(--surface-subrail))',
 					'subrail-border': 'hsl(var(--surface-subrail-border))',
 				},
@@ -124,8 +122,6 @@ module.exports = {
 			boxShadow: {
 				raised: 'var(--shadow-raised)',
 				overlay: 'var(--shadow-overlay)',
-				paper: 'var(--shadow-paper)',
-				'paper-hover': 'var(--shadow-paper-hover)',
 			},
 			maxWidth: {
 				'page-compact': 'var(--page-width-compact)',

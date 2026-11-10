@@ -62,19 +62,16 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
   - `text-ink-secondary`: Readable secondary descriptions, timestamps, and labels (>6.5:1 contrast).
   - `text-ink-tertiary`: Readable muted copy (>4.5:1 contrast).
   - `text-ink-subtle`: Strictly non-textual dividers and subtle glyphs.
-- **General UI Surfaces (3-Surface Model):**
+- **General UI Surfaces (3 Canonical Surfaces):**
   - `bg-surface-canvas`: Global backdrop canvas — warm ivory off-white, never pure gray and never green.
-  - `bg-surface-panel`: Pure white functional container surface for primary nav sidebar, dialogs, cards, forms, inputs, resume modules, list panels, and pricing cards. Flat by default (NO `shadow-xs`).
+  - `bg-surface-panel`: Pure white functional container surface for primary nav sidebar, dialogs, cards, forms, inputs, resume modules, list panels, pricing cards, and musical notation containers. Flat by default (NO `shadow-xs`). Musical notation is domain content and uses this standard panel.
   - `bg-surface-raised`: Elevated overlay surface (menus, popovers, floating toolbars) with `shadow-overlay` or `shadow-raised`.
-- **Domain Exception (Notation Canvas Only):**
-  - `bg-surface-paper`: Archival paper tone **strictly reserved for score artifacts and musical notation canvases (`MusicPaper`)**. Banned on generic UI.
 - **Secondary Navigation Shell (Implementation Detail):**
   - `bg-surface-subrail`, `border-line-subrail`: Subtle, distinct secondary navigation rail surface and border for collection/folder exploration.
 - **Lines & Borders:**
   - `border-line-subtle`: Quiet structural dividers and panel borders.
   - `border-line-strong`: Stronger borders for unfocused controls, switches, checkboxes.
   - `border-line-subrail`: Distinctive divider for secondary navigation rails.
-  - `border-surface-paper-edge`: Score paper boundary (notation only).
 - **Brand & Active States:**
   - `bg-brand`: Deep forest green for primary CTA buttons, strong emphasis, and checkmark indicators. Brand is an accent, never a full-width background system.
   - `bg-brand-hover`: Darker forest green for primary CTA hover.
@@ -110,8 +107,7 @@ Yueora enforces **one canonical visual language**. Legacy token aliases (`bg-acc
 | **Tab Trigger** | `transparent` | `bg-neutral-hover` | `bg-surface-panel` | `none` | `text-ink-primary` |
 | **Filter Pill (Compact)** | `transparent` | `bg-neutral-hover` | `bg-brand-soft` | `border-line-subtle` | `text-brand-soft-foreground` |
 | **ChoiceCard (Large)** | `bg-surface-panel` | `bg-neutral-hover` | `bg-neutral-hover` | `border-brand` | `text-ink-primary` |
-| **Standard Card** | `bg-surface-panel` | `bg-surface-panel` | `border-brand` | `border-line-subtle` | `text-ink-primary` |
-| **Notation Canvas** | `bg-surface-paper` | — | — | `border-surface-paper-edge` | `text-ink-primary` |
+| **Standard Card / Score Container** | `bg-surface-panel` | `bg-surface-panel` | `border-brand` | `border-line-subtle` | `text-ink-primary` |
 | **Form Input** | `bg-surface-panel` | `bg-surface-panel` | `ring-brand/20 border-brand` | `border-line-subtle` | `text-ink-primary` |
 | **Neutral Badge** | `bg-neutral-muted` | — | — | `border-transparent` | `text-ink-secondary` |
 | **Selected Badge (Compact)**| `bg-brand-soft` | — | — | `border-transparent` | `text-brand-soft-foreground` |
@@ -139,10 +135,10 @@ Yueora's visual vocabulary is rich in semantic roles, but strictly restrained in
 | Primitive Color Token | Semantic Consumers | Design System Role |
 | :--- | :--- | :--- |
 | `--primitive-neutral-0` | `surface-panel`, `surface-raised`, `*-foreground` | Pure White: panels, clean cards, overlay popovers, button text |
-| `--primitive-neutral-25` | `surface-canvas`, `surface-paper` | Warm Ivory Canvas: global page backdrop, tactile archival paper |
+| `--primitive-neutral-25` | `surface-canvas` | Warm Ivory Canvas: global page backdrop |
 | `--primitive-neutral-50` | `surface-subrail` | Warm Neutral: secondary navigation rail, preserved takes |
 | `--primitive-neutral-75` | `neutral-hover` | Neutral Hover: perceptible interactive hover contrast |
-| `--primitive-neutral-100` | `neutral-muted`, `line-subtle`, `surface-paper-edge`, `subrail-border` | Neutral Muted: quiet borders, passive tracks, nav active background |
+| `--primitive-neutral-100` | `neutral-muted`, `line-subtle`, `subrail-border` | Neutral Muted: quiet borders, passive tracks, nav active background |
 | `--primitive-neutral-200` | `line-strong` | Neutral Strong: control borders, checkboxes, switches |
 | `--primitive-neutral-300` | `ink-subtle` | Neutral Subtle: quiet dividers, passive iconography |
 | `--primitive-ink-500` | `ink-tertiary` | Ink Tertiary: readable muted metadata (>=4.5:1 WCAG AA contrast) |
@@ -178,16 +174,17 @@ Practice runtime conveys musical feedback without looking like a rainbow arcade 
 > *Simple before expressive. Consistent before distinctive.*
 > *If the standard treatment works, use it.*
 > *Semantic meaning does not automatically justify a different visual treatment.*
+> *Domain meaning does not automatically justify a new visual primitive.*
+> *A specialized content type is not automatically a specialized Design System surface.*
 > *Do not create a new surface, color, shadow, radius, card treatment, page width or component variant merely because a section is important, musical, premium, emotional, featured or memorable.*
 > *Visual differences must have functional necessity, not aesthetic preference.*
 > *When in doubt, use the standard panel.*
 
-Authenticated application layout converges on 3 general UI surfaces + 1 notation domain exception:
+Authenticated application layout converges on 3 canonical surfaces with zero notation exceptions:
 
 1. **App Canvas (`bg-surface-canvas`):** Warm ivory backdrop for all application views.
-2. **Standard Content Panel (`bg-surface-panel`):** Universal clean white container with `border border-line-subtle` and `rounded-container` (flat by default, no shadow). All application cards, list containers, resume modules, stats, pricing cards, and forms use this universal container.
+2. **Standard Content Panel (`bg-surface-panel`):** Universal clean white container with `border border-line-subtle` and `rounded-container` (flat by default, no shadow). All application cards, list containers, resume modules, stats, pricing cards, forms, and musical notation containers use this universal container.
 3. **Floating Raised Overlays (`bg-surface-raised`):** Elevated overlay surface with `shadow-overlay` or `shadow-raised` (popovers, menus, modal dialogs, search trigger).
-4. **Score Notation Canvas Domain Exception (`bg-surface-paper` / `MusicPaper`):** Archival paper canvas strictly reserved for literal sheet music score and stave notation rendering. Banned on generic UI.
 
 ### 2.4 Marketing Surface Rhythm Contract (Landing Page)
 
@@ -196,7 +193,7 @@ Authenticated application layout converges on 3 general UI surfaces + 1 notation
 > *Structure should be felt, not painted.*
 
 Full-width marketing page sections strictly alternate between two canonical surfaces: `surface-canvas` (warm ivory) and `surface-panel` (editorial white).
-**Banned on full-width sections:** `bg-surface-paper`, `bg-neutral-muted`, `bg-brand`.
+**Banned on full-width sections:** `bg-neutral-muted`, `bg-brand`.
 
 | Section | Content Role | Semantic Surface | Border Divider |
 | :--- | :--- | :--- | :--- |
@@ -212,7 +209,7 @@ Full-width marketing page sections strictly alternate between two canonical surf
 | **10. Final CTA** | Clean editorial closing ("Play what you love") | `bg-surface-panel` | `border-t border-line-subtle` |
 | **11. Footer** | Sanctuary credits & quiet legal navigation | `bg-surface-canvas` | `border-t border-line-subtle` |
 
-Contained artifacts within these sections utilize standard `surface-panel` with appropriate elevation, reserving `surface-paper` strictly for literal notation staves.
+Contained artifacts within these sections utilize standard `surface-panel` with appropriate elevation. Musical notation is domain content and renders on standard `surface-panel`.
 
 ### 2.5 Canonical Control Scale & Icon Sizing
 
@@ -233,8 +230,7 @@ Yueora is a tactile, calm, planar environment. Shadows are strictly functional:
 - **Primary & Danger Actions:** Subtle `shadow-xs` on primary CTA buttons (`Button intent="primary|danger"` and `IconButton tone="primary"`).
 - **Core Form Controls:** Subtle `shadow-xs` on interactive input controls (`Input`, `Select`, `Textarea`, `Checkbox`, `RadioGroup`, `Switch`, `Slider`, `InputOTP`).
 - **Floating Overlays:** `shadow-raised` / `shadow-overlay` on dropdown menus, popovers, and modal dialogs (`bg-surface-raised`).
-- **Notation Paper:** `shadow-paper` on literal sheet music canvases (`MusicPaper`).
-- **Everything Else (Flat by Default):** Standard panels, cards, list views, sticky headers (`PublicHeader`), navigation rails (`Sidebar`, `SubRail`), segmented tabs (`TabsList` neutral track, `TabsTrigger` active `bg-surface-panel`), secondary buttons, and outline icon buttons are **strictly planar (no drop shadow)**.
+- **Everything Else (Flat by Default):** Standard panels, cards, list views, sticky headers (`PublicHeader`), navigation rails (`Sidebar`, `SubRail`), segmented tabs (`TabsList` neutral track, `TabsTrigger` active `bg-surface-panel`), score notation containers, secondary buttons, and outline icon buttons are **strictly planar (no drop shadow)**.
 
 ---
 
@@ -395,10 +391,10 @@ import { Upload } from 'lucide-react';
 />
 ```
 
-### 4.7 Surfaces: Surface & MusicPaper
+### 4.7 Surfaces: Surface
 
-- Use `<MusicPaper>` when representing an **actual physical or living musical score**.
-- Use `<Surface tone="panel">` for general application containers, dialogs, summaries, and cards (flat by default; use `elevation="raised"` or `elevation="overlay"` only when contextual elevation is required).
+- Use `<Surface tone="panel">` for general application containers, dialogs, summaries, score workspaces, and cards (flat by default; use `elevation="raised"` or `elevation="overlay"` only when contextual elevation is required).
+- Musical notation is domain content and renders within the standard `Surface` container.
 - **Do not** wrap every trivial element in a card. Let whitespace separate content naturally.
 
 ---
@@ -431,8 +427,8 @@ The Yueora Design System architecture is **formally frozen**.
 
 - **No New Layers or Paradigms:** The 6-tier architecture (Foundations → Semantic Tokens → Primitives → Yueora Patterns → Domain Components → Page Composition) is locked.
 - **No Token Sprawl:** Do not introduce new color tokens, arbitrary surfaces, or redundant semantic variants. Reuse existing tokens.
-- **Planar Panel Standard:** Standard panels and content containers are flat by default (`bg-surface-panel border-line-subtle rounded-container`). Ordinary content panels, list views, and settings forms must not add `shadow-xs`.
+- **Planar Panel Standard:** Standard panels and content containers are flat by default (`bg-surface-panel border-line-subtle rounded-container`). Ordinary content panels, list views, score stands, and settings forms must not add `shadow-xs`.
 - **Neutral Active Navigation:** Navigation items and segmented controls use canonical neutral active states (`bg-neutral-muted text-ink-primary font-semibold`) with zero drop shadows.
-- **Bounded Domain Exceptions:** `MusicPaper` and paper tokens remain strictly reserved for literal musical notation canvases and sheet music representations.
+- **Zero Domain Surface Exceptions:** Sheet music and musical notation are domain content types, not separate Design System surfaces. All score rendering uses standard `surface-panel`.
 - **Pages Compose:** Future feature development and page additions must compose existing primitives and semantic tokens rather than inventing page-level visual styles.
 

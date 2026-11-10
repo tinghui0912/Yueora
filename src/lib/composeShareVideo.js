@@ -7,7 +7,7 @@ const SIZES = {
   portrait: { width: 720, height: 1280 },
 };
 
-const PAPER = '#fffdf8';
+const SCORE_CANVAS_BG = '#fffdf8';
 const INK = '#f7f5ef';
 const BRAND = '#8fbfa6';
 
@@ -76,7 +76,7 @@ export async function composeShareVideo({
   if (signal) signal.addEventListener('abort', onAbort);
 
   const drawScoreBox = (box, scoreCanvas, measure) => {
-    ctx.fillStyle = PAPER;
+    ctx.fillStyle = SCORE_CANVAS_BG;
     ctx.fillRect(box.x, box.y, box.width, box.height);
 
     const pad = Math.max(10, Math.round(box.width * 0.035));
