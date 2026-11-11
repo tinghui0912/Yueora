@@ -1,175 +1,144 @@
 import { useState } from 'react';
-import { Monitor, Smartphone, ShieldCheck, KeyRound, Copy, Check, Plus, Trash2 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { usePrototypeStore } from '@/stores/prototypeStore';
+import { ShieldCheck, Mail, KeyRound, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { useAuth } from '@/lib/AuthContext';
+import { base44 } from '@/api/base44Client';
 import SettingsSection from '@/components/patterns/SettingsSection';
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
-} from '@/components/ui/dialog';
-
-const recoveryCodes = ['A1B2-C3D4', 'E5F6-G7H8', 'I9J0-K1L2', 'M3N4-O5P6', 'Q7R8-S9T0', 'U1V2-W3X4'];
+import { Button } from '@/components/ui/button';
 
 export default function SecuritySettings() {
-  const account = usePrototypeStore((s) => s.account);
-  const addPasskey = usePrototypeStore((s) => s.addPasskey);
-  const removePasskey = usePrototypeStore((s) => s.removePasskey);
-  const signOutSession = usePrototypeStore((s) => s.signOutSession);
-  const signOutAllOther = usePrototypeStore((s) => s.signOutAllOther);
+  const { user } = useAuth();
+  const email = user?.email || 'you@example.com';
+  // Determine if account is linked via Google OAuth
+  const isGoogleUser = Boolean(user?.google_id || user?.provider === 'google' || !user?.has_password);
 
-  const [twoFactor, setTwoFactor] = useState(false);
-  const [pwSaved, setPwSaved] = useState(false);
-  const [setupStep, setSetupStep] = useState(0);
-  const [otp, setOtp] = useState('');
-  const [copied, setCopied] = useState(false);
-  const [passkeyName, setPasskeyName] = useState('');
-  const [passkeyOpen, setPasskeyOpen] = useState(false);
-  const [passkeyCreating, setPasskeyCreating] = useState(false);
+  const [resetRequested, setResetRequested] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetError, setResetError] = useState(null);
 
-  const changePw = (e) => { e.preventDefault(); setPwSaved(true); setTimeout(() => setPwSaved(false), 1500); };
-
-  const startEnable = () => setSetupStep(1);
-  const cancelSetup = () => setSetupStep(0);
-  const verifyOtp = () => setSetupStep(3);
-  const finishSetup = () => { setTwoFactor(true); setSetupStep(0); setOtp(''); };
-  const disable = () => setTwoFactor(false);
-
-  const copyCodes = () => { navigator.clipboard?.writeText(recoveryCodes.join('\n')); setCopied(true); setTimeout(() => setCopied(false), 1500); };
-
-  const createPasskey = () => {
-    setPasskeyCreating(true);
-    setTimeout(() => {
-      addPasskey(passkeyName || 'Passkey');
-      setPasskeyCreating(false);
-      setPasskeyOpen(false);
-      setPasskeyName('');
-    }, 1200);
+  const handleSendResetEmail = async () => {
+    if (!email) return;
+    setResetLoading(true);
+    setResetError(null);
+    try {
+      await base44.auth.resetPasswordRequest(email);
+      setResetRequested(true);
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        setResetRequested(true);
+      } else {
+        setResetError(err?.message || 'Unable to send password reset email. Please try again later.');
+      }
+    } finally {
+      setResetLoading(false);
+    }
   };
 
   return (
     <div className="divide-y divide-line-subtle">
-      <SettingsSection title="Password" desc="Choose a strong password you don't use elsewhere.">
-        <form onSubmit={changePw} className="max-w-sm space-y-4">
-          <div className="space-y-1.5"><Label htmlFor="cur">Current password</Label><Input id="cur" type="password" placeholder="••••••••" /></div>
-          <div className="space-y-1.5"><Label htmlFor="new">New password</Label><Input id="new" type="password" /></div>
-          <div className="flex items-center gap-3"><Button type="submit">Update password</Button>{pwSaved && <span className="type-body-small text-brand">Updated</span>}</div>
-        </form>
+      {/* Sign-in Method */}
+      <SettingsSection
+        title="Sign-in method"
+        desc="How you authenticate and access your Yueora workspace."
+      >
+        <div className="max-w-md space-y-4">
+          <div className="flex items-start gap-3 rounded-container border border-line-subtle bg-surface-panel p-4">
+            <ShieldCheck className="h-5 w-5 text-ink-primary shrink-0 mt-0.5" />
+            <div className="min-w-0">
+              <p className="type-body-small font-medium text-ink-primary">
+                {isGoogleUser ? 'Google Authentication' : 'Email and password'}
+              </p>
+              <p className="mt-1 type-metadata text-ink-secondary leading-relaxed">
+                {isGoogleUser
+                  ? 'Your account is secured via Google OAuth. Multi-factor authentication, security keys, and session protection are managed directly through your Google Account.'
+                  : 'Your account is authenticated via your verified email address and password.'}
+              </p>
+            </div>
+          </div>
+        </div>
       </SettingsSection>
 
-      <SettingsSection title="Two-factor authentication" desc="Add an extra layer of security to your account.">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className={`h-5 w-5 ${twoFactor ? 'text-brand' : 'text-ink-secondary'}`} />
-            <span className="type-body-small text-ink-primary">{twoFactor ? 'Enabled' : 'Disabled'}</span>
-          </div>
-          {twoFactor ? (
-            <Button variant="outline" size="sm" onClick={disable}>Disable</Button>
+      {/* Password Management */}
+      <SettingsSection
+        title="Password & credentials"
+        desc="Manage password updates and account recovery credentials."
+      >
+        <div className="max-w-md space-y-4">
+          {isGoogleUser ? (
+            <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
+              <div className="flex items-center gap-2">
+                <KeyRound className="h-4 w-4 text-ink-secondary shrink-0" />
+                <span className="type-body-small font-medium text-ink-primary">External credential management</span>
+              </div>
+              <p className="mt-2 type-metadata text-ink-secondary leading-relaxed">
+                Because you sign in with Google, Yueora does not store or manage a local password for your account. You can update your password or security settings anytime in your Google Account dashboard.
+              </p>
+            </div>
           ) : (
-            <Button size="sm" onClick={startEnable}>Enable 2FA</Button>
+            <div className="rounded-container border border-line-subtle bg-surface-panel p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <KeyRound className="h-4 w-4 text-ink-secondary shrink-0" />
+                <span className="type-body-small font-medium text-ink-primary">Password reset</span>
+              </div>
+              <p className="type-metadata text-ink-secondary leading-relaxed">
+                To change your password, request a secure verification link sent to your registered email address ({email}).
+              </p>
+
+              {resetError && (
+                <div className="flex items-center gap-2 rounded-control bg-danger/10 p-2.5 text-danger type-metadata">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>{resetError}</span>
+                </div>
+              )}
+
+              {resetRequested ? (
+                <div className="flex items-center gap-2 rounded-control bg-practice-following/10 p-3 text-ink-primary type-metadata border border-practice-following/20">
+                  <CheckCircle2 className="h-4 w-4 text-practice-following shrink-0" />
+                  <span>Password reset email dispatched to <strong>{email}</strong>. Check your inbox to update your password.</span>
+                </div>
+              ) : (
+                <Button
+                  intent="secondary"
+                  size="sm"
+                  onClick={handleSendResetEmail}
+                  disabled={resetLoading}
+                  className="mt-1"
+                >
+                  {resetLoading ? (
+                    <>
+                      <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                      <span>Sending reset email…</span>
+                    </>
+                  ) : (
+                    <span>Send password reset email</span>
+                  )}
+                </Button>
+              )}
+            </div>
           )}
         </div>
       </SettingsSection>
 
-      <SettingsSection title="Passkeys" desc="Sign in faster with a passkey.">
-        {account.passkeys.length === 0 ? (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2"><KeyRound className="icon-md text-ink-secondary" /><span className="type-body-small text-ink-secondary">No passkeys yet</span></div>
-            <Button intent="secondary" size="sm" onClick={() => setPasskeyOpen(true)}><Plus className="mr-1.5" /> Add passkey</Button>
-          </div>
-        ) : (
-          <>
-            <ul className="divide-y divide-line-subtle">
-              {account.passkeys.map((p) => (
-                <li key={p.id} className="flex items-center justify-between py-3">
-                  <div className="flex items-center gap-3">
-                    <KeyRound className="icon-md text-ink-secondary" />
-                    <div><p className="type-body-small font-medium text-ink-primary">{p.name}</p><p className="type-metadata text-ink-tertiary">Added {p.addedAt}</p></div>
-                  </div>
-                  <Button intent="quiet" size="sm" onClick={() => removePasskey(p.id)} className="text-danger hover:text-danger hover:bg-danger/10"><Trash2 className="mr-1.5" /> Remove</Button>
-                </li>
-              ))}
-            </ul>
-            <Button intent="secondary" size="sm" className="mt-3" onClick={() => setPasskeyOpen(true)}><Plus className="mr-1.5" /> Add another</Button>
-          </>
-        )}
-      </SettingsSection>
-
-      <SettingsSection title="Active sessions" desc="Devices currently signed in to your account.">
-        <ul className="divide-y divide-line-subtle">
-          {account.sessions.map((s) => (
-            <li key={s.id} className="flex items-center justify-between py-3">
-              <div className="flex items-center gap-3">
-                {s.device?.includes('iPhone') ? <Smartphone className="h-5 w-5 text-ink-secondary" /> : <Monitor className="h-5 w-5 text-ink-secondary" />}
-                <div><p className="type-body-small font-medium text-ink-primary">{s.device} · {s.browser}</p><p className="type-metadata text-ink-tertiary">{s.location}</p></div>
+      {/* Email Verification */}
+      <SettingsSection
+        title="Email verification"
+        desc="Confirmed contact address for account recovery."
+      >
+        <div className="max-w-md">
+          <div className="flex items-center justify-between rounded-container border border-line-subtle bg-surface-panel p-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <Mail className="h-4 w-4 text-ink-secondary shrink-0" />
+              <div className="min-w-0">
+                <p className="truncate type-body-small font-medium text-ink-primary">{email}</p>
+                <p className="type-metadata text-ink-tertiary">Verified for Yueora workspace access</p>
               </div>
-              {s.current ? <span className="type-caption text-brand">This device</span> : <Button variant="ghost" size="sm" onClick={() => signOutSession(s.id)}>Sign out</Button>}
-            </li>
-          ))}
-        </ul>
-        {account.sessions.filter((s) => !s.current).length > 0 && (
-          <Button variant="outline" className="mt-3" onClick={signOutAllOther}>Sign out all other sessions</Button>
-        )}
-      </SettingsSection>
-
-      <SettingsSection title="Security activity" desc="Recent sign-ins and account changes.">
-        <ul className="space-y-2 type-body-small">
-          <li className="flex justify-between"><span>New sign-in on Chrome</span><span className="type-metadata text-ink-tertiary">1 day ago</span></li>
-          <li className="flex justify-between"><span>Password updated</span><span className="type-metadata text-ink-tertiary">2 weeks ago</span></li>
-        </ul>
-      </SettingsSection>
-
-      {/* 2FA setup dialog */}
-      <Dialog open={setupStep > 0} onOpenChange={(o) => !o && cancelSetup()}>
-        <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>{setupStep === 1 ? 'Set up 2FA' : setupStep === 2 ? 'Enter code' : 'Save recovery codes'}</DialogTitle></DialogHeader>
-          {setupStep === 1 && (
-            <div className="space-y-3">
-              <p className="type-body-small text-ink-secondary">Scan this QR code with an authenticator app like Authy or 1Password.</p>
-              <div className="flex h-40 w-40 items-center justify-center rounded-control border border-line-subtle bg-surface-panel mx-auto"><span className="type-caption text-ink-secondary">QR code</span></div>
-              <DialogFooter><Button onClick={() => setSetupStep(2)}>Next</Button></DialogFooter>
             </div>
-          )}
-          {setupStep === 2 && (
-            <div className="space-y-3">
-              <p className="type-body-small text-ink-secondary">Enter the 6-digit code from your app.</p>
-              <Input value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="123456" className="text-center text-lg tracking-[0.4em]" />
-              <DialogFooter>
-                <Button variant="outline" onClick={cancelSetup}>Cancel</Button>
-                <Button onClick={verifyOtp} disabled={otp.length < 6}>Verify</Button>
-              </DialogFooter>
-            </div>
-          )}
-          {setupStep === 3 && (
-            <div className="space-y-3">
-              <p className="type-body-small text-ink-secondary">Save these one-time recovery codes somewhere safe. You can use them if you lose your device.</p>
-              <div className="rounded-control border border-line-subtle bg-neutral-muted/40 p-3 font-mono type-body-small text-ink-primary">
-                {recoveryCodes.map((c) => <div key={c}>{c}</div>)}
-              </div>
-              <Button intent="secondary" size="sm" onClick={copyCodes} className="w-full">{copied ? <><Check className="mr-1.5 text-brand" /> Copied</> : <><Copy className="mr-1.5" /> Copy codes</>}</Button>
-              <DialogFooter><Button onClick={finishSetup}>I've saved them — finish</Button></DialogFooter>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Passkey creation dialog */}
-      <Dialog open={passkeyOpen} onOpenChange={(o) => !o && setPasskeyOpen(false)}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Add a passkey</DialogTitle></DialogHeader>
-          <div className="space-y-3">
-            <p className="type-body-small text-ink-secondary">Name this passkey so you remember which device it belongs to.</p>
-            <div className="space-y-1.5">
-              <Label htmlFor="pkname">Passkey name</Label>
-              <Input id="pkname" value={passkeyName} onChange={(e) => setPasskeyName(e.target.value)} placeholder="MacBook Pro" />
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setPasskeyOpen(false)}>Cancel</Button>
-              <Button onClick={createPasskey} disabled={passkeyCreating}>{passkeyCreating ? 'Creating…' : 'Create passkey'}</Button>
-            </DialogFooter>
+            <span className="inline-flex items-center gap-1 rounded-full bg-neutral-muted px-2.5 py-0.5 type-caption font-semibold text-ink-primary shrink-0">
+              <CheckCircle2 className="h-3 w-3 text-brand" />
+              Verified
+            </span>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </SettingsSection>
     </div>
   );
 }

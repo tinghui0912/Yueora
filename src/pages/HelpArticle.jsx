@@ -3,21 +3,21 @@ import { Link, useParams } from 'react-router-dom';
 import { ChevronRight, ThumbsUp, ThumbsDown, LifeBuoy, Flag } from 'lucide-react';
 import { getHelpArticle } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import PublicShell from '@/components/public/PublicShell';
 import AppPage from '@/components/patterns/AppPage';
+import ContactSupportDialog from '@/components/help/ContactSupportDialog';
 
 export default function HelpArticle() {
   const { slug } = useParams();
   const article = getHelpArticle(slug);
   const [feedback, setFeedback] = useState(null);
   const [supportOpen, setSupportOpen] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [supportTopic, setSupportTopic] = useState('');
+
+  const openContact = (topic = '') => {
+    setSupportTopic(topic);
+    setSupportOpen(true);
+  };
 
   if (!article) {
     return (
@@ -74,40 +74,17 @@ export default function HelpArticle() {
             {feedback && <span className="text-sm text-ink-tertiary">Thanks for the feedback.</span>}
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
-            <Button intent="secondary" size="sm" onClick={() => setSupportOpen(true)}><LifeBuoy className="mr-1.5" /> Contact support</Button>
-            <Button intent="quiet" size="sm" onClick={() => setSupportOpen(true)}><Flag className="mr-1.5" /> Report a problem</Button>
+            <Button intent="secondary" size="sm" onClick={() => openContact()}><LifeBuoy className="mr-1.5" /> Contact support</Button>
+            <Button intent="quiet" size="sm" onClick={() => openContact(`Problem report: ${article.title}`)}><Flag className="mr-1.5" /> Report a problem</Button>
           </div>
         </div>
       </AppPage>
 
-      <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Contact support</DialogTitle></DialogHeader>
-          {sent ? (
-            <div className="py-6 text-center">
-              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas text-brand"><ThumbsUp className="h-5 w-5" /></div>
-              <p className="mt-3 type-body-small font-medium text-ink-primary">Message sent</p>
-              <p className="mt-1 type-caption text-ink-secondary">We’ll get back to you soon.</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div className="space-y-1.5"><Label htmlFor="topic">Topic</Label><Input id="topic" placeholder="What’s this about?" /></div>
-              <div className="space-y-1.5"><Label htmlFor="msg">Message</Label><Textarea id="msg" placeholder="How can we help?" rows={4} /></div>
-              <div className="space-y-1.5"><Label htmlFor="email">Email</Label><Input id="email" type="email" placeholder="you@example.com" /></div>
-            </div>
-          )}
-          <DialogFooter>
-            {sent ? (
-              <Button onClick={() => { setSupportOpen(false); setSent(false); }}>Done</Button>
-            ) : (
-              <>
-                <Button intent="secondary" onClick={() => setSupportOpen(false)}>Cancel</Button>
-                <Button onClick={() => setSent(true)}>Send</Button>
-              </>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ContactSupportDialog
+        open={supportOpen}
+        onOpenChange={setSupportOpen}
+        defaultTopic={supportTopic}
+      />
     </PublicShell>
   );
 }

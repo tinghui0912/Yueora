@@ -1,20 +1,17 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ChevronRight, LifeBuoy, ThumbsUp } from 'lucide-react';
+import { Search, ChevronRight, LifeBuoy } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { helpArticles, helpCategories } from '@/lib/mockData';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import PublicShell from '@/components/public/PublicShell';
 import AppPage from '@/components/patterns/AppPage';
+import ContactSupportDialog from '@/components/help/ContactSupportDialog';
 
 export default function Help() {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState('Getting started');
   const [supportOpen, setSupportOpen] = useState(false);
-  const [sent, setSent] = useState(false);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -86,34 +83,11 @@ export default function Help() {
         <div className="mt-10 rounded-container border border-line-subtle bg-surface-panel p-5">
           <h2 className="type-section-title font-medium text-ink-primary">Still need help?</h2>
           <p className="mt-0.5 type-body-small text-ink-secondary">Reach out and we’ll get back to you.</p>
-          <Button className="mt-3" onClick={() => { setSupportOpen(true); setSent(false); }}><LifeBuoy className="mr-1.5" /> Contact support</Button>
+          <Button className="mt-3" onClick={() => setSupportOpen(true)}><LifeBuoy className="mr-1.5" /> Contact support</Button>
         </div>
       </AppPage>
 
-      <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Contact support</DialogTitle></DialogHeader>
-          {sent ? (
-            <div className="py-6 text-center">
-              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-line-subtle bg-surface-canvas text-brand"><ThumbsUp className="h-5 w-5" /></div>
-              <p className="mt-3 type-body-small font-medium text-ink-primary">Message sent</p>
-              <p className="mt-1 type-caption text-ink-secondary">We’ll get back to you soon.</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div className="space-y-1.5"><Label htmlFor="topic">Topic</Label><Input id="topic" placeholder="What’s this about?" /></div>
-              <div className="space-y-1.5"><Label htmlFor="msg">Message</Label><Textarea id="msg" rows={4} placeholder="How can we help?" /></div>
-              <div className="space-y-1.5"><Label htmlFor="email">Email</Label><Input id="email" type="email" placeholder="you@example.com" /></div>
-            </div>
-          )}
-          <DialogFooter>
-            {sent ? <Button onClick={() => setSupportOpen(false)}>Done</Button> : (<>
-              <Button variant="outline" onClick={() => setSupportOpen(false)}>Cancel</Button>
-              <Button onClick={() => setSent(true)}>Send</Button>
-            </>)}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />
     </PublicShell>
   );
 }

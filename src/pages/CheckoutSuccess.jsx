@@ -63,7 +63,7 @@ export default function CheckoutSuccess() {
       </div>
 
       <div className="mt-6 flex flex-wrap gap-2">
-        <Button asChild><Link to="/library">Go to Library</Link></Button>
+        <Button asChild><Link to="/library">Go to Repertoire</Link></Button>
         <Button variant="outline" asChild><Link to="/settings/plan">View Plan &amp; billing</Link></Button>
       </div>
     </div>

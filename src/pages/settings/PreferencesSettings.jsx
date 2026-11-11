@@ -49,7 +49,7 @@ export default function PreferencesSettings() {
         </div>
       </SettingsSection>
 
-      <SettingsSection title="Language & region" desc="Interface language.">
+      <SettingsSection title="Language" desc="Interface language.">
         <select
           value={prefs.language}
           onChange={(e) => update({ language: e.target.value })}

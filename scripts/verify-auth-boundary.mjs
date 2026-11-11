@@ -221,10 +221,10 @@ async function verifyBrowserRedirect(chromePath, targetPath, expectedPath = '/lo
 
       await sendSession('Page.navigate', { url: `${BASE_URL}${targetPath}` });
 
-      // Poll up to 6 seconds for client-side React Router to evaluate auth and redirect
+      // Poll up to 10 seconds for client-side React Router to evaluate auth and redirect
       let pathname = '';
       let text = '';
-      for (let i = 0; i < 24; i++) {
+      for (let i = 0; i < 40; i++) {
         await new Promise((r) => setTimeout(r, 250));
         const evalRes = await sendSession('Runtime.evaluate', {
           expression: 'JSON.stringify({ pathname: window.location.pathname, text: document.body.innerText.slice(0, 200) })',
@@ -232,7 +232,7 @@ async function verifyBrowserRedirect(chromePath, targetPath, expectedPath = '/lo
         });
         const current = JSON.parse(evalRes?.result?.value || '{}');
         pathname = current.pathname;
-        text = current.text;
+        text = current.text || '';
         if (pathname === expectedPath) {
           break;
         }

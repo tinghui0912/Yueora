@@ -14,16 +14,6 @@ export default function MobileNav() {
       aria-label="Mobile navigation"
     >
       <NavLink
-        to="/library"
-        className={({ isActive }) =>
-          `${navTabBase} ${isActive ? 'text-brand font-semibold' : 'text-ink-secondary hover:text-ink-primary'}`
-        }
-      >
-        <RepertoireGlyph className="h-5 w-5" />
-        <span>Repertoire</span>
-      </NavLink>
-
-      <NavLink
         to="/practice"
         className={({ isActive }) =>
           `${navTabBase} ${isActive ? 'text-brand font-semibold' : 'text-ink-secondary hover:text-ink-primary'}`
@@ -31,6 +21,16 @@ export default function MobileNav() {
       >
         <PracticeGlyph className="h-5 w-5" />
         <span>Practice</span>
+      </NavLink>
+
+      <NavLink
+        to="/library"
+        className={({ isActive }) =>
+          `${navTabBase} ${isActive ? 'text-brand font-semibold' : 'text-ink-secondary hover:text-ink-primary'}`
+        }
+      >
+        <RepertoireGlyph className="h-5 w-5" />
+        <span>Repertoire</span>
       </NavLink>
 
       <button

@@ -16,7 +16,7 @@ export default function Sidebar() {
     <div className="flex h-full flex-col px-4 py-5 select-none">
       {/* Brand Header */}
       <div className="px-2 pt-1">
-        <NavLink to="/library" aria-label="Yueora Repertoire" className="inline-flex focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded">
+        <NavLink to="/practice" aria-label="Yueora Practice" className="inline-flex focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded">
           <Logo variant="full" size="md" />
         </NavLink>
       </div>
@@ -39,14 +39,14 @@ export default function Sidebar() {
         <SidebarSectionLabel>Spaces</SidebarSectionLabel>
         <nav className="mt-2 space-y-1">
           <SidebarNavItem
-            to="/library"
-            icon={RepertoireGlyph}
-            label="Repertoire"
-          />
-          <SidebarNavItem
             to="/practice"
             icon={PracticeGlyph}
             label="Practice"
+          />
+          <SidebarNavItem
+            to="/library"
+            icon={RepertoireGlyph}
+            label="Repertoire"
           />
           <SidebarNavItem
             to="/performances"

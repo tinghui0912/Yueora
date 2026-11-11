@@ -33,18 +33,18 @@ export default function PublicMobileMenu({ open, onClose }) {
               The Lifecycle
             </a>
             <a
-              href="/#repertoire"
-              onClick={onClose}
-              className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/40 hover:text-brand transition-colors"
-            >
-              Personal Repertoire
-            </a>
-            <a
               href="/#practice"
               onClick={onClose}
               className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/40 hover:text-brand transition-colors"
             >
               Practice Stand
+            </a>
+            <a
+              href="/#repertoire"
+              onClick={onClose}
+              className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/40 hover:text-brand transition-colors"
+            >
+              Personal Repertoire
             </a>
             <Link
               to="/about"
@@ -64,14 +64,14 @@ export default function PublicMobileMenu({ open, onClose }) {
             <div className="pt-5 mt-2 flex flex-col gap-3">
               {isAuthenticated ? (
                 <Button asChild intent="primary" size="hero" className="w-full">
-                  <Link to="/library" onClick={onClose}>
-                    Go to Library
+                  <Link to="/practice" onClick={onClose}>
+                    Open Yueora
                   </Link>
                 </Button>
               ) : (
                 <>
                   <Button asChild intent="primary" size="hero" className="w-full">
-                    <Link to="/register" onClick={onClose}>
+                    <Link to="/register?returnTo=%2Fadd-score" onClick={onClose}>
                       Start playing
                     </Link>
                   </Button>

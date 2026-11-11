@@ -24,7 +24,16 @@ import { formatPrice, checkoutPath } from '@/lib/commercial';
 export default function Landing() {
   const { isAuthenticated } = useAuth();
   const plans = usePrototypeStore((s) => s.plans);
-  const freeDestination = isAuthenticated ? '/library' : '/register';
+  const scores = usePrototypeStore((s) => s.scores);
+  const activeScores = scores.filter((s) => s.ownership !== 'trash');
+
+  const primaryPlayDestination = isAuthenticated
+    ? activeScores.length === 0
+      ? '/add-score'
+      : '/practice'
+    : `/register?returnTo=${encodeURIComponent('/add-score')}`;
+  const freeDestination = primaryPlayDestination;
+
   const plusDestination = isAuthenticated
     ? checkoutPath('plus', 'monthly')
     : `/register?returnTo=${encodeURIComponent(checkoutPath('plus', 'monthly'))}`;
@@ -173,8 +182,8 @@ export default function Landing() {
               className="mt-10 flex flex-col sm:flex-row gap-4"
             >
               <Button asChild intent="primary" size="hero">
-                <Link to={freeDestination}>
-                  <span>Start your repertoire</span>
+                <Link to={primaryPlayDestination}>
+                  <span>Start playing</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
@@ -420,14 +429,74 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* 4. PERSONAL REPERTOIRE — UGC SelectedWork Parity */}
-      <section id="repertoire" className="py-24 md:py-36 bg-surface-panel/30 border-y border-line-subtle/80">
+      {/* 4. THE PRACTICE STAND — UGC 5/7 Editorial Asymmetry */}
+      <section id="practice" className="py-24 md:py-36 bg-surface-panel/30 border-y border-line-subtle/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* Left 5 Columns — Visual */}
+          <Reveal className="lg:col-span-5" y={36}>
+            <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.25)] border border-line-subtle bg-surface-panel p-4">
+              <PracticeWorkspaceVisual />
+            </div>
+          </Reveal>
+
+          {/* Right 7 Columns — Content */}
+          <div className="lg:col-span-7">
+            <Reveal>
+              <p className="type-eyebrow text-ink-tertiary mb-5">
+                02 · The Practice Stand
+              </p>
+              <h2 className="font-display text-4xl md:text-6xl leading-[1.02] tracking-tight text-balance text-ink-primary">
+                Following your phrasing, <br />
+                <span className="italic">not policing your notes.</span>
+              </h2>
+            </Reveal>
+
+            <Reveal delay={0.1}>
+              <div className="mt-7 space-y-5 text-lg leading-relaxed text-ink-secondary max-w-xl">
+                <p>
+                  Traditional practice tools penalize every missed accidental with blaring red marks.
+                  Yueora listens quietly to acoustic piano through your microphone, tracking where you
+                  are on the score and following your phrase.
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.15}>
+              <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300">
+                  <h3 className="font-display text-xl text-ink-primary">Paced Following</h3>
+                  <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
+                    Respects expressive rubato, slowing down and accelerating naturally with you.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300">
+                  <h3 className="font-display text-xl text-ink-primary">Phrase Looping</h3>
+                  <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
+                    Select measures 14 to 22 with one tap to work through tricky transitions calmly.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300 sm:col-span-2">
+                  <h3 className="font-display text-xl text-ink-primary">Zero Accuracy Scoring</h3>
+                  <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
+                    No percentage grades, no stars, no shaming—just a quiet, supportive companion at the keys.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. PERSONAL REPERTOIRE — UGC SelectedWork Parity */}
+      <section id="repertoire" className="py-24 md:py-36">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
               <div>
                 <p className="type-eyebrow text-ink-tertiary mb-4">
-                  02 · Personal Repertoire
+                  03 · Personal Repertoire
                 </p>
                 <h2 className="font-display text-4xl md:text-6xl leading-[1.02] tracking-tight text-balance max-w-2xl text-ink-primary">
                   A music cabinet, <br />
@@ -494,66 +563,6 @@ export default function Landing() {
                     <span className="w-1.5 h-1.5 rounded-full bg-line-strong shrink-0" />
                     <span>No subscription limit to begin</span>
                   </div>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. THE PRACTICE STAND — UGC 5/7 Editorial Asymmetry */}
-      <section id="practice" className="py-24 md:py-36">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* Left 5 Columns — Visual */}
-          <Reveal className="lg:col-span-5" y={36}>
-            <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.25)] border border-line-subtle bg-surface-panel p-4">
-              <PracticeWorkspaceVisual />
-            </div>
-          </Reveal>
-
-          {/* Right 7 Columns — Content */}
-          <div className="lg:col-span-7">
-            <Reveal>
-              <p className="type-eyebrow text-ink-tertiary mb-5">
-                03 · The Practice Stand
-              </p>
-              <h2 className="font-display text-4xl md:text-6xl leading-[1.02] tracking-tight text-balance text-ink-primary">
-                Following your phrasing, <br />
-                <span className="italic">not policing your notes.</span>
-              </h2>
-            </Reveal>
-
-            <Reveal delay={0.1}>
-              <div className="mt-7 space-y-5 text-lg leading-relaxed text-ink-secondary max-w-xl">
-                <p>
-                  Traditional practice tools penalize every missed accidental with blaring red marks.
-                  Yueora listens quietly to acoustic piano through your microphone, tracking where you
-                  are on the score and following your phrase.
-                </p>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.15}>
-              <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300">
-                  <h3 className="font-display text-xl text-ink-primary">Paced Following</h3>
-                  <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
-                    Respects expressive rubato, slowing down and accelerating naturally with you.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300">
-                  <h3 className="font-display text-xl text-ink-primary">Phrase Looping</h3>
-                  <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
-                    Select measures 14 to 22 with one tap to work through tricky transitions calmly.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300 sm:col-span-2">
-                  <h3 className="font-display text-xl text-ink-primary">Zero Accuracy Scoring</h3>
-                  <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
-                    No percentage grades, no stars, no shaming—just a quiet, supportive companion at the keys.
-                  </p>
                 </div>
               </div>
             </Reveal>
@@ -842,8 +851,8 @@ export default function Landing() {
                     </p>
                     <div className="mt-8 flex flex-col gap-3">
                       <Button asChild size="hero" className="w-full bg-surface-canvas text-ink-primary hover:bg-white font-semibold rounded-full">
-                        <Link to={freeDestination}>
-                          <span>Begin Your Repertoire</span>
+                        <Link to={primaryPlayDestination}>
+                          <span>Start playing</span>
                           <ArrowRight className="h-4 w-4" />
                         </Link>
                       </Button>

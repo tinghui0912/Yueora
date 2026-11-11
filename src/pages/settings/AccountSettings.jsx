@@ -84,17 +84,6 @@ export default function AccountSettings() {
         </div>
       </SettingsSection>
 
-      <SettingsSection title="Language & region" desc="Interface language and regional formatting.">
-        <div className="max-w-sm space-y-1.5">
-          <Label htmlFor="lang">Language</Label>
-          <select id="lang" className="h-9 w-full rounded-control border border-line-subtle bg-surface-panel px-3 type-body-small text-ink-primary">
-            <option>English</option>
-            <option>中文</option>
-          </select>
-          <p className="type-metadata text-ink-tertiary">Some pages may not be fully translated yet.</p>
-        </div>
-      </SettingsSection>
-
       <Dialog open={emailModal} onOpenChange={setEmailModal}>
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Change email</DialogTitle></DialogHeader>

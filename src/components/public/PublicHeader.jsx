@@ -80,16 +80,16 @@ export default function PublicHeader() {
                   The Lifecycle
                 </a>
                 <a
-                  href="#repertoire"
-                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
-                >
-                  Repertoire
-                </a>
-                <a
                   href="#practice"
                   className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
                 >
                   Practice
+                </a>
+                <a
+                  href="#repertoire"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+                >
+                  Repertoire
                 </a>
               </>
             ) : (
@@ -101,16 +101,16 @@ export default function PublicHeader() {
                   The Lifecycle
                 </Link>
                 <Link
-                  to="/#repertoire"
-                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
-                >
-                  Repertoire
-                </Link>
-                <Link
                   to="/#practice"
                   className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
                 >
                   Practice
+                </Link>
+                <Link
+                  to="/#repertoire"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+                >
+                  Repertoire
                 </Link>
               </>
             )}
@@ -136,8 +136,8 @@ export default function PublicHeader() {
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             {isAuthenticated ? (
               <Button asChild intent="primary" className="hidden sm:inline-flex h-9 sm:h-control-lg px-3.5 sm:px-5 text-xs sm:text-sm font-medium tracking-wide shrink-0">
-                <Link to="/library">
-                  Go to Library
+                <Link to="/practice">
+                  Open Yueora
                 </Link>
               </Button>
             ) : (
@@ -148,7 +148,7 @@ export default function PublicHeader() {
                   </Link>
                 </Button>
                 <Button asChild intent="primary" className="hidden sm:inline-flex h-9 sm:h-control-lg px-3.5 sm:px-5 text-xs sm:text-sm font-medium tracking-wide shrink-0">
-                  <Link to="/register">
+                  <Link to="/register?returnTo=%2Fadd-score">
                     Start playing
                   </Link>
                 </Button>

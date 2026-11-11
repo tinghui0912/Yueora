@@ -13,7 +13,7 @@ export default function Privacy() {
           { heading: 'How we use it', paragraphs: ['To provide the service — recognition, your library, practice feedback, and sharing.', 'To improve recognition quality and the product. We never sell your data.'] },
           { heading: 'Sharing', paragraphs: ['Scores you share are visible only to the people and links you choose. We don’t share your data with third parties for advertising.'] },
           { heading: 'Your choices', paragraphs: ['You can export your data or delete your account anytime from Settings → Data & Privacy. You can also turn off anonymous analytics.'] },
-          { heading: 'Security', paragraphs: ['We use reasonable measures to protect your data, but no system is perfectly secure. Enable two-factor authentication for extra protection.'] },
+          { heading: 'Security', paragraphs: ['We use reasonable measures to protect your data, but no system is perfectly secure. We recommend maintaining strong authentication and credentials on your primary sign-in account.'] },
           { heading: 'Contact', paragraphs: ['Privacy questions? Contact support from the Help center.'] },
         ]}
       />

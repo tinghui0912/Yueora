@@ -192,11 +192,6 @@ function defaultSharing(score) {
 const accountSeed = {
   avatar: null,
   email: 'you@example.com',
-  passkeys: [],
-  sessions: [
-    { id: 's1', device: 'MacBook Pro', browser: 'Chrome', location: 'Current session', current: true },
-    { id: 's2', device: 'iPhone 15', browser: 'Safari', location: 'San Francisco', current: false },
-  ],
 };
 
 const subscriptionSeed = {
@@ -1058,16 +1053,6 @@ export const usePrototypeStore = create(
       // ---- Account actions ----
       setAvatar: (avatar) => set((st) => ({ account: { ...st.account, avatar } })),
       updateEmail: (email) => set((st) => ({ account: { ...st.account, email } })),
-      addPasskey: (name) =>
-        set((st) => ({
-          account: { ...st.account, passkeys: [...st.account.passkeys, { id: `pk-${Date.now()}`, name: name || 'Passkey', addedAt: 'Today' }] },
-        })),
-      removePasskey: (id) =>
-        set((st) => ({ account: { ...st.account, passkeys: st.account.passkeys.filter((p) => p.id !== id) } })),
-      signOutSession: (id) =>
-        set((st) => ({ account: { ...st.account, sessions: st.account.sessions.filter((s) => s.id !== id) } })),
-      signOutAllOther: () =>
-        set((st) => ({ account: { ...st.account, sessions: st.account.sessions.filter((s) => s.current) } })),
 
       // ---- Preferences & notifications ----
       updatePreferences: (partial) =>

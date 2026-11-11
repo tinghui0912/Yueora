@@ -18,7 +18,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { loginViaDemo } = useAuth();
   const returnTo = safeReturnTo();
-  const destination = returnTo && returnTo !== "/" && returnTo !== "/login" ? returnTo : "/library";
+  const destination = returnTo && returnTo !== "/" && returnTo !== "/login" ? returnTo : "/practice";
 
   const handleDemoLogin = () => {
     if (import.meta.env.DEV) {
@@ -71,7 +71,7 @@ export default function Login() {
         <>
           Don't have an account?{" "}
           <Link
-            to={"/register" + (destination !== "/library" ? "?returnTo=" + encodeURIComponent(destination) : "")}
+            to={"/register" + (destination !== "/practice" ? "?returnTo=" + encodeURIComponent(destination) : "")}
             className="text-brand font-medium hover:underline"
           >
             Create one

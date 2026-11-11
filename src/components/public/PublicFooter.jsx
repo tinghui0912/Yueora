@@ -43,13 +43,13 @@ export default function PublicFooter() {
                   </a>
                 </li>
                 <li>
-                  <a href="/#repertoire" className="hover:text-ink-primary transition-colors">
-                    Repertoire
+                  <a href="/#practice" className="hover:text-ink-primary transition-colors">
+                    Practice Stand
                   </a>
                 </li>
                 <li>
-                  <a href="/#practice" className="hover:text-ink-primary transition-colors">
-                    Practice Stand
+                  <a href="/#repertoire" className="hover:text-ink-primary transition-colors">
+                    Repertoire
                   </a>
                 </li>
                 <li>
