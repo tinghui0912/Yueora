@@ -203,10 +203,10 @@ export default function Landing() {
               className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-ink-tertiary"
             >
               <span className="flex items-center gap-1.5">
-                <Check className="h-3.5 w-3.5 text-ink-primary" /> No forced curriculum
+                <Check className="h-3.5 w-3.5 text-ink-primary" /> Start with 5 scores free
               </span>
               <span className="flex items-center gap-1.5">
-                <Check className="h-3.5 w-3.5 text-ink-primary" /> No streak pressure
+                <Check className="h-3.5 w-3.5 text-ink-primary" /> PDF · Images · MusicXML
               </span>
               <span className="flex items-center gap-1.5">
                 <Check className="h-3.5 w-3.5 text-ink-primary" /> 100% Private by default

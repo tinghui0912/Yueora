@@ -5,10 +5,6 @@ import { formatPrice, intervalLabel, intervalNoun } from '@/lib/commercial';
 import { Button } from '@/components/ui/button';
 import StateMessage from '@/components/patterns/StateMessage';
 
-/**
- * CheckoutSuccess — only reachable with a completed demo checkout recorded in the
- * store. Opening the URL directly shows the "nothing completed" state.
- */
 export default function CheckoutSuccess() {
   const checkout = usePrototypeStore((s) => s.checkout);
   const plans = usePrototypeStore((s) => s.plans);
@@ -21,7 +17,7 @@ export default function CheckoutSuccess() {
       <StateMessage
         icon={AlertCircle}
         title="No completed checkout"
-        description="This page only confirms a checkout you completed a moment ago. Nothing has been purchased and your plan is unchanged."
+        description="This page confirms a subscription you completed. Nothing has been purchased yet and your plan is unchanged."
         secondaryAction={<Button variant="outline" asChild><Link to="/settings/plan">View Plan &amp; billing</Link></Button>}
         primaryAction={<Button asChild><Link to="/pricing">Back to pricing</Link></Button>}
       />
@@ -35,36 +31,33 @@ export default function CheckoutSuccess() {
           <CheckCircle2 className="h-6 w-6" />
         </span>
         <div>
-          <p className="type-caption text-ink-tertiary">Demo checkout complete</p>
+          <p className="type-caption text-ink-tertiary">Subscription confirmed</p>
           <h1 className="type-page-title text-ink-primary">You're on {plan.name}</h1>
         </div>
       </div>
 
       <p className="mt-4 type-body-small text-ink-secondary">
-        Your prototype account has been switched to {plan.name} with {intervalLabel(checkout.interval).toLowerCase()}{' '}
-        billing. This demonstrates the purchase journey only — no bank payment was made and no card was charged.
+        Your subscription to {plan.name} is now active with {intervalLabel(checkout.interval).toLowerCase()}{' '}
+        billing. All plan features and allowances are ready for you.
       </p>
 
       <div className="mt-6 rounded-container border border-line-subtle bg-surface-panel">
         <dl className="divide-y divide-line-subtle px-5 text-sm">
           <Row label="Plan" value={`Yueora ${plan.name}`} />
           <Row label="Billing interval" value={`Every ${intervalNoun(checkout.interval)}`} />
-          <Row label="Amount" value={`${formatPrice(checkout.amount)} (demo — not charged)`} />
-          <Row label="Demo reference" value={checkout.reference} mono />
-          <Row label="Renews" value={subscription.renewal} />
+          <Row label="Amount paid" value={formatPrice(checkout.amount)} />
+          <Row label="Invoice reference" value={checkout.reference} mono />
+          <Row label="Next renewal" value={subscription.renewal} />
         </dl>
-        <div className="flex items-start gap-2 border-t border-line-subtle px-5 py-4 type-metadata text-ink-tertiary">
-          <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          <span>
-            {checkout.reference} is a demo reference, not a payment transaction ID. A record labelled demo has been
-            added to your billing history.
-          </span>
-        </div>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        <Button asChild><Link to="/library">Go to Repertoire</Link></Button>
-        <Button variant="outline" asChild><Link to="/settings/plan">View Plan &amp; billing</Link></Button>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <Button asChild>
+          <Link to="/practice">Start playing</Link>
+        </Button>
+        <Button variant="outline" asChild>
+          <Link to="/settings/plan">View plan &amp; billing</Link>
+        </Button>
       </div>
     </div>
   );

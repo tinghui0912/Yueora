@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
+import { usePrototypeStore } from '@/stores/prototypeStore';
 import PublicShell from '@/components/public/PublicShell';
 import AppPage from '@/components/patterns/AppPage';
 import Reveal from '@/components/public/Reveal';
@@ -9,7 +10,9 @@ import { Music2, Heart, Eye, TrendingUp, Shield, ArrowRight } from 'lucide-react
 
 export default function About() {
   const { isAuthenticated } = useAuth();
-  const ctaDestination = isAuthenticated ? '/library' : '/register';
+  const scores = usePrototypeStore((s) => s.scores);
+  const activeScoresCount = (scores || []).filter((s) => s.ownership !== 'trash').length;
+  const ctaDestination = isAuthenticated ? (activeScoresCount > 0 ? '/practice' : '/add-score') : '/register';
 
   return (
     <PublicShell>

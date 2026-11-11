@@ -6,6 +6,7 @@ import {
   Folder, Pencil, Sparkles,
 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
+import { getScoreQuota } from '@/lib/commercialEntitlements';
 import ScoreCard from '@/components/library/ScoreCard';
 import ScorePreview from '@/components/library/ScorePreview';
 import LibrarySubRail from '@/components/library/LibrarySubRail';
@@ -53,6 +54,8 @@ export default function Library() {
   const [searchInput, setSearchInput] = useState(search);
 
   const scores = usePrototypeStore((s) => s.scores);
+  const subscription = usePrototypeStore((s) => s.subscription);
+  const scoreQuota = getScoreQuota(subscription?.plan);
   const folders = usePrototypeStore((s) => s.folders);
   const createFolder = usePrototypeStore((s) => s.createFolder);
   const renameFolder = usePrototypeStore((s) => s.renameFolder);
@@ -264,7 +267,14 @@ export default function Library() {
                 {isTrash ? 'Trash' : activeFolderId ? folders.find((f) => f.id === activeFolderId)?.name : 'Repertoire'}
               </h1>
               <p className="mt-0.5 type-body-small text-ink-secondary">
-                {isTrash ? `${filtered.length} in trash` : `${liveCount} pieces in your personal collection`}
+                {isTrash
+                  ? `${filtered.length} in trash`
+                  : `${liveCount} of ${scoreQuota.isUnlimited ? 'Unlimited' : `${scoreQuota.limit} scores`} in your personal collection`}
+                {!isTrash && !scoreQuota.isUnlimited && liveCount >= scoreQuota.limit && (
+                  <Link to="/pricing" className="ml-2 font-medium text-brand hover:underline">
+                    Upgrade to expand
+                  </Link>
+                )}
               </p>
             </div>
 

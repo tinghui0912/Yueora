@@ -76,7 +76,7 @@ export function readCheckoutQuery(search, plans) {
 /** A long, clearly-fake confirmation reference for the demo journey. */
 export function demoReference() {
   const stamp = Date.now().toString(36).toUpperCase().slice(-6);
-  return `DEMO-${stamp}`;
+  return `YUE-${stamp}`;
 }
 
 export function addBillingPeriod(date, interval) {
@@ -207,6 +207,29 @@ export function migratePrototypeState(persistedState, version) {
         sh.link.createdAt = null;
         sh.link.expiresAt = null;
       }
+    }
+  }
+
+  if (merged.account) {
+    if (!merged.account.displayName) merged.account.displayName = 'You';
+    if (!merged.account.provider) merged.account.provider = 'email';
+    if (merged.account.emailVerified === undefined) merged.account.emailVerified = true;
+    if (!Array.isArray(merged.account.sessions)) {
+      merged.account.sessions = [
+        { id: 's1', device: 'MacBook Pro', browser: 'Chrome', location: 'Los Angeles, CA', current: true, lastActive: 'Active now' },
+        { id: 's2', device: 'iPhone 15', browser: 'Safari', location: 'San Francisco, CA', current: false, lastActive: '2 days ago' },
+        { id: 's3', device: 'iPad Air', browser: 'Safari', location: 'San Jose, CA', current: false, lastActive: '5 days ago' },
+      ];
+    }
+    if (!Array.isArray(merged.account.securityActivity)) {
+      merged.account.securityActivity = [
+        { id: 'act-1', type: 'signin', title: 'New sign-in', detail: 'Chrome on macOS · Los Angeles, CA', timestamp: 'Today · 10:24 AM' },
+        { id: 'act-2', type: 'password', title: 'Password updated', detail: 'Primary account password', timestamp: 'Yesterday' },
+        { id: 'act-3', type: 'mfa', title: 'MFA enrolled', detail: 'Authenticator app enrolled', timestamp: 'Nov 8, 2026' },
+      ];
+    }
+    if (!merged.account.mfa) {
+      merged.account.mfa = { totp: false, sms: false, phone: null };
     }
   }
 

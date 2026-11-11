@@ -191,7 +191,26 @@ function defaultSharing(score) {
 // ---- Account / security seed ----
 const accountSeed = {
   avatar: null,
+  displayName: 'Alex Morgan',
   email: 'you@example.com',
+  provider: 'email',
+  emailVerified: true,
+  pendingEmail: null,
+  sessions: [
+    { id: 's1', device: 'MacBook Pro', browser: 'Chrome', location: 'Los Angeles, CA', current: true, lastActive: 'Active now' },
+    { id: 's2', device: 'iPhone 15', browser: 'Safari', location: 'San Francisco, CA', current: false, lastActive: '2 days ago' },
+    { id: 's3', device: 'iPad Air', browser: 'Safari', location: 'San Jose, CA', current: false, lastActive: '5 days ago' },
+  ],
+  securityActivity: [
+    { id: 'act-1', type: 'signin', title: 'New sign-in', detail: 'Chrome on macOS · Los Angeles, CA', timestamp: 'Today · 10:24 AM' },
+    { id: 'act-2', type: 'password', title: 'Password updated', detail: 'Primary account password', timestamp: 'Yesterday' },
+    { id: 'act-3', type: 'mfa', title: 'MFA enrolled', detail: 'Authenticator app enrolled', timestamp: 'Nov 8, 2026' },
+  ],
+  mfa: {
+    totp: false,
+    sms: false,
+    phone: null,
+  },
 };
 
 const subscriptionSeed = {
@@ -201,8 +220,7 @@ const subscriptionSeed = {
   renewal: 'Nov 15, 2026',
   cancelAt: null,
   pendingPlan: null,
-  // Sample display data only — this prototype never collects or stores a card.
-  payment: { method: 'Demo card', last4: '4242', demo: true },
+  payment: { brand: 'Visa', last4: '4242', expMonth: '08', expYear: '29' },
   usage: { scores: 8, imports: 14, storage: '1.2 GB' },
 };
 
@@ -1052,7 +1070,72 @@ export const usePrototypeStore = create(
 
       // ---- Account actions ----
       setAvatar: (avatar) => set((st) => ({ account: { ...st.account, avatar } })),
+      setDisplayName: (displayName) => set((st) => ({ account: { ...st.account, displayName } })),
       updateEmail: (email) => set((st) => ({ account: { ...st.account, email } })),
+      setPendingEmail: (pendingEmail) => set((st) => ({ account: { ...st.account, pendingEmail } })),
+      confirmPendingEmail: () =>
+        set((st) => ({
+          account: {
+            ...st.account,
+            email: st.account.pendingEmail || st.account.email,
+            pendingEmail: null,
+            emailVerified: true,
+          },
+        })),
+      cancelPendingEmail: () => set((st) => ({ account: { ...st.account, pendingEmail: null } })),
+      resendEmailVerification: () =>
+        set((st) => ({
+          notifications: [
+            {
+              id: `n-${Date.now()}`,
+              category: 'security',
+              title: 'Verification email sent',
+              body: `A new confirmation link was sent to ${st.account.pendingEmail || st.account.email}.`,
+              time: 'just now',
+              unread: true,
+              href: '/settings/account',
+            },
+            ...st.notifications,
+          ],
+        })),
+      signOutSession: (id) =>
+        set((st) => ({
+          account: {
+            ...st.account,
+            sessions: (st.account.sessions || []).filter((s) => s.id !== id),
+          },
+        })),
+      signOutAllOtherSessions: () =>
+        set((st) => ({
+          account: {
+            ...st.account,
+            sessions: (st.account.sessions || []).filter((s) => s.current),
+          },
+        })),
+      addSecurityActivity: (activity) =>
+        set((st) => ({
+          account: {
+            ...st.account,
+            securityActivity: [
+              { id: `act-${Date.now()}`, timestamp: 'Just now', ...activity },
+              ...(st.account.securityActivity || []),
+            ],
+          },
+        })),
+      setMfaMethod: (method, enabled, extra = {}) =>
+        set((st) => ({
+          account: {
+            ...st.account,
+            mfa: { ...st.account.mfa, [method]: enabled, ...extra },
+          },
+        })),
+      updatePaymentMethod: (card) =>
+        set((st) => ({
+          subscription: {
+            ...st.subscription,
+            payment: { ...st.subscription.payment, ...card },
+          },
+        })),
 
       // ---- Preferences & notifications ----
       updatePreferences: (partial) =>

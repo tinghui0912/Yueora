@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Upload,
   Camera,
@@ -14,6 +14,8 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
+import { getScoreQuota, getImportQuota } from '@/lib/commercialEntitlements';
+import { checkoutPath } from '@/lib/commercial';
 import { AppPage } from '@/components/patterns/AppPage';
 import BackLink from '@/components/patterns/BackLink';
 import { PageHeader } from '@/components/patterns/PageHeader';
@@ -46,6 +48,14 @@ export default function AddScore() {
   const navigate = useNavigate();
   const createImport = usePrototypeStore((s) => s.createImport);
   const folders = usePrototypeStore((s) => s.folders);
+  const scores = usePrototypeStore((s) => s.scores);
+  const subscription = usePrototypeStore((s) => s.subscription);
+
+  const liveScores = scores.filter((s) => s.ownership !== 'trash');
+  const scoreQuota = getScoreQuota(subscription?.plan);
+  const importQuota = getImportQuota(subscription?.plan);
+  const importsCount = subscription?.usage?.imports ?? 8;
+  const isAtScoreLimit = !scoreQuota.isUnlimited && liveScores.length >= scoreQuota.limit;
 
   const [step, setStep] = useState(1);
   const [source, setSource] = useState(null);
@@ -55,7 +65,36 @@ export default function AddScore() {
   const [fileError, setFileError] = useState(null);
   const [createdImportId, setCreatedImportId] = useState(null);
 
-  const addFile = () => setFiles((f) => [...f, { id: Date.now(), name: `Page ${f.length + 1}.pdf` }]);
+  const handleSelectSource = (sourceId) => {
+    setSource(sourceId);
+    if (sourceId === 'pdf') {
+      setFiles([{ id: 1, name: 'Score-Part-1.pdf' }, { id: 2, name: 'Score-Part-2.pdf' }]);
+    } else if (sourceId === 'images') {
+      setFiles([{ id: 1, name: 'Scan_Page_1.jpg' }, { id: 2, name: 'Scan_Page_2.jpg' }]);
+    } else if (sourceId === 'camera') {
+      setFiles([{ id: 1, name: 'Camera_Capture_1.jpg' }]);
+    } else if (sourceId === 'musicxml') {
+      setFiles([{ id: 1, name: 'Clair_de_Lune.musicxml' }]);
+      setDetails((prev) => ({
+        ...prev,
+        title: 'Clair de Lune',
+        composer: 'Claude Debussy',
+        instrument: 'Piano',
+        tags: 'Impressionist, Suite bergamasque',
+      }));
+    }
+    setStep(2);
+  };
+
+  const addFile = () => {
+    const ext = source === 'images' ? 'jpg' : source === 'musicxml' ? 'musicxml' : 'pdf';
+    setFiles((f) => [...f, { id: Date.now(), name: `Page ${f.length + 1}.${ext}` }]);
+  };
+
+  const capturePhoto = () => {
+    setFiles((f) => [...f, { id: Date.now(), name: `Camera_Capture_${f.length + 1}.jpg` }]);
+  };
+
   const removeFile = (id) => setFiles((f) => f.filter((x) => x.id !== id));
   const rotate = (id) => setFiles((f) => f.map((x) => (x.id === id ? { ...x, rotated: !x.rotated } : x)));
   const moveUp = (id) =>
@@ -115,7 +154,32 @@ export default function AddScore() {
       <div className="mt-8">
         {/* Step 1 — Choose Source */}
         {step === 1 && (
-          <div className="space-y-4">
+          <div className="space-y-6">
+            {/* Score Quota Warning Banner */}
+            {isAtScoreLimit && (
+              <div className="rounded-container border border-line-subtle bg-surface-panel p-5 space-y-3">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="icon-sm text-ink-primary shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="type-body-small font-medium text-ink-primary">
+                      Repertoire limit reached ({liveScores.length} of {scoreQuota.limit} scores)
+                    </h3>
+                    <p className="mt-1 type-metadata text-ink-secondary leading-relaxed">
+                      You have reached the maximum repertoire allowance for your current plan. Upgrade to Plus for 30 scores, or Pro for unlimited music.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <Button intent="primary" size="sm" asChild>
+                    <Link to={checkoutPath('plus', 'monthly')}>Upgrade to Plus</Link>
+                  </Button>
+                  <Button intent="secondary" size="sm" asChild>
+                    <Link to="/library">Manage Repertoire</Link>
+                  </Button>
+                </div>
+              </div>
+            )}
+
             <div>
               <h2 className="type-subsection text-ink-primary">How would you like to add it?</h2>
               <p className="mt-1 type-body-small text-ink-secondary">
@@ -132,12 +196,17 @@ export default function AddScore() {
                   description={s.desc}
                   mode="action"
                   selected={source === s.id}
-                  onClick={() => {
-                    setSource(s.id);
-                    setStep(2);
-                  }}
+                  onClick={() => handleSelectSource(s.id)}
                 />
               ))}
+            </div>
+
+            {/* Monthly Import Allowance Indicator */}
+            <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-4 py-3 type-metadata text-ink-secondary">
+              <span>Monthly import allowance</span>
+              <span className="font-medium text-ink-primary">
+                {importsCount} of {importQuota.label}
+              </span>
             </div>
           </div>
         )}
@@ -146,8 +215,20 @@ export default function AddScore() {
         {step === 2 && (
           <div className="space-y-6">
             <SectionHeader
-              title="Your files"
-              description="Preview, reorder, rotate, or remove pages before processing."
+              title={
+                source === 'camera'
+                  ? 'Capture score pages'
+                  : source === 'musicxml'
+                  ? 'Digital score verification'
+                  : 'Your files'
+              }
+              description={
+                source === 'camera'
+                  ? 'Frame each page evenly and snap clear photos of your sheet music.'
+                  : source === 'musicxml'
+                  ? 'Yueora parsed the digital structure of your score automatically.'
+                  : 'Preview, reorder, rotate, or remove pages before processing.'
+              }
             />
 
             {/* Simulated file error banner */}
@@ -177,73 +258,154 @@ export default function AddScore() {
               </div>
             )}
 
-            {/* Uploaded File List */}
-            <div className="space-y-2">
-              {files.map((f, i) => (
-                <Surface
-                  key={f.id}
-                  tone="panel"
-                  border
-                  padding="sm"
-                  className="flex items-center gap-3"
-                >
-                  <FileThumbnail seed={f.id} className="h-14 w-12 shrink-0 rounded" />
-                  <div className="flex-1 min-w-0">
-                    <p className="type-body-small font-medium text-ink-primary truncate">
-                      {f.name}
-                      {f.rotated && (
-                        <span className="ml-2 type-metadata text-ink-secondary font-normal">
-                          (rotated 90°)
+            {/* Source: MusicXML Flow */}
+            {source === 'musicxml' ? (
+              <div className="space-y-4">
+                <div className="rounded-container border border-line-subtle bg-surface-panel p-5">
+                  <div className="flex items-start gap-4">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-control bg-neutral-muted text-ink-primary shrink-0">
+                      <Music2 className="icon-md" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="type-body-small font-medium text-ink-primary truncate">
+                          {files[0]?.name || 'score.musicxml'}
+                        </p>
+                        <span className="rounded-control bg-neutral-muted px-2 py-0.5 type-caption font-semibold uppercase tracking-wider text-ink-primary">
+                          Parsed
                         </span>
-                      )}
-                    </p>
-                    <p className="type-metadata text-ink-secondary">Page {i + 1} of {files.length}</p>
+                      </div>
+                      <p className="mt-1 type-metadata text-ink-secondary">
+                        Detected: Claude Debussy · Suite bergamasque · Piano
+                      </p>
+                      <p className="mt-1 type-caption text-ink-tertiary">
+                        Format: MusicXML 4.0 · 72 measures · Key of D♭ Major · 2 staves
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="type-metadata text-ink-tertiary">
+                  MusicXML contains native pitch and measure vectors. Optical recognition will be bypassed and notation will render immediately.
+                </p>
+              </div>
+            ) : source === 'camera' ? (
+              /* Source: Camera Capture Flow */
+              <div className="space-y-4">
+                <div className="relative aspect-[4/3] rounded-container border border-line-subtle bg-surface-canvas overflow-hidden flex flex-col items-center justify-center p-6 text-center">
+                  {/* Framing outline */}
+                  <div className="absolute inset-6 rounded-control border-2 border-dashed border-line-strong pointer-events-none flex items-center justify-center">
+                    <span className="type-caption uppercase tracking-wider text-ink-tertiary bg-surface-canvas/90 px-3 py-1 rounded">
+                      Align sheet within borders
+                    </span>
                   </div>
 
-                  <div className="flex items-center gap-1 shrink-0">
-                    <IconButton
-                      icon={ChevronUp}
-                      size="sm"
-                      tone="quiet"
-                      label={`Move ${f.name} up`}
-                      disabled={i === 0}
-                      onClick={() => moveUp(f.id)}
-                    />
-                    <IconButton
-                      icon={ChevronDown}
-                      size="sm"
-                      tone="quiet"
-                      label={`Move ${f.name} down`}
-                      disabled={i === files.length - 1}
-                      onClick={() => moveDown(f.id)}
-                    />
-                    <IconButton
-                      icon={RotateCw}
-                      size="sm"
-                      tone="quiet"
-                      label={`Rotate ${f.name}`}
-                      onClick={() => rotate(f.id)}
-                    />
-                    {files.length > 1 && (
-                      <IconButton
-                        icon={X}
-                        size="sm"
-                        tone="danger"
-                        label={`Remove ${f.name}`}
-                        onClick={() => removeFile(f.id)}
-                      />
-                    )}
-                  </div>
-                </Surface>
-              ))}
-            </div>
+                  <Camera className="icon-xl text-ink-tertiary mb-3" />
+                  <p className="type-body-small text-ink-secondary max-w-xs">
+                    Hold steady with balanced lighting. Staves will be detected automatically.
+                  </p>
 
-            <div>
-              <Button intent="quiet" size="sm" onClick={addFile} className="gap-1.5 text-brand">
-                <Plus className="icon-sm" />
-                <span>Add another page</span>
-              </Button>
-            </div>
+                  <div className="mt-6 z-10">
+                    <Button intent="primary" size="md" onClick={capturePhoto}>
+                      <Camera className="mr-1.5 icon-sm" /> Capture page {files.length + 1}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Captured photo thumbnail tray */}
+                <div>
+                  <p className="type-label text-ink-primary mb-2">Captured pages ({files.length})</p>
+                  <div className="flex items-center gap-3 overflow-x-auto pb-2">
+                    {files.map((f, i) => (
+                      <div key={f.id} className="relative flex-shrink-0 rounded-control border border-line-subtle bg-surface-panel p-2 flex flex-col items-center gap-1">
+                        <FileThumbnail seed={f.id} className="h-16 w-12 rounded" />
+                        <span className="type-caption text-ink-secondary">Page {i + 1}</span>
+                        {files.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeFile(f.id)}
+                            className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-surface-canvas border border-line-subtle text-ink-secondary hover:text-ink-primary flex items-center justify-center"
+                            aria-label={`Remove page ${i + 1}`}
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Source: PDF & Images Standard Flow */
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  {files.map((f, i) => (
+                    <Surface
+                      key={f.id}
+                      tone="panel"
+                      border
+                      padding="sm"
+                      className="flex items-center gap-3"
+                    >
+                      <FileThumbnail seed={f.id} className="h-14 w-12 shrink-0 rounded" />
+                      <div className="flex-1 min-w-0">
+                        <p className="type-body-small font-medium text-ink-primary truncate">
+                          {f.name}
+                          {f.rotated && (
+                            <span className="ml-2 type-metadata text-ink-secondary font-normal">
+                              (rotated 90°)
+                            </span>
+                          )}
+                        </p>
+                        <p className="type-metadata text-ink-secondary">Page {i + 1} of {files.length}</p>
+                      </div>
+
+                      <div className="flex items-center gap-1 shrink-0">
+                        <IconButton
+                          icon={ChevronUp}
+                          size="sm"
+                          tone="quiet"
+                          label={`Move ${f.name} up`}
+                          disabled={i === 0}
+                          onClick={() => moveUp(f.id)}
+                        />
+                        <IconButton
+                          icon={ChevronDown}
+                          size="sm"
+                          tone="quiet"
+                          label={`Move ${f.name} down`}
+                          disabled={i === files.length - 1}
+                          onClick={() => moveDown(f.id)}
+                        />
+                        <IconButton
+                          icon={RotateCw}
+                          size="sm"
+                          tone="quiet"
+                          label={`Rotate ${f.name}`}
+                          onClick={() => rotate(f.id)}
+                        />
+                        {files.length > 1 && (
+                          <IconButton
+                            icon={X}
+                            size="sm"
+                            tone="danger"
+                            label={`Remove ${f.name}`}
+                            onClick={() => removeFile(f.id)}
+                          />
+                        )}
+                      </div>
+                    </Surface>
+                  ))}
+                </div>
+
+                <div>
+                  <Button intent="quiet" size="sm" onClick={addFile} className="gap-1.5 text-brand">
+                    <Plus className="icon-sm" />
+                    <span>{source === 'images' ? 'Add another photo' : 'Add another page'}</span>
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* QA Testing Triggers (development-only) */}
             {import.meta.env.DEV && (
@@ -319,7 +481,7 @@ export default function AddScore() {
                 />
               </Field>
 
-              <Field label="Tags (optional)" htmlFor="tags">
+              <Field label="Tags (optional)" htmlFor="tags" description="Comma-separated">
                 <Input
                   id="tags"
                   value={details.tags}
@@ -328,13 +490,13 @@ export default function AddScore() {
                 />
               </Field>
 
-              <Field label="Collection / Folder (optional)" htmlFor="folder">
+              <Field label="Save to folder (optional)" htmlFor="folder">
                 <NativeSelect
                   id="folder"
                   value={details.folder}
                   onChange={(e) => setDetails({ ...details, folder: e.target.value })}
                 >
-                  <option value="">No folder</option>
+                  <option value="">No folder (All music)</option>
                   {folders.map((f) => (
                     <option key={f.id} value={f.id}>
                       {f.name}
@@ -348,55 +510,50 @@ export default function AddScore() {
               <Button intent="secondary" onClick={() => setStep(2)}>
                 Back
               </Button>
-              <Button
-                intent="primary"
-                onClick={() => {
-                  if (!details.title.trim()) {
-                    setError('Add a title so you can find this score later.');
-                    return;
-                  }
-                  setStep(4);
-                }}
-              >
-                Continue
+              <Button intent="primary" onClick={() => setStep(4)}>
+                Review &amp; start
               </Button>
             </div>
           </div>
         )}
 
-        {/* Step 4 — Confirmation */}
+        {/* Step 4 — Confirmation Overview */}
         {step === 4 && (
           <div className="space-y-6">
-            <Surface tone="panel" padding="md" className="space-y-4">
-              <SectionHeader
-                title="Confirm and begin"
-                description="Review summary before optical recognition begins."
-              />
+            <SectionHeader
+              title="Review & confirm"
+              description="Confirm details before submitting your score to the recognition pipeline."
+            />
 
-              <dl className="divide-y divide-line-subtle type-body-small">
-                <div className="flex items-center justify-between py-2.5">
-                  <dt className="text-ink-secondary">Title</dt>
-                  <dd className="font-medium text-ink-primary">{details.title || 'Untitled'}</dd>
+            <Surface tone="panel" padding="md" className="space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="type-section-title text-ink-primary truncate">
+                    {details.title || 'Untitled score'}
+                  </h3>
+                  <p className="type-body-small text-ink-secondary mt-0.5">
+                    {details.composer || 'Unknown composer'} · {details.instrument || 'Piano'}
+                  </p>
                 </div>
-                <div className="flex items-center justify-between py-2.5">
-                  <dt className="text-ink-secondary">Composer</dt>
-                  <dd className="font-medium text-ink-primary">{details.composer || '—'}</dd>
+                <span className="rounded-control bg-neutral-muted px-2.5 py-1 type-caption font-semibold uppercase tracking-wider text-ink-primary">
+                  {sources.find((s) => s.id === source)?.label || 'PDF'}
+                </span>
+              </div>
+
+              <div className="border-t border-line-subtle pt-3 grid grid-cols-2 gap-4 text-xs">
+                <div>
+                  <span className="type-caption text-ink-tertiary">Total pages</span>
+                  <p className="type-body-small font-medium text-ink-primary mt-0.5">
+                    {files.length} {files.length === 1 ? 'page' : 'pages'}
+                  </p>
                 </div>
-                <div className="flex items-center justify-between py-2.5">
-                  <dt className="text-ink-secondary">Instrument</dt>
-                  <dd className="font-medium text-ink-primary">{details.instrument}</dd>
+                <div>
+                  <span className="type-caption text-ink-tertiary">Target folder</span>
+                  <p className="type-body-small font-medium text-ink-primary mt-0.5">
+                    {folders.find((f) => f.id === details.folder)?.name || 'None (All music)'}
+                  </p>
                 </div>
-                <div className="flex items-center justify-between py-2.5">
-                  <dt className="text-ink-secondary">Pages</dt>
-                  <dd className="font-medium text-ink-primary">{files.length} {files.length === 1 ? 'page' : 'pages'}</dd>
-                </div>
-                <div className="flex items-center justify-between py-2.5">
-                  <dt className="text-ink-secondary">Source</dt>
-                  <dd className="font-medium text-ink-primary">
-                    {sources.find((s) => s.id === source)?.label}
-                  </dd>
-                </div>
-              </dl>
+              </div>
 
               <p className="type-metadata text-ink-secondary pt-2">
                 Recognition runs in the background. You can navigate away anytime and return once your active score is prepared.

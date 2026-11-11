@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Play, ChevronRight, Clock } from 'lucide-react';
+import { Play, ChevronRight, Clock, BarChart2 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { practiceWeek } from '@/lib/practiceStats';
 import ScorePreview from '@/components/library/ScorePreview';
@@ -231,6 +231,12 @@ export default function PracticeHub() {
             <Link to="/practice/history">
               <Clock />
               <span>Practice history</span>
+            </Link>
+          </Button>
+          <Button intent="secondary" size="md" asChild>
+            <Link to="/practice/progress">
+              <BarChart2 />
+              <span>Progress &amp; insights</span>
             </Link>
           </Button>
           {activeScores.length > 0 && (

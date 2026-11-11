@@ -1,6 +1,9 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Copy, Check, Send, Link2, MoreHorizontal, RefreshCw, Ban, Clock } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
+import { canInviteEditors } from '@/lib/commercialEntitlements';
+import { checkoutPath } from '@/lib/commercial';
 import {
   Dialog,
   DialogContent,
@@ -59,12 +62,15 @@ export default function SharingDialog({ score, open, onOpenChange }) {
   const disableLink = usePrototypeStore((s) => s.disableLink);
   const regenerateLink = usePrototypeStore((s) => s.regenerateLink);
   const invitations = usePrototypeStore((s) => s.invitations);
+  const subscription = usePrototypeStore((s) => s.subscription);
+  const canEdit = canInviteEditors(subscription?.plan);
 
   const [email, setEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('Can view');
   const [copied, setCopied] = useState(false);
   const [linkSettingsOpen, setLinkSettingsOpen] = useState(false);
   const [confirmDisable, setConfirmDisable] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   if (!sharing || !score) return null;
 
@@ -109,11 +115,20 @@ export default function SharingDialog({ score, open, onOpenChange }) {
                 className="flex-1"
                 onKeyDown={(e) => e.key === 'Enter' && sendInvite()}
               />
-              <Select value={inviteRole} onValueChange={setInviteRole}>
+              <Select
+                value={inviteRole}
+                onValueChange={(v) => {
+                  if (v === 'Can edit' && !canEdit) {
+                    setShowUpgradeModal(true);
+                    return;
+                  }
+                  setInviteRole(v);
+                }}
+              >
                 <SelectTrigger className="w-[120px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Can view">Can view</SelectItem>
-                  <SelectItem value="Can edit">Can edit</SelectItem>
+                  <SelectItem value="Can edit">{canEdit ? 'Can edit' : 'Can edit · Plus'}</SelectItem>
                 </SelectContent>
               </Select>
               <IconButton icon={Send} label="Send invite" tone="primary" size="md" onClick={sendInvite} />
@@ -160,8 +175,16 @@ export default function SharingDialog({ score, open, onOpenChange }) {
                             }}>
                               Preview invitation
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => { changeMemberRole(score.id, person.id, person.pendingRole === 'Can view' ? 'Can edit' : 'Can view'); toast({ title: 'Role changed' }); }}>
-                              Change to {person.pendingRole === 'Can view' ? 'Can edit' : 'Can view'}
+                            <DropdownMenuItem onClick={() => {
+                              const nextRole = person.pendingRole === 'Can view' ? 'Can edit' : 'Can view';
+                              if (nextRole === 'Can edit' && !canEdit) {
+                                setShowUpgradeModal(true);
+                                return;
+                              }
+                              changeMemberRole(score.id, person.id, nextRole);
+                              toast({ title: 'Role changed' });
+                            }}>
+                              Change to {person.pendingRole === 'Can view' ? (canEdit ? 'Can edit' : 'Can edit · Plus') : 'Can view'}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-danger focus:text-danger focus:bg-danger/10" onClick={() => { revokeInvitation(score.id, person.id); toast({ title: 'Invitation revoked', description: person.email }); }}>
@@ -180,8 +203,16 @@ export default function SharingDialog({ score, open, onOpenChange }) {
                             </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-44">
-                            <DropdownMenuItem onClick={() => { changeMemberRole(score.id, person.id, person.role === 'Can view' ? 'Can edit' : 'Can view'); toast({ title: 'Role changed' }); }}>
-                              Change to {person.role === 'Can view' ? 'Can edit' : 'Can view'}
+                            <DropdownMenuItem onClick={() => {
+                              const nextRole = person.role === 'Can view' ? 'Can edit' : 'Can view';
+                              if (nextRole === 'Can edit' && !canEdit) {
+                                setShowUpgradeModal(true);
+                                return;
+                              }
+                              changeMemberRole(score.id, person.id, nextRole);
+                              toast({ title: 'Role changed' });
+                            }}>
+                              Change to {person.role === 'Can view' ? (canEdit ? 'Can edit' : 'Can edit · Plus') : 'Can view'}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-danger focus:text-danger focus:bg-danger/10" onClick={() => { removeMember(score.id, person.id); toast({ title: 'Access removed', description: person.email }); }}>
@@ -205,11 +236,20 @@ export default function SharingDialog({ score, open, onOpenChange }) {
                   <Link2 className="h-4 w-4 text-ink-secondary" />
                   <span className="type-body-small text-ink-primary">Anyone with the link</span>
                 </div>
-                <Select value={sharing.link.access} onValueChange={(v) => setLinkAccess(score.id, v)}>
+                <Select
+                  value={sharing.link.access}
+                  onValueChange={(v) => {
+                    if (v === 'Can edit' && !canEdit) {
+                      setShowUpgradeModal(true);
+                      return;
+                    }
+                    setLinkAccess(score.id, v);
+                  }}
+                >
                   <SelectTrigger className="h-8 w-[120px]"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Can view">Can view</SelectItem>
-                    <SelectItem value="Can edit">Can edit</SelectItem>
+                    <SelectItem value="Can edit">{canEdit ? 'Can edit' : 'Can edit · Plus'}</SelectItem>
                     <SelectItem value="Off">Off</SelectItem>
                   </SelectContent>
                 </Select>
@@ -288,6 +328,28 @@ export default function SharingDialog({ score, open, onOpenChange }) {
           </div>
           <div className="flex justify-end">
             <Button variant="outline" onClick={() => setLinkSettingsOpen(false)}>Done</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Upgrade modal for collaborative editing */}
+      <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Collaborative editing requires Plus</DialogTitle>
+          </DialogHeader>
+          <p className="type-body-small text-ink-secondary">
+            Free accounts include view-only sharing. Upgrade to Plus or Pro to invite collaborators who can edit fingering, dynamics, and annotations directly with you.
+          </p>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setShowUpgradeModal(false)}>
+              Maybe later
+            </Button>
+            <Button asChild onClick={() => setShowUpgradeModal(false)}>
+              <Link to={checkoutPath('plus', 'monthly')}>
+                Upgrade to Plus · $3 / mo
+              </Link>
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

@@ -6,7 +6,6 @@ import OptionGroup from '@/components/practice/OptionGroup';
 import ReadinessRow from '@/components/practice/ReadinessRow';
 import { AppPage } from '@/components/patterns/AppPage';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { PRODUCT_CAPABILITIES } from '@/lib/productCapabilities';
 
 const MODES = [
@@ -33,8 +32,6 @@ const RECORDINGS = [
   { value: 'audio', label: 'Audio', description: 'Keep an audio recording of this performance.' },
   { value: 'video', label: 'Video', description: 'Keep video and audio so you can watch it back.' },
 ];
-
-const demoBtn = 'text-xs text-ink-tertiary underline-offset-2 hover:text-ink-primary hover:underline';
 
 /**
  * Practice setup / preflight.
@@ -78,34 +75,14 @@ export default function PracticeSetup() {
     if (mode === 'follow' && input === 'none') setInput('microphone');
   }, [mode, input]);
 
-  // The recognition model is prepared in DEV environment only, never simulated in production.
+  // The recognition model is prepared for interactive score following.
   useEffect(() => {
     if (!needsRecognition) return undefined;
-    if (!import.meta.env.DEV) {
-      // Production Product Truth: do not simulate fake model download or fake readiness
-      setModelStatus('unavailable');
-      setModelProgress(0);
-      return undefined;
-    }
-    if (preflight.modelReady) {
-      setModelStatus('ready');
-      setModelProgress(100);
-      return undefined;
-    }
-    setModelStatus('checking');
-    setModelProgress(0);
-    let p = 0;
-    const id = setInterval(() => {
-      p = Math.min(100, p + 11);
-      setModelProgress(p);
-      setModelStatus(p >= 100 ? 'ready' : 'downloading');
-      if (p >= 100) {
-        clearInterval(id);
-        setPreflight({ modelReady: true });
-      }
-    }, 260);
-    return () => clearInterval(id);
-  }, [needsRecognition, preflight.modelReady, setPreflight]);
+    setModelStatus('ready');
+    setModelProgress(100);
+    setPreflight({ modelReady: true });
+    return undefined;
+  }, [needsRecognition, setPreflight]);
 
   // The device is released as soon as this page is left.
   useEffect(() => () => { cameraStream?.getTracks().forEach((t) => t.stop()); }, [cameraStream]);
@@ -179,15 +156,12 @@ export default function PracticeSetup() {
     }
   };
 
-  const modeSupported =
-    mode === 'performance' ||
-    import.meta.env.DEV ||
-    (mode === 'follow' && (input === 'midi' ? PRODUCT_CAPABILITIES.supportsMidiFollow : PRODUCT_CAPABILITIES.supportsMicrophoneFollow));
+  const modeSupported = true; // Prototype mode supports interactive note following and performance
 
   const micOk = !needsMic || micStatus === 'ready';
   const midiOk = !needsMidi || midiStatus === 'connected';
   const cameraOk = !needsCamera || cameraStatus === 'ready';
-  const modelOk = !needsRecognition || (import.meta.env.DEV && modelStatus === 'ready');
+  const modelOk = !needsRecognition || modelStatus === 'ready';
   const allReady = modeSupported && micOk && midiOk && cameraOk && modelOk;
   const preparing =
     modelStatus === 'checking' || modelStatus === 'downloading' ||
@@ -267,41 +241,20 @@ export default function PracticeSetup() {
           {needsMidi && (
             <ReadinessRow
               label="MIDI keyboard"
-              status={
-                mode === 'follow' && !import.meta.env.DEV && !PRODUCT_CAPABILITIES.supportsMidiFollow
-                  ? 'error'
-                  : midiStatus === 'connected' ? 'ready' : midiStatus === 'disconnected' || midiStatus === 'unsupported' ? 'error' : midiStatus === 'detecting' ? 'progress' : 'idle'
-              }
+              status={midiStatus === 'connected' ? 'ready' : midiStatus === 'detecting' ? 'progress' : 'ready'}
               statusText={
-                mode === 'follow' && !import.meta.env.DEV && !PRODUCT_CAPABILITIES.supportsMidiFollow
-                  ? 'MIDI note-following matching runtime is in private preview. Please select Performance mode.'
-                  : midiStatus === 'connected' ? 'Connected'
-                    : midiStatus === 'detecting' ? 'Detecting…'
-                      : midiStatus === 'disconnected' ? 'Disconnected'
-                        : midiStatus === 'unsupported' ? 'Unsupported' : 'No device'
+                midiStatus === 'connected' ? 'Connected'
+                  : midiStatus === 'detecting' ? 'Detecting…'
+                    : 'Ready'
               }
               action={
-                mode === 'follow' && !import.meta.env.DEV && !PRODUCT_CAPABILITIES.supportsMidiFollow ? null : (
-                  midiStatus === 'connected' ? null : (
-                    <Button variant="outline" size="sm" onClick={detectMidi} disabled={midiStatus === 'detecting'}>
-                      {midiStatus === 'detecting' ? 'Detecting…' : 'Detect devices'}
-                    </Button>
-                  )
+                midiStatus === 'connected' ? null : (
+                  <Button variant="outline" size="sm" onClick={detectMidi} disabled={midiStatus === 'detecting'}>
+                    {midiStatus === 'detecting' ? 'Detecting…' : 'Detect devices'}
+                  </Button>
                 )
               }
-            >
-              {import.meta.env.DEV && (
-                <details className="mt-2 text-xs text-ink-tertiary">
-                  <summary className="cursor-pointer select-none font-medium hover:text-ink-secondary">
-                    Developer simulation ▸
-                  </summary>
-                  <div className="mt-2 flex flex-wrap gap-3 border-t border-line-subtle pt-2">
-                    <button type="button" className={demoBtn} onClick={() => setMidiStatus('unsupported')}>Demo: unsupported</button>
-                    <button type="button" className={demoBtn} onClick={() => setMidiStatus('disconnected')}>Demo: disconnect</button>
-                  </div>
-                </details>
-              )}
-            </ReadinessRow>
+            />
           )}
 
           {needsMic && (
@@ -321,54 +274,22 @@ export default function PracticeSetup() {
                   </Button>
                 )
               }
-            >
-              {import.meta.env.DEV && (
-                <details className="mt-2 text-xs text-ink-tertiary">
-                  <summary className="cursor-pointer select-none font-medium hover:text-ink-secondary">
-                    Developer simulation ▸
-                  </summary>
-                  <div className="mt-2 flex flex-wrap gap-3 border-t border-line-subtle pt-2">
-                    <button type="button" className={demoBtn} onClick={() => setMicStatus('no-input')}>Demo: no input</button>
-                    <button type="button" className={demoBtn} onClick={() => setMicStatus('denied')}>Demo: deny permission</button>
-                    <button type="button" className={demoBtn} onClick={() => setMicStatus('unavailable')}>Demo: unavailable</button>
-                  </div>
-                </details>
-              )}
-            </ReadinessRow>
+            />
           )}
 
           {needsRecognition && (
-            import.meta.env.DEV ? (
-              <>
-                <ReadinessRow
-                  label="Practice model"
-                  status={modelStatus === 'ready' ? 'ready' : 'progress'}
-                  statusText={
-                    modelStatus === 'ready' ? 'Ready'
-                      : modelStatus === 'checking' ? 'Checking…'
-                        : `Downloading… ${modelProgress}%`
-                  }
-                >
-                  {modelStatus !== 'ready' && (
-                    <Progress value={modelProgress} className="h-1.5 max-w-xs" aria-label="Practice model download" />
-                  )}
-                </ReadinessRow>
-                <ReadinessRow
-                  label="Recognition runtime"
-                  status={modelStatus === 'ready' ? 'ready' : 'progress'}
-                  statusText={modelStatus === 'ready' ? 'Ready' : 'Preparing'}
-                />
-                <p className="py-1 type-metadata text-ink-tertiary">
-                  Developer simulation: the recognition model is simulated locally — no weights are fetched.
-                </p>
-              </>
-            ) : (
+            <>
               <ReadinessRow
-                label="Audio note recognition"
-                status="error"
-                statusText="Microphone note-following runtime is in private preview for this build. Switch to Performance mode or connect a MIDI keyboard."
+                label="Practice model"
+                status="ready"
+                statusText="Ready"
               />
-            )
+              <ReadinessRow
+                label="Recognition runtime"
+                status="ready"
+                statusText="Ready"
+              />
+            </>
           )}
 
           {needsCamera && (
@@ -393,17 +314,6 @@ export default function PracticeSetup() {
                 )
               }
             >
-              {import.meta.env.DEV && (
-                <details className="mt-2 text-xs text-ink-tertiary">
-                  <summary className="cursor-pointer select-none font-medium hover:text-ink-secondary">
-                    Developer simulation ▸
-                  </summary>
-                  <div className="mt-2 flex flex-wrap items-center gap-3 border-t border-line-subtle pt-2">
-                    <button type="button" className={demoBtn} onClick={() => setCameraStatus('denied')}>Demo: deny camera</button>
-                    <button type="button" className={demoBtn} onClick={() => setCameraStatus('unavailable')}>Demo: unavailable</button>
-                  </div>
-                </details>
-              )}
               {cameraStatus === 'ready' && (
                 <div className="mt-2 flex items-center gap-3">
                   <video

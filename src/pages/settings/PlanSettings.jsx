@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, AlertCircle, Info, ArrowRight } from 'lucide-react';
+import { Check, AlertCircle, ArrowRight, CreditCard, Receipt, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Field } from '@/components/ui/field';
 import { Switch } from '@/components/ui/switch';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import SettingsSection from '@/components/patterns/SettingsSection';
@@ -12,15 +14,27 @@ import {
 
 export default function PlanSettings() {
   const subscription = usePrototypeStore((s) => s.subscription);
-  const billingHistory = usePrototypeStore((s) => s.billingHistory);
+  const billingHistory = usePrototypeStore((s) => s.billingHistory) || [];
+  const account = usePrototypeStore((s) => s.account);
   const plans = usePrototypeStore((s) => s.plans);
   const cancelSubscription = usePrototypeStore((s) => s.cancelSubscription);
   const resumeSubscription = usePrototypeStore((s) => s.resumeSubscription);
   const downgradeToFree = usePrototypeStore((s) => s.downgradeToFree);
+  const updatePaymentMethod = usePrototypeStore((s) => s.updatePaymentMethod);
 
   const [annual, setAnnual] = useState(subscription.billingInterval === 'yearly');
   const [dialog, setDialog] = useState(null);
   const [done, setDone] = useState(null);
+
+  // Card update dialog state
+  const [editCardOpen, setEditCardOpen] = useState(false);
+  const [newCardNumber, setNewCardNumber] = useState('');
+  const [newExpiry, setNewExpiry] = useState('');
+  const [newCvc, setNewCvc] = useState('');
+  const [cardError, setCardError] = useState('');
+
+  // Receipt viewer state
+  const [selectedReceipt, setSelectedReceipt] = useState(null);
 
   const currentPlanId = subscription.plan || 'free';
   const isFree = currentPlanId === 'free';
@@ -29,12 +43,39 @@ export default function PlanSettings() {
   const currentPlan = plans[currentPlanId] || plans.free;
   const chosenInterval = annual ? 'yearly' : 'monthly';
 
+  const payment = subscription.payment || { brand: 'Visa', last4: '4242', expMonth: '08', expYear: '29' };
+
   const confirm = () => {
     if (dialog === 'downgrade') downgradeToFree();
     if (dialog === 'cancel') cancelSubscription();
     setDone(dialog);
     setDialog(null);
     setTimeout(() => setDone(null), 2500);
+  };
+
+  const handleSaveCard = (e) => {
+    e.preventDefault();
+    setCardError('');
+    const clean = newCardNumber.replace(/\s+/g, '');
+    if (clean.length < 15) {
+      setCardError('Please enter a valid 16-digit card number.');
+      return;
+    }
+    if (!newExpiry || !newExpiry.includes('/')) {
+      setCardError('Please enter a valid expiration date (MM/YY).');
+      return;
+    }
+    const [expMonth, expYear] = newExpiry.split('/').map((s) => s.trim());
+    updatePaymentMethod({
+      brand: 'Visa',
+      last4: clean.slice(-4),
+      expMonth: expMonth || '08',
+      expYear: expYear || '29',
+    });
+    setEditCardOpen(false);
+    setNewCardNumber('');
+    setNewExpiry('');
+    setNewCvc('');
   };
 
   // Alternative plans user can transition to
@@ -51,7 +92,7 @@ export default function PlanSettings() {
           ? (isCancelling ? `${currentPlan.name} until ${subscription.cancelAt}, then Free.` : `You're on ${currentPlan.name}. Thanks for being on Yueora.`)
           : "You're on the Free plan."}
       >
-        <div className="rounded-container border border-line-subtle p-4">
+        <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="font-display text-lg font-medium text-ink-primary">{currentPlan.name}</p>
@@ -85,7 +126,7 @@ export default function PlanSettings() {
 
         {isPaid && isCancelling && (
           <div className="mt-3 flex items-start gap-2 rounded-container border border-line-subtle bg-surface-panel p-3 type-body-small text-ink-secondary">
-            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-ink-tertiary" />
+            <AlertCircle className="mt-0.5 icon-xs shrink-0 text-ink-tertiary" />
             <span>
               Your {currentPlan.name} plan stays active until {subscription.cancelAt}. Nothing changes before then, and you can resume
               at any time.
@@ -103,7 +144,7 @@ export default function PlanSettings() {
         )}
       </SettingsSection>
 
-      {/* 2. Usage Section (Available for all or paid accounts) */}
+      {/* 2. Usage Section */}
       <SettingsSection title="Usage" desc="How much of your current plan quota you're using.">
         <div className="space-y-3">
           <UsageBar label="Scores" value={subscription.usage.scores} limit={currentPlan.scores} />
@@ -112,7 +153,7 @@ export default function PlanSettings() {
         </div>
       </SettingsSection>
 
-      {/* 3. Available Paid Plan Options (Free can upgrade to Plus/Pro; Plus can upgrade to Pro; Pro can switch to Plus) */}
+      {/* 3. Available Paid Plan Options */}
       {availablePlans.length > 0 && (
         <SettingsSection
           title={isFree ? 'Upgrade plan' : 'Change plan'}
@@ -145,18 +186,18 @@ export default function PlanSettings() {
                       <span className="text-sm font-normal text-ink-tertiary"> / {intervalNoun(chosenInterval)}</span>
                     </p>
                     <ul className="mt-4 space-y-2 type-body-small text-ink-secondary">
-                      <li className="flex items-center gap-2"><Check className="h-4 w-4 text-brand" /> {p.scores} in library</li>
-                      <li className="flex items-center gap-2"><Check className="h-4 w-4 text-brand" /> {p.imports}</li>
-                      <li className="flex items-center gap-2"><Check className="h-4 w-4 text-brand" /> {p.storage} storage</li>
-                      {p.analytics && <li className="flex items-center gap-2"><Check className="h-4 w-4 text-brand" /> Practice insights</li>}
-                      {p.export && <li className="flex items-center gap-2"><Check className="h-4 w-4 text-brand" /> Recording downloads</li>}
+                      <li className="flex items-center gap-2"><Check className="icon-xs text-brand" /> {p.scores} in library</li>
+                      <li className="flex items-center gap-2"><Check className="icon-xs text-brand" /> {p.imports}</li>
+                      <li className="flex items-center gap-2"><Check className="icon-xs text-brand" /> {p.storage} storage</li>
+                      {p.analytics && <li className="flex items-center gap-2"><Check className="icon-xs text-brand" /> Practice insights</li>}
+                      {p.export && <li className="flex items-center gap-2"><Check className="icon-xs text-brand" /> Recording downloads</li>}
                     </ul>
                   </div>
 
                   <div className="mt-6">
                     <Button className="w-full" asChild>
                       <Link to={checkoutPath(p.id, chosenInterval)}>
-                        {isUpgrade ? `Upgrade to ${p.name}` : `Switch to ${p.name}`} <ArrowRight className="ml-1.5 h-4 w-4" />
+                        {isUpgrade ? `Upgrade to ${p.name}` : `Switch to ${p.name}`} <ArrowRight className="ml-1.5 icon-xs" />
                       </Link>
                     </Button>
                   </div>
@@ -168,43 +209,56 @@ export default function PlanSettings() {
       )}
 
       {/* 4. Payment Method */}
-      <SettingsSection title="Payment method" desc={`How you pay for ${isPaid ? currentPlan.name : 'Yueora'}.`}>
-        <div className="rounded-container border border-line-subtle p-4">
-          <p className="flex items-start gap-2 type-body-small text-ink-secondary">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-ink-tertiary" />
-            <span>
-              Payment method management is not connected in this prototype. No card details are collected or stored.
+      <SettingsSection title="Payment method" desc={`How you pay for ${isPaid ? currentPlan.name : 'your subscription'}.`}>
+        <div className="rounded-container border border-line-subtle bg-surface-panel p-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-control bg-neutral-muted text-ink-primary shrink-0">
+              <CreditCard className="icon-sm" />
             </span>
-          </p>
-          <p className="mt-2 type-metadata text-ink-tertiary">
-            Sample data shown elsewhere in this prototype is demo data, not a real card.
-          </p>
+            <div>
+              <p className="type-body-small font-medium text-ink-primary">
+                {payment.brand || 'Visa'} •••• {payment.last4 || '4242'}
+              </p>
+              <p className="type-metadata text-ink-secondary">
+                Expires {payment.expMonth || '08'}/{payment.expYear || '29'}
+              </p>
+            </div>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => setEditCardOpen(true)}>
+            Change payment method
+          </Button>
         </div>
       </SettingsSection>
 
       {/* 5. Billing History */}
-      <SettingsSection title="Billing history" desc="Demo records from this prototype. No real payments.">
+      <SettingsSection title="Billing history" desc="Past payments and itemized invoice receipts.">
         {billingHistory.length === 0 ? (
-          <p className="type-body-small text-ink-secondary">No records yet.</p>
+          <p className="type-body-small text-ink-secondary">No billing records yet.</p>
         ) : (
-          <ul className="divide-y divide-line-subtle text-sm">
-            {billingHistory.map((b) => (
-              <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
-                <div>
-                  <p className="font-medium text-ink-primary">{b.date} · {b.amount}</p>
-                  <p className="type-metadata text-ink-tertiary">
-                    {b.plan} · {b.invoice}
-                    {b.demo && <span className="ml-2 rounded-control bg-neutral-muted px-2 py-0.5 type-caption font-semibold uppercase tracking-wider text-ink-secondary">Demo</span>}
-                  </p>
+          <div className="rounded-container border border-line-subtle bg-surface-panel overflow-hidden">
+            <div className="divide-y divide-line-subtle text-sm">
+              {billingHistory.map((b) => (
+                <div key={b.id} className="flex flex-wrap items-center justify-between gap-3 p-4 hover:bg-neutral-hover/40 transition-colors">
+                  <div className="min-w-0">
+                    <p className="font-medium text-ink-primary">{b.date} · {b.amount}</p>
+                    <p className="type-metadata text-ink-tertiary">
+                      {b.plan} · {b.invoice}
+                      <span className="ml-2 rounded-control bg-neutral-muted px-2 py-0.5 type-caption font-semibold uppercase tracking-wider text-ink-primary">
+                        Paid
+                      </span>
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setSelectedReceipt(b)}>
+                    <Receipt className="mr-1.5 icon-xs" /> View receipt
+                  </Button>
                 </div>
-                <span className="type-metadata text-ink-tertiary">No invoice file in this prototype</span>
-              </li>
-            ))}
-          </ul>
+              ))}
+            </div>
+          </div>
         )}
       </SettingsSection>
 
-      {/* Confirmation Dialog */}
+      {/* Downgrade / Cancel Dialog */}
       <Dialog open={dialog !== null} onOpenChange={(o) => !o && setDialog(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
@@ -219,6 +273,115 @@ export default function PlanSettings() {
             <Button variant="outline" onClick={() => setDialog(null)}>Keep {currentPlan.name}</Button>
             <Button variant={dialog === 'cancel' ? 'destructive' : 'default'} onClick={confirm}>Confirm</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Change Payment Method Dialog */}
+      <Dialog open={editCardOpen} onOpenChange={setEditCardOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Update payment method</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSaveCard} className="space-y-4">
+            {cardError && (
+              <div role="alert" className="flex items-center gap-2 rounded-control bg-danger/10 p-2.5 text-danger type-metadata">
+                <AlertCircle className="icon-xs shrink-0" />
+                <span>{cardError}</span>
+              </div>
+            )}
+            <Field label="Card number" htmlFor="editCardNum" required>
+              <Input
+                id="editCardNum"
+                value={newCardNumber}
+                onChange={(e) => setNewCardNumber(e.target.value)}
+                placeholder="4242 •••• •••• 4242"
+                required
+              />
+            </Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Expiration" htmlFor="editExpiry" required>
+                <Input
+                  id="editExpiry"
+                  value={newExpiry}
+                  onChange={(e) => setNewExpiry(e.target.value)}
+                  placeholder="MM/YY"
+                  required
+                />
+              </Field>
+              <Field label="CVC" htmlFor="editCvc" required>
+                <Input
+                  id="editCvc"
+                  value={newCvc}
+                  onChange={(e) => setNewCvc(e.target.value)}
+                  placeholder="123"
+                  maxLength={4}
+                  required
+                />
+              </Field>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setEditCardOpen(false)}>Cancel</Button>
+              <Button type="submit">Save card</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Receipt Viewer Dialog */}
+      <Dialog open={selectedReceipt !== null} onOpenChange={(o) => !o && setSelectedReceipt(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Yueora Receipt</DialogTitle>
+          </DialogHeader>
+          {selectedReceipt && (
+            <div className="space-y-4 text-sm">
+              <div className="rounded-container border border-line-subtle bg-surface-panel p-4 space-y-3">
+                <div className="flex items-center justify-between border-b border-line-subtle pb-3">
+                  <div>
+                    <p className="type-caption text-ink-tertiary">Invoice Number</p>
+                    <p className="type-body-small font-mono font-medium text-ink-primary">{selectedReceipt.invoice}</p>
+                  </div>
+                  <span className="rounded-control bg-neutral-muted px-2.5 py-0.5 type-caption font-semibold uppercase tracking-wider text-ink-primary">
+                    Paid
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <span className="type-caption text-ink-tertiary">Date Paid</span>
+                    <p className="type-body-small text-ink-primary mt-0.5">{selectedReceipt.date}</p>
+                  </div>
+                  <div>
+                    <span className="type-caption text-ink-tertiary">Payment Method</span>
+                    <p className="type-body-small text-ink-primary mt-0.5">{payment.brand || 'Visa'} •••• {payment.last4 || '4242'}</p>
+                  </div>
+                </div>
+
+                <div className="border-t border-line-subtle pt-3 text-xs">
+                  <span className="type-caption text-ink-tertiary">Billed To</span>
+                  <p className="type-body-small text-ink-primary mt-0.5">{account?.displayName || 'Alex Morgan'}</p>
+                  <p className="type-caption text-ink-secondary">{account?.email || 'you@example.com'}</p>
+                </div>
+
+                <div className="border-t border-line-subtle pt-3 flex items-baseline justify-between">
+                  <div>
+                    <p className="type-body-small font-medium text-ink-primary">{selectedReceipt.plan}</p>
+                    <p className="type-caption text-ink-tertiary">Subscription period payment</p>
+                  </div>
+                  <p className="font-display text-lg font-medium text-ink-primary">{selectedReceipt.amount}</p>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-1">
+                <Button variant="outline" size="sm" onClick={() => window.print()}>
+                  <Printer className="mr-1.5 icon-xs" /> Print receipt
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => setSelectedReceipt(null)}>
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

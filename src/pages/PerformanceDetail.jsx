@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Download, MoreHorizontal, Trash2, Wand2 } from 'lucide-react';
+import { ArrowLeft, Download, MoreHorizontal, Trash2, Wand2, Lock } from 'lucide-react';
 import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
+import { canDownloadRecording } from '@/lib/commercialEntitlements';
+import { checkoutPath } from '@/lib/commercial';
 import { signedUrlFor, slugify, downloadBlob } from '@/lib/media';
 import { fmtClock, visibilityLabel } from '@/lib/practiceUtils';
 import SyncPlayback from '@/components/performances/SyncPlayback';
@@ -37,12 +39,15 @@ export default function PerformanceDetail() {
   const members = usePrototypeStore((s) => s.teamMembers) || [];
   const updateSharing = usePrototypeStore((s) => s.updatePerformanceSharing);
   const deletePerformance = usePrototypeStore((s) => s.deletePerformance);
+  const subscription = usePrototypeStore((s) => s.subscription);
+  const canDownload = canDownloadRecording(subscription?.plan);
 
   const [src, setSrc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [videoOpen, setVideoOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [downloadUpgradeModal, setDownloadUpgradeModal] = useState(false);
 
   const canView = !!performance
     && (performance.ownerId === 'you' || (performance.sharedWith || []).includes('you'));
@@ -141,9 +146,15 @@ export default function PerformanceDetail() {
           <Button variant="outline" onClick={() => setVideoOpen(true)}>
             <Wand2 className="mr-1.5 h-4 w-4" /> Make share video
           </Button>
-          <Button variant="outline" onClick={download}>
-            <Download className="mr-1.5 h-4 w-4" /> Download recording
-          </Button>
+          {canDownload ? (
+            <Button variant="outline" onClick={download}>
+              <Download className="mr-1.5 h-4 w-4" /> Download recording
+            </Button>
+          ) : (
+            <Button variant="outline" onClick={() => setDownloadUpgradeModal(true)}>
+              <Lock className="mr-1.5 h-3.5 w-3.5 text-ink-tertiary" /> Download recording · Pro
+            </Button>
+          )}
           {isOwner && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -245,6 +256,27 @@ export default function PerformanceDetail() {
               onClick={() => { deletePerformance(performance.id); setConfirmDelete(false); navigate('/performances'); }}
             >
               Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={downloadUpgradeModal} onOpenChange={setDownloadUpgradeModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Download your original recordings</DialogTitle>
+          </DialogHeader>
+          <p className="type-body-small text-ink-secondary">
+            Recording downloads are included with Pro. Upgrade to Pro to export original audio and video files at full fidelity, along with unlimited repertoire and 10 GB storage.
+          </p>
+          <DialogFooter className="mt-2">
+            <Button variant="outline" onClick={() => setDownloadUpgradeModal(false)}>
+              Not now
+            </Button>
+            <Button asChild onClick={() => setDownloadUpgradeModal(false)}>
+              <Link to={checkoutPath('pro', 'monthly')}>
+                Upgrade to Pro · $6 / mo
+              </Link>
             </Button>
           </DialogFooter>
         </DialogContent>

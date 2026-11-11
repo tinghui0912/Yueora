@@ -147,6 +147,16 @@ export default function Register() {
             "Create account"
           )}
         </Button>
+        <p className="pt-2 text-center type-caption text-ink-tertiary leading-relaxed">
+          By creating an account, you agree to Yueora's{" "}
+          <Link to="/legal/terms" className="text-ink-secondary hover:text-ink-primary underline">
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link to="/legal/privacy" className="text-ink-secondary hover:text-ink-primary underline">
+            Privacy Policy
+          </Link>.
+        </p>
       </form>
     </AuthLayout>
   );

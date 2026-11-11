@@ -64,6 +64,7 @@ import CheckoutShell from '@/components/commercial/CheckoutShell';
 const Checkout = lazy(() => import('@/pages/Checkout'));
 const CheckoutSuccess = lazy(() => import('@/pages/CheckoutSuccess'));
 const CheckoutCancelled = lazy(() => import('@/pages/CheckoutCancelled'));
+const Mfa = lazy(() => import('@/pages/Mfa'));
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -141,6 +142,9 @@ const AuthenticatedApp = () => {
           <Route path="/score/:scoreId/practice" element={<PracticeSession />} />
           <Route path="/review/:importId" element={<RecognitionReview />} />
           <Route path="/practice/:activityId/summary" element={<PracticeSummary />} />
+
+          {/* Multi-factor Authentication */}
+          <Route path="/mfa" element={<Mfa />} />
 
           {/* Checkout — focused shell, no app chrome */}
           <Route element={<CheckoutShell />}>

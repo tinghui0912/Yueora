@@ -24,11 +24,15 @@ export default function Pricing() {
   const { isAuthenticated } = useAuth();
   const plans = usePrototypeStore((s) => s.plans);
   const subscription = usePrototypeStore((s) => s.subscription);
+  const scores = usePrototypeStore((s) => s.scores);
+  const activeScoresCount = (scores || []).filter((s) => s.ownership !== 'trash').length;
 
   const interval = yearly ? 'yearly' : 'monthly';
   const saving = yearlySavingPercent(plans.plus || plans.pro);
   const onPlus = subscription.plan === 'plus' && subscription.status === 'active';
   const onPro = subscription.plan === 'pro' && subscription.status === 'active';
+
+  const freeDestination = isAuthenticated ? (activeScoresCount > 0 ? '/practice' : '/add-score') : '/register';
 
   const plusDestination = isAuthenticated
     ? checkoutPath('plus', interval)
@@ -141,7 +145,7 @@ export default function Pricing() {
 
                 <div className="mt-8">
                   <Button asChild intent="secondary" size="hero" className="w-full rounded-full">
-                    <Link to={isAuthenticated ? '/library' : '/register'}>
+                    <Link to={freeDestination}>
                       Start free
                     </Link>
                   </Button>

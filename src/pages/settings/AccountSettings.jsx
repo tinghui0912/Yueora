@@ -7,26 +7,34 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Field } from '@/components/ui/field';
 import { Button } from '@/components/ui/button';
-import { Camera } from 'lucide-react';
+import { Camera, Check, Mail } from 'lucide-react';
 
 export default function AccountSettings() {
   const { user } = useAuth();
   const account = usePrototypeStore((s) => s.account);
   const setAvatar = usePrototypeStore((s) => s.setAvatar);
-  const updateEmail = usePrototypeStore((s) => s.updateEmail);
-  const [name, setName] = useState(user?.full_name || 'You');
+  const setDisplayName = usePrototypeStore((s) => s.setDisplayName);
+  const setPendingEmail = usePrototypeStore((s) => s.setPendingEmail);
+  const confirmPendingEmail = usePrototypeStore((s) => s.confirmPendingEmail);
+  const cancelPendingEmail = usePrototypeStore((s) => s.cancelPendingEmail);
+  const resendEmailVerification = usePrototypeStore((s) => s.resendEmailVerification);
+
+  const isGoogleUser = Boolean(user?.google_id || user?.provider === 'google' || account?.provider === 'google');
+  const [name, setName] = useState(account?.displayName || user?.full_name || 'You');
   const [saved, setSaved] = useState(false);
   const [emailModal, setEmailModal] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const [emailSent, setEmailSent] = useState(false);
+  const [resendNotified, setResendNotified] = useState(false);
   const fileRef = useRef(null);
 
   const save = async () => {
     try { await base44.auth.updateMe({ full_name: name }); } catch { /* mock */ }
+    setDisplayName(name);
     setSaved(true);
-    setTimeout(() => setSaved(false), 1500);
+    setTimeout(() => setSaved(false), 2000);
   };
 
   const onAvatarChange = (e) => {
@@ -37,65 +45,137 @@ export default function AccountSettings() {
     reader.readAsDataURL(file);
   };
 
-  const sendVerification = () => {
-    if (!newEmail.trim()) return;
-    updateEmail(newEmail.trim());
+  const handleSendVerification = () => {
+    if (!newEmail.trim() || newEmail.trim() === account.email) return;
+    setPendingEmail(newEmail.trim());
     setEmailSent(true);
-    setTimeout(() => { setEmailModal(false); setEmailSent(false); setNewEmail(''); }, 1500);
+    setTimeout(() => {
+      setEmailModal(false);
+      setEmailSent(false);
+      setNewEmail('');
+    }, 1200);
+  };
+
+  const handleResend = () => {
+    resendEmailVerification();
+    setResendNotified(true);
+    setTimeout(() => setResendNotified(false), 3000);
   };
 
   return (
     <div className="divide-y divide-line-subtle">
       <SettingsSection title="Profile" desc="Your name and email as shown across Yueora.">
-        <div className="max-w-sm space-y-4">
+        <div className="max-w-md space-y-5">
+          {/* Avatar row */}
           <div className="flex items-center gap-3">
             {account.avatar ? (
-              <img src={account.avatar} alt="Avatar" className="h-12 w-12 rounded-full object-cover" />
+              <img src={account.avatar} alt="Avatar" className="h-12 w-12 rounded-full object-cover border border-line-subtle" />
             ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand text-white font-medium">{name.slice(0, 1).toUpperCase()}</div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand text-white font-medium">
+                {name.slice(0, 1).toUpperCase()}
+              </div>
             )}
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onAvatarChange} />
-            <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()}>
-              <Camera className="mr-1.5 h-4 w-4" /> Change avatar
+            <Button intent="secondary" size="sm" onClick={() => fileRef.current?.click()}>
+              <Camera className="mr-1.5 icon-xs" /> Change avatar
             </Button>
             {account.avatar && (
-              <Button variant="ghost" size="sm" onClick={() => setAvatar(null)}>Remove</Button>
+              <Button intent="quiet" size="sm" onClick={() => setAvatar(null)}>Remove</Button>
             )}
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="name">Display name</Label>
+
+          {/* Display Name */}
+          <Field label="Display name" htmlFor="name">
             <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="email">Email</Label>
+          </Field>
+
+          {/* Email row */}
+          <Field label="Email" htmlFor="email">
             <div className="flex items-center gap-2">
               <Input id="email" value={account.email} disabled />
-              <Button variant="outline" size="sm" onClick={() => setEmailModal(true)}>Change</Button>
+              <Button intent="secondary" size="sm" onClick={() => setEmailModal(true)}>Change</Button>
             </div>
+          </Field>
+
+          {/* Pending email banner if email change is in flight */}
+          {account.pendingEmail && (
+            <div className="rounded-container border border-line-subtle bg-surface-panel p-3.5 space-y-2">
+              <div className="flex items-start gap-2.5">
+                <Mail className="icon-xs text-ink-secondary shrink-0 mt-0.5" />
+                <div className="min-w-0 flex-1">
+                  <p className="type-body-small font-medium text-ink-primary">
+                    Pending verification for {account.pendingEmail}
+                  </p>
+                  <p className="type-metadata text-ink-secondary">
+                    We sent a confirmation link. Your primary email will update once confirmed.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 pt-1">
+                <Button intent="quiet" size="xs" onClick={handleResend}>
+                  {resendNotified ? 'Link resent' : 'Resend link'}
+                </Button>
+                <Button intent="quiet" size="xs" onClick={confirmPendingEmail}>
+                  Simulate confirm
+                </Button>
+                <Button intent="quiet" size="xs" onClick={cancelPendingEmail} className="text-ink-tertiary hover:text-ink-primary">
+                  Cancel change
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Login provider */}
+          <div className="space-y-1">
+            <p className="type-label text-ink-primary">Login provider</p>
+            <p className="type-body-small text-ink-secondary">
+              {isGoogleUser ? 'Google Authentication' : 'Email and password'} · email verification on file
+            </p>
           </div>
-          <div className="space-y-1.5">
-            <Label>Login method</Label>
-            <p className="type-body-small text-ink-secondary">Google · email verification on file</p>
-          </div>
-          <div className="flex items-center gap-3">
+
+          {/* Save button */}
+          <div className="flex items-center gap-3 pt-1">
             <Button onClick={save}>Save changes</Button>
-            {saved && <span className="type-body-small text-brand">Saved</span>}
+            {saved && (
+              <span className="flex items-center gap-1 type-body-small text-brand">
+                <Check className="icon-xs" /> Saved
+              </span>
+            )}
           </div>
         </div>
       </SettingsSection>
 
+      {/* Change Email Dialog */}
       <Dialog open={emailModal} onOpenChange={setEmailModal}>
         <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Change email</DialogTitle></DialogHeader>
-          <p className="text-sm text-ink-secondary">We'll send a verification link to your new address.</p>
-          <div className="mt-3 space-y-1.5">
-            <Label htmlFor="newemail">New email</Label>
-            <Input id="newemail" type="email" placeholder="you@example.com" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
+          <DialogHeader>
+            <DialogTitle>Change email address</DialogTitle>
+          </DialogHeader>
+          <p className="type-body-small text-ink-secondary">
+            We will dispatch a verification link to your new address. Your account remains reachable at {account.email} until confirmed.
+          </p>
+          <div className="mt-3">
+            <Field label="New email" htmlFor="newemail" required>
+              <Input
+                id="newemail"
+                type="email"
+                placeholder="you@example.com"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                autoComplete="email"
+              />
+            </Field>
           </div>
-          {emailSent && <p className="mt-2 text-sm text-brand">Verification sent — updating your email now.</p>}
+          {emailSent && (
+            <p className="mt-2 type-metadata text-brand flex items-center gap-1">
+              <Check className="icon-xs" /> Verification link sent. Check your inbox.
+            </p>
+          )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEmailModal(false)}>Cancel</Button>
-            <Button onClick={sendVerification} disabled={!newEmail.trim() || emailSent}>{emailSent ? 'Sent' : 'Send verification'}</Button>
+            <Button intent="secondary" onClick={() => setEmailModal(false)}>Cancel</Button>
+            <Button onClick={handleSendVerification} disabled={!newEmail.trim() || newEmail.trim() === account.email || emailSent}>
+              {emailSent ? 'Sent' : 'Send verification'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

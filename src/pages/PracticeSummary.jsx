@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Download, History, Play, RotateCcw, Wand2 } from 'lucide-react';
+import { ArrowLeft, Download, History, Play, RotateCcw, Wand2, Lock } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { usePracticeRuntime } from '@/stores/practiceRuntime';
+import { canDownloadRecording } from '@/lib/commercialEntitlements';
+import { checkoutPath } from '@/lib/commercial';
 import { generateNotes } from '@/lib/mockData';
 import { fmtClock, measureWindowStart } from '@/lib/practiceUtils';
 import { downloadBlob, extensionFor, slugify, uploadRecording } from '@/lib/media';
@@ -14,6 +16,9 @@ import SyncPlayback from '@/components/performances/SyncPlayback';
 import ShareVideoDialog from '@/components/performances/ShareVideoDialog';
 import SavePerformanceDialog from '@/components/performances/SavePerformanceDialog';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 
 /**
@@ -27,7 +32,10 @@ export default function PracticeSummary() {
   const clearReport = usePracticeRuntime((s) => s.clearReport);
   const scores = usePrototypeStore((s) => s.scores);
   const savePerformance = usePrototypeStore((s) => s.savePerformance);
+  const subscription = usePrototypeStore((s) => s.subscription);
+  const canDownload = canDownloadRecording(subscription?.plan);
 
+  const [downloadUpgradeModal, setDownloadUpgradeModal] = useState(false);
   const [saveOpen, setSaveOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -214,9 +222,15 @@ export default function PracticeSummary() {
             ) : (
               <Button onClick={() => setSaveOpen(true)}>Save performance</Button>
             )}
-            <Button variant="outline" onClick={downloadRecording}>
-              <Download className="mr-1.5 h-4 w-4" /> Download recording
-            </Button>
+            {canDownload ? (
+              <Button variant="outline" onClick={downloadRecording}>
+                <Download className="mr-1.5 h-4 w-4" /> Download recording
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={() => setDownloadUpgradeModal(true)}>
+                <Lock className="mr-1.5 h-3.5 w-3.5 text-ink-tertiary" /> Download recording · Pro
+              </Button>
+            )}
             <Button variant="outline" onClick={() => setShareOpen(true)}>
               <Wand2 className="mr-1.5 h-4 w-4" /> Make a share video
             </Button>
@@ -271,6 +285,26 @@ export default function PracticeSummary() {
         mediaType={mediaType}
         mediaBlob={mediaBlob}
       />
+      <Dialog open={downloadUpgradeModal} onOpenChange={setDownloadUpgradeModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Download your original recordings</DialogTitle>
+          </DialogHeader>
+          <p className="type-body-small text-ink-secondary">
+            Recording downloads are included with Pro. Upgrade to Pro to export original audio and video files at full fidelity, along with unlimited repertoire and 10 GB storage.
+          </p>
+          <DialogFooter className="mt-2">
+            <Button variant="outline" onClick={() => setDownloadUpgradeModal(false)}>
+              Not now
+            </Button>
+            <Button asChild onClick={() => setDownloadUpgradeModal(false)}>
+              <Link to={checkoutPath('pro', 'monthly')}>
+                Upgrade to Pro · $6 / mo
+              </Link>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AppPage>
   );
 }

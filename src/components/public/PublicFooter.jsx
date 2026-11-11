@@ -72,9 +72,9 @@ export default function PublicFooter() {
               </p>
               <ul className="space-y-3 text-ink-secondary">
                 <li>
-                  <a href="/#philosophy" className="hover:text-ink-primary transition-colors">
+                  <Link to="/about" className="hover:text-ink-primary transition-colors">
                     Your Music, Not Ours
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <span className="text-ink-tertiary">Zero Streak Shaming</span>
@@ -109,6 +109,11 @@ export default function PublicFooter() {
                 <li>
                   <Link to="/legal/terms" className="hover:text-ink-primary transition-colors">
                     Terms of Service
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/legal/acceptable-use" className="hover:text-ink-primary transition-colors">
+                    Acceptable Use
                   </Link>
                 </li>
                 <li>

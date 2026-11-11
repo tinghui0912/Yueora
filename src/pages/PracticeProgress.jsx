@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { usePrototypeStore } from '@/stores/prototypeStore';
+import { canUsePracticeInsights } from '@/lib/commercialEntitlements';
+import { checkoutPath } from '@/lib/commercial';
 import { dayLabel, minutesLabel } from '@/lib/practiceUtils';
 import { practiceWeek } from '@/lib/practiceStats';
 import AppPage from '@/components/patterns/AppPage';
@@ -7,15 +9,85 @@ import PageHeader from '@/components/patterns/PageHeader';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import Metric from '@/components/patterns/Metric';
 import StateMessage from '@/components/patterns/StateMessage';
+import { Button } from '@/components/ui/button';
+import { Sparkles, BarChart2, Calendar, Music } from 'lucide-react';
 
 const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 
 /**
  * Progress is read from lightweight activity only — time, pieces and how often.
- * There is no historical accuracy here because accuracy was never stored.
+ * Enforces commercial entitlement matrix: Free gets upgrade preview ("Available with Plus").
  */
 export default function PracticeProgress() {
+  const subscription = usePrototypeStore((s) => s.subscription);
   const activities = (usePrototypeStore((s) => s.practiceActivities) || []).filter((a) => a.ownerId === 'you');
+
+  const hasInsights = canUsePracticeInsights(subscription?.plan);
+
+  if (!hasInsights) {
+    return (
+      <AppPage size="standard">
+        <Link to="/practice" className="type-body-small text-ink-secondary hover:text-ink-primary">← Practice</Link>
+        <div className="mt-3">
+          <PageHeader
+            title="Progress & insights"
+            description="Available with Plus · Track practice time and repertoire return patterns without pressure."
+          />
+        </div>
+
+        <div className="mt-8 rounded-container border border-line-subtle bg-surface-panel p-6 sm:p-8">
+          <div className="max-w-xl">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-muted px-3 py-1 type-caption font-semibold uppercase tracking-wider text-ink-primary">
+              <Sparkles className="icon-xs text-brand" /> Plus Feature
+            </span>
+            <h2 className="mt-4 font-display text-2xl sm:text-3xl font-medium tracking-tight text-ink-primary">
+              See how your playing unfolds over time.
+            </h2>
+            <p className="mt-3 type-body text-ink-secondary leading-relaxed">
+              Practice insights offer calm, reflective visibility into your music: time spent playing, pieces you keep returning to, and your weekly playing rhythms — never grades or streaks.
+            </p>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-3 border-y border-line-subtle py-5">
+              <div className="flex items-start gap-2.5">
+                <BarChart2 className="icon-sm text-ink-secondary shrink-0 mt-0.5" />
+                <div>
+                  <p className="type-body-small font-medium text-ink-primary">Total time</p>
+                  <p className="type-caption text-ink-tertiary">Minutes spent playing</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <Music className="icon-sm text-ink-secondary shrink-0 mt-0.5" />
+                <div>
+                  <p className="type-body-small font-medium text-ink-primary">Pieces played</p>
+                  <p className="type-caption text-ink-tertiary">Return frequency</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <Calendar className="icon-sm text-ink-secondary shrink-0 mt-0.5" />
+                <div>
+                  <p className="type-body-small font-medium text-ink-primary">Weekly rhythm</p>
+                  <p className="type-caption text-ink-tertiary">7-day visual summary</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button intent="primary" asChild>
+                <Link to={checkoutPath('plus', 'monthly')}>
+                  Upgrade to Plus · $3 / mo
+                </Link>
+              </Button>
+              <Button intent="secondary" asChild>
+                <Link to="/pricing">
+                  Compare plans
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </AppPage>
+    );
+  }
 
   const totalSeconds = activities.reduce((sum, a) => sum + (a.durationSeconds || 0), 0);
   const totalMinutes = Math.round(totalSeconds / 60);
