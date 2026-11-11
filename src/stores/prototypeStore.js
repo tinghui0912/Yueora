@@ -256,6 +256,8 @@ const notificationPrefsSeed = {
   billing: { inApp: true, email: false },
   practice: { inApp: true, email: false },
   updates: { inApp: false, email: false },
+  practiceCadence: 'Occasionally',
+  practicePreferredTime: 'Evening',
 };
 
 // ---- Permission helpers ----
@@ -428,7 +430,20 @@ export const usePrototypeStore = create(
         })),
 
       deleteScoreForever: (id) =>
-        set((st) => ({ scores: st.scores.filter((s) => s.id !== id) })),
+        set((st) => {
+          const remainingScores = st.scores.filter((s) => s.id !== id);
+          const liveCount = remainingScores.filter((s) => s.ownership !== 'trash').length;
+          return {
+            scores: remainingScores,
+            subscription: {
+              ...st.subscription,
+              usage: {
+                ...st.subscription?.usage,
+                scores: liveCount,
+              },
+            },
+          };
+        }),
 
       emptyTrash: () =>
         set((st) => ({ scores: st.scores.filter((s) => s.ownership !== 'trash') })),
@@ -575,8 +590,70 @@ export const usePrototypeStore = create(
             pages: pages || 1,
             source: source || 'PDF',
           };
+          const nextImportsCount = (st.subscription?.usage?.imports ?? 8) + 1;
           return {
             imports: [newImport, ...st.imports],
+            subscription: {
+              ...st.subscription,
+              usage: {
+                ...st.subscription?.usage,
+                imports: nextImportsCount,
+              },
+            },
+          };
+        }),
+
+      // Creates an interactive score directly (e.g. from MusicXML digital import)
+      addInteractiveScore: ({ title, composer, instrument, pages, folder, source }) =>
+        set((st) => {
+          const scoreId = `score-${Date.now()}`;
+          const folderIds = folder ? [folder] : [];
+          const newScore = {
+            id: scoreId,
+            title: title || 'Untitled score',
+            composer: composer || 'Unknown composer',
+            instrument: instrument || 'Piano',
+            tags: ['Digital score', 'MusicXML'],
+            ownership: 'mine',
+            favorite: false,
+            folderIds,
+            lastPlayed: 'never',
+            lastMeasure: 1,
+            tempo: 80,
+            pages: pages || 1,
+            measures: 32,
+            difficultSections: [],
+            created: new Date().toISOString().slice(0, 10),
+            source: source || 'MusicXML',
+            currentVersion: 'Current version',
+            versionRestoredAt: null,
+          };
+          const nextScores = [newScore, ...st.scores];
+          const liveCount = nextScores.filter((s) => s.ownership !== 'trash').length;
+          const nextImportsCount = (st.subscription?.usage?.imports ?? 8) + 1;
+          return {
+            scores: nextScores,
+            sharing: { ...st.sharing, [scoreId]: defaultSharing(newScore) },
+            subscription: {
+              ...st.subscription,
+              usage: {
+                ...st.subscription?.usage,
+                scores: liveCount,
+                imports: nextImportsCount,
+              },
+            },
+            notifications: [
+              {
+                id: `n-${Date.now()}`,
+                category: 'imports',
+                title: 'Score added',
+                body: `${newScore.title} added directly to your library.`,
+                time: 'just now',
+                unread: true,
+                href: `/score/${scoreId}`,
+              },
+              ...st.notifications,
+            ],
           };
         }),
 
@@ -647,11 +724,20 @@ export const usePrototypeStore = create(
           // Mark all recognition issues as resolved/archived
           const issues = st.recognitionIssues[id] || [];
           const archivedIssues = issues.map((i) => ({ ...i, resolved: true }));
+          const nextScores = [newScore, ...st.scores];
+          const liveCount = nextScores.filter((s) => s.ownership !== 'trash').length;
           return {
-            scores: [newScore, ...st.scores],
+            scores: nextScores,
             imports: st.imports.map((i) => (i.id === id ? { ...i, status: 'completed', scoreId } : i)),
             sharing: { ...st.sharing, [scoreId]: defaultSharing(newScore) },
             recognitionIssues: { ...st.recognitionIssues, [id]: archivedIssues },
+            subscription: {
+              ...st.subscription,
+              usage: {
+                ...st.subscription?.usage,
+                scores: liveCount,
+              },
+            },
             notifications: [
               { id: `n-${Date.now()}`, category: 'imports', title: 'Import complete', body: `${newScore.title} is ready in your library.`, time: 'just now', unread: true, href: `/score/${scoreId}` },
               ...st.notifications,
@@ -1098,18 +1184,64 @@ export const usePrototypeStore = create(
             ...st.notifications,
           ],
         })),
-      signOutSession: (id) =>
+      setEmailVerified: (verified) =>
         set((st) => ({
           account: {
             ...st.account,
-            sessions: (st.account.sessions || []).filter((s) => s.id !== id),
+            emailVerified: Boolean(verified),
           },
         })),
+      signOutSession: (id) =>
+        set((st) => {
+          const target = (st.account.sessions || []).find((s) => s.id === id);
+          const sessions = (st.account.sessions || []).filter((s) => s.id !== id);
+          const activity = target
+            ? [
+                {
+                  id: `act-${Date.now()}`,
+                  type: 'session',
+                  title: 'Session signed out',
+                  detail: `${target.browser} on ${target.device} · ${target.location}`,
+                  timestamp: 'Just now',
+                },
+              ]
+            : [];
+          return {
+            account: {
+              ...st.account,
+              sessions,
+              securityActivity: [...activity, ...(st.account.securityActivity || [])],
+            },
+          };
+        }),
       signOutAllOtherSessions: () =>
+        set((st) => {
+          const otherCount = (st.account.sessions || []).filter((s) => !s.current).length;
+          const sessions = (st.account.sessions || []).filter((s) => s.current);
+          const activity = otherCount > 0
+            ? [
+                {
+                  id: `act-${Date.now()}`,
+                  type: 'session',
+                  title: 'Other sessions signed out',
+                  detail: `${otherCount} session${otherCount > 1 ? 's' : ''} ended`,
+                  timestamp: 'Just now',
+                },
+              ]
+            : [];
+          return {
+            account: {
+              ...st.account,
+              sessions,
+              securityActivity: [...activity, ...(st.account.securityActivity || [])],
+            },
+          };
+        }),
+      setNotificationSetting: (key, value) =>
         set((st) => ({
-          account: {
-            ...st.account,
-            sessions: (st.account.sessions || []).filter((s) => s.current),
+          notificationPrefs: {
+            ...st.notificationPrefs,
+            [key]: value,
           },
         })),
       addSecurityActivity: (activity) =>

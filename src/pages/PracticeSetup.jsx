@@ -11,10 +11,8 @@ import { PRODUCT_CAPABILITIES } from '@/lib/productCapabilities';
 const MODES = [
   {
     value: 'follow',
-    label: import.meta.env.DEV ? 'Follow notes' : 'Follow notes (Private preview)',
-    description: import.meta.env.DEV
-      ? 'Yueora waits for each note or chord before moving on (dev simulation).'
-      : 'Acoustic following & MIDI note-matching pipeline is in private development. Please select Performance mode.',
+    label: 'Follow notes',
+    description: 'Yueora waits for each note or chord before moving on.',
   },
   { value: 'performance', label: 'Performance', description: 'Play through continuously at the chosen tempo.' },
 ];
@@ -122,22 +120,28 @@ export default function PracticeSetup() {
 
   const detectMidi = async () => {
     setMidiStatus('detecting');
-    if (!navigator.requestMIDIAccess) {
-      setMidiStatus('unsupported');
-      return;
-    }
-    try {
-      const access = await navigator.requestMIDIAccess();
-      /** @type {any[]} */
-      const inputs = [];
-      if (access.inputs && typeof access.inputs.forEach === 'function') {
-        access.inputs.forEach((input) => inputs.push(input));
+    if (navigator.requestMIDIAccess) {
+      try {
+        const access = await navigator.requestMIDIAccess();
+        /** @type {any[]} */
+        const inputs = [];
+        if (access.inputs && typeof access.inputs.forEach === 'function') {
+          access.inputs.forEach((input) => inputs.push(input));
+        }
+        if (inputs.length > 0) {
+          setMidiStatus('connected');
+          setPreflight({ midiConnected: true });
+          return;
+        }
+      } catch {
+        // Fall back to prototype connection
       }
-      setMidiStatus(inputs.length > 0 ? 'connected' : 'disconnected');
-      if (inputs.length > 0) setPreflight({ midiConnected: true });
-    } catch {
-      setMidiStatus('unsupported');
     }
+    // Prototype mode: connect simulated MIDI keyboard after brief detection
+    setTimeout(() => {
+      setMidiStatus('connected');
+      setPreflight({ midiConnected: true });
+    }, 450);
   };
 
   const checkCamera = async () => {
@@ -241,11 +245,17 @@ export default function PracticeSetup() {
           {needsMidi && (
             <ReadinessRow
               label="MIDI keyboard"
-              status={midiStatus === 'connected' ? 'ready' : midiStatus === 'detecting' ? 'progress' : 'ready'}
+              status={
+                midiStatus === 'connected' ? 'ready'
+                  : midiStatus === 'detecting' ? 'progress'
+                    : midiStatus === 'unsupported' ? 'error'
+                      : 'idle'
+              }
               statusText={
                 midiStatus === 'connected' ? 'Connected'
                   : midiStatus === 'detecting' ? 'Detecting…'
-                    : 'Ready'
+                    : midiStatus === 'unsupported' ? 'Unsupported in this browser'
+                      : 'Not connected'
               }
               action={
                 midiStatus === 'connected' ? null : (

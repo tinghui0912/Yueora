@@ -14,7 +14,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
-import { getScoreQuota, getImportQuota } from '@/lib/commercialEntitlements';
+import { getScoreQuota, getImportQuota, getStorageQuota } from '@/lib/commercialEntitlements';
 import { checkoutPath } from '@/lib/commercial';
 import { AppPage } from '@/components/patterns/AppPage';
 import BackLink from '@/components/patterns/BackLink';
@@ -54,25 +54,48 @@ export default function AddScore() {
   const liveScores = scores.filter((s) => s.ownership !== 'trash');
   const scoreQuota = getScoreQuota(subscription?.plan);
   const importQuota = getImportQuota(subscription?.plan);
+  const storageQuota = getStorageQuota(subscription?.plan);
   const importsCount = subscription?.usage?.imports ?? 8;
   const isAtScoreLimit = !scoreQuota.isUnlimited && liveScores.length >= scoreQuota.limit;
+  const isAtImportLimit = !importQuota.isUnlimited && importsCount >= importQuota.limit;
 
-  const [step, setStep] = useState(1);
-  const [source, setSource] = useState(null);
-  const [files, setFiles] = useState([{ id: 1, name: 'Page 1.pdf' }]);
-  const [details, setDetails] = useState({ title: '', composer: '', instrument: 'Piano', tags: '', folder: '' });
+  const searchParams = new URLSearchParams(window.location.search);
+  const initialSource = searchParams.get('source');
+
+  const [step, setStep] = useState(() => (initialSource ? 2 : 1));
+  const [source, setSource] = useState(initialSource);
+  const [files, setFiles] = useState(() => {
+    if (initialSource === 'camera') return [];
+    if (initialSource === 'musicxml') return [{ id: 1, name: 'Clair_de_Lune.musicxml' }];
+    return [{ id: 1, name: 'Page 1.pdf' }];
+  });
+  const [details, setDetails] = useState(() => {
+    if (initialSource === 'musicxml') {
+      return {
+        title: 'Clair de Lune',
+        composer: 'Claude Debussy',
+        instrument: 'Piano',
+        tags: 'Impressionist, Suite bergamasque',
+        folder: '',
+      };
+    }
+    return { title: '', composer: '', instrument: 'Piano', tags: '', folder: '' };
+  });
   const [error, setError] = useState('');
   const [fileError, setFileError] = useState(null);
   const [createdImportId, setCreatedImportId] = useState(null);
+  const [createdScoreId, setCreatedScoreId] = useState(null);
 
   const handleSelectSource = (sourceId) => {
+    if (isAtScoreLimit) return;
+    if (isAtImportLimit && sourceId !== 'musicxml') return;
     setSource(sourceId);
     if (sourceId === 'pdf') {
       setFiles([{ id: 1, name: 'Score-Part-1.pdf' }, { id: 2, name: 'Score-Part-2.pdf' }]);
     } else if (sourceId === 'images') {
       setFiles([{ id: 1, name: 'Scan_Page_1.jpg' }, { id: 2, name: 'Scan_Page_2.jpg' }]);
     } else if (sourceId === 'camera') {
-      setFiles([{ id: 1, name: 'Camera_Capture_1.jpg' }]);
+      setFiles([]); // Camera begins with 0 captured pages
     } else if (sourceId === 'musicxml') {
       setFiles([{ id: 1, name: 'Clair_de_Lune.musicxml' }]);
       setDetails((prev) => ({
@@ -117,22 +140,42 @@ export default function AddScore() {
   const simulateError = (type) => setFileError(type);
   const clearFileError = () => setFileError(null);
 
-  const startRecognition = () => {
+  const handleSubmitScore = () => {
     if (!details.title.trim()) {
       setError('Add a title so you can find this score later.');
       return;
     }
-    createImport({
-      title: details.title,
-      composer: details.composer,
-      instrument: details.instrument,
-      pages: files.length,
-      source: sources.find((s) => s.id === source)?.label || 'PDF',
-      folder: details.folder,
-    });
-    const store = usePrototypeStore.getState();
-    setCreatedImportId(store.imports[0]?.id);
-    setStep(5);
+    if (isAtScoreLimit) return;
+
+    if (source === 'musicxml') {
+      const addInteractiveScore = usePrototypeStore.getState().addInteractiveScore;
+      if (typeof addInteractiveScore === 'function') {
+        addInteractiveScore({
+          title: details.title,
+          composer: details.composer,
+          instrument: details.instrument,
+          pages: files.length,
+          folder: details.folder,
+          source: 'MusicXML',
+        });
+      }
+      const newScore = usePrototypeStore.getState().scores[0];
+      setCreatedScoreId(newScore?.id);
+      setStep(5);
+    } else {
+      if (isAtImportLimit) return;
+      createImport({
+        title: details.title,
+        composer: details.composer,
+        instrument: details.instrument,
+        pages: files.length,
+        source: sources.find((s) => s.id === source)?.label || 'PDF',
+        folder: details.folder,
+      });
+      const store = usePrototypeStore.getState();
+      setCreatedImportId(store.imports[0]?.id);
+      setStep(5);
+    }
   };
 
   return (
@@ -180,6 +223,28 @@ export default function AddScore() {
               </div>
             )}
 
+            {/* Import Quota Warning Banner */}
+            {!isAtScoreLimit && isAtImportLimit && (
+              <div className="rounded-container border border-line-subtle bg-surface-panel p-5 space-y-3">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="icon-sm text-ink-primary shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="type-body-small font-medium text-ink-primary">
+                      Monthly import limit reached ({importsCount} of {importQuota.label})
+                    </h3>
+                    <p className="mt-1 type-metadata text-ink-secondary leading-relaxed">
+                      You have used all import allowances for this billing cycle. Upgrade to continue importing now, or import digital MusicXML scores directly.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <Button intent="primary" size="sm" asChild>
+                    <Link to={checkoutPath('plus', 'monthly')}>Upgrade to continue importing</Link>
+                  </Button>
+                </div>
+              </div>
+            )}
+
             <div>
               <h2 className="type-subsection text-ink-primary">How would you like to add it?</h2>
               <p className="mt-1 type-body-small text-ink-secondary">
@@ -188,25 +253,37 @@ export default function AddScore() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              {sources.map((s) => (
-                <ChoiceCard
-                  key={s.id}
-                  icon={s.icon}
-                  title={s.label}
-                  description={s.desc}
-                  mode="action"
-                  selected={source === s.id}
-                  onClick={() => handleSelectSource(s.id)}
-                />
-              ))}
+              {sources.map((s) => {
+                const isBlocked = isAtScoreLimit || (isAtImportLimit && s.id !== 'musicxml');
+                return (
+                  <ChoiceCard
+                    key={s.id}
+                    icon={s.icon}
+                    title={s.label}
+                    description={isBlocked ? (isAtScoreLimit ? 'Repertoire limit reached' : 'Import limit reached') : s.desc}
+                    mode="action"
+                    selected={source === s.id}
+                    disabled={isBlocked}
+                    onClick={() => !isBlocked && handleSelectSource(s.id)}
+                  />
+                );
+              })}
             </div>
 
-            {/* Monthly Import Allowance Indicator */}
-            <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-4 py-3 type-metadata text-ink-secondary">
-              <span>Monthly import allowance</span>
-              <span className="font-medium text-ink-primary">
-                {importsCount} of {importQuota.label}
-              </span>
+            {/* Quota Indicators */}
+            <div className="grid gap-2 sm:grid-cols-2">
+              <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-4 py-3 type-metadata text-ink-secondary">
+                <span>Monthly imports</span>
+                <span className="font-medium text-ink-primary">
+                  {importsCount} of {importQuota.label}
+                </span>
+              </div>
+              <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-4 py-3 type-metadata text-ink-secondary">
+                <span>Cloud storage</span>
+                <span className="font-medium text-ink-primary">
+                  {subscription?.usage?.storage || '1.2 GB'} of {storageQuota.limit}
+                </span>
+              </div>
             </div>
           </div>
         )}
@@ -315,23 +392,26 @@ export default function AddScore() {
                 {/* Captured photo thumbnail tray */}
                 <div>
                   <p className="type-label text-ink-primary mb-2">Captured pages ({files.length})</p>
-                  <div className="flex items-center gap-3 overflow-x-auto pb-2">
+                  <div className="flex items-center gap-3 overflow-x-auto pb-2 min-h-[5rem]">
                     {files.map((f, i) => (
                       <div key={f.id} className="relative flex-shrink-0 rounded-control border border-line-subtle bg-surface-panel p-2 flex flex-col items-center gap-1">
                         <FileThumbnail seed={f.id} className="h-16 w-12 rounded" />
                         <span className="type-caption text-ink-secondary">Page {i + 1}</span>
-                        {files.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeFile(f.id)}
-                            className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-surface-canvas border border-line-subtle text-ink-secondary hover:text-ink-primary flex items-center justify-center"
-                            aria-label={`Remove page ${i + 1}`}
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        )}
+                        <button
+                          type="button"
+                          onClick={() => removeFile(f.id)}
+                          className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-surface-canvas border border-line-subtle text-ink-secondary hover:text-ink-primary flex items-center justify-center cursor-pointer"
+                          aria-label={`Remove page ${i + 1}`}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
                       </div>
                     ))}
+                    {files.length === 0 && (
+                      <p className="type-metadata text-ink-tertiary italic py-2">
+                        No pages captured yet. Click capture above to snap your first page.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -428,7 +508,7 @@ export default function AddScore() {
               <Button intent="secondary" onClick={() => setStep(1)}>
                 Back
               </Button>
-              <Button intent="primary" onClick={() => setStep(3)}>
+              <Button intent="primary" onClick={() => setStep(3)} disabled={files.length === 0}>
                 Continue
               </Button>
             </div>
@@ -521,8 +601,12 @@ export default function AddScore() {
         {step === 4 && (
           <div className="space-y-6">
             <SectionHeader
-              title="Review & confirm"
-              description="Confirm details before submitting your score to the recognition pipeline."
+              title={source === 'musicxml' ? 'Review & add score' : 'Review & confirm'}
+              description={
+                source === 'musicxml'
+                  ? 'Confirm details before adding your digital MusicXML score directly to your library.'
+                  : 'Confirm details before submitting your score to the recognition pipeline.'
+              }
             />
 
             <Surface tone="panel" padding="md" className="space-y-4">
@@ -542,9 +626,11 @@ export default function AddScore() {
 
               <div className="border-t border-line-subtle pt-3 grid grid-cols-2 gap-4 text-xs">
                 <div>
-                  <span className="type-caption text-ink-tertiary">Total pages</span>
+                  <span className="type-caption text-ink-tertiary">
+                    {source === 'musicxml' ? 'Score measures' : 'Total pages'}
+                  </span>
                   <p className="type-body-small font-medium text-ink-primary mt-0.5">
-                    {files.length} {files.length === 1 ? 'page' : 'pages'}
+                    {source === 'musicxml' ? '72 measures' : `${files.length} ${files.length === 1 ? 'page' : 'pages'}`}
                   </p>
                 </div>
                 <div>
@@ -556,7 +642,9 @@ export default function AddScore() {
               </div>
 
               <p className="type-metadata text-ink-secondary pt-2">
-                Recognition runs in the background. You can navigate away anytime and return once your active score is prepared.
+                {source === 'musicxml'
+                  ? 'Native digital score. Optical recognition is bypassed and notation will render immediately in your library and practice stand.'
+                  : 'Recognition runs in the background. You can navigate away anytime and return once your active score is prepared.'}
               </p>
             </Surface>
 
@@ -564,14 +652,18 @@ export default function AddScore() {
               <Button intent="secondary" onClick={() => setStep(3)}>
                 Back
               </Button>
-              <Button intent="primary" onClick={startRecognition}>
-                Start recognition
+              <Button
+                intent="primary"
+                onClick={handleSubmitScore}
+                disabled={isAtScoreLimit || (source !== 'musicxml' && isAtImportLimit)}
+              >
+                {source === 'musicxml' ? 'Add interactive score' : 'Start recognition'}
               </Button>
             </div>
           </div>
         )}
 
-        {/* Step 5 — Recognition Started */}
+        {/* Step 5 — Success */}
         {step === 5 && (
           <Surface tone="panel" padding="lg" className="space-y-5 text-center sm:text-left">
             <div className="flex items-center gap-3">
@@ -579,39 +671,58 @@ export default function AddScore() {
                 <Check className="icon-lg" />
               </span>
               <div>
-                <h2 className="type-section-title text-ink-primary">Recognition has started</h2>
+                <h2 className="type-section-title text-ink-primary">
+                  {source === 'musicxml' ? 'Interactive score ready' : 'Recognition has started'}
+                </h2>
                 <p className="type-body-small text-ink-secondary">
-                  {details.title || 'Untitled score'} · {files.length} {files.length === 1 ? 'page' : 'pages'}
+                  {details.title || 'Untitled score'} · {source === 'musicxml' ? 'Ready to play' : `${files.length} ${files.length === 1 ? 'page' : 'pages'}`}
                 </p>
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <div className="flex justify-between type-metadata text-ink-secondary">
-                <span>Interpreting notes and staves…</span>
-                <span>Active</span>
-              </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-surface-canvas">
-                <div className="h-full w-1/3 rounded-full bg-brand animate-pulse" />
-              </div>
-            </div>
+            {source === 'musicxml' ? (
+              <p className="type-body-small text-ink-secondary">
+                Your MusicXML digital score was validated and converted directly into interactive notation. You can start practicing right away.
+              </p>
+            ) : (
+              <>
+                <div className="space-y-1.5">
+                  <div className="flex justify-between type-metadata text-ink-secondary">
+                    <span>Interpreting notes and staves…</span>
+                    <span>Active</span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-surface-canvas">
+                    <div className="h-full w-1/3 rounded-full bg-brand animate-pulse" />
+                  </div>
+                </div>
 
-            <p className="type-body-small text-ink-secondary">
-              Your score is being added to your repertoire. We’ll notify you when it’s ready for the practice stand.
-            </p>
+                <p className="type-body-small text-ink-secondary">
+                  Your score is being added to your repertoire. We’ll notify you when it’s ready for the practice stand.
+                </p>
+              </>
+            )}
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <Button intent="secondary" onClick={() => navigate('/library')}>
                 Back to library
               </Button>
-              <Button
-                intent="primary"
-                onClick={() =>
-                  navigate(createdImportId ? `/imports/${createdImportId}` : '/imports')
-                }
-              >
-                View import queue
-              </Button>
+              {source === 'musicxml' ? (
+                <Button
+                  intent="primary"
+                  onClick={() => navigate(createdScoreId ? `/score/${createdScoreId}/setup` : '/library')}
+                >
+                  Open in practice stand
+                </Button>
+              ) : (
+                <Button
+                  intent="primary"
+                  onClick={() =>
+                    navigate(createdImportId ? `/imports/${createdImportId}` : '/imports')
+                  }
+                >
+                  View import queue
+                </Button>
+              )}
             </div>
           </Surface>
         )}

@@ -115,9 +115,11 @@ export default function AccountSettings() {
                 <Button intent="quiet" size="xs" onClick={handleResend}>
                   {resendNotified ? 'Link resent' : 'Resend link'}
                 </Button>
-                <Button intent="quiet" size="xs" onClick={confirmPendingEmail}>
-                  Simulate confirm
-                </Button>
+                {import.meta.env.DEV && (
+                  <Button intent="quiet" size="xs" onClick={confirmPendingEmail}>
+                    Simulate confirm
+                  </Button>
+                )}
                 <Button intent="quiet" size="xs" onClick={cancelPendingEmail} className="text-ink-tertiary hover:text-ink-primary">
                   Cancel change
                 </Button>

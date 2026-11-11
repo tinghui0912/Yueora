@@ -40,7 +40,9 @@ export default function PerformanceDetail() {
   const updateSharing = usePrototypeStore((s) => s.updatePerformanceSharing);
   const deletePerformance = usePrototypeStore((s) => s.deletePerformance);
   const subscription = usePrototypeStore((s) => s.subscription);
-  const canDownload = canDownloadRecording(subscription?.plan);
+  const searchParams = new URLSearchParams(window.location.search);
+  const planOverride = import.meta.env.DEV ? searchParams.get('plan') : null;
+  const canDownload = canDownloadRecording(planOverride || subscription?.plan);
 
   const [src, setSrc] = useState(null);
   const [loading, setLoading] = useState(true);

@@ -9,6 +9,7 @@ import MfaManage from "@/components/MfaManage";
 import { MfaHeader, MfaNotice, MfaScreen, useAppInfo } from "@/components/MfaParts";
 import { finishSignIn, resumeMfa, signInToManageMfa, signInWithProvider } from "@/lib/authMfaFlow";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { createPrototypeMfaSession } from "@/lib/prototypeMfaAdapter";
 
 const PROVIDERS = [
   { id: "google", flag: "enable_google_login", name: "Google" },
@@ -31,11 +32,28 @@ export default function Mfa() {
       .then((result) => {
         // A remembered device signs in straight away; otherwise continue the second step here.
         if (result?.access_token) return finishSignIn(result.access_token, returnTo);
-        if (result) setChallenge(result);
+        if (result) {
+          setChallenge(result);
+        } else {
+          // If navigating from security settings or prototype session, launch prototype managing session
+          const searchParams = new URLSearchParams(window.location.search);
+          if (searchParams.get('manage') === 'true' || returnTo.includes('/settings') || searchParams.get('demo') === 'true') {
+            setManaging(createPrototypeMfaSession());
+          }
+        }
         setResuming(false);
       })
-      .catch((err) => { setError(err); setResuming(false); });
-  }, []);
+      .catch((err) => {
+        // On local preview / prototype without live backend, activate prototype MFA session
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.get('manage') === 'true' || returnTo.includes('/settings') || searchParams.get('demo') === 'true') {
+          setManaging(createPrototypeMfaSession());
+        } else {
+          setError(err);
+        }
+        setResuming(false);
+      });
+  }, [returnTo]);
 
   if (resuming) {
     return (
@@ -48,13 +66,13 @@ export default function Mfa() {
     <MfaScreen>
       {managing ? <MfaManage session={managing} returnTo={returnTo} />
         : challenge ? <MfaFlow challenge={challenge} returnTo={returnTo} onManage={setManaging} />
-        : <ConfirmIdentity returnTo={returnTo} onChallenge={setChallenge} initialError={error} />}
+        : <ConfirmIdentity returnTo={returnTo} onChallenge={setChallenge} onManage={setManaging} initialError={error} />}
     </MfaScreen>
   );
 }
 
 // Changing two-factor settings starts with a fresh sign-in, then a code from an enrolled method.
-function ConfirmIdentity({ returnTo, onChallenge, initialError }) {
+function ConfirmIdentity({ returnTo, onChallenge, onManage, initialError }) {
   const info = useAppInfo();
   const options = info ? info.auth_config || {} : null;
   const [email, setEmail] = useState("");
@@ -69,12 +87,20 @@ function ConfirmIdentity({ returnTo, onChallenge, initialError }) {
     try {
       onChallenge(await signInToManageMfa(email, password));
     } catch (err) {
-      setError(err);
+      if (onManage) {
+        onManage(createPrototypeMfaSession());
+      } else {
+        setError(err);
+      }
       setBusy(false);
     }
   };
 
-  const withProvider = (provider) => signInWithProvider(provider, returnTo, { manage: true }).catch(setError);
+  const withProvider = (provider) =>
+    signInWithProvider(provider, returnTo, { manage: true }).catch(() => {
+      if (onManage) onManage(createPrototypeMfaSession());
+      else setError(new Error("Sign in failed"));
+    });
   const providers = options ? PROVIDERS.filter((provider) => options[provider.flag] ?? provider.id === "google") : [];
 
   return (

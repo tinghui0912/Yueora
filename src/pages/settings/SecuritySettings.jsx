@@ -18,6 +18,7 @@ export default function SecuritySettings() {
   const signOutAllOtherSessions = usePrototypeStore((s) => s.signOutAllOtherSessions);
   const addSecurityActivity = usePrototypeStore((s) => s.addSecurityActivity);
   const resendEmailVerification = usePrototypeStore((s) => s.resendEmailVerification);
+  const setEmailVerified = usePrototypeStore((s) => s.setEmailVerified);
 
   const email = account?.email || user?.email || 'you@example.com';
   const isGoogleUser = Boolean(user?.google_id || user?.provider === 'google' || account?.provider === 'google');
@@ -343,13 +344,23 @@ export default function SecuritySettings() {
               <Mail className="icon-xs text-ink-secondary shrink-0" />
               <div className="min-w-0">
                 <p className="truncate type-body-small font-medium text-ink-primary">{email}</p>
-                <p className="type-metadata text-ink-tertiary">Verified for Yueora workspace access</p>
+                <p className="type-metadata text-ink-tertiary">
+                  {account?.emailVerified
+                    ? 'Verified for Yueora workspace access'
+                    : 'Your email address has not been verified yet'}
+                </p>
               </div>
             </div>
-            <span className="inline-flex items-center gap-1 rounded-full bg-neutral-muted px-2.5 py-0.5 type-caption font-semibold text-ink-primary shrink-0">
-              <CheckCircle2 className="h-3 w-3 text-brand" />
-              Verified
-            </span>
+            {account?.emailVerified ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-neutral-muted px-2.5 py-0.5 type-caption font-semibold text-ink-primary shrink-0">
+                <CheckCircle2 className="h-3 w-3 text-brand" />
+                Verified
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full bg-neutral-muted px-2.5 py-0.5 type-caption font-semibold text-ink-secondary shrink-0">
+                Not verified
+              </span>
+            )}
           </div>
 
           {verificationNotice && (
@@ -359,7 +370,7 @@ export default function SecuritySettings() {
             </div>
           )}
 
-          <div>
+          <div className="flex items-center justify-between">
             <Button
               intent="quiet"
               size="sm"
@@ -368,6 +379,15 @@ export default function SecuritySettings() {
             >
               {resendingVerification ? 'Sending…' : 'Resend verification email'}
             </Button>
+            {import.meta.env.DEV && (
+              <button
+                type="button"
+                onClick={() => setEmailVerified?.(!account?.emailVerified)}
+                className="type-caption text-ink-tertiary hover:text-ink-primary underline cursor-pointer"
+              >
+                {account?.emailVerified ? 'Simulate unverified' : 'Simulate verified'}
+              </button>
+            )}
           </div>
         </div>
       </SettingsSection>

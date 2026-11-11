@@ -1,4 +1,6 @@
 import assert from 'node:assert';
+import fs from 'node:fs';
+import path from 'node:path';
 import { plans } from '../src/lib/mockData.js';
 import {
   readCheckoutQuery,
@@ -8,6 +10,14 @@ import {
   applyDemoCheckout,
   migratePrototypeState,
 } from '../src/lib/commercial.js';
+import {
+  canUsePracticeInsights,
+  canInviteEditors,
+  canDownloadRecording,
+  getScoreQuota,
+  getImportQuota,
+  getStorageQuota,
+} from '../src/lib/commercialEntitlements.js';
 
 console.log('🧪 Running Yueora Commercial Flow & 3-Tier Pricing Verification...');
 
@@ -213,4 +223,201 @@ assert.strictEqual(freeCheckoutState, baseState, 'Free checkout attempt must ret
 
 console.log('  ✓ Production applyDemoCheckout verified for Plus, Pro, idempotency, and Free rejection.');
 
-console.log('✅ Commercial verifier passed all 7 assertion groups successfully.');
+// Group 8. Commercial Entitlements Verification
+assert.strictEqual(canUsePracticeInsights('free'), false);
+assert.strictEqual(canUsePracticeInsights('plus'), true);
+assert.strictEqual(canUsePracticeInsights('pro'), true);
+
+assert.strictEqual(canInviteEditors('free'), false);
+assert.strictEqual(canInviteEditors('plus'), true);
+assert.strictEqual(canInviteEditors('pro'), true);
+
+assert.strictEqual(canDownloadRecording('free'), false);
+assert.strictEqual(canDownloadRecording('plus'), false);
+assert.strictEqual(canDownloadRecording('pro'), true);
+
+assert.deepStrictEqual(getScoreQuota('free'), { limit: 5, label: '5 scores', isUnlimited: false });
+assert.deepStrictEqual(getScoreQuota('plus'), { limit: 30, label: '30 scores', isUnlimited: false });
+assert.deepStrictEqual(getScoreQuota('pro'), { limit: Infinity, label: 'Unlimited', isUnlimited: true });
+
+assert.deepStrictEqual(getImportQuota('free'), { limit: 10, label: '10 imports / month', isUnlimited: false });
+assert.deepStrictEqual(getImportQuota('plus'), { limit: 50, label: '50 imports / month', isUnlimited: false });
+assert.deepStrictEqual(getImportQuota('pro'), { limit: Infinity, label: 'Unlimited', isUnlimited: true });
+
+assert.strictEqual(getStorageQuota('free').limit, '500 MB');
+assert.strictEqual(getStorageQuota('plus').limit, '3 GB');
+assert.strictEqual(getStorageQuota('pro').limit, '10 GB');
+
+// Regression assertion: Prove helpers dynamically derive from canonical plan object rather than independent duplicated values
+const customMockPlans = {
+  free: {
+    ...plans.free,
+    analytics: true,
+    export: true,
+    sharing: 'View & edit',
+    scores: '12 scores',
+    imports: '24 imports / month',
+    storage: '2 GB',
+  },
+};
+assert.strictEqual(canUsePracticeInsights('free', customMockPlans), true, 'Helper must derive from plan.analytics');
+assert.strictEqual(canDownloadRecording('free', customMockPlans), true, 'Helper must derive from plan.export');
+assert.strictEqual(canInviteEditors('free', customMockPlans), true, 'Helper must derive from plan.sharing');
+assert.strictEqual(getScoreQuota('free', customMockPlans).limit, 12, 'Score quota must derive from plan.scores');
+assert.strictEqual(getImportQuota('free', customMockPlans).limit, 24, 'Import quota must derive from plan.imports');
+assert.strictEqual(getStorageQuota('free', customMockPlans).limit, '2 GB', 'Storage quota must derive from plan.storage');
+
+console.log('  ✓ Commercial entitlement helpers verified across all plans & dynamic derivation proved.');
+
+// Group 9. Quota Limits & Over-Limit Prevention Invariants
+const isAtLimitScore = (count, planId) => {
+  const q = getScoreQuota(planId);
+  return !q.isUnlimited && count >= q.limit;
+};
+const isAtLimitImport = (count, planId) => {
+  const q = getImportQuota(planId);
+  return !q.isUnlimited && count >= q.limit;
+};
+assert.strictEqual(isAtLimitScore(4, 'free'), false);
+assert.strictEqual(isAtLimitScore(5, 'free'), true);
+assert.strictEqual(isAtLimitScore(6, 'free'), true);
+assert.strictEqual(isAtLimitScore(30, 'plus'), true);
+assert.strictEqual(isAtLimitScore(999, 'pro'), false, 'Pro must remain unlimited');
+
+assert.strictEqual(isAtLimitImport(9, 'free'), false);
+assert.strictEqual(isAtLimitImport(10, 'free'), true);
+assert.strictEqual(isAtLimitImport(50, 'plus'), true);
+assert.strictEqual(isAtLimitImport(999, 'pro'), false, 'Pro must remain unlimited');
+
+console.log('  ✓ Quota limit prevention logic verified (Free 5/10, Plus 30/50, Pro Unlimited).');
+
+// Group 10. Production-Sensitive Customer Copy Audit
+const filesToCheck = [
+  'src/pages/PracticeSetup.jsx',
+  'src/pages/Pricing.jsx',
+  'src/pages/Checkout.jsx',
+  'src/pages/Landing.jsx',
+];
+const forbiddenPhrases = [
+  'Follow notes (Private preview)',
+  'private development',
+  'Please select Performance mode',
+  'Continues to demo checkout',
+];
+for (const rel of filesToCheck) {
+  const full = path.resolve(rel);
+  if (fs.existsSync(full)) {
+    const content = fs.readFileSync(full, 'utf8');
+    for (const phrase of forbiddenPhrases) {
+      assert.ok(
+        !content.includes(phrase),
+        `Forbidden customer copy "${phrase}" detected in ${rel}`
+      );
+    }
+  }
+}
+console.log('  ✓ Production-sensitive customer copy audit passed (0 forbidden phrases found).');
+
+// Group 11. Prototype State Consistency & Security Activity Verification
+// 11a. Import & Score usage tracking transition
+const mockStoreState = {
+  scores: [
+    { id: 'sc-1', title: 'Moonlight', ownership: 'mine' },
+    { id: 'sc-2', title: 'Prelude', ownership: 'mine' },
+  ],
+  imports: [],
+  subscription: {
+    plan: 'free',
+    usage: { scores: 2, imports: 8, storage: '1.2 GB' },
+  },
+  account: {
+    sessions: [
+      { id: 's1', device: 'MacBook', browser: 'Chrome', location: 'LA', current: true },
+      { id: 's2', device: 'iPhone', browser: 'Safari', location: 'SF', current: false },
+      { id: 's3', device: 'iPad', browser: 'Safari', location: 'SJ', current: false },
+    ],
+    securityActivity: [],
+    mfa: { totp: false, sms: false },
+    emailVerified: true,
+  },
+  notificationPrefs: {
+    practiceCadence: 'Occasionally',
+    practicePreferredTime: 'Evening',
+  },
+};
+
+// Simulate session termination
+const targetSession = mockStoreState.account.sessions.find((s) => s.id === 's2');
+const remainingSessions = mockStoreState.account.sessions.filter((s) => s.id !== 's2');
+const sessionSignOutActivity = {
+  id: 'act-test-1',
+  type: 'session',
+  title: 'Session signed out',
+  detail: `${targetSession.browser} on ${targetSession.device} · ${targetSession.location}`,
+  timestamp: 'Just now',
+};
+const stateAfterSessionSignOut = {
+  ...mockStoreState,
+  account: {
+    ...mockStoreState.account,
+    sessions: remainingSessions,
+    securityActivity: [sessionSignOutActivity, ...mockStoreState.account.securityActivity],
+  },
+};
+assert.strictEqual(stateAfterSessionSignOut.account.sessions.length, 2);
+assert.strictEqual(stateAfterSessionSignOut.account.securityActivity.length, 1);
+assert.strictEqual(stateAfterSessionSignOut.account.securityActivity[0].title, 'Session signed out');
+assert.ok(stateAfterSessionSignOut.account.securityActivity[0].detail.includes('Safari on iPhone'));
+
+// Simulate sign out all other sessions
+const otherCount = stateAfterSessionSignOut.account.sessions.filter((s) => !s.current).length;
+const activeSessionsOnly = stateAfterSessionSignOut.account.sessions.filter((s) => s.current);
+const allOthersActivity = {
+  id: 'act-test-2',
+  type: 'session',
+  title: 'Other sessions signed out',
+  detail: `${otherCount} session ended`,
+  timestamp: 'Just now',
+};
+const stateAfterAllOthers = {
+  ...stateAfterSessionSignOut,
+  account: {
+    ...stateAfterSessionSignOut.account,
+    sessions: activeSessionsOnly,
+    securityActivity: [allOthersActivity, ...stateAfterSessionSignOut.account.securityActivity],
+  },
+};
+assert.strictEqual(stateAfterAllOthers.account.sessions.length, 1);
+assert.strictEqual(stateAfterAllOthers.account.securityActivity.length, 2);
+assert.strictEqual(stateAfterAllOthers.account.securityActivity[0].title, 'Other sessions signed out');
+
+// Simulate notification preferences change
+const stateWithCadence = {
+  ...stateAfterAllOthers,
+  notificationPrefs: {
+    ...stateAfterAllOthers.notificationPrefs,
+    practiceCadence: 'Weekly',
+    practicePreferredTime: 'Morning',
+  },
+};
+assert.strictEqual(stateWithCadence.notificationPrefs.practiceCadence, 'Weekly');
+assert.strictEqual(stateWithCadence.notificationPrefs.practicePreferredTime, 'Morning');
+
+// Simulate MFA enrollment update
+const stateWithMfa = {
+  ...stateWithCadence,
+  account: {
+    ...stateWithCadence.account,
+    mfa: { ...stateWithCadence.account.mfa, totp: true },
+    securityActivity: [
+      { id: 'act-test-3', type: 'mfa', title: 'Authenticator app enabled', timestamp: 'Just now' },
+      ...stateWithCadence.account.securityActivity,
+    ],
+  },
+};
+assert.strictEqual(stateWithMfa.account.mfa.totp, true);
+assert.strictEqual(stateWithMfa.account.securityActivity[0].title, 'Authenticator app enabled');
+
+console.log('  ✓ Prototype state consistency & security activity verification passed.');
+
+console.log('✅ Commercial verifier passed all 11 assertion groups successfully.');

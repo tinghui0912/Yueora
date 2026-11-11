@@ -31,7 +31,10 @@ export default function Checkout() {
   const [billingCountry, setBillingCountry] = useState('United States');
 
   const [processing, setProcessing] = useState(false);
-  const [paymentError, setPaymentError] = useState('');
+  const [paymentError, setPaymentError] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('state') === 'declined' ? 'Your card was declined. Try another payment method.' : '';
+  });
 
   if (reason) {
     return (
@@ -83,6 +86,13 @@ export default function Checkout() {
 
     setProcessing(true);
     setTimeout(() => {
+      // Deterministic prototype trigger: cards ending in 0002 simulate payment decline
+      if (cleanCard.endsWith('0002') || cleanCard.endsWith('9999')) {
+        setProcessing(false);
+        setPaymentError('Your card was declined. Try another payment method.');
+        return;
+      }
+
       // Save card details in store
       const last4 = cleanCard.slice(-4);
       const [expMonth, expYear] = cardExpiry.split('/').map((s) => s.trim());
@@ -91,13 +101,15 @@ export default function Checkout() {
         last4: last4 || '4242',
         expMonth: expMonth || '08',
         expYear: expYear || '29',
+        cardholderName: cardName,
+        billingCountry,
       });
 
       // Complete checkout transition
       completeDemoCheckout({ planId, interval, sessionKey });
       setProcessing(false);
       navigate('/checkout/success', { replace: true });
-    }, 900);
+    }, 800);
   };
 
   const cancel = () => navigate('/checkout/cancelled', { replace: true });

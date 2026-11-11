@@ -22,7 +22,10 @@ export default function PracticeProgress() {
   const subscription = usePrototypeStore((s) => s.subscription);
   const activities = (usePrototypeStore((s) => s.practiceActivities) || []).filter((a) => a.ownerId === 'you');
 
-  const hasInsights = canUsePracticeInsights(subscription?.plan);
+  const searchParams = new URLSearchParams(window.location.search);
+  const planOverride = import.meta.env.DEV ? searchParams.get('plan') : null;
+  const effectivePlan = planOverride || subscription?.plan;
+  const hasInsights = canUsePracticeInsights(effectivePlan);
 
   if (!hasInsights) {
     return (

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import SettingsSection from '@/components/patterns/SettingsSection';
@@ -18,11 +17,12 @@ const categories = [
 ];
 
 export default function NotificationSettings() {
-  const prefs = usePrototypeStore((s) => s.notificationPrefs);
+  const prefs = usePrototypeStore((s) => s.notificationPrefs) || {};
   const toggle = usePrototypeStore((s) => s.toggleNotificationPref);
+  const setNotificationSetting = usePrototypeStore((s) => s.setNotificationSetting);
 
-  const [frequency, setFrequency] = useState('Occasionally');
-  const [preferredTime, setPreferredTime] = useState('Evening');
+  const frequency = prefs.practiceCadence || 'Occasionally';
+  const preferredTime = prefs.practicePreferredTime || 'Evening';
 
   return (
     <div className="divide-y divide-line-subtle">
@@ -55,7 +55,7 @@ export default function NotificationSettings() {
             <NativeSelect
               id="cadence"
               value={frequency}
-              onChange={(e) => setFrequency(e.target.value)}
+              onChange={(e) => setNotificationSetting('practiceCadence', e.target.value)}
             >
               <option value="Off">Off (no suggestions)</option>
               <option value="Occasionally">Occasionally (every few days)</option>
@@ -67,7 +67,7 @@ export default function NotificationSettings() {
             <NativeSelect
               id="timeOfDay"
               value={preferredTime}
-              onChange={(e) => setPreferredTime(e.target.value)}
+              onChange={(e) => setNotificationSetting('practicePreferredTime', e.target.value)}
             >
               <option value="Morning">Morning (8:00 AM – 11:00 AM)</option>
               <option value="Afternoon">Afternoon (1:00 PM – 4:00 PM)</option>
@@ -89,7 +89,10 @@ export default function NotificationSettings() {
             </span>
           </div>
           <p className="font-display text-lg italic text-ink-primary leading-relaxed">
-            &ldquo;Feel like playing something today? It’s been a few days since Moonlight Sonata.&rdquo;
+            &ldquo;Feel like returning to Moonlight Sonata today?&rdquo;
+          </p>
+          <p className="type-metadata text-ink-secondary">
+            Moonlight Sonata is waiting whenever you feel like playing.
           </p>
           <p className="type-metadata text-ink-tertiary border-t border-line-subtle pt-2">
             Zero streak counters, zero pressure.

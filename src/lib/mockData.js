@@ -125,8 +125,21 @@ export const practiceActivities = [
 ];
 
 // ---------- Saved Performances (only what the user chose to keep) ----------
-// Seeded as empty: a performance exists only after a real recording was saved.
-export const savedPerformances = [];
+export const savedPerformances = [
+  {
+    id: 'perf-clair-take-1',
+    scoreId: 'clair-de-lune',
+    scoreTitleSnapshot: 'Clair de Lune',
+    ownerId: 'you',
+    created: daysAgo(3, 19, 30),
+    durationSeconds: 305,
+    tempoBpm: 60,
+    mediaType: 'audio',
+    fileUri: 'mock://recordings/clair-de-lune-take-1.webm',
+    rangeSummary: 'Full score',
+    sharedWith: [],
+  },
+];
 
 // ---------- Practice Progress ----------
 export const practiceProgress = {

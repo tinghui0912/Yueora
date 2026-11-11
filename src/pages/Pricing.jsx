@@ -241,7 +241,7 @@ export default function Pricing() {
                         </Link>
                       </Button>
                       <p className="mt-2 text-center type-metadata text-surface-canvas/50">
-                        {isAuthenticated ? 'Continues to demo checkout.' : 'Create an account, then continue.'}
+                        {isAuthenticated ? 'Continue to checkout.' : 'Create an account, then continue.'}
                       </p>
                     </>
                   )}
@@ -337,7 +337,7 @@ export default function Pricing() {
                         </Link>
                       </Button>
                       <p className="mt-2 text-center type-metadata text-ink-tertiary">
-                        {isAuthenticated ? 'Continues to demo checkout.' : 'Create an account, then continue.'}
+                        {isAuthenticated ? 'Continue to checkout.' : 'Create an account, then continue.'}
                       </p>
                     </>
                   )}

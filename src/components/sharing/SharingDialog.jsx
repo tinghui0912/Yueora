@@ -63,7 +63,9 @@ export default function SharingDialog({ score, open, onOpenChange }) {
   const regenerateLink = usePrototypeStore((s) => s.regenerateLink);
   const invitations = usePrototypeStore((s) => s.invitations);
   const subscription = usePrototypeStore((s) => s.subscription);
-  const canEdit = canInviteEditors(subscription?.plan);
+  const searchParams = new URLSearchParams(window.location.search);
+  const planOverride = import.meta.env.DEV ? searchParams.get('plan') : null;
+  const canEdit = canInviteEditors(planOverride || subscription?.plan);
 
   const [email, setEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('Can view');

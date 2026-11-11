@@ -8,6 +8,13 @@ import http from 'node:http';
 const OUT_DIR = path.resolve('.taste-skill/shots');
 if (!fs.existsSync(OUT_DIR)) {
   fs.mkdirSync(OUT_DIR, { recursive: true });
+} else {
+  // Clean previous run screenshots so count is exact and truthful
+  for (const file of fs.readdirSync(OUT_DIR)) {
+    if (file.endsWith('.png')) {
+      try { fs.unlinkSync(path.join(OUT_DIR, file)); } catch { /* ignore */ }
+    }
+  }
 }
 
 const PORT = process.env.PORT || 5350;
@@ -28,17 +35,32 @@ const TARGETS = [
   { name: 'help-article-1440', category: 'Public', path: '/help/change-plan', w: 1440, h: 900 },
   { name: 'help-article-390', category: 'Public', path: '/help/change-plan', w: 390, h: 844 },
   { name: 'login-desktop', category: 'Public', path: '/login', w: 1440, h: 900 },
+  { name: 'register-desktop', category: 'Public', path: '/register', w: 1440, h: 900 },
 
-  // Authenticated Application (Dev Demo Boundary: local dev preview only)
+  // Authenticated Application & Prototype Journeys (Dev Demo Boundary: local dev preview only)
   { name: 'library-desktop', category: 'DEV Demo', path: '/library?demo=true', w: 1440, h: 900 },
   { name: 'practice-hub-desktop', category: 'DEV Demo', path: '/practice?demo=true', w: 1440, h: 900 },
+  { name: 'practice-progress-free', category: 'DEV Demo', path: '/practice/progress?plan=free&demo=true', w: 1440, h: 900 },
+  { name: 'practice-progress-pro', category: 'DEV Demo', path: '/practice/progress?plan=pro&demo=true', w: 1440, h: 900 },
   { name: 'imports-desktop', category: 'DEV Demo', path: '/imports?demo=true', w: 1440, h: 900 },
   { name: 'setup-desktop', category: 'DEV Demo', path: '/score/clair-de-lune/setup?demo=true', w: 1440, h: 900 },
   { name: 'setup-mobile', category: 'DEV Demo', path: '/score/clair-de-lune/setup?demo=true', w: 390, h: 844 },
+  { name: 'add-score-camera', category: 'DEV Demo', path: '/add-score?source=camera&demo=true', w: 1440, h: 900 },
+  { name: 'add-score-musicxml', category: 'DEV Demo', path: '/add-score?source=musicxml&demo=true', w: 1440, h: 900 },
   { name: 'settings-desktop', category: 'DEV Demo', path: '/settings/account?demo=true', w: 1440, h: 900 },
   { name: 'settings-security', category: 'DEV Demo', path: '/settings/security?demo=true', w: 1440, h: 900 },
+  { name: 'settings-notifications', category: 'DEV Demo', path: '/settings/notifications?demo=true', w: 1440, h: 900 },
+  { name: 'settings-plan', category: 'DEV Demo', path: '/settings/plan?demo=true', w: 1440, h: 900 },
   { name: 'settings-preferences', category: 'DEV Demo', path: '/settings/preferences?demo=true', w: 1440, h: 900 },
   { name: 'settings-privacy', category: 'DEV Demo', path: '/settings/privacy?demo=true', w: 1440, h: 900 },
+  { name: 'mfa-manage', category: 'DEV Demo', path: '/mfa?demo=true&manage=true', w: 1440, h: 900 },
+  { name: 'checkout', category: 'DEV Demo', path: '/checkout?plan=plus&interval=monthly&demo=true', w: 1440, h: 900 },
+  { name: 'checkout-payment-failure', category: 'DEV Demo', path: '/checkout?plan=plus&interval=monthly&state=declined&demo=true', w: 1440, h: 900 },
+  { name: 'checkout-success', category: 'DEV Demo', path: '/checkout/success?demo=true', w: 1440, h: 900 },
+  { name: 'sharing-free', category: 'DEV Demo', path: '/score/clair-de-lune?dialog=sharing&plan=free&demo=true', w: 1440, h: 900 },
+  { name: 'sharing-pro', category: 'DEV Demo', path: '/score/clair-de-lune?dialog=sharing&plan=pro&demo=true', w: 1440, h: 900 },
+  { name: 'perf-locked-download', category: 'DEV Demo', path: '/score/clair-de-lune/performances/perf-clair-take-1?plan=free&demo=true', w: 1440, h: 900 },
+  { name: 'perf-pro-download', category: 'DEV Demo', path: '/score/clair-de-lune/performances/perf-clair-take-1?plan=pro&demo=true', w: 1440, h: 900 },
 ];
 
 console.log('📸 Starting Yueora Automated Visual QA Screenshot Capture...');

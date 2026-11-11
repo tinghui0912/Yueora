@@ -4,6 +4,7 @@ import { Check, AlertCircle, ArrowRight, CreditCard, Receipt, Printer } from 'lu
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field } from '@/components/ui/field';
+import { NativeSelect } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import SettingsSection from '@/components/patterns/SettingsSection';
@@ -28,9 +29,11 @@ export default function PlanSettings() {
 
   // Card update dialog state
   const [editCardOpen, setEditCardOpen] = useState(false);
+  const [newCardholder, setNewCardholder] = useState('');
   const [newCardNumber, setNewCardNumber] = useState('');
   const [newExpiry, setNewExpiry] = useState('');
   const [newCvc, setNewCvc] = useState('');
+  const [newCountry, setNewCountry] = useState('United States');
   const [cardError, setCardError] = useState('');
 
   // Receipt viewer state
@@ -56,6 +59,10 @@ export default function PlanSettings() {
   const handleSaveCard = (e) => {
     e.preventDefault();
     setCardError('');
+    if (!newCardholder.trim()) {
+      setCardError('Please enter the cardholder name.');
+      return;
+    }
     const clean = newCardNumber.replace(/\s+/g, '');
     if (clean.length < 15) {
       setCardError('Please enter a valid 16-digit card number.');
@@ -71,8 +78,11 @@ export default function PlanSettings() {
       last4: clean.slice(-4),
       expMonth: expMonth || '08',
       expYear: expYear || '29',
+      cardholderName: newCardholder.trim(),
+      billingCountry: newCountry,
     });
     setEditCardOpen(false);
+    setNewCardholder('');
     setNewCardNumber('');
     setNewExpiry('');
     setNewCvc('');
@@ -150,6 +160,15 @@ export default function PlanSettings() {
           <UsageBar label="Scores" value={subscription.usage.scores} limit={currentPlan.scores} />
           <UsageBar label="Imports this month" value={subscription.usage.imports} limit={currentPlan.imports} />
           <UsageBar label="Storage" value={subscription.usage.storage} limit={currentPlan.storage} />
+          {parseFloat(subscription.usage.storage) >= parseFloat(currentPlan.storage) ? (
+            <p className="type-caption text-ink-primary bg-neutral-muted p-2.5 rounded-control border border-line-subtle">
+              Storage limit reached. Free up space or upgrade your plan.
+            </p>
+          ) : parseFloat(subscription.usage.storage) >= parseFloat(currentPlan.storage) * 0.8 ? (
+            <p className="type-caption text-ink-secondary bg-neutral-muted p-2.5 rounded-control border border-line-subtle">
+              Storage is nearly full. New recordings may require additional space.
+            </p>
+          ) : null}
         </div>
       </SettingsSection>
 
@@ -289,6 +308,15 @@ export default function PlanSettings() {
                 <span>{cardError}</span>
               </div>
             )}
+            <Field label="Cardholder name" htmlFor="editCardName" required>
+              <Input
+                id="editCardName"
+                value={newCardholder}
+                onChange={(e) => setNewCardholder(e.target.value)}
+                placeholder="Alex Morgan"
+                required
+              />
+            </Field>
             <Field label="Card number" htmlFor="editCardNum" required>
               <Input
                 id="editCardNum"
@@ -319,6 +347,21 @@ export default function PlanSettings() {
                 />
               </Field>
             </div>
+            <Field label="Billing country / region" htmlFor="editCountry">
+              <NativeSelect
+                id="editCountry"
+                value={newCountry}
+                onChange={(e) => setNewCountry(e.target.value)}
+              >
+                <option value="United States">United States</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="Canada">Canada</option>
+                <option value="Germany">Germany</option>
+                <option value="France">France</option>
+                <option value="Japan">Japan</option>
+                <option value="Australia">Australia</option>
+              </NativeSelect>
+            </Field>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setEditCardOpen(false)}>Cancel</Button>
               <Button type="submit">Save card</Button>
@@ -352,23 +395,42 @@ export default function PlanSettings() {
                     <p className="type-body-small text-ink-primary mt-0.5">{selectedReceipt.date}</p>
                   </div>
                   <div>
+                    <span className="type-caption text-ink-tertiary">Billing Interval</span>
+                    <p className="type-body-small text-ink-primary mt-0.5">{selectedReceipt.plan.includes('yearly') ? 'Yearly' : 'Monthly'}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div>
                     <span className="type-caption text-ink-tertiary">Payment Method</span>
                     <p className="type-body-small text-ink-primary mt-0.5">{payment.brand || 'Visa'} •••• {payment.last4 || '4242'}</p>
+                  </div>
+                  <div>
+                    <span className="type-caption text-ink-tertiary">Plan</span>
+                    <p className="type-body-small text-ink-primary mt-0.5">{selectedReceipt.plan}</p>
                   </div>
                 </div>
 
                 <div className="border-t border-line-subtle pt-3 text-xs">
                   <span className="type-caption text-ink-tertiary">Billed To</span>
-                  <p className="type-body-small text-ink-primary mt-0.5">{account?.displayName || 'Alex Morgan'}</p>
+                  <p className="type-body-small font-medium text-ink-primary mt-0.5">{account?.displayName || 'Alex Morgan'}</p>
                   <p className="type-caption text-ink-secondary">{account?.email || 'you@example.com'}</p>
+                  <p className="type-caption text-ink-tertiary mt-0.5">123 Music Row, Suite 400, Los Angeles, CA 90028</p>
                 </div>
 
-                <div className="border-t border-line-subtle pt-3 flex items-baseline justify-between">
-                  <div>
-                    <p className="type-body-small font-medium text-ink-primary">{selectedReceipt.plan}</p>
-                    <p className="type-caption text-ink-tertiary">Subscription period payment</p>
+                <div className="border-t border-line-subtle pt-3 space-y-1.5 text-xs">
+                  <div className="flex justify-between text-ink-secondary">
+                    <span>Subtotal</span>
+                    <span>{selectedReceipt.amount}</span>
                   </div>
-                  <p className="font-display text-lg font-medium text-ink-primary">{selectedReceipt.amount}</p>
+                  <div className="flex justify-between text-ink-secondary">
+                    <span>Tax (0%)</span>
+                    <span>$0.00</span>
+                  </div>
+                  <div className="flex justify-between border-t border-line-subtle pt-1.5 type-body-small font-medium text-ink-primary">
+                    <span>Total Paid</span>
+                    <span>{selectedReceipt.amount}</span>
+                  </div>
                 </div>
               </div>
 

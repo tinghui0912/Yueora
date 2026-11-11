@@ -40,7 +40,10 @@ export default function ScoreDetail() {
   const folders = usePrototypeStore((s) => s.folders);
   const restoreVersion = usePrototypeStore((s) => s.restoreVersion);
 
-  const [shareOpen, setShareOpen] = useState(false);
+  const searchParams = new URLSearchParams(window.location.search);
+  const [shareOpen, setShareOpen] = useState(
+    () => searchParams.get('dialog') === 'sharing'
+  );
   const [page, setPage] = useState(1);
   const [zoom, setZoom] = useState(1);
   const [versionsOpen, setVersionsOpen] = useState(false);
