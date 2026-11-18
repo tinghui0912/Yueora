@@ -29,7 +29,7 @@ export default function CheckoutShell() {
         <div className="mx-auto flex max-w-4xl flex-col items-center justify-between gap-2 px-5 py-5 text-sm text-ink-tertiary md:flex-row md:px-8">
           <span className="flex items-center gap-2">
             <Logo variant="mark" size="sm" className="text-ink-tertiary" label="Yueora" />
-            Secure and simple. Yueora never asks for card details.
+            Secure checkout. Your payment details are protected.
           </span>
           <nav className="flex gap-4">
             <Link to="/legal/terms" className="hover:text-ink-primary">Terms</Link>

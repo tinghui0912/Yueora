@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Play, Pencil, Share2, MoreHorizontal, Star, ChevronLeft,
   ChevronRight, ZoomIn, ZoomOut, Trash2, FolderInput, History,
@@ -40,10 +40,16 @@ export default function ScoreDetail() {
   const folders = usePrototypeStore((s) => s.folders);
   const restoreVersion = usePrototypeStore((s) => s.restoreVersion);
 
-  const searchParams = new URLSearchParams(window.location.search);
+  const [searchParams] = useSearchParams();
   const [shareOpen, setShareOpen] = useState(
     () => searchParams.get('dialog') === 'sharing'
   );
+
+  useEffect(() => {
+    if (searchParams.get('dialog') === 'sharing') {
+      setShareOpen(true);
+    }
+  }, [searchParams]);
   const [page, setPage] = useState(1);
   const [zoom, setZoom] = useState(1);
   const [versionsOpen, setVersionsOpen] = useState(false);

@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import SettingsSection from '@/components/patterns/SettingsSection';
 import { checkoutPath, formatPrice, intervalLabel, intervalNoun, PLAN_ORDER, yearlySavingPercent } from '@/lib/commercial';
+import { getStorageUsageState, parseStorageToBytes } from '@/lib/commercialEntitlements';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -45,6 +46,8 @@ export default function PlanSettings() {
   const isCancelling = subscription.status === 'cancelling';
   const currentPlan = plans[currentPlanId] || plans.free;
   const chosenInterval = annual ? 'yearly' : 'monthly';
+  const liveScoresCount = usePrototypeStore((s) => s.scores.filter((sc) => sc.ownership !== 'trash').length);
+  const storageState = getStorageUsageState(subscription?.usage?.storage || '0 MB', currentPlanId);
 
   const payment = subscription.payment || { brand: 'Visa', last4: '4242', expMonth: '08', expYear: '29' };
 
@@ -157,15 +160,15 @@ export default function PlanSettings() {
       {/* 2. Usage Section */}
       <SettingsSection title="Usage" desc="How much of your current plan quota you're using.">
         <div className="space-y-3">
-          <UsageBar label="Scores" value={subscription.usage.scores} limit={currentPlan.scores} />
+          <UsageBar label="Scores" value={liveScoresCount} limit={currentPlan.scores} />
           <UsageBar label="Imports this month" value={subscription.usage.imports} limit={currentPlan.imports} />
           <UsageBar label="Storage" value={subscription.usage.storage} limit={currentPlan.storage} />
-          {parseFloat(subscription.usage.storage) >= parseFloat(currentPlan.storage) ? (
-            <p className="type-caption text-ink-primary bg-neutral-muted p-2.5 rounded-control border border-line-subtle">
+          {storageState.isAtLimit ? (
+            <p className="type-metadata text-ink-primary bg-neutral-muted p-2.5 rounded-control border border-line-subtle">
               Storage limit reached. Free up space or upgrade your plan.
             </p>
-          ) : parseFloat(subscription.usage.storage) >= parseFloat(currentPlan.storage) * 0.8 ? (
-            <p className="type-caption text-ink-secondary bg-neutral-muted p-2.5 rounded-control border border-line-subtle">
+          ) : storageState.isNearLimit ? (
+            <p className="type-metadata text-ink-secondary bg-neutral-muted p-2.5 rounded-control border border-line-subtle">
               Storage is nearly full. New recordings may require additional space.
             </p>
           ) : null}
@@ -451,8 +454,9 @@ export default function PlanSettings() {
 }
 
 function UsageBar({ label, value, limit }) {
-  const numValue = typeof value === 'number' ? value : parseFloat(value);
-  const numLimit = typeof limit === 'number' ? limit : parseFloat(limit);
+  const isStorage = typeof label === 'string' && label.toLowerCase().includes('storage');
+  const numValue = isStorage ? parseStorageToBytes(value) : (typeof value === 'number' ? value : parseFloat(value));
+  const numLimit = isStorage ? parseStorageToBytes(limit) : (typeof limit === 'number' ? limit : parseFloat(limit));
   const isUnlimited = typeof limit === 'string' && limit.toLowerCase().includes('unlimited');
   const hasNumericLimit = !isUnlimited && !Number.isNaN(numValue) && !Number.isNaN(numLimit) && numLimit > 0;
   const pct = hasNumericLimit ? Math.min(100, Math.max(0, Math.round((numValue / numLimit) * 100))) : null;

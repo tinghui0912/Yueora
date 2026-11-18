@@ -19,6 +19,13 @@ import {
   applyDemoCheckout,
   migratePrototypeState,
 } from '@/lib/commercial';
+import {
+  getScoreQuota,
+  getImportQuota,
+  getEffectiveScoreUsage,
+  getLiveScores,
+  isImportReservingScore,
+} from '@/lib/commercialEntitlements';
 
 /**
  * @typedef {Object} DifficultSection
@@ -416,23 +423,54 @@ export const usePrototypeStore = create(
         set((st) => ({ scores: st.scores.map((s) => (s.id === id ? { ...s, favorite: !s.favorite } : s)) })),
 
       moveOwnedScoreToTrash: (id) =>
-        set((st) => ({
-          scores: st.scores.map((s) =>
+        set((st) => {
+          const nextScores = st.scores.map((s) =>
             s.id === id && s.ownership === 'mine'
               ? { ...s, ownership: 'trash', deletedAt: new Date().toISOString().slice(0, 10) }
               : s
-          ),
-        })),
+          );
+          const liveCount = getLiveScores(nextScores).length;
+          return {
+            scores: nextScores,
+            subscription: {
+              ...st.subscription,
+              usage: {
+                ...st.subscription?.usage,
+                scores: liveCount,
+              },
+            },
+          };
+        }),
 
       restoreScore: (id) =>
-        set((st) => ({
-          scores: st.scores.map((s) => (s.id === id ? { ...s, ownership: 'mine', deletedAt: undefined } : s)),
-        })),
+        set((st) => {
+          const score = st.scores.find((s) => s.id === id);
+          if (!score || score.ownership !== 'trash') return {};
+          const scoreQuota = getScoreQuota(st.subscription?.plan);
+          const { effectiveCount } = getEffectiveScoreUsage(st.scores, st.imports);
+          if (!scoreQuota.isUnlimited && effectiveCount >= scoreQuota.limit) {
+            return {};
+          }
+          const nextScores = st.scores.map((s) =>
+            s.id === id ? { ...s, ownership: 'mine', deletedAt: undefined } : s
+          );
+          const liveCount = getLiveScores(nextScores).length;
+          return {
+            scores: nextScores,
+            subscription: {
+              ...st.subscription,
+              usage: {
+                ...st.subscription?.usage,
+                scores: liveCount,
+              },
+            },
+          };
+        }),
 
       deleteScoreForever: (id) =>
         set((st) => {
           const remainingScores = st.scores.filter((s) => s.id !== id);
-          const liveCount = remainingScores.filter((s) => s.ownership !== 'trash').length;
+          const liveCount = getLiveScores(remainingScores).length;
           return {
             scores: remainingScores,
             subscription: {
@@ -446,18 +484,62 @@ export const usePrototypeStore = create(
         }),
 
       emptyTrash: () =>
-        set((st) => ({ scores: st.scores.filter((s) => s.ownership !== 'trash') })),
+        set((st) => {
+          const remainingScores = st.scores.filter((s) => s.ownership !== 'trash');
+          const liveCount = getLiveScores(remainingScores).length;
+          return {
+            scores: remainingScores,
+            subscription: {
+              ...st.subscription,
+              usage: {
+                ...st.subscription?.usage,
+                scores: liveCount,
+              },
+            },
+          };
+        }),
 
       leaveSharedScore: (id) =>
-        set((st) => ({ scores: st.scores.filter((s) => s.id !== id) })),
+        set((st) => {
+          const remainingScores = st.scores.filter((s) => s.id !== id);
+          const liveCount = getLiveScores(remainingScores).length;
+          return {
+            scores: remainingScores,
+            subscription: {
+              ...st.subscription,
+              usage: {
+                ...st.subscription?.usage,
+                scores: liveCount,
+              },
+            },
+          };
+        }),
 
       removeSavedScore: (id) =>
-        set((st) => ({ scores: st.scores.filter((s) => s.id !== id) })),
+        set((st) => {
+          const remainingScores = st.scores.filter((s) => s.id !== id);
+          const liveCount = getLiveScores(remainingScores).length;
+          return {
+            scores: remainingScores,
+            subscription: {
+              ...st.subscription,
+              usage: {
+                ...st.subscription?.usage,
+                scores: liveCount,
+              },
+            },
+          };
+        }),
 
       duplicateScore: (id) =>
         set((st) => {
           const score = st.scores.find((s) => s.id === id);
           if (!score) return {};
+          const scoreQuota = getScoreQuota(st.subscription?.plan);
+          const { effectiveCount } = getEffectiveScoreUsage(st.scores, st.imports);
+          if (!scoreQuota.isUnlimited && effectiveCount >= scoreQuota.limit) {
+            return {};
+          }
           const copy = {
             ...clone(score),
             id: `${score.id}-copy-${Date.now()}`,
@@ -469,7 +551,18 @@ export const usePrototypeStore = create(
             lastMeasure: 1,
             folderIds: [],
           };
-          return { scores: [copy, ...st.scores] };
+          const nextScores = [copy, ...st.scores];
+          const liveCount = getLiveScores(nextScores).length;
+          return {
+            scores: nextScores,
+            subscription: {
+              ...st.subscription,
+              usage: {
+                ...st.subscription?.usage,
+                scores: liveCount,
+              },
+            },
+          };
         }),
 
       moveScoreToFolder: (scoreId, folderId) =>
@@ -565,8 +658,19 @@ export const usePrototypeStore = create(
 
       // ---- Import actions ----
       // Creates an import with pendingScore — does NOT create a score yet.
-      createImport: ({ title, composer, instrument, pages, source, folder }) =>
+      // Reserves a repertoire score capacity slot for finite plans while in progress.
+      createImport: ({ title, composer, instrument, pages, measures, source, folder }) =>
         set((st) => {
+          const importQuota = getImportQuota(st.subscription?.plan);
+          const currentImports = st.subscription?.usage?.imports ?? 8;
+          if (!importQuota.isUnlimited && currentImports >= importQuota.limit) {
+            return {};
+          }
+          const scoreQuota = getScoreQuota(st.subscription?.plan);
+          const { effectiveCount } = getEffectiveScoreUsage(st.scores, st.imports);
+          if (!scoreQuota.isUnlimited && effectiveCount >= scoreQuota.limit) {
+            return {};
+          }
           const importId = `imp-${Date.now()}`;
           const scoreId = `score-${Date.now()}`;
           const folderIds = folder ? [folder] : [];
@@ -577,6 +681,7 @@ export const usePrototypeStore = create(
             tags: [],
             folderIds,
             pages: pages || 1,
+            measures: measures || 32,
             source: source || 'PDF',
           };
           const newImport = {
@@ -588,9 +693,10 @@ export const usePrototypeStore = create(
             progress: 0,
             started: 'just now',
             pages: pages || 1,
+            measures: measures || 32,
             source: source || 'PDF',
           };
-          const nextImportsCount = (st.subscription?.usage?.imports ?? 8) + 1;
+          const nextImportsCount = currentImports + 1;
           return {
             imports: [newImport, ...st.imports],
             subscription: {
@@ -603,9 +709,20 @@ export const usePrototypeStore = create(
           };
         }),
 
-      // Creates an interactive score directly (e.g. from MusicXML digital import)
-      addInteractiveScore: ({ title, composer, instrument, pages, folder, source }) =>
+      // Creates an interactive score directly (e.g. from MusicXML digital import).
+      // Consumes 1 monthly import allowance and 1 repertoire score slot.
+      addInteractiveScore: ({ title, composer, instrument, pages, measures, folder, source }) =>
         set((st) => {
+          const importQuota = getImportQuota(st.subscription?.plan);
+          const currentImports = st.subscription?.usage?.imports ?? 8;
+          if (!importQuota.isUnlimited && currentImports >= importQuota.limit) {
+            return {};
+          }
+          const scoreQuota = getScoreQuota(st.subscription?.plan);
+          const { effectiveCount } = getEffectiveScoreUsage(st.scores, st.imports);
+          if (!scoreQuota.isUnlimited && effectiveCount >= scoreQuota.limit) {
+            return {};
+          }
           const scoreId = `score-${Date.now()}`;
           const folderIds = folder ? [folder] : [];
           const newScore = {
@@ -621,7 +738,7 @@ export const usePrototypeStore = create(
             lastMeasure: 1,
             tempo: 80,
             pages: pages || 1,
-            measures: 32,
+            measures: measures || 72,
             difficultSections: [],
             created: new Date().toISOString().slice(0, 10),
             source: source || 'MusicXML',
@@ -629,8 +746,8 @@ export const usePrototypeStore = create(
             versionRestoredAt: null,
           };
           const nextScores = [newScore, ...st.scores];
-          const liveCount = nextScores.filter((s) => s.ownership !== 'trash').length;
-          const nextImportsCount = (st.subscription?.usage?.imports ?? 8) + 1;
+          const liveCount = getLiveScores(nextScores).length;
+          const nextImportsCount = currentImports + 1;
           return {
             scores: nextScores,
             sharing: { ...st.sharing, [scoreId]: defaultSharing(newScore) },
@@ -699,6 +816,15 @@ export const usePrototypeStore = create(
           if (!imp) return {};
           // Already completed? Don't duplicate.
           if (imp.status === 'completed' && imp.scoreId) return {};
+
+          const liveScores = getLiveScores(st.scores);
+          const isAlreadyReserving = isImportReservingScore(imp, liveScores);
+          const scoreQuota = getScoreQuota(st.subscription?.plan);
+          const { effectiveCount } = getEffectiveScoreUsage(st.scores, st.imports);
+          if (!isAlreadyReserving && !scoreQuota.isUnlimited && effectiveCount >= scoreQuota.limit) {
+            return {};
+          }
+
           const ps = imp.pendingScore || {};
           const scoreId = imp.scoreId;
           const newScore = {
@@ -714,7 +840,7 @@ export const usePrototypeStore = create(
             lastMeasure: 1,
             tempo: 80,
             pages: ps.pages || imp.pages || 1,
-            measures: 32,
+            measures: ps.measures || imp.measures || 32,
             difficultSections: [],
             created: new Date().toISOString().slice(0, 10),
             source: ps.source || imp.source || 'PDF',
@@ -725,7 +851,7 @@ export const usePrototypeStore = create(
           const issues = st.recognitionIssues[id] || [];
           const archivedIssues = issues.map((i) => ({ ...i, resolved: true }));
           const nextScores = [newScore, ...st.scores];
-          const liveCount = nextScores.filter((s) => s.ownership !== 'trash').length;
+          const liveCount = getLiveScores(nextScores).length;
           return {
             scores: nextScores,
             imports: st.imports.map((i) => (i.id === id ? { ...i, status: 'completed', scoreId } : i)),

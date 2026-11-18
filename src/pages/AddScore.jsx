@@ -14,7 +14,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
-import { getScoreQuota, getImportQuota, getStorageQuota } from '@/lib/commercialEntitlements';
+import { getScoreQuota, getImportQuota, getStorageQuota, getEffectiveScoreUsage } from '@/lib/commercialEntitlements';
 import { checkoutPath } from '@/lib/commercial';
 import { AppPage } from '@/components/patterns/AppPage';
 import BackLink from '@/components/patterns/BackLink';
@@ -49,14 +49,15 @@ export default function AddScore() {
   const createImport = usePrototypeStore((s) => s.createImport);
   const folders = usePrototypeStore((s) => s.folders);
   const scores = usePrototypeStore((s) => s.scores);
+  const imports = usePrototypeStore((s) => s.imports);
   const subscription = usePrototypeStore((s) => s.subscription);
 
-  const liveScores = scores.filter((s) => s.ownership !== 'trash');
+  const { liveCount, reservedCount, effectiveCount } = getEffectiveScoreUsage(scores, imports);
   const scoreQuota = getScoreQuota(subscription?.plan);
   const importQuota = getImportQuota(subscription?.plan);
   const storageQuota = getStorageQuota(subscription?.plan);
   const importsCount = subscription?.usage?.imports ?? 8;
-  const isAtScoreLimit = !scoreQuota.isUnlimited && liveScores.length >= scoreQuota.limit;
+  const isAtScoreLimit = !scoreQuota.isUnlimited && effectiveCount >= scoreQuota.limit;
   const isAtImportLimit = !importQuota.isUnlimited && importsCount >= importQuota.limit;
 
   const searchParams = new URLSearchParams(window.location.search);
@@ -87,8 +88,7 @@ export default function AddScore() {
   const [createdScoreId, setCreatedScoreId] = useState(null);
 
   const handleSelectSource = (sourceId) => {
-    if (isAtScoreLimit) return;
-    if (isAtImportLimit && sourceId !== 'musicxml') return;
+    if (isAtScoreLimit || isAtImportLimit) return;
     setSource(sourceId);
     if (sourceId === 'pdf') {
       setFiles([{ id: 1, name: 'Score-Part-1.pdf' }, { id: 2, name: 'Score-Part-2.pdf' }]);
@@ -145,7 +145,7 @@ export default function AddScore() {
       setError('Add a title so you can find this score later.');
       return;
     }
-    if (isAtScoreLimit) return;
+    if (isAtScoreLimit || isAtImportLimit) return;
 
     if (source === 'musicxml') {
       const addInteractiveScore = usePrototypeStore.getState().addInteractiveScore;
@@ -155,6 +155,7 @@ export default function AddScore() {
           composer: details.composer,
           instrument: details.instrument,
           pages: files.length,
+          measures: 72,
           folder: details.folder,
           source: 'MusicXML',
         });
@@ -163,7 +164,6 @@ export default function AddScore() {
       setCreatedScoreId(newScore?.id);
       setStep(5);
     } else {
-      if (isAtImportLimit) return;
       createImport({
         title: details.title,
         composer: details.composer,
@@ -205,10 +205,10 @@ export default function AddScore() {
                   <AlertCircle className="icon-sm text-ink-primary shrink-0 mt-0.5" />
                   <div className="flex-1 min-w-0">
                     <h3 className="type-body-small font-medium text-ink-primary">
-                      Repertoire limit reached ({liveScores.length} of {scoreQuota.limit} scores)
+                      Repertoire limit reached ({effectiveCount} of {scoreQuota.limit} scores)
                     </h3>
                     <p className="mt-1 type-metadata text-ink-secondary leading-relaxed">
-                      You have reached the maximum repertoire allowance for your current plan. Upgrade to Plus for 30 scores, or Pro for unlimited music.
+                      Your current plan has room for {scoreQuota.limit} scores. A score already being prepared also reserves a place in your repertoire.
                     </p>
                   </div>
                 </div>
@@ -233,7 +233,7 @@ export default function AddScore() {
                       Monthly import limit reached ({importsCount} of {importQuota.label})
                     </h3>
                     <p className="mt-1 type-metadata text-ink-secondary leading-relaxed">
-                      You have used all import allowances for this billing cycle. Upgrade to continue importing now, or import digital MusicXML scores directly.
+                      You have used all import allowances for this billing cycle. Upgrade to continue importing sheet music or digital scores.
                     </p>
                   </div>
                 </div>
@@ -254,7 +254,7 @@ export default function AddScore() {
 
             <div className="grid gap-3 sm:grid-cols-2">
               {sources.map((s) => {
-                const isBlocked = isAtScoreLimit || (isAtImportLimit && s.id !== 'musicxml');
+                const isBlocked = isAtScoreLimit || isAtImportLimit;
                 return (
                   <ChoiceCard
                     key={s.id}
@@ -520,7 +520,11 @@ export default function AddScore() {
           <div className="space-y-6">
             <SectionHeader
               title="Score details"
-              description="Recognition will pre-fill these nuances — you can customize them anytime."
+              description={
+                source === 'musicxml'
+                  ? 'These details were read from the digital score. You can adjust them anytime.'
+                  : 'Recognition can pre-fill these details — you can adjust them anytime.'
+              }
             />
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -655,7 +659,7 @@ export default function AddScore() {
               <Button
                 intent="primary"
                 onClick={handleSubmitScore}
-                disabled={isAtScoreLimit || (source !== 'musicxml' && isAtImportLimit)}
+                disabled={isAtScoreLimit || isAtImportLimit}
               >
                 {source === 'musicxml' ? 'Add interactive score' : 'Start recognition'}
               </Button>

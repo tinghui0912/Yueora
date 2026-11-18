@@ -17,6 +17,15 @@ import {
   getScoreQuota,
   getImportQuota,
   getStorageQuota,
+  parseStorageToBytes,
+  getStorageUsageState,
+  getLiveScores,
+  isImportReservingScore,
+  getReservedScoreCount,
+  getEffectiveScoreUsage,
+  canCreateOrImportScore,
+  canDuplicateScore,
+  canRestoreScore,
 } from '../src/lib/commercialEntitlements.js';
 
 console.log('🧪 Running Yueora Commercial Flow & 3-Tier Pricing Verification...');
@@ -269,40 +278,120 @@ assert.strictEqual(getStorageQuota('free', customMockPlans).limit, '2 GB', 'Stor
 
 console.log('  ✓ Commercial entitlement helpers verified across all plans & dynamic derivation proved.');
 
-// Group 9. Quota Limits & Over-Limit Prevention Invariants
-const isAtLimitScore = (count, planId) => {
-  const q = getScoreQuota(planId);
-  return !q.isUnlimited && count >= q.limit;
-};
-const isAtLimitImport = (count, planId) => {
+// Group 9. Storage Normalization & Ratio Calculation Invariants
+assert.strictEqual(parseStorageToBytes('500 MB'), 500 * 1024 * 1024);
+assert.strictEqual(parseStorageToBytes('3 GB'), 3 * 1024 * 1024 * 1024);
+assert.strictEqual(parseStorageToBytes('10 GB'), 10 * 1024 * 1024 * 1024);
+assert.strictEqual(parseStorageToBytes('1.2 GB'), Math.round(1.2 * 1024 * 1024 * 1024));
+
+// 9a. 400 MB on Free 500 MB -> 80% (Near limit, not at limit)
+const free400 = getStorageUsageState('400 MB', 'free');
+assert.strictEqual(free400.percentage, 80);
+assert.strictEqual(free400.isNearLimit, true);
+assert.strictEqual(free400.isAtLimit, false);
+
+// 9b. 500 MB on Free 500 MB -> 100% (At limit)
+const free500 = getStorageUsageState('500 MB', 'free');
+assert.strictEqual(free500.percentage, 100);
+assert.strictEqual(free500.isNearLimit, false);
+assert.strictEqual(free500.isAtLimit, true);
+
+// 9c. 1.2 GB on Free 500 MB -> 246% (Over limit — proves mixed-unit parseFloat bug is fixed!)
+const free1200 = getStorageUsageState('1.2 GB', 'free');
+assert.ok(free1200.percentage >= 240, '1.2 GB must be > 200% of 500 MB');
+assert.strictEqual(free1200.isAtLimit, true);
+
+// 9d. 2.4 GB on Plus 3 GB -> 80% (Near limit)
+const plus2400 = getStorageUsageState('2.4 GB', 'plus');
+assert.strictEqual(plus2400.percentage, 80);
+assert.strictEqual(plus2400.isNearLimit, true);
+assert.strictEqual(plus2400.isAtLimit, false);
+
+console.log('  ✓ Storage unit normalization & quota state invariants verified across mixed units.');
+
+// Group 10. Repertoire Quota Reservation & Store Mutation Invariants
+const sampleScores4 = [
+  { id: 's1', ownership: 'mine' },
+  { id: 's2', ownership: 'mine' },
+  { id: 's3', ownership: 'mine' },
+  { id: 's4', ownership: 'mine' },
+];
+const sampleScores5 = [...sampleScores4, { id: 's5', ownership: 'mine' }];
+const sampleScores29 = Array.from({ length: 29 }, (_, i) => ({ id: `plus-s-${i}`, ownership: 'mine' }));
+
+const pendingImport = { id: 'imp-pending', scoreId: 'score-future', status: 'processing' };
+const completedImport = { id: 'imp-done', scoreId: 's1', status: 'completed' };
+const failedImport = { id: 'imp-fail', scoreId: 'score-failed', status: 'failed' };
+
+// Pending import reserves a slot
+assert.strictEqual(isImportReservingScore(pendingImport, sampleScores4), true);
+// Completed import with live score does not double-count
+assert.strictEqual(isImportReservingScore(completedImport, sampleScores4), false);
+// Failed import does not reserve
+assert.strictEqual(isImportReservingScore(failedImport, sampleScores4), false);
+
+// Free 4 live + 0 pending -> allowed
+const free4Usage = getEffectiveScoreUsage(sampleScores4, []);
+assert.strictEqual(free4Usage.effectiveCount, 4);
+assert.strictEqual(canCreateOrImportScore(sampleScores4, [], 'free'), true);
+assert.strictEqual(canDuplicateScore(sampleScores4, [], 'free'), true);
+assert.strictEqual(canRestoreScore(sampleScores4, [], 'free'), true);
+
+// Free 4 live + 1 pending -> 5 (FULL, blocked!)
+const free4Plus1Usage = getEffectiveScoreUsage(sampleScores4, [pendingImport]);
+assert.strictEqual(free4Plus1Usage.effectiveCount, 5);
+assert.strictEqual(canCreateOrImportScore(sampleScores4, [pendingImport], 'free'), false);
+assert.strictEqual(canDuplicateScore(sampleScores4, [pendingImport], 'free'), false);
+assert.strictEqual(canRestoreScore(sampleScores4, [pendingImport], 'free'), false);
+
+// Free 5 live + 0 pending -> 5 (FULL, blocked!)
+const free5Usage = getEffectiveScoreUsage(sampleScores5, []);
+assert.strictEqual(free5Usage.effectiveCount, 5);
+assert.strictEqual(canCreateOrImportScore(sampleScores5, [], 'free'), false);
+
+// Plus 29 live + 1 pending -> 30 (FULL, blocked!)
+const plus29Plus1Usage = getEffectiveScoreUsage(sampleScores29, [pendingImport]);
+assert.strictEqual(plus29Plus1Usage.effectiveCount, 30);
+assert.strictEqual(canCreateOrImportScore(sampleScores29, [pendingImport], 'plus'), false);
+
+// Pro -> unlimited
+assert.strictEqual(canCreateOrImportScore(Array.from({ length: 999 }, (_, i) => ({ id: `p-${i}`, ownership: 'mine' })), [pendingImport], 'pro'), true);
+
+// Monthly Import limits: Free 10/10 and Plus 50/50 block all sources including MusicXML
+const isImportQuotaReached = (currentCount, planId) => {
   const q = getImportQuota(planId);
-  return !q.isUnlimited && count >= q.limit;
+  return !q.isUnlimited && currentCount >= q.limit;
 };
-assert.strictEqual(isAtLimitScore(4, 'free'), false);
-assert.strictEqual(isAtLimitScore(5, 'free'), true);
-assert.strictEqual(isAtLimitScore(6, 'free'), true);
-assert.strictEqual(isAtLimitScore(30, 'plus'), true);
-assert.strictEqual(isAtLimitScore(999, 'pro'), false, 'Pro must remain unlimited');
+assert.strictEqual(isImportQuotaReached(9, 'free'), false);
+assert.strictEqual(isImportQuotaReached(10, 'free'), true, 'Free 10/10 must block imports');
+assert.strictEqual(isImportQuotaReached(49, 'plus'), false);
+assert.strictEqual(isImportQuotaReached(50, 'plus'), true, 'Plus 50/50 must block imports');
+assert.strictEqual(isImportQuotaReached(999, 'pro'), false, 'Pro imports remain unlimited');
 
-assert.strictEqual(isAtLimitImport(9, 'free'), false);
-assert.strictEqual(isAtLimitImport(10, 'free'), true);
-assert.strictEqual(isAtLimitImport(50, 'plus'), true);
-assert.strictEqual(isAtLimitImport(999, 'pro'), false, 'Pro must remain unlimited');
+console.log('  ✓ Repertoire quota reservation & import quota invariants verified.');
 
-console.log('  ✓ Quota limit prevention logic verified (Free 5/10, Plus 30/50, Pro Unlimited).');
-
-// Group 10. Production-Sensitive Customer Copy Audit
+// Group 11. Production-Sensitive Customer Copy Audit Across All Shells, Help & Pages
 const filesToCheck = [
+  'src/components/commercial/CheckoutShell.jsx',
+  'src/lib/mockData.js',
   'src/pages/PracticeSetup.jsx',
   'src/pages/Pricing.jsx',
   'src/pages/Checkout.jsx',
   'src/pages/Landing.jsx',
+  'src/pages/AddScore.jsx',
+  'src/pages/settings/AccountSettings.jsx',
+  'src/pages/settings/SecuritySettings.jsx',
+  'src/pages/settings/PlanSettings.jsx',
+  'src/pages/settings/NotificationSettings.jsx',
 ];
 const forbiddenPhrases = [
+  'Yueora never asks for card details',
   'Follow notes (Private preview)',
   'private development',
   'Please select Performance mode',
   'Continues to demo checkout',
+  'It’s been a few days since Moonlight Sonata.',
+  'or import digital MusicXML scores directly',
 ];
 for (const rel of filesToCheck) {
   const full = path.resolve(rel);
@@ -316,9 +405,9 @@ for (const rel of filesToCheck) {
     }
   }
 }
-console.log('  ✓ Production-sensitive customer copy audit passed (0 forbidden phrases found).');
+console.log('  ✓ Production-sensitive customer copy audit passed across 11 files (0 forbidden phrases found).');
 
-// Group 11. Prototype State Consistency & Security Activity Verification
+// Group 12. Prototype State Consistency & Security Activity Verification
 // 11a. Import & Score usage tracking transition
 const mockStoreState = {
   scores: [
@@ -420,4 +509,4 @@ assert.strictEqual(stateWithMfa.account.securityActivity[0].title, 'Authenticato
 
 console.log('  ✓ Prototype state consistency & security activity verification passed.');
 
-console.log('✅ Commercial verifier passed all 11 assertion groups successfully.');
+console.log('✅ Commercial verifier passed all 12 assertion groups successfully.');

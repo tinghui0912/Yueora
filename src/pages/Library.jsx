@@ -6,7 +6,7 @@ import {
   Folder, Pencil, Sparkles,
 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
-import { getScoreQuota } from '@/lib/commercialEntitlements';
+import { getScoreQuota, getEffectiveScoreUsage } from '@/lib/commercialEntitlements';
 import ScoreCard from '@/components/library/ScoreCard';
 import ScorePreview from '@/components/library/ScorePreview';
 import LibrarySubRail from '@/components/library/LibrarySubRail';
@@ -54,8 +54,11 @@ export default function Library() {
   const [searchInput, setSearchInput] = useState(search);
 
   const scores = usePrototypeStore((s) => s.scores);
+  const imports = usePrototypeStore((s) => s.imports);
   const subscription = usePrototypeStore((s) => s.subscription);
   const scoreQuota = getScoreQuota(subscription?.plan);
+  const { effectiveCount } = getEffectiveScoreUsage(scores, imports);
+  const isAtScoreLimit = !scoreQuota.isUnlimited && effectiveCount >= scoreQuota.limit;
   const folders = usePrototypeStore((s) => s.folders);
   const createFolder = usePrototypeStore((s) => s.createFolder);
   const renameFolder = usePrototypeStore((s) => s.renameFolder);
@@ -448,6 +451,11 @@ export default function Library() {
             <EmptyState active={active} isTrash={isTrash} />
           ) : isTrash ? (
             <div className="space-y-3">
+              {isAtScoreLimit && (
+                <p className="type-metadata text-ink-secondary bg-neutral-muted px-4 py-2.5 rounded-control border border-line-subtle">
+                  Your repertoire is full ({effectiveCount} of {scoreQuota.limit} scores). Delete a score permanently or upgrade to restore music from Trash.
+                </p>
+              )}
               <div className="flex justify-end">
                 <Button intent="secondary" size="sm" onClick={emptyTrash}>
                   <Trash2 className="mr-1.5" /> Empty trash
@@ -466,6 +474,8 @@ export default function Library() {
                     <Button
                       intent="secondary"
                       size="xs"
+                      disabled={isAtScoreLimit}
+                      title={isAtScoreLimit ? `Repertoire limit reached (${effectiveCount}/${scoreQuota.limit}). Upgrade or delete another score first.` : 'Restore score'}
                       onClick={() => restoreScore(s.id)}
                     >
                       Restore
