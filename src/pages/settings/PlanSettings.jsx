@@ -108,7 +108,7 @@ export default function PlanSettings() {
         <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="font-display text-lg font-medium text-ink-primary">{currentPlan.name}</p>
+              <p className="type-subsection font-medium text-ink-primary">{currentPlan.name}</p>
               <p className="type-body-small text-ink-secondary">
                 {isPaid
                   ? `${intervalLabel(subscription.billingInterval)} billing · renews ${subscription.renewal}`
@@ -198,14 +198,14 @@ export default function PlanSettings() {
                 <div key={p.id} className="rounded-container border border-line-subtle bg-surface-panel p-5 flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between">
-                      <p className="font-display text-xl font-medium text-ink-primary">{p.name}</p>
-                      <span className="type-caption uppercase tracking-wider text-ink-tertiary">
+                      <p className="type-subsection font-medium text-ink-primary">{p.name}</p>
+                      <span className="type-caption text-ink-tertiary">
                         {p.id === 'plus' ? 'Most Popular' : 'Unlimited'}
                       </span>
                     </div>
-                    <p className="mt-2 font-display text-2xl font-medium text-ink-primary">
+                    <p className="mt-2 type-section-title font-medium text-ink-primary">
                       {formatPrice(price)}
-                      <span className="text-sm font-normal text-ink-tertiary"> / {intervalNoun(chosenInterval)}</span>
+                      <span className="type-metadata font-normal text-ink-tertiary"> / {intervalNoun(chosenInterval)}</span>
                     </p>
                     <ul className="mt-4 space-y-2 type-body-small text-ink-secondary">
                       <li className="flex items-center gap-2"><Check className="icon-xs text-brand" /> {p.scores} in library</li>
@@ -258,14 +258,14 @@ export default function PlanSettings() {
           <p className="type-body-small text-ink-secondary">No billing records yet.</p>
         ) : (
           <div className="rounded-container border border-line-subtle bg-surface-panel overflow-hidden">
-            <div className="divide-y divide-line-subtle text-sm">
+            <div className="divide-y divide-line-subtle type-body-small">
               {billingHistory.map((b) => (
                 <div key={b.id} className="flex flex-wrap items-center justify-between gap-3 p-4 hover:bg-neutral-hover/40 transition-colors">
                   <div className="min-w-0">
                     <p className="font-medium text-ink-primary">{b.date} · {b.amount}</p>
                     <p className="type-metadata text-ink-tertiary">
                       {b.plan} · {b.invoice}
-                      <span className="ml-2 rounded-control bg-neutral-muted px-2 py-0.5 type-caption font-semibold uppercase tracking-wider text-ink-primary">
+                      <span className="ml-2 rounded-control bg-neutral-muted px-2 py-0.5 type-caption font-semibold text-ink-primary">
                         Paid
                       </span>
                     </p>
@@ -380,19 +380,19 @@ export default function PlanSettings() {
             <DialogTitle>Yueora Receipt</DialogTitle>
           </DialogHeader>
           {selectedReceipt && (
-            <div className="space-y-4 text-sm">
+            <div className="space-y-4 type-body-small">
               <div className="rounded-container border border-line-subtle bg-surface-panel p-4 space-y-3">
                 <div className="flex items-center justify-between border-b border-line-subtle pb-3">
                   <div>
                     <p className="type-caption text-ink-tertiary">Invoice Number</p>
                     <p className="type-body-small font-mono font-medium text-ink-primary">{selectedReceipt.invoice}</p>
                   </div>
-                  <span className="rounded-control bg-neutral-muted px-2.5 py-0.5 type-caption font-semibold uppercase tracking-wider text-ink-primary">
+                  <span className="rounded-control bg-neutral-muted px-2.5 py-0.5 type-caption font-semibold text-ink-primary">
                     Paid
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-2 gap-3 type-metadata">
                   <div>
                     <span className="type-caption text-ink-tertiary">Date Paid</span>
                     <p className="type-body-small text-ink-primary mt-0.5">{selectedReceipt.date}</p>
@@ -403,7 +403,7 @@ export default function PlanSettings() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-2 gap-3 type-metadata">
                   <div>
                     <span className="type-caption text-ink-tertiary">Payment Method</span>
                     <p className="type-body-small text-ink-primary mt-0.5">{payment.brand || 'Visa'} •••• {payment.last4 || '4242'}</p>
@@ -414,14 +414,14 @@ export default function PlanSettings() {
                   </div>
                 </div>
 
-                <div className="border-t border-line-subtle pt-3 text-xs">
+                <div className="border-t border-line-subtle pt-3 type-metadata">
                   <span className="type-caption text-ink-tertiary">Billed To</span>
                   <p className="type-body-small font-medium text-ink-primary mt-0.5">{account?.displayName || 'Alex Morgan'}</p>
                   <p className="type-caption text-ink-secondary">{account?.email || 'you@example.com'}</p>
                   <p className="type-caption text-ink-tertiary mt-0.5">123 Music Row, Suite 400, Los Angeles, CA 90028</p>
                 </div>
 
-                <div className="border-t border-line-subtle pt-3 space-y-1.5 text-xs">
+                <div className="border-t border-line-subtle pt-3 space-y-1.5 type-metadata">
                   <div className="flex justify-between text-ink-secondary">
                     <span>Subtotal</span>
                     <span>{selectedReceipt.amount}</span>

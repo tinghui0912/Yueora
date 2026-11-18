@@ -103,7 +103,7 @@ export default function PracticeHub() {
                   <div className="min-w-0">
                     <p className="truncate type-subsection text-ink-primary">{r.title}</p>
                     <p className="truncate type-metadata text-ink-secondary mt-0.5">{r.composer}</p>
-                    <span className="inline-block mt-1 text-xs font-medium text-brand">Revisit piece →</span>
+                    <span className="inline-block mt-1 type-metadata font-medium text-brand">Revisit piece →</span>
                   </div>
                 </div>
               </Link>
@@ -115,7 +115,7 @@ export default function PracticeHub() {
       {/* Haven't played in a while */}
       {havenPlayed.length > 0 && (
         <section className="mt-10">
-          <p className="type-caption font-semibold uppercase tracking-wider text-ink-secondary/70">
+          <p className="type-caption text-ink-secondary/70">
             Haven't played in a while
           </p>
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
@@ -125,7 +125,7 @@ export default function PracticeHub() {
                   <div className="min-w-0">
                     <p className="type-subsection text-ink-primary">{r.title}</p>
                     <p className="type-metadata text-ink-secondary mt-0.5">{r.composer} · last played {r.lastPlayed}</p>
-                    <p className="mt-1 text-sm text-brand font-medium">Feel like revisiting this one?</p>
+                    <p className="mt-1 type-body-small text-brand font-medium">Feel like revisiting this one?</p>
                   </div>
                   <ChevronRight className="icon-sm text-ink-tertiary" />
                 </div>
@@ -216,7 +216,7 @@ export default function PracticeHub() {
                   <span
                     className={`h-2.5 w-2.5 rounded-full ${thisWeekMarks[i] ? 'bg-brand' : 'bg-neutral-muted'}`}
                   />
-                  <span className="text-xs font-medium text-ink-secondary">{d.label}</span>
+                  <span className="type-metadata font-medium text-ink-secondary">{d.label}</span>
                 </div>
               ))}
             </div>

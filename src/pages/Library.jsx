@@ -207,13 +207,13 @@ export default function Library() {
           ))}
           <button
             onClick={() => setManageFoldersOpen(true)}
-            className="flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 text-xs text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary"
+            className="flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 type-body-small text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary"
           >
             <Settings className="icon-xs" /> Manage
           </button>
           <button
             onClick={() => { setParam('view', 'trash'); clearSelect(); }}
-            className={`flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 text-xs transition-colors ${
+            className={`flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 type-body-small transition-colors ${
               active === 'trash'
                 ? 'bg-neutral-muted font-semibold text-ink-primary'
                 : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
@@ -232,7 +232,7 @@ export default function Library() {
                   <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
                 </div>
                 <div className="min-w-0">
-                  <span className="inline-flex items-center gap-1.5 type-caption font-semibold uppercase tracking-wider text-brand">
+                  <span className="inline-flex items-center gap-1.5 type-caption text-brand">
                     <Sparkles className="icon-xs" />
                     <span>Pick up where you left off</span>
                   </span>
@@ -401,7 +401,7 @@ export default function Library() {
           {/* Multi-select bar */}
           {selected.length > 0 && !isTrash && (
             <div className="mt-3 flex flex-wrap items-center gap-2 rounded-control border border-line-subtle bg-neutral-muted px-3 py-2">
-              <span className="text-sm font-semibold text-ink-primary">
+              <span className="type-body-small font-semibold text-ink-primary">
                 <span className="text-brand font-bold mr-1.5">●</span>
                 {selected.length} piece{selected.length > 1 ? 's' : ''} selected
               </span>
@@ -468,8 +468,8 @@ export default function Library() {
                       <ScorePreview id={s.id} className="h-full w-full object-cover" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-display font-medium text-ink-primary">{s.title}</p>
-                      <p className="truncate text-xs text-ink-secondary">{s.composer} · deleted {s.deletedAt}</p>
+                      <p className="truncate type-subsection text-ink-primary">{s.title}</p>
+                      <p className="truncate type-metadata text-ink-secondary">{s.composer} · deleted {s.deletedAt}</p>
                     </div>
                     <Button
                       intent="secondary"
@@ -524,11 +524,11 @@ export default function Library() {
                       <ScorePreview id={s.id} className="h-full w-full object-cover" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-display font-medium text-ink-primary">{s.title}</p>
-                      <p className="truncate text-xs text-ink-secondary">{s.composer} · {s.instrument}</p>
+                      <p className="truncate type-subsection text-ink-primary">{s.title}</p>
+                      <p className="truncate type-metadata text-ink-secondary">{s.composer} · {s.instrument}</p>
                     </div>
                     {s.favorite && <Star className="h-3.5 w-3.5 fill-gold text-gold shrink-0" />}
-                    <span className="hidden text-xs text-ink-tertiary sm:block">
+                    <span className="hidden type-metadata text-ink-tertiary sm:block">
                       {s.lastPlayed === 'never' || !s.lastPlayed ? 'Awaiting practice' : `Played ${s.lastPlayed}`}
                     </span>
                   </Link>
@@ -560,13 +560,13 @@ export default function Library() {
               <button
                 key={f.id}
                 onClick={() => moveSelected(f.id)}
-                className="flex w-full items-center gap-2 rounded-control border border-line-subtle px-3 py-2 text-left text-xs hover:bg-neutral-hover"
+                className="flex w-full items-center gap-2 rounded-control border border-line-subtle px-3 py-2 text-left type-body-small hover:bg-neutral-hover"
               >
                 <FolderInput className="h-3.5 w-3.5 text-ink-secondary" />
                 <span className="font-medium text-ink-primary">{f.name}</span>
               </button>
             ))}
-            {folders.length === 0 && <p className="py-4 text-center text-xs text-ink-tertiary">No folders yet.</p>}
+            {folders.length === 0 && <p className="py-4 text-center type-metadata text-ink-tertiary">No folders yet.</p>}
           </div>
           <DialogFooter>
             <Button intent="secondary" size="sm" onClick={() => setMoveOpen(false)}>Cancel</Button>
@@ -578,7 +578,7 @@ export default function Library() {
       <Dialog open={!!folderDelete} onOpenChange={(o) => !o && setFolderDelete(null)}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
-          <p className="text-xs text-ink-secondary mt-1">Scores in this folder will stay in your library — only the folder is removed.</p>
+          <p className="type-body-small text-ink-secondary mt-1">Scores in this folder will stay in your library — only the folder is removed.</p>
           <DialogFooter className="mt-4">
             <Button intent="secondary" size="sm" onClick={() => setFolderDelete(null)}>Cancel</Button>
             <Button intent="danger" size="sm" onClick={confirmDeleteFolder}>Delete folder</Button>
@@ -590,7 +590,7 @@ export default function Library() {
       <Dialog open={!!trashConfirm} onOpenChange={(o) => !o && setTrashConfirm(null)}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle>{removeLabel}?</DialogTitle></DialogHeader>
-          <p className="text-xs text-ink-secondary mt-1">
+          <p className="type-body-small text-ink-secondary mt-1">
             {allMine && 'These pieces will move to Trash for 30 days.'}
             {allShared && 'You will lose access to these shared scores.'}
             {allSaved && 'These scores will be removed from your repertoire.'}
@@ -608,7 +608,7 @@ export default function Library() {
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle>Manage folders</DialogTitle></DialogHeader>
           <div className="space-y-2 mt-2">
-            {folders.length === 0 && <p className="py-4 text-center text-xs text-ink-tertiary">No folders created yet.</p>}
+            {folders.length === 0 && <p className="py-4 text-center type-metadata text-ink-tertiary">No folders created yet.</p>}
             {folders.map((f) => (
               <div key={f.id} className="flex items-center gap-2 rounded-control border border-line-subtle px-3 py-2">
                 {editingFolderId === f.id ? (
@@ -638,7 +638,7 @@ export default function Library() {
                 ) : (
                   <>
                     <Folder className="h-3.5 w-3.5 text-ink-tertiary" />
-                    <span className="flex-1 text-xs font-medium text-ink-primary">{f.name}</span>
+                    <span className="flex-1 type-body-small font-medium text-ink-primary">{f.name}</span>
                     <IconButton
                       icon={Pencil}
                       size="xs"
@@ -678,7 +678,7 @@ export default function Library() {
       <Dialog open={!!folderToDelete} onOpenChange={(o) => !o && setFolderToDelete(null)}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
-          <p className="text-xs text-ink-secondary mt-1">Scores in this folder will remain in your library.</p>
+          <p className="type-body-small text-ink-secondary mt-1">Scores in this folder will remain in your library.</p>
           <DialogFooter className="mt-4">
             <Button intent="secondary" size="sm" onClick={() => setFolderToDelete(null)}>Cancel</Button>
             <Button intent="danger" size="sm" onClick={() => { deleteFolder(folderToDelete); if (activeFolderId === folderToDelete) setParam('view', 'all'); setFolderToDelete(null); }}>Delete folder</Button>
@@ -694,8 +694,8 @@ function EmptyState({ active, isTrash }) {
     return (
       <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
         <Trash2 className="h-8 w-8 text-ink-tertiary" />
-        <h2 className="mt-3 font-display text-xl font-medium text-ink-primary">Trash is empty</h2>
-        <p className="mt-1.5 max-w-sm text-xs text-ink-secondary">Scores you remove go here first. You can restore them anytime within 30 days.</p>
+        <h2 className="mt-3 type-section-title text-ink-primary">Trash is empty</h2>
+        <p className="mt-1.5 max-w-sm type-body-small text-ink-secondary">Scores you remove go here first. You can restore them anytime within 30 days.</p>
       </div>
     );
   }

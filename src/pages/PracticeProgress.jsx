@@ -40,10 +40,10 @@ export default function PracticeProgress() {
 
         <div className="mt-8 rounded-container border border-line-subtle bg-surface-panel p-6 sm:p-8">
           <div className="max-w-xl">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-muted px-3 py-1 type-caption font-semibold uppercase tracking-wider text-ink-primary">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-muted px-3 py-1 type-caption text-ink-primary">
               <Sparkles className="icon-xs text-brand" /> Plus Feature
             </span>
-            <h2 className="mt-4 font-display text-2xl sm:text-3xl font-medium tracking-tight text-ink-primary">
+            <h2 className="mt-4 type-section-title text-ink-primary">
               See how your playing unfolds over time.
             </h2>
             <p className="mt-3 type-body text-ink-secondary leading-relaxed">
@@ -147,12 +147,12 @@ export default function PracticeProgress() {
               <div className="flex h-40 items-end justify-between gap-2">
                 {days.map((d, i) => (
                   <div key={i} className="flex flex-1 flex-col items-center gap-1">
-                    <span className="text-xs tabular-nums text-ink-secondary/70">{d.minutes > 0 ? d.minutes : ''}</span>
+                    <span className="type-metadata tabular-nums text-ink-secondary/70">{d.minutes > 0 ? d.minutes : ''}</span>
                     <div
                       className={`w-full rounded-t transition-colors ${d.isToday ? 'bg-brand' : 'bg-neutral-muted hover:bg-neutral-hover'}`}
                       style={{ height: `${(d.minutes / max) * 100}%`, minHeight: d.minutes > 0 ? 3 : 0 }}
                     />
-                    <span className="text-xs font-medium text-ink-secondary/80">{d.label}</span>
+                    <span className="type-metadata font-medium text-ink-secondary/80">{d.label}</span>
                   </div>
                 ))}
               </div>

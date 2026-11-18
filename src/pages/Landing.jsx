@@ -126,6 +126,7 @@ export default function Landing() {
       <section id="top" className="relative min-h-screen flex items-center overflow-hidden">
         {/* ambient oversized background typography */}
         <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          {/* ds-allow: ambient oversized background typography */}
           <span className="font-display italic text-[26vw] leading-none text-ink-primary/[0.035] select-none whitespace-nowrap">
             music
           </span>
@@ -158,7 +159,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
-              className="mt-6 text-xs sm:text-sm tracking-[0.22em] uppercase text-ink-secondary font-medium"
+              className="mt-6 type-eyebrow text-ink-secondary"
             >
               Personal sheet music library &amp; quiet practice stand
             </motion.p>
@@ -167,7 +168,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.3 }}
-              className="mt-6 max-w-xl text-lg md:text-xl leading-relaxed text-ink-secondary"
+              className="mt-6 max-w-xl type-marketing-body text-ink-secondary"
             >
               Bring the sheet music that already matters to you. Yueora turns physical pages into
               living interactive scores, holds your personal repertoire, follows your playing without
@@ -200,7 +201,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.5 }}
-              className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-ink-tertiary"
+              className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 type-metadata text-ink-tertiary"
             >
               <span className="flex items-center gap-1.5">
                 <Check className="h-3.5 w-3.5 text-ink-primary" /> Start with 5 scores free
@@ -227,7 +228,7 @@ export default function Landing() {
                 <span className="px-3.5 py-1.5 rounded-full bg-white/90 text-ink-primary type-eyebrow backdrop-blur border border-line-subtle shadow-sm">
                   Clair de Lune
                 </span>
-                <span className="font-display italic text-ink-primary text-sm font-medium">Debussy</span>
+                <span className="type-editorial-quote text-ink-primary font-medium">Debussy</span>
               </div>
             </motion.div>
           </div>
@@ -265,25 +266,25 @@ export default function Landing() {
           <Reveal delay={0.05}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-line-subtle/80 rounded-2xl overflow-hidden border border-line-subtle/80">
               <div className="bg-surface-canvas px-6 py-8 text-center">
-                <div className="font-display text-4xl md:text-5xl tracking-tight text-ink-primary">0</div>
+                <div className="type-display text-ink-primary">0</div>
                 <div className="mt-2 type-eyebrow text-ink-secondary">
                   Streak pressure
                 </div>
               </div>
               <div className="bg-surface-canvas px-6 py-8 text-center">
-                <div className="font-display text-4xl md:text-5xl tracking-tight text-ink-primary">Any</div>
+                <div className="type-display text-ink-primary">Any</div>
                 <div className="mt-2 type-eyebrow text-ink-secondary">
                   Score format accepted
                 </div>
               </div>
               <div className="bg-surface-canvas px-6 py-8 text-center">
-                <div className="font-display text-4xl md:text-5xl tracking-tight text-ink-primary">Mic</div>
+                <div className="type-display text-ink-primary">Mic</div>
                 <div className="mt-2 type-eyebrow text-ink-secondary">
                   Acoustic phrase listening
                 </div>
               </div>
               <div className="bg-surface-canvas px-6 py-8 text-center">
-                <div className="font-display text-4xl md:text-5xl tracking-tight text-ink-primary">100%</div>
+                <div className="type-display text-ink-primary">100%</div>
                 <div className="mt-2 type-eyebrow text-ink-secondary">
                   Private by default
                 </div>
@@ -302,12 +303,12 @@ export default function Landing() {
                 <p className="type-eyebrow text-ink-tertiary mb-4">
                   01 · The Musical Lifecycle
                 </p>
-                <h2 className="font-display text-4xl md:text-6xl leading-[1.02] tracking-tight text-balance max-w-2xl text-ink-primary">
+                <h2 className="type-marketing-title text-balance max-w-2xl text-ink-primary">
                   A piece has a <span className="italic">life</span> in Yueora.
                 </h2>
               </div>
-              <p className="text-ink-secondary max-w-sm leading-relaxed text-base">
-                Follow how Claude Debussy’s <span className="font-display italic font-medium text-ink-primary">Clair de Lune</span> journeys
+              <p className="type-marketing-body text-ink-secondary max-w-sm">
+                Follow how Claude Debussy’s <span className="type-editorial-quote font-medium text-ink-primary">Clair de Lune</span> journeys
                 from a paper scan into a living performance memory.
               </p>
             </div>
@@ -331,21 +332,21 @@ export default function Landing() {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="type-metadata font-mono font-semibold tracking-wider text-ink-primary">
+                      <span className="type-caption font-mono text-ink-primary">
                         {s.step}
                       </span>
-                      <span className="type-metadata uppercase rounded-full bg-surface-canvas px-3 py-0.5 text-ink-tertiary border border-line-subtle/60">
+                      <span className="type-caption rounded-full bg-surface-canvas px-3 py-0.5 text-ink-tertiary border border-line-subtle/60">
                         {s.tag}
                       </span>
                     </div>
-                    <h3 className="mt-2 font-display text-lg font-medium text-ink-primary">
+                    <h3 className="mt-2 type-subsection text-ink-primary">
                       {s.title}
                     </h3>
-                    <p className="mt-1 text-xs leading-relaxed text-ink-secondary">
+                    <p className="mt-1 type-body-small text-ink-secondary leading-relaxed">
                       {s.summary}
                     </p>
                     {isActive && (
-                      <p className="mt-3 border-t border-line-subtle pt-2.5 text-xs leading-relaxed text-ink-secondary font-display italic">
+                      <p className="mt-3 border-t border-line-subtle pt-2.5 type-editorial-quote text-ink-secondary">
                         {s.description}
                       </p>
                     )}
@@ -361,12 +362,12 @@ export default function Landing() {
                   <div>
                     <div className="flex items-center justify-between border-b border-line-subtle pb-4">
                       <p className="type-eyebrow text-ink-tertiary">Step 01 · Original Paper Scan</p>
-                      <span className="text-sm font-medium text-ink-primary">Debussy · Clair de Lune</span>
+                      <span className="type-body-small font-medium text-ink-primary">Debussy · Clair de Lune</span>
                     </div>
                     <div className="mt-6 overflow-hidden rounded-2xl border border-line-subtle bg-surface-canvas/50">
                       <MockScanPage seed="step-scan-original" className="aspect-[16/10] w-full" />
                     </div>
-                    <p className="mt-4 text-center text-xs text-ink-tertiary italic">
+                    <p className="mt-4 text-center type-metadata text-ink-tertiary italic">
                       Physical sheet photographed on the music stand
                     </p>
                   </div>
@@ -383,7 +384,7 @@ export default function Landing() {
                     <div className="mt-6 overflow-hidden rounded-2xl border border-line-subtle bg-white">
                       <ScorePreview id="step-score-review" className="aspect-[16/10] w-full" />
                     </div>
-                    <div className="mt-4 flex items-center justify-between text-xs text-ink-secondary">
+                    <div className="mt-4 flex items-center justify-between type-metadata text-ink-secondary">
                       <span>Key: D♭ Major · 9/8 Time</span>
                       <span className="text-ink-primary font-semibold">Ready to play</span>
                     </div>
@@ -394,21 +395,21 @@ export default function Landing() {
                   <div>
                     <div className="flex items-center justify-between border-b border-line-subtle pb-4">
                       <p className="type-eyebrow text-ink-tertiary">Step 03 · Living Repertoire</p>
-                      <span className="text-sm font-medium text-ink-primary">Curated Collection</span>
+                      <span className="type-body-small font-medium text-ink-primary">Curated Collection</span>
                     </div>
                     <div className="mt-6 rounded-2xl border border-line-subtle bg-surface-canvas/50 p-5">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h4 className="font-display text-xl font-medium text-ink-primary">
+                          <h4 className="type-subsection text-ink-primary">
                             Clair de Lune
                           </h4>
-                          <p className="text-sm text-ink-secondary">Claude Debussy</p>
+                          <p className="type-body-small text-ink-secondary">Claude Debussy</p>
                         </div>
                         <span className="rounded-full border border-line-subtle bg-surface-panel px-3 py-1 type-metadata font-semibold text-ink-primary">
                           Active Study
                         </span>
                       </div>
-                      <div className="mt-4 flex items-center gap-4 text-xs text-ink-tertiary">
+                      <div className="mt-4 flex items-center gap-4 type-metadata text-ink-tertiary">
                         <span>Last played Sunday</span>
                         <span>·</span>
                         <span className="text-ink-primary font-medium">Continue from bar 14</span>
@@ -445,14 +446,14 @@ export default function Landing() {
               <p className="type-eyebrow text-ink-tertiary mb-5">
                 02 · The Practice Stand
               </p>
-              <h2 className="font-display text-4xl md:text-6xl leading-[1.02] tracking-tight text-balance text-ink-primary">
+              <h2 className="type-marketing-title text-balance text-ink-primary">
                 Following your phrasing, <br />
                 <span className="italic">not policing your notes.</span>
               </h2>
             </Reveal>
 
             <Reveal delay={0.1}>
-              <div className="mt-7 space-y-5 text-lg leading-relaxed text-ink-secondary max-w-xl">
+              <div className="mt-7 space-y-5 type-marketing-body text-ink-secondary max-w-xl">
                 <p>
                   Traditional practice tools penalize every missed accidental with blaring red marks.
                   Yueora listens quietly to acoustic piano through your microphone, tracking where you
@@ -464,22 +465,22 @@ export default function Landing() {
             <Reveal delay={0.15}>
               <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300">
-                  <h3 className="font-display text-xl text-ink-primary">Paced Following</h3>
-                  <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
+                  <h3 className="type-subsection text-ink-primary">Paced Following</h3>
+                  <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
                     Respects expressive rubato, slowing down and accelerating naturally with you.
                   </p>
                 </div>
 
                 <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300">
-                  <h3 className="font-display text-xl text-ink-primary">Phrase Looping</h3>
-                  <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
+                  <h3 className="type-subsection text-ink-primary">Phrase Looping</h3>
+                  <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
                     Select measures 14 to 22 with one tap to work through tricky transitions calmly.
                   </p>
                 </div>
 
                 <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300 sm:col-span-2">
-                  <h3 className="font-display text-xl text-ink-primary">Zero Accuracy Scoring</h3>
-                  <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
+                  <h3 className="type-subsection text-ink-primary">Zero Accuracy Scoring</h3>
+                  <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
                     No percentage grades, no stars, no shaming—just a quiet, supportive companion at the keys.
                   </p>
                 </div>
@@ -498,12 +499,12 @@ export default function Landing() {
                 <p className="type-eyebrow text-ink-tertiary mb-4">
                   03 · Personal Repertoire
                 </p>
-                <h2 className="font-display text-4xl md:text-6xl leading-[1.02] tracking-tight text-balance max-w-2xl text-ink-primary">
+                <h2 className="type-marketing-title text-balance max-w-2xl text-ink-primary">
                   A music cabinet, <br />
                   <span className="italic">not a cloud drive.</span>
                 </h2>
               </div>
-              <p className="text-ink-secondary max-w-sm leading-relaxed text-base">
+              <p className="type-marketing-body max-w-sm text-ink-secondary">
                 Yueora doesn’t treat your music like generic files. Every piece is bound into tactile
                 pages, complete with its practice timeline, saved takes, and personal notes.
               </p>
@@ -518,10 +519,10 @@ export default function Landing() {
                   <ScorePreview id="rep-clair" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
                 </div>
                 <div className="mt-5">
-                  <span className="type-metadata uppercase tracking-[0.2em] text-ink-tertiary">Debussy</span>
-                  <h3 className="font-display text-2xl tracking-tight text-ink-primary mt-1">Clair de Lune</h3>
-                  <p className="mt-2 text-xs leading-relaxed text-ink-secondary">Suite bergamasque · Bar 14</p>
-                  <div className="mt-4 flex items-center gap-2 text-xs text-ink-primary font-medium">
+                  <span className="type-caption text-ink-tertiary">Debussy</span>
+                  <h3 className="type-subsection text-ink-primary mt-1">Clair de Lune</h3>
+                  <p className="mt-2 type-body-small text-ink-secondary">Suite bergamasque · Bar 14</p>
+                  <div className="mt-4 flex items-center gap-2 type-metadata text-ink-primary font-medium">
                     <span className="w-1.5 h-1.5 rounded-full bg-ink-primary shrink-0" />
                     <span>Active study · 2 takes preserved</span>
                   </div>
@@ -535,10 +536,10 @@ export default function Landing() {
                   <ScorePreview id="rep-gymno" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
                 </div>
                 <div className="mt-5">
-                  <span className="type-metadata uppercase tracking-[0.2em] text-ink-tertiary">Satie</span>
-                  <h3 className="font-display text-2xl tracking-tight text-ink-primary mt-1">Gymnopédie No. 1</h3>
-                  <p className="mt-2 text-xs leading-relaxed text-ink-secondary">Lent et douloureux</p>
-                  <div className="mt-4 flex items-center gap-2 text-xs text-ink-primary font-medium">
+                  <span className="type-caption text-ink-tertiary">Satie</span>
+                  <h3 className="type-subsection text-ink-primary mt-1">Gymnopédie No. 1</h3>
+                  <p className="mt-2 type-body-small text-ink-secondary">Lent et douloureux</p>
+                  <div className="mt-4 flex items-center gap-2 type-metadata text-ink-primary font-medium">
                     <span className="w-1.5 h-1.5 rounded-full bg-ink-primary shrink-0" />
                     <span>Polishing · 3 takes preserved</span>
                   </div>
@@ -551,15 +552,15 @@ export default function Landing() {
                 <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-line-subtle bg-surface-canvas/50 flex items-center justify-center">
                   <div className="text-center p-6">
                     <ScoreSheetGlyph className="h-8 w-8 text-ink-primary mx-auto mb-3" />
-                    <p className="font-display text-lg text-ink-primary">Your Next Piece</p>
-                    <p className="text-xs text-ink-tertiary mt-1">Drop a scan or PDF anytime</p>
+                    <p className="type-subsection text-ink-primary">Your Next Piece</p>
+                    <p className="type-metadata text-ink-tertiary mt-1">Drop a scan or PDF anytime</p>
                   </div>
                 </div>
                 <div className="mt-5">
-                  <span className="type-metadata uppercase tracking-[0.2em] text-ink-tertiary">Open Repertoire</span>
-                  <h3 className="font-display text-2xl tracking-tight text-ink-primary mt-1">Ready to explore</h3>
-                  <p className="mt-2 text-xs leading-relaxed text-ink-secondary">Add whatever you feel like playing</p>
-                  <div className="mt-4 flex items-center gap-2 text-xs text-ink-primary font-medium">
+                  <span className="type-caption text-ink-tertiary">Open Repertoire</span>
+                  <h3 className="type-subsection text-ink-primary mt-1">Ready to explore</h3>
+                  <p className="mt-2 type-body-small text-ink-secondary">Add whatever you feel like playing</p>
+                  <div className="mt-4 flex items-center gap-2 type-metadata text-ink-primary font-medium">
                     <span className="w-1.5 h-1.5 rounded-full bg-line-strong shrink-0" />
                     <span>No subscription limit to begin</span>
                   </div>
@@ -579,12 +580,12 @@ export default function Landing() {
                 <p className="type-eyebrow text-ink-tertiary mb-4">
                   04 · Preserved Moments &amp; Intimate Sharing
                 </p>
-                <h2 className="font-display text-4xl md:text-6xl leading-[1.02] tracking-tight text-balance max-w-2xl text-ink-primary">
+                <h2 className="type-marketing-title text-balance max-w-2xl text-ink-primary">
                   Reflective memories, <br />
                   <span className="italic">never vanity metrics.</span>
                 </h2>
               </div>
-              <p className="text-ink-secondary max-w-sm leading-relaxed text-base">
+              <p className="type-marketing-body max-w-sm text-ink-secondary">
                 Music is not a gym workout or a productivity sprint. Preserve the takes you love and open
                 the door only when you choose.
               </p>
@@ -617,10 +618,10 @@ export default function Landing() {
               <p className="type-eyebrow text-ink-tertiary mb-4">
                 05 · Simple &amp; Durable
               </p>
-              <h2 className="font-display text-4xl md:text-6xl leading-[1.02] tracking-tight text-balance text-ink-primary">
+              <h2 className="type-marketing-title text-balance text-ink-primary">
                 Simple, transparent <span className="italic">pricing.</span>
               </h2>
-              <p className="mt-4 text-base text-ink-secondary leading-relaxed">
+              <p className="mt-4 type-marketing-body text-ink-secondary">
                 Start free. Upgrade when your repertoire grows.
               </p>
             </div>
@@ -634,18 +635,18 @@ export default function Landing() {
                   <span className="type-eyebrow text-ink-tertiary">
                     Starter
                   </span>
-                  <h3 className="font-display text-3xl md:text-4xl tracking-tight leading-none text-ink-primary mt-4">
+                  <h3 className="type-display text-ink-primary mt-4">
                     {plans.free.name}
                   </h3>
-                  <p className="mt-3 text-sm text-ink-secondary leading-relaxed">
+                  <p className="mt-3 type-body-small text-ink-secondary leading-relaxed">
                     A personal starter library to begin your musical journey calmly.
                   </p>
-                  <div className="mt-6 font-display text-4xl md:text-5xl tracking-tight text-ink-primary">
+                  <div className="mt-6 type-display text-ink-primary">
                     {formatPrice(plans.free.priceMonthly)}
-                    <span className="text-sm font-normal text-ink-tertiary ml-2">free forever</span>
+                    <span className="type-metadata font-normal text-ink-tertiary ml-2">free forever</span>
                   </div>
 
-                  <ul className="mt-8 space-y-3.5 border-t border-line-subtle pt-6 text-sm text-ink-secondary">
+                  <ul className="mt-8 space-y-3.5 border-t border-line-subtle pt-6 type-body-small text-ink-secondary">
                     <li className="flex items-center gap-3">
                       <Check className="h-4 w-4 text-ink-primary shrink-0" /> {plans.free.scores} in your library
                     </li>
@@ -680,22 +681,22 @@ export default function Landing() {
                     <span className="type-eyebrow text-surface-canvas/60">
                       Regular Musician
                     </span>
-                    <span className="rounded-full bg-surface-canvas/15 px-3 py-1 type-metadata uppercase text-surface-canvas font-semibold">
+                    <span className="rounded-full bg-surface-canvas/15 px-3 py-1 type-caption text-surface-canvas font-semibold">
                       Most Popular
                     </span>
                   </div>
-                  <h3 className="font-display text-3xl md:text-4xl tracking-tight leading-none text-surface-canvas mt-4">
+                  <h3 className="type-display text-surface-canvas mt-4">
                     {plans.plus.name}
                   </h3>
-                  <p className="mt-3 text-sm text-surface-canvas/75 leading-relaxed">
+                  <p className="mt-3 type-body-small text-surface-canvas/75 leading-relaxed">
                     For active players building their repertoire with practice insights.
                   </p>
-                  <div className="mt-6 font-display text-4xl md:text-5xl tracking-tight text-surface-canvas">
+                  <div className="mt-6 type-display text-surface-canvas">
                     {formatPrice(plans.plus.priceMonthly)}
-                    <span className="text-sm font-normal text-surface-canvas/60 ml-2">/ month</span>
+                    <span className="type-metadata font-normal text-surface-canvas/60 ml-2">/ month</span>
                   </div>
 
-                  <ul className="mt-8 space-y-3.5 border-t border-surface-canvas/20 pt-6 text-sm text-surface-canvas/85">
+                  <ul className="mt-8 space-y-3.5 border-t border-surface-canvas/20 pt-6 type-body-small text-surface-canvas/85">
                     <li className="flex items-center gap-3">
                       <Check className="h-4 w-4 text-surface-canvas shrink-0" /> <strong>{plans.plus.scores}</strong> in your library
                     </li>
@@ -730,22 +731,22 @@ export default function Landing() {
                     <span className="type-eyebrow text-ink-tertiary">
                       Devoted Repertoire
                     </span>
-                    <span className="type-metadata text-ink-tertiary uppercase tracking-wider">
+                    <span className="type-caption text-ink-tertiary">
                       Unlimited
                     </span>
                   </div>
-                  <h3 className="font-display text-3xl md:text-4xl tracking-tight leading-none text-ink-primary mt-4">
+                  <h3 className="type-display text-ink-primary mt-4">
                     {plans.pro.name}
                   </h3>
-                  <p className="mt-3 text-sm text-ink-secondary leading-relaxed">
+                  <p className="mt-3 type-body-small text-ink-secondary leading-relaxed">
                     Unlimited scores, phrase looping, and deep performance archives.
                   </p>
-                  <div className="mt-6 font-display text-4xl md:text-5xl tracking-tight text-ink-primary">
+                  <div className="mt-6 type-display text-ink-primary">
                     {formatPrice(plans.pro.priceMonthly)}
-                    <span className="text-sm font-normal text-ink-tertiary ml-2">/ month</span>
+                    <span className="type-metadata font-normal text-ink-tertiary ml-2">/ month</span>
                   </div>
 
-                  <ul className="mt-8 space-y-3.5 border-t border-line-subtle pt-6 text-sm text-ink-secondary">
+                  <ul className="mt-8 space-y-3.5 border-t border-line-subtle pt-6 type-body-small text-ink-secondary">
                     <li className="flex items-center gap-3">
                       <Check className="h-4 w-4 text-ink-primary shrink-0" /> <strong>{plans.pro.scores}</strong> in your library
                     </li>
@@ -783,7 +784,7 @@ export default function Landing() {
               <p className="type-eyebrow text-ink-tertiary mb-4">
                 06 · Clarity &amp; Questions
               </p>
-              <h2 className="font-display text-4xl md:text-5xl leading-[1.05] tracking-tight text-ink-primary">
+              <h2 className="type-marketing-title text-ink-primary">
                 Frequently asked questions
               </h2>
             </div>
@@ -792,13 +793,13 @@ export default function Landing() {
           <div className="mt-14 divide-y divide-line-subtle border-y border-line-subtle">
             {faqs.map((f) => (
               <details key={f.q} className="group py-6 transition-colors">
-                <summary className="flex cursor-pointer items-center justify-between text-lg font-medium text-ink-primary focus:outline-hidden">
+                <summary className="flex cursor-pointer items-center justify-between type-subsection text-ink-primary focus:outline-hidden">
                   <span>{f.q}</span>
                   <span className="ml-4 font-mono text-ink-tertiary group-open:rotate-45 transition-transform duration-300">
                     +
                   </span>
                 </summary>
-                <p className="mt-4 text-base leading-relaxed text-ink-secondary font-display italic">
+                <p className="mt-4 type-body text-ink-secondary leading-relaxed">
                   {f.a}
                 </p>
               </details>
@@ -813,6 +814,7 @@ export default function Landing() {
           <div className="rounded-[2.5rem] bg-ink-primary text-surface-canvas overflow-hidden relative shadow-[0_40px_80px_-20px_rgba(0,0,0,0.35)]">
             {/* ambient oversized word */}
             <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              {/* ds-allow: ambient oversized background wordmark */}
               <span className="font-display italic text-[22vw] leading-none text-surface-canvas/[0.04] select-none whitespace-nowrap">
                 play
               </span>
@@ -825,11 +827,11 @@ export default function Landing() {
                   <p className="type-eyebrow text-surface-canvas/50 mb-6">
                     A Personal Sanctuary
                   </p>
-                  <h2 className="font-display text-4xl md:text-6xl leading-[1.02] tracking-tight text-balance text-surface-canvas">
+                  <h2 className="type-marketing-title text-balance text-surface-canvas">
                     Play what you love. <br />
                     <span className="italic text-surface-canvas/80">乐，是为了悦。</span>
                   </h2>
-                  <p className="mt-7 text-surface-canvas/75 text-lg md:text-xl leading-relaxed max-w-lg">
+                  <p className="mt-7 type-marketing-body text-surface-canvas/75 max-w-lg">
                     Your music is waiting on your piano stand. Bring it into Yueora and start your
                     journey with the pieces that already matter to you.
                   </p>
@@ -840,13 +842,13 @@ export default function Landing() {
               <div className="lg:col-span-5 flex flex-col justify-center">
                 <Reveal delay={0.1}>
                   <div className="rounded-3xl border border-surface-canvas/15 p-8 md:p-10 bg-surface-canvas/5 backdrop-blur-md">
-                    <p className="text-xs tracking-wider uppercase text-surface-canvas/60 mb-2">
+                    <p className="type-caption text-surface-canvas/60 mb-2">
                       Get Started Today
                     </p>
-                    <p className="font-display text-2xl text-surface-canvas">
+                    <p className="type-subsection text-surface-canvas">
                       No card required for free tier.
                     </p>
-                    <p className="text-sm text-surface-canvas/75 mt-2 leading-relaxed">
+                    <p className="type-body-small text-surface-canvas/75 mt-2 leading-relaxed">
                       Upload your first score in under two minutes.
                     </p>
                     <div className="mt-8 flex flex-col gap-3">
@@ -856,7 +858,7 @@ export default function Landing() {
                           <ArrowRight className="h-4 w-4" />
                         </Link>
                       </Button>
-                      <p className="text-center text-xs text-surface-canvas/50 mt-1">
+                      <p className="text-center type-metadata text-surface-canvas/50 mt-1">
                         Encrypted · Private by Default · Cancel Anytime
                       </p>
                     </div>

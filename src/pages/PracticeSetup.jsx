@@ -93,7 +93,7 @@ export default function PracticeSetup() {
     return (
       <AppPage size="form">
         <div className="py-16 text-center">
-          <p className="font-display text-xl text-ink-primary">Score not found.</p>
+          <p className="type-section-title text-ink-primary">Score not found.</p>
           <Button onClick={() => navigate('/library')} className="mt-4">Back to library</Button>
         </div>
       </AppPage>

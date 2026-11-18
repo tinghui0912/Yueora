@@ -249,7 +249,7 @@ export default function Editor() {
         ))}
         <div className="ml-auto flex items-center gap-1">
           <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="flex h-7 w-7 items-center justify-center rounded-control text-ink-secondary hover:bg-neutral-hover" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
-          <span className="text-xs font-medium text-ink-secondary">{Math.round(zoom * 100)}%</span>
+          <span className="type-metadata font-medium text-ink-secondary">{Math.round(zoom * 100)}%</span>
           <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="flex h-7 w-7 items-center justify-center rounded-control text-ink-secondary hover:bg-neutral-hover" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
         </div>
       </div>
@@ -275,12 +275,12 @@ export default function Editor() {
               }`}
             >
               <t.icon className={`h-4 w-4 ${tool === t.id ? 'text-brand' : ''}`} />
-              <span className="text-xs font-medium">{t.label}</span>
+              <span className="type-metadata font-medium">{t.label}</span>
             </button>
           ))}
           <div className="mt-auto flex flex-col items-center gap-1">
             <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="flex h-8 w-8 items-center justify-center rounded-control text-ink-secondary hover:bg-neutral-hover" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
-            <span className="text-xs font-medium text-ink-secondary">{Math.round(zoom * 100)}%</span>
+            <span className="type-metadata font-medium text-ink-secondary">{Math.round(zoom * 100)}%</span>
             <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="flex h-8 w-8 items-center justify-center rounded-control text-ink-secondary hover:bg-neutral-hover" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
           </div>
         </div>
@@ -290,18 +290,18 @@ export default function Editor() {
           {view === 'original' ? (
             <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-4">
               <div className="staff-bg aspect-[3/4] w-full rounded border border-line-subtle opacity-60" />
-              <p className="mt-2 text-center text-xs text-ink-secondary">Original scan · Page 1</p>
+              <p className="mt-2 text-center type-metadata text-ink-secondary">Original scan · Page 1</p>
             </div>
           ) : view === 'split' ? (
             <div className="flex gap-4">
               <div className="flex-1">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Original</p>
+                <p className="mb-2 type-caption text-ink-secondary/70">Original</p>
                 <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
                   <div className="staff-bg aspect-[3/4] w-full rounded border border-line-subtle opacity-60" />
                 </div>
               </div>
               <div className="flex-1">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">Score</p>
+                <p className="mb-2 type-caption text-ink-secondary/70">Score</p>
                 <div className="mx-auto max-w-3xl rounded-container border border-line-subtle bg-surface-panel p-6">
                   <ScoreCanvas notes={notes} selectedIds={selectedIds} onSelect={handleSelect} onAddNote={addNote} onDelete={deleteNote} tool={tool} zoom={zoom} activeIssueMeasure={activeIssue?.measure} />
                 </div>
@@ -310,7 +310,7 @@ export default function Editor() {
           ) : (
             <div className="mx-auto max-w-3xl rounded-container border border-line-subtle bg-surface-panel p-6">
               <ScoreCanvas notes={notes} selectedIds={selectedIds} onSelect={handleSelect} onAddNote={addNote} onDelete={deleteNote} tool={tool} zoom={zoom} activeIssueMeasure={activeIssue?.measure} />
-              <p className="mt-4 text-center text-sm text-ink-secondary">Page 1 of {score.pages}</p>
+              <p className="mt-4 text-center type-body-small text-ink-secondary">Page 1 of {score.pages}</p>
             </div>
           )}
         </div>
@@ -320,12 +320,12 @@ export default function Editor() {
           <EditorInspector note={firstSelected} onChange={updateNote} />
           {selectedIds.size > 1 && (
             <div className="mt-4 space-y-2.5 border-t border-line-subtle pt-3.5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-ink-secondary/70">{selectedIds.size} notes selected</p>
-              <Button intent="secondary" size="sm" className="w-full text-xs font-medium" onClick={deleteSelected}><Trash2 className="mr-1.5" /> Delete selected</Button>
-              <Button intent="secondary" size="sm" className="w-full text-xs font-medium" onClick={copySelected}><Copy className="mr-1.5" /> Copy selected</Button>
+              <p className="type-caption text-ink-secondary/70">{selectedIds.size} notes selected</p>
+              <Button intent="secondary" size="sm" className="w-full" onClick={deleteSelected}><Trash2 className="mr-1.5" /> Delete selected</Button>
+              <Button intent="secondary" size="sm" className="w-full" onClick={copySelected}><Copy className="mr-1.5" /> Copy selected</Button>
               <div className="flex gap-1.5">
                 {['1', '2', '4', '8'].map((d) => (
-                  <button key={d} onClick={() => changeDurationSelected(d)} className="flex-1 rounded-control border border-line-subtle py-1 text-xs font-medium text-ink-primary hover:bg-neutral-hover">{d}</button>
+                  <button key={d} onClick={() => changeDurationSelected(d)} className="flex-1 rounded-control border border-line-subtle py-1 type-metadata font-medium text-ink-primary hover:bg-neutral-hover">{d}</button>
                 ))}
               </div>
             </div>
@@ -336,20 +336,20 @@ export default function Editor() {
       {/* Mobile inspector trigger */}
       {firstSelected && (
         <button onClick={() => setMobileInspectorOpen(true)} className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 lg:hidden">
-          <span className="text-sm font-medium text-ink-primary">Edit note · {/** @type {any} */ (firstSelected).type === 'rest' ? 'Rest' : 'Note'} {firstSelected.measure + 1}</span>
+          <span className="type-body-small font-medium text-ink-primary">Edit note · {/** @type {any} */ (firstSelected).type === 'rest' ? 'Rest' : 'Note'} {firstSelected.measure + 1}</span>
           <ChevronRight className="icon-sm text-ink-secondary" />
         </button>
       )}
 
       {/* Playback bar */}
-      <div className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 text-sm text-ink-secondary">
+      <div className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 type-body-small text-ink-secondary">
         <div className="flex items-center gap-2">
           <button className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-white hover:bg-brand-hover transition-colors" aria-label="Play"><Play className="h-4 w-4 fill-current" /></button>
           <span className="font-medium text-ink-primary">Playback</span>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => setMeasure((m) => Math.max(1, m - 1))} className="flex h-7 w-7 items-center justify-center rounded-control border border-line-subtle hover:bg-neutral-hover" aria-label="Previous measure"><ChevronLeft className="h-3.5 w-3.5" /></button>
-          <span className="text-xs font-medium text-ink-secondary">Measure {measure} / {score.measures || 16}</span>
+          <span className="type-metadata font-medium text-ink-secondary">Measure {measure} / {score.measures || 16}</span>
           <button onClick={() => setMeasure((m) => Math.min(score.measures || 16, m + 1))} className="flex h-7 w-7 items-center justify-center rounded-control border border-line-subtle hover:bg-neutral-hover" aria-label="Next measure"><ChevronRight className="h-3.5 w-3.5" /></button>
         </div>
       </div>
@@ -373,24 +373,24 @@ export default function Editor() {
 
 function ViewTab({ active, onClick, icon: Icon, label }) {
   return (
-    <button onClick={onClick} className={`flex items-center gap-1.5 rounded-control px-3.5 py-1.5 text-sm transition-colors ${active ? 'bg-surface-panel font-semibold text-ink-primary' : 'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover'}`}>
+    <button onClick={onClick} className={`flex items-center gap-1.5 rounded-control px-3.5 py-1.5 type-body-small transition-colors ${active ? 'bg-surface-panel font-semibold text-ink-primary' : 'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover'}`}>
       <Icon className="h-4 w-4" /> {label}
     </button>
   );
 }
 
 function SaveIndicator({ state, onRetry, onFail }) {
-  if (state === 'saving') return <span className="hidden items-center gap-1 text-sm text-ink-secondary sm:flex"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Saving…</span>;
+  if (state === 'saving') return <span className="hidden items-center gap-1 type-body-small text-ink-secondary sm:flex"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Saving…</span>;
   if (state === 'failed') return (
     <span className="hidden items-center gap-2 sm:flex">
-      <button onClick={onRetry} className="text-sm text-danger font-medium">Save failed — Retry</button>
-      <button onClick={onFail} className="text-xs text-ink-tertiary underline" title="Demo: simulate save failure">Demo fail</button>
+      <button onClick={onRetry} className="type-body-small text-danger font-medium">Save failed — Retry</button>
+      <button onClick={onFail} className="type-metadata text-ink-tertiary underline" title="Demo: simulate save failure">Demo fail</button>
     </span>
   );
   return (
-    <span className="hidden items-center gap-2 text-sm text-brand font-medium sm:flex">
+    <span className="hidden items-center gap-2 type-body-small text-brand font-medium sm:flex">
       <Check className="h-4 w-4" /> Saved
-      <button onClick={onFail} className="text-xs text-ink-tertiary underline" title="Demo: simulate save failure">Demo fail</button>
+      <button onClick={onFail} className="type-metadata text-ink-tertiary underline" title="Demo: simulate save failure">Demo fail</button>
     </span>
   );
 }

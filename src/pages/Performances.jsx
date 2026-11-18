@@ -159,7 +159,7 @@ export default function Performances() {
       </div>
 
       {contextualScore && (
-        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-ink-secondary">
+        <div className="mt-4 flex flex-wrap items-center gap-2 type-metadata text-ink-secondary">
           <span>Filtered by piece:</span>
           <Link to={`/score/${contextualScore.id}`} className="font-semibold text-brand hover:underline">
             {contextualScore.title}
@@ -229,7 +229,7 @@ export default function Performances() {
           />
         </div>
       ) : visible.length === 0 ? (
-        <p className="mt-8 text-xs text-ink-tertiary">No takes match that filter.</p>
+        <p className="mt-8 type-body-small text-ink-tertiary">No takes match that filter.</p>
       ) : (
         <div className="mt-6 space-y-4">
           {visible.map((p) => (
@@ -266,7 +266,7 @@ export default function Performances() {
       <Dialog open={!!pendingDelete} onOpenChange={(o) => !o && setPendingDelete(null)}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle>Delete preserved moment?</DialogTitle></DialogHeader>
-          <p className="text-xs text-ink-secondary mt-1">
+          <p className="type-body-small text-ink-secondary mt-1">
             This will permanently remove the preserved recording of {pendingDelete?.scoreTitleSnapshot}.
           </p>
           <DialogFooter className="mt-4">

@@ -28,7 +28,7 @@ export default function Copyright() {
         ]}
       >
         <div className="border-t border-line-subtle pt-6">
-          <p className="text-sm text-ink-secondary">Need to report copyrighted material?</p>
+          <p className="type-body-small text-ink-secondary">Need to report copyrighted material?</p>
           <Button className="mt-3" onClick={() => { setOpen(true); setSent(false); }}>Submit a takedown request</Button>
         </div>
       </LegalLayout>

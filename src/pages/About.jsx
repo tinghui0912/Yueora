@@ -29,10 +29,10 @@ export default function About() {
                     <span>Repertoire Archive</span>
                     <span>Op. 75 No. 3</span>
                   </div>
-                  <h3 className="mt-3 font-display text-2xl sm:text-3xl font-medium tracking-tight text-ink-primary">
+                  <h3 className="mt-3 type-subsection text-ink-primary">
                     Clair de Lune
                   </h3>
-                  <p className="mt-0.5 text-xs text-ink-secondary">Claude Debussy · Suite bergamasque</p>
+                  <p className="mt-0.5 type-metadata text-ink-secondary">Claude Debussy · Suite bergamasque</p>
                 </div>
 
                 {/* Real Domain Score Preview */}
@@ -41,7 +41,7 @@ export default function About() {
                 </div>
 
                 {/* Score Footer Details */}
-                <div className="pt-4 border-t border-line-subtle flex items-center justify-between text-xs text-ink-tertiary">
+                <div className="pt-4 border-t border-line-subtle flex items-center justify-between type-metadata text-ink-tertiary">
                   <span className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-practice-following" /> Acoustic Listener Ready
                   </span>
@@ -59,13 +59,13 @@ export default function About() {
                 <h1 className="type-marketing-title text-balance text-ink-primary">
                   Music is meant to be enjoyed.
                 </h1>
-                <p className="mt-4 font-display text-2xl sm:text-3xl text-ink-secondary italic">
+                <p className="mt-4 type-editorial-quote text-ink-secondary">
                   乐，是为了悦。
                 </p>
               </Reveal>
 
               <Reveal delay={0.1}>
-                <div className="mt-7 space-y-5 text-lg leading-relaxed text-ink-secondary max-w-xl">
+                <div className="mt-7 space-y-5 type-marketing-body text-ink-secondary max-w-xl">
                   <p>
                     You don’t have to play for an exam, a competition, or anyone else’s expectations.
                     Music in your home does not need to justify itself with certificates or daily practice streaks.
@@ -85,19 +85,19 @@ export default function About() {
                 <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5">
                     <p className="type-eyebrow text-ink-tertiary">Traditional Tools</p>
-                    <p className="mt-2 font-display text-lg text-ink-primary font-medium">
+                    <p className="mt-2 type-subsection text-ink-primary font-medium">
                       &ldquo;Here is what you must practice.&rdquo;
                     </p>
-                    <p className="mt-1.5 text-sm text-ink-secondary leading-relaxed">
+                    <p className="mt-1.5 type-body-small text-ink-secondary leading-relaxed">
                       A curriculum, a syllabus, daily streak badges, and forced grading matrices.
                     </p>
                   </div>
                   <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5">
                     <p className="type-eyebrow text-ink-primary">Yueora Sanctuary</p>
-                    <p className="mt-2 font-display text-lg text-ink-primary font-medium">
+                    <p className="mt-2 type-subsection text-ink-primary font-medium">
                       &ldquo;What do you feel like playing?&rdquo;
                     </p>
-                    <p className="mt-1.5 text-sm text-ink-secondary leading-relaxed">
+                    <p className="mt-1.5 type-body-small text-ink-secondary leading-relaxed">
                       You bring the sheet music that already matters to you. Everything follows from your devotion.
                     </p>
                   </div>
@@ -116,6 +116,7 @@ export default function About() {
                 <h2 className="type-marketing-title text-ink-primary text-balance">
                   Why &ldquo;Yueora&rdquo;
                 </h2>
+                {/* ds-allow: decorative brand hanzi glyph artwork */}
                 <div className="mt-6 flex items-baseline gap-4">
                   <span className="font-display text-6xl md:text-7xl text-ink-primary font-medium">乐</span>
                   <span className="text-xl text-ink-tertiary font-serif italic">+</span>
@@ -126,7 +127,7 @@ export default function About() {
 
             <div className="lg:col-span-7">
               <Reveal delay={0.1}>
-                <div className="space-y-5 text-lg leading-relaxed text-ink-secondary max-w-2xl">
+                <div className="space-y-5 type-marketing-body text-ink-secondary max-w-2xl">
                   <p>
                     In Chinese, <span className="font-medium text-ink-primary">乐 (yuè)</span> means music,
                     while <span className="font-medium text-ink-primary">悦 (yuè)</span> carries the idea of joy and quiet delight.
@@ -138,7 +139,7 @@ export default function About() {
                     For thousands of years in classical thought, music was never separated from happiness.
                     Over time, institutional pedagogy turned music into an exercise of discipline and stress.
                   </p>
-                  <p className="font-display text-2xl text-ink-primary italic pt-2">
+                  <p className="type-editorial-quote text-ink-primary pt-2">
                     To us, they belong together: 乐，是为了悦。
                   </p>
                 </div>
@@ -166,8 +167,8 @@ export default function About() {
                     <div className="w-10 h-10 rounded-xl bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
                       <Music2 className="w-5 h-5" />
                     </div>
-                    <h3 className="font-display text-xl text-ink-primary font-medium">Choice over curriculum</h3>
-                    <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
+                    <h3 className="type-subsection text-ink-primary font-medium">Choice over curriculum</h3>
+                    <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
                       You decide what to play. No mandated progression, no grading hurdles, no arbitrary prerequisites.
                     </p>
                   </div>
@@ -181,8 +182,8 @@ export default function About() {
                     <div className="w-10 h-10 rounded-xl bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
                       <Heart className="w-5 h-5" />
                     </div>
-                    <h3 className="font-display text-xl text-ink-primary font-medium">Joy over obligation</h3>
-                    <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
+                    <h3 className="type-subsection text-ink-primary font-medium">Joy over obligation</h3>
+                    <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
                       Liking a piece is reason enough. You never have to justify playing a pop ballad or a favorite prelude.
                     </p>
                   </div>
@@ -196,8 +197,8 @@ export default function About() {
                     <div className="w-10 h-10 rounded-xl bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
                       <Eye className="w-5 h-5" />
                     </div>
-                    <h3 className="font-display text-xl text-ink-primary font-medium">Feedback without judgment</h3>
-                    <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
+                    <h3 className="type-subsection text-ink-primary font-medium">Feedback without judgment</h3>
+                    <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
                       Acoustic cues help you listen and hear where you stopped, without humiliating red failure marks.
                     </p>
                   </div>
@@ -211,8 +212,8 @@ export default function About() {
                     <div className="w-10 h-10 rounded-xl bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
                       <TrendingUp className="w-5 h-5" />
                     </div>
-                    <h3 className="font-display text-xl text-ink-primary font-medium">Progress without pressure</h3>
-                    <p className="mt-2 text-sm text-ink-secondary leading-relaxed">
+                    <h3 className="type-subsection text-ink-primary font-medium">Progress without pressure</h3>
+                    <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
                       Progress is worth seeing, not worrying about. If you leave for two months, Yueora warmly welcomes you back.
                     </p>
                   </div>
@@ -232,7 +233,7 @@ export default function About() {
                 <h2 className="type-marketing-title text-ink-primary">
                   A companion, not a coach.
                 </h2>
-                <div className="mt-6 space-y-4 text-lg leading-relaxed text-ink-secondary">
+                <div className="mt-6 space-y-4 type-marketing-body text-ink-secondary">
                   <p>
                     Yueora isn’t here to tell you whether you’ve practiced enough.
                   </p>
@@ -253,11 +254,11 @@ export default function About() {
                 <div className="rounded-3xl border border-line-subtle bg-surface-panel p-8 sm:p-10">
                   <div className="flex items-center gap-3 mb-6">
                     <Shield className="w-6 h-6 text-ink-primary" />
-                    <h3 className="font-display text-2xl text-ink-primary font-medium">
+                    <h3 className="type-section-title text-ink-primary">
                       Your repertoire is private.
                     </h3>
                   </div>
-                  <div className="space-y-4 text-base leading-relaxed text-ink-secondary">
+                  <div className="space-y-4 type-body text-ink-secondary leading-relaxed">
                     <p>
                       Your scores, recordings, and rehearsal notes belong exclusively to you.
                       We do not sell your practice audio, train public AI models on your private playing,
@@ -268,7 +269,7 @@ export default function About() {
                       you open the door with an intimate private link—on your terms.
                     </p>
                   </div>
-                  <div className="mt-8 pt-6 border-t border-line-subtle flex items-center justify-between text-xs text-ink-tertiary">
+                  <div className="mt-8 pt-6 border-t border-line-subtle flex items-center justify-between type-metadata text-ink-tertiary">
                     <span>Encrypted Repertoire</span>
                     <span>Zero Public Discoverability</span>
                   </div>
@@ -285,6 +286,7 @@ export default function About() {
               <div className="relative rounded-[2.5rem] bg-ink-primary text-surface-canvas p-10 md:p-16 lg:p-20 overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.35)]">
                 {/* Ambient watermark */}
                 <div aria-hidden className="pointer-events-none absolute -bottom-10 -right-8 select-none">
+                  {/* ds-allow: ambient oversized background typography */}
                   <span className="font-display italic text-[22vw] leading-none text-surface-canvas/[0.04]">
                     joy
                   </span>
@@ -295,14 +297,14 @@ export default function About() {
                     <p className="type-eyebrow text-surface-canvas/60 mb-5">
                       Start Your Sanctuary
                     </p>
-                    <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-surface-canvas leading-[1.04]">
+                    <h2 className="type-marketing-title text-surface-canvas leading-[1.04]">
                       Play what you love.
                       <br />
                       <span className="italic font-normal text-surface-canvas/80">
                         Bring the music that matters.
                       </span>
                     </h2>
-                    <p className="mt-6 max-w-xl text-lg text-surface-canvas/75 leading-relaxed">
+                    <p className="mt-6 max-w-xl type-marketing-body text-surface-canvas/75 leading-relaxed">
                       Begin with whatever is sitting on your piano right now. Free to start, private forever.
                     </p>
                   </div>

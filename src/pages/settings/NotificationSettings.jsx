@@ -84,11 +84,11 @@ export default function NotificationSettings() {
         <div className="max-w-md rounded-container border border-line-subtle bg-surface-panel p-4 space-y-2.5">
           <div className="flex items-center gap-2">
             <MessageCircle className="icon-xs text-ink-primary" />
-            <span className="type-caption font-semibold uppercase tracking-wider text-ink-tertiary">
+            <span className="type-caption text-ink-tertiary">
               Invitation preview
             </span>
           </div>
-          <p className="font-display text-lg italic text-ink-primary leading-relaxed">
+          <p className="type-editorial-quote text-ink-primary leading-relaxed">
             &ldquo;Feel like returning to Moonlight Sonata today?&rdquo;
           </p>
           <p className="type-metadata text-ink-secondary">

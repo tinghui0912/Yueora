@@ -260,8 +260,8 @@ export default function DesignSystemPreview() {
               <Button intent="primary" className="rounded-full">Pill Primary</Button>
               <Button intent="secondary" className="rounded-full">Pill Secondary</Button>
               <div className="inline-flex items-center gap-1 rounded-full border border-line-subtle bg-surface-panel p-1">
-                <span className="rounded-full bg-neutral-muted px-4 py-1.5 text-xs font-semibold text-ink-primary border border-line-subtle">Active Toggle</span>
-                <span className="rounded-full px-4 py-1.5 text-xs font-medium text-ink-secondary">Inactive</span>
+                <span className="rounded-full bg-neutral-muted px-4 py-1.5 type-caption font-semibold text-ink-primary border border-line-subtle">Active Toggle</span>
+                <span className="rounded-full px-4 py-1.5 type-caption font-medium text-ink-secondary">Inactive</span>
               </div>
             </div>
           </div>
@@ -373,10 +373,10 @@ export default function DesignSystemPreview() {
                 <Sparkles className="icon-sm" />
               </span>
               <div>
-                <span className="type-caption font-semibold uppercase tracking-wider text-brand">
+                <span className="type-caption text-brand">
                   Live Standard Panel Demo
                 </span>
-                <p className="font-display text-base font-medium text-ink-primary">
+                <p className="type-subsection text-ink-primary">
                   Pick up where you left off · Clair de Lune
                 </p>
                 <p className="type-metadata text-ink-secondary">
@@ -421,12 +421,13 @@ export default function DesignSystemPreview() {
         />
         <div className="relative rounded-[2rem] bg-ink-primary text-surface-canvas p-8 md:p-10 overflow-hidden shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)]">
           <div aria-hidden className="pointer-events-none absolute -bottom-6 -right-6 select-none">
+            {/* ds-allow: ambient oversized background typography showcase */}
             <span className="font-display italic text-8xl text-surface-canvas/[0.04]">music</span>
           </div>
           <div className="relative z-10 max-w-xl">
             <p className="type-eyebrow text-surface-canvas/60 mb-3">Sanctuary Callout</p>
-            <h3 className="font-display text-3xl font-medium text-surface-canvas">Play what you love.</h3>
-            <p className="mt-2 text-sm text-surface-canvas/75 leading-relaxed">
+            <h3 className="type-display font-medium text-surface-canvas">Play what you love.</h3>
+            <p className="mt-2 type-body-small text-surface-canvas/75 leading-relaxed">
               Near-black is identity. White / ivory is content surface. Chromatic color communicates functional status.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">

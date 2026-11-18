@@ -55,7 +55,7 @@ export default function Pricing() {
               <h1 className="type-marketing-title text-balance text-ink-primary">
                 Simple, transparent pricing.
               </h1>
-              <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-ink-secondary">
+              <p className="mx-auto mt-4 max-w-xl type-marketing-body leading-relaxed text-ink-secondary">
                 Start free. Upgrade when your repertoire grows. Cancel or change your plan whenever you like.
               </p>
 
@@ -63,7 +63,7 @@ export default function Pricing() {
               <div className="mt-8 inline-flex items-center gap-1 rounded-full border border-line-subtle bg-surface-panel p-1.5">
                 <button
                   onClick={() => setYearly(false)}
-                  className={`rounded-full px-5 py-2 text-sm font-medium transition-all ${
+                  className={`rounded-full px-5 py-2 type-label font-medium transition-all ${
                     !yearly
                       ? 'bg-neutral-muted font-semibold text-ink-primary border border-line-subtle'
                       : 'text-ink-secondary hover:text-ink-primary'
@@ -73,13 +73,13 @@ export default function Pricing() {
                 </button>
                 <button
                   onClick={() => setYearly(true)}
-                  className={`rounded-full px-5 py-2 text-sm font-medium transition-all ${
+                  className={`rounded-full px-5 py-2 type-label font-medium transition-all ${
                     yearly
                       ? 'bg-neutral-muted font-semibold text-ink-primary border border-line-subtle'
                       : 'text-ink-secondary hover:text-ink-primary'
                   }`}
                 >
-                  Yearly <span className="ml-1.5 text-xs text-brand font-semibold">save {saving}%</span>
+                  Yearly <span className="ml-1.5 type-metadata text-brand font-semibold">save {saving}%</span>
                 </button>
               </div>
             </Reveal>
@@ -97,28 +97,28 @@ export default function Pricing() {
                     <span className="type-eyebrow text-ink-tertiary">
                       Starter
                     </span>
-                    <span className="type-metadata text-ink-tertiary uppercase tracking-wider">
+                    <span className="type-caption text-ink-tertiary">
                       Free Tier
                     </span>
                   </div>
 
-                  <h3 className="font-display text-3xl font-medium text-ink-primary">
+                  <h3 className="type-display font-medium text-ink-primary">
                     {plans.free.name}
                   </h3>
-                  <p className="mt-2.5 text-sm text-ink-secondary leading-relaxed">
+                  <p className="mt-2.5 type-body-small text-ink-secondary leading-relaxed">
                     A personal starter library to begin your musical journey calmly.
                   </p>
 
                   <div className="mt-6 flex items-baseline gap-1">
-                    <span className="font-display text-4xl font-medium text-ink-primary">$0</span>
-                    <span className="text-sm text-ink-tertiary">/month</span>
+                    <span className="type-display font-medium text-ink-primary">$0</span>
+                    <span className="type-metadata text-ink-tertiary">/month</span>
                   </div>
                   <p className="mt-1 type-metadata text-ink-tertiary">
                     Free forever. No credit card required.
                   </p>
 
                   <div className="mt-7 pt-5 border-t border-line-subtle">
-                    <ul className="space-y-3 text-sm text-ink-secondary">
+                    <ul className="space-y-3 type-body-small text-ink-secondary">
                       <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
                         <span>{plans.free.scores} in your library</span>
@@ -171,18 +171,18 @@ export default function Pricing() {
                     </span>
                   </div>
 
-                  <h3 className="font-display text-3xl font-medium text-surface-canvas">
+                  <h3 className="type-display font-medium text-surface-canvas">
                     {plans.plus.name}
                   </h3>
-                  <p className="mt-2.5 text-sm text-surface-canvas/75 leading-relaxed">
+                  <p className="mt-2.5 type-body-small text-surface-canvas/75 leading-relaxed">
                     For active players who build a solid repertoire and value practice insights.
                   </p>
 
                   <div className="mt-6 flex items-baseline gap-1.5">
-                    <span className="font-display text-4xl font-medium text-surface-canvas">
+                    <span className="type-display font-medium text-surface-canvas">
                       {formatPrice(yearly ? plans.plus.priceYearly : plans.plus.priceMonthly)}
                     </span>
-                    <span className="text-sm text-surface-canvas/70">
+                    <span className="type-metadata text-surface-canvas/70">
                       /{intervalNoun(interval)}
                     </span>
                   </div>
@@ -193,7 +193,7 @@ export default function Pricing() {
                   </p>
 
                   <div className="mt-7 pt-5 border-t border-surface-canvas/15">
-                    <ul className="space-y-3 text-sm text-surface-canvas/85">
+                    <ul className="space-y-3 type-body-small text-surface-canvas/85">
                       <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-surface-canvas shrink-0" />
                         <span><strong>{plans.plus.scores}</strong> in your library</span>
@@ -257,23 +257,23 @@ export default function Pricing() {
                     <span className="type-eyebrow text-ink-tertiary">
                       Devoted Repertoire
                     </span>
-                    <span className="type-metadata text-ink-tertiary uppercase tracking-wider">
+                    <span className="type-caption text-ink-tertiary">
                       Unlimited
                     </span>
                   </div>
 
-                  <h3 className="font-display text-3xl font-medium text-ink-primary">
+                  <h3 className="type-display font-medium text-ink-primary">
                     {plans.pro.name}
                   </h3>
-                  <p className="mt-2.5 text-sm text-ink-secondary leading-relaxed">
+                  <p className="mt-2.5 type-body-small text-ink-secondary leading-relaxed">
                     For devoted musicians who play regularly, preserve takes, and archive recordings.
                   </p>
 
                   <div className="mt-6 flex items-baseline gap-1.5">
-                    <span className="font-display text-4xl font-medium text-ink-primary">
+                    <span className="type-display font-medium text-ink-primary">
                       {formatPrice(yearly ? plans.pro.priceYearly : plans.pro.priceMonthly)}
                     </span>
-                    <span className="text-sm text-ink-tertiary">
+                    <span className="type-metadata text-ink-tertiary">
                       /{intervalNoun(interval)}
                     </span>
                   </div>
@@ -284,7 +284,7 @@ export default function Pricing() {
                   </p>
 
                   <div className="mt-7 pt-5 border-t border-line-subtle">
-                    <ul className="space-y-3 text-sm text-ink-secondary">
+                    <ul className="space-y-3 type-body-small text-ink-secondary">
                       <li className="flex items-start gap-2.5">
                         <Check className="w-4 h-4 mt-0.5 text-ink-primary shrink-0" />
                         <span><strong>{plans.pro.scores}</strong> in your library</span>
@@ -351,13 +351,13 @@ export default function Pricing() {
             <Reveal>
               <div className="text-center mb-8">
                 <p className="type-eyebrow text-ink-tertiary mb-2">Feature Matrix</p>
-                <h2 className="font-display text-2xl sm:text-3xl text-ink-primary font-medium">
+                <h2 className="type-section-title text-ink-primary font-medium">
                   Detailed side-by-side comparison
                 </h2>
               </div>
 
               <div className="overflow-x-auto rounded-2xl border border-line-subtle bg-surface-panel">
-                <table className="w-full text-sm">
+                <table className="w-full type-body-small">
                   <thead>
                     <tr className="border-b border-line-subtle bg-neutral-muted/40">
                       <th className="px-6 py-4 text-left font-medium text-ink-secondary">Feature</th>

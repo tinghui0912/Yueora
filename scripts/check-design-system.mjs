@@ -397,8 +397,7 @@ const SCAN_DIRECTORIES = [
   path.resolve('src/components'),
 ];
 
-// Exemptions for non-application marketing pages or musical notation canvas geometry
-const MARKETING_PAGES = new Set(['About.jsx', 'Landing.jsx', 'Pricing.jsx', 'DesignSystemPreview.jsx']);
+// Exemptions for musical notation canvas coordinate geometry
 const GEOMETRY_EXEMPT_FILES = new Set(['ScoreCanvas.jsx', 'ScorePreview.jsx', 'MusicalGlyphs.jsx']);
 
 // Rules to scan for in JSX
@@ -457,7 +456,6 @@ function scanDirectory(dir, issues = []) {
       scannedFilesCount++;
       const content = fs.readFileSync(fullPath, 'utf8');
       const lines = content.split('\n');
-      const isMarketing = MARKETING_PAGES.has(entry.name);
       const isGeometryExempt = GEOMETRY_EXEMPT_FILES.has(entry.name);
 
       lines.forEach((line, lineIndex) => {
@@ -501,7 +499,7 @@ function scanDirectory(dir, issues = []) {
         });
 
         // Check unmigrated application page titles
-        if (!isMarketing && /<h1[^>]*font-display\s+text-(?:2xl|3xl|4xl)/.test(line)) {
+        if (/<h1[^>]*font-display\s+text-(?:2xl|3xl|4xl)/.test(line)) {
           issues.push({
             file: path.relative(process.cwd(), fullPath),
             line: lineIndex + 1,
@@ -624,6 +622,108 @@ verifyExclusionIntegrity(totalViolations);
 for (const dir of SCAN_DIRECTORIES) {
   scanDirectory(dir, totalViolations);
 }
+
+// Phase 4.5: Verify Page-Level Typography Semantic Ownership & Consumption
+function verifyPageTypographyConsumption(issues = []) {
+  const pagesDir = path.resolve('src/pages');
+  if (!fs.existsSync(pagesDir)) return issues;
+
+  const RAW_TEXT_REGEX = /\b(text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|\[\d+px\]))\b/g;
+  const FONT_DISPLAY_REGEX = /\bfont-display\b/g;
+  const RAW_UPPERCASE_REGEX = /\buppercase\b/g;
+  const RAW_TRACKING_REGEX = /\btracking-(?:wide|wider|widest|\[[^\]]+\])\b/g;
+  const SEMANTIC_TYPE_REGEX = /\btype-(?:hero-title|marketing-title|editorial-quote|marketing-body|display|experience-title|page-title|section-title|subsection|body-small|body|label|caption|eyebrow|metadata|metric)\b/;
+
+  const TRIVIAL_REASONS = /^(?:marketing|custom|looks better|test|override)$/i;
+
+  function scanPages(dir) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanPages(full);
+      } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
+        const content = fs.readFileSync(full, 'utf8');
+        const lines = content.split('\n');
+
+        lines.forEach((line, idx) => {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) {
+            return;
+          }
+
+          // Check if line or up to 4 preceding lines has ds-allow / ds-ignore
+          const allowMatch = line.match(/(?:ds-allow|ds-ignore):\s*([^\n*/]+)/) ||
+            (idx > 0 && lines.slice(Math.max(0, idx - 4), idx).reduce((found, l) => found || l.match(/(?:ds-allow|ds-ignore):\s*([^\n*/]+)/), null));
+
+          if (allowMatch) {
+            const reason = allowMatch[1].trim();
+            if (!reason || TRIVIAL_REASONS.test(reason)) {
+              issues.push({
+                file: path.relative(process.cwd(), full),
+                line: idx + 1,
+                matched: allowMatch[0].trim(),
+                message: `Trivial or missing ds-allow reason '${reason}'. Explicit, domain-specific explanation required (do not use generic reasons like 'marketing', 'custom', or 'looks better').`,
+              });
+            }
+            return; // excused with valid reason
+          }
+
+          // Extract className attributes
+          const classMatches = [...line.matchAll(/className=["']([^"']+)["']/g)];
+          for (const cm of classMatches) {
+            const str = cm[1] || '';
+
+            // 1. Raw font size
+            const sizeMatches = str.match(RAW_TEXT_REGEX);
+            if (sizeMatches) {
+              issues.push({
+                file: path.relative(process.cwd(), full),
+                line: idx + 1,
+                matched: sizeMatches.join(', '),
+                message: `Page Typography Ownership violation: raw font-size utility '${sizeMatches.join(', ')}' used in page. Pages must consume semantic type-* roles or provide a reasoned ds-allow: <reason> exception.`,
+              });
+            }
+
+            // 2. Raw font-display without semantic type
+            if (FONT_DISPLAY_REGEX.test(str) && !SEMANTIC_TYPE_REGEX.test(str)) {
+              issues.push({
+                file: path.relative(process.cwd(), full),
+                line: idx + 1,
+                matched: 'font-display',
+                message: `Page Typography Ownership violation: raw font-display used without semantic type role. Cormorant display typography must be owned by semantic type roles (e.g. type-page-title, type-section-title, type-subsection, type-editorial-quote, type-display).`,
+              });
+            }
+
+            // 3. Raw uppercase without type-caption or type-eyebrow
+            if (RAW_UPPERCASE_REGEX.test(str) && !/\btype-(?:caption|eyebrow)\b/.test(str)) {
+              issues.push({
+                file: path.relative(process.cwd(), full),
+                line: idx + 1,
+                matched: 'uppercase',
+                message: `Page Typography Ownership violation: raw uppercase utility used without type-caption or type-eyebrow. Micro-labels and tags must consume type-caption or type-eyebrow.`,
+              });
+            }
+
+            // 4. Raw tracking without type-caption or type-eyebrow
+            if (RAW_TRACKING_REGEX.test(str) && !/\btype-(?:caption|eyebrow)\b/.test(str)) {
+              issues.push({
+                file: path.relative(process.cwd(), full),
+                line: idx + 1,
+                matched: str.match(RAW_TRACKING_REGEX)[0],
+                message: `Page Typography Ownership violation: raw tracking utility used without type-caption or type-eyebrow. Tracking belongs to the design system typography definitions.`,
+              });
+            }
+          }
+        });
+      }
+    }
+  }
+
+  scanPages(pagesDir);
+  return issues;
+}
+verifyPageTypographyConsumption(totalViolations);
 
 // Phase 5: Verify Legacy Color Token Retirement
 function verifyLegacyColorRetirement(issues = []) {
@@ -1285,6 +1385,7 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified Surface API simplification (zero paper tone/elevation in Surface component or consumers)`);
   console.log(`   - Verified retired paper tokens & MusicPaper completely removed from product code (zero exceptions)`);
   console.log(`   - Verified zero DialogTitle typography overrides & zero conflicting font-size overrides on semantic typography`);
+  console.log('   - Verified Page Typography Ownership & Consumption (zero raw font-size, font-display, uppercase, or tracking across all pages in src/pages)');
   console.log(`   - Verified documentation and AI instruction truth sync (AGENTS.md & docs/design-system.md)`);
   console.log(`   - Verified zero banned full-width Landing surfaces`);
   console.log(`   - Verified retired tokens permanently removed and forbidden from product code`);

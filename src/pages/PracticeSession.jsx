@@ -331,7 +331,7 @@ export default function PracticeSession() {
     return (
       <div className="flex min-h-dvh items-center justify-center p-6 text-center">
         <div>
-          <p className="font-display text-xl text-ink-primary">Score not found.</p>
+          <p className="type-section-title text-ink-primary">Score not found.</p>
           <Button onClick={() => navigate('/library')} className="mt-4">Back to Repertoire</Button>
         </div>
       </div>
@@ -341,11 +341,11 @@ export default function PracticeSession() {
   if (!getPermissions(score).canPractice) {
     return (
       <div className="mx-auto max-w-md px-4 py-20 text-center">
-        <p className="font-display text-xl text-ink-primary">Practice is not enabled for this score</p>
-        <p className="mt-2 text-xs text-ink-secondary leading-relaxed">
+        <p className="type-section-title text-ink-primary">Practice is not enabled for this score</p>
+        <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
           The link you received does not include practice permission.
         </p>
-        <Button onClick={() => navigate(`/score/${scoreId}`)} className="mt-5 text-xs">Back to score</Button>
+        <Button onClick={() => navigate(`/score/${scoreId}`)} className="mt-5">Back to score</Button>
       </div>
     );
   }
@@ -366,10 +366,10 @@ export default function PracticeSession() {
       >
         <button
           onClick={() => (phase === 'ready' ? navigate(`/score/${scoreId}`) : setExitOpen(true))}
-          className="flex min-w-0 items-center gap-2 text-sm font-medium text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
+          className="flex min-w-0 items-center gap-2 type-label font-medium text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
         >
           <ArrowLeft className="h-4 w-4 shrink-0" />
-          <span className="truncate font-display text-base font-medium text-ink-primary">{score.title}</span>
+          <span className="truncate type-subsection text-ink-primary">{score.title}</span>
         </button>
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -389,13 +389,13 @@ export default function PracticeSession() {
           )}
 
           {/* Session Phase Pill */}
-          <div className="flex items-center gap-1.5 rounded-full border border-line-subtle bg-neutral-muted/50 px-3 py-1 text-xs text-ink-secondary">
+          <div className="flex items-center gap-1.5 rounded-full border border-line-subtle bg-neutral-muted/50 px-3 py-1 type-metadata text-ink-secondary">
             <span
               className={`h-2 w-2 rounded-full ${
                 isPlaying ? 'bg-brand animate-pulse' : phase === 'countin' ? 'bg-practice-current' : 'bg-ink-tertiary'
               }`}
             />
-            <span className="text-xs font-medium">
+            <span className="type-metadata font-medium">
               {isPlaying ? 'Playing' : phase === 'countin' ? 'Count-in' : phase === 'paused' ? 'Paused' : 'Ready'}
             </span>
           </div>
@@ -421,7 +421,7 @@ export default function PracticeSession() {
           {/* Section range selector notification bar */}
           {selecting && (
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-container border border-line-subtle bg-surface-panel p-3">
-              <p className="text-xs text-ink-primary font-medium">
+              <p className="type-metadata text-ink-primary font-medium">
                 {sectionPhase === 'start'
                   ? 'Choose starting measure on score.'
                   : 'Starting measure selected. Click ending measure.'}
@@ -435,7 +435,7 @@ export default function PracticeSession() {
                   onClick={() => setPickWindow((w) => Math.max(1, w - 4))}
                   disabled={pickWindow <= 1}
                 />
-                <span className="px-1 text-xs text-ink-secondary">
+                <span className="px-1 type-metadata text-ink-secondary">
                   Bars {pickWindow}–{Math.min(totalMeasures, pickWindow + 3)}
                 </span>
                 <IconButton
@@ -476,7 +476,7 @@ export default function PracticeSession() {
             />
 
             {/* Position indicator & measure navigation */}
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line-subtle pt-3 text-xs text-ink-secondary">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-line-subtle pt-3 type-metadata text-ink-secondary">
               <span>Showing bars {canvasStart}–{Math.min(totalMeasures, canvasStart + 3)} of {totalMeasures}</span>
 
               {!selecting && phase === 'paused' && measureWindowStart(activeMeasure) !== visibleMeasureStart && (
@@ -522,10 +522,11 @@ export default function PracticeSession() {
         {phase === 'countin' && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-surface-canvas/80 backdrop-blur-xs">
             <div className="text-center">
+              {/* ds-allow: oversized rehearsal count-in number */}
               <p className="font-display text-7xl font-medium text-ink-primary animate-pulse">
                 {countBeat > 0 ? countBeat : '—'}
               </p>
-              <p className="mt-2 text-xs text-ink-secondary">One bar count-in · ♩ = {bpm}</p>
+              <p className="mt-2 type-metadata text-ink-secondary">One bar count-in · ♩ = {bpm}</p>
             </div>
           </div>
         )}
@@ -543,7 +544,7 @@ export default function PracticeSession() {
             onResolve={resolveCurrentGroup}
           />
         ) : (
-          <p className="text-center text-xs text-ink-secondary">
+          <p className="text-center type-metadata text-ink-secondary">
             {phase === 'ready'
               ? mode === 'follow'
                 ? 'Set a range if you wish, then press Start or Spacebar. Yueora follows your tempo.'
@@ -600,7 +601,7 @@ export default function PracticeSession() {
               </Button>
             )}
 
-            <span className="text-sm tabular-nums font-mono text-ink-secondary ml-1.5">
+            <span className="type-metadata tabular-nums font-mono text-ink-secondary ml-1.5">
               {fmtClock(elapsed)}
             </span>
           </div>
@@ -681,14 +682,14 @@ export default function PracticeSession() {
                 />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 border-line-subtle bg-surface-panel shadow-overlay">
-                <DropdownMenuItem onClick={() => setSettingsOpen(true)} className="text-sm">
+                <DropdownMenuItem onClick={() => setSettingsOpen(true)}>
                   <Settings2 className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Session settings
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={restart} className="text-sm">
+                <DropdownMenuItem onClick={restart}>
                   <RotateCcw className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Restart from bar 1
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-line-subtle" />
-                <DropdownMenuItem onClick={finish} disabled={!startedAt.current} className="text-sm text-brand font-medium">
+                <DropdownMenuItem onClick={finish} disabled={!startedAt.current} className="text-brand font-medium">
                   <Flag className="mr-2 h-3.5 w-3.5" /> Finish &amp; preserve
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -722,7 +723,7 @@ export default function PracticeSession() {
       <Dialog open={exitOpen} onOpenChange={setExitOpen}>
         <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
           <DialogHeader><DialogTitle>Leave practice?</DialogTitle></DialogHeader>
-          <p className="text-xs text-ink-secondary mt-1">You can preserve this session in your repertoire history, or discard it.</p>
+          <p className="type-body-small text-ink-secondary mt-1">You can preserve this session in your repertoire history, or discard it.</p>
           <DialogFooter className="mt-4 gap-2">
             <Button intent="quiet" size="sm" onClick={() => setExitOpen(false)}>Keep playing</Button>
             <Button intent="secondary" size="sm" onClick={() => { setExitOpen(false); finish(); }}>Save &amp; finish</Button>

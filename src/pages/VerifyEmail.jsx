@@ -75,12 +75,13 @@ export default function VerifyEmail() {
         <form onSubmit={submit} className="mt-6 w-full space-y-3 text-left">
           <div className="space-y-1.5">
             <Label htmlFor="code" className="type-label text-ink-primary">Verification code</Label>
+            {/* ds-allow: verification code input letter-spacing and size */}
             <Input
               id="code"
+              className="text-center text-lg tracking-[0.4em]"
               value={code}
               onChange={(e) => { setCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setError(''); }}
               placeholder="123456"
-              className="text-center text-lg tracking-[0.4em]"
               autoFocus
             />
             {error && <p className="type-caption text-danger">{error}</p>}

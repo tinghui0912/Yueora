@@ -55,7 +55,7 @@ export default function CheckoutSuccess() {
       </p>
 
       <div className="mt-6 rounded-container border border-line-subtle bg-surface-panel">
-        <dl className="divide-y divide-line-subtle px-5 text-sm">
+        <dl className="divide-y divide-line-subtle px-5 type-body-small">
           <Row label="Plan" value={`Yueora ${plan.name}`} />
           <Row label="Billing interval" value={`Every ${intervalNoun(effectiveCheckout.interval)}`} />
           <Row label="Amount paid" value={formatPrice(effectiveCheckout.amount)} />
@@ -80,7 +80,7 @@ function Row({ label, value, mono = false }) {
   return (
     <div className="flex items-baseline justify-between gap-4 py-3">
       <dt className="text-ink-secondary">{label}</dt>
-      <dd className={`text-right text-ink-primary ${mono ? 'font-mono text-xs tracking-wide' : ''}`}>{value}</dd>
+      <dd className={`text-right text-ink-primary ${mono ? 'font-mono type-metadata' : ''}`}>{value}</dd>
     </div>
   );
 }

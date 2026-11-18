@@ -623,12 +623,12 @@ export default function AddScore() {
                     {details.composer || 'Unknown composer'} · {details.instrument || 'Piano'}
                   </p>
                 </div>
-                <span className="rounded-control bg-neutral-muted px-2.5 py-1 type-caption font-semibold uppercase tracking-wider text-ink-primary">
+                <span className="rounded-control bg-neutral-muted px-2.5 py-1 type-caption font-semibold text-ink-primary">
                   {sources.find((s) => s.id === source)?.label || 'PDF'}
                 </span>
               </div>
 
-              <div className="border-t border-line-subtle pt-3 grid grid-cols-2 gap-4 text-xs">
+              <div className="border-t border-line-subtle pt-3 grid grid-cols-2 gap-4 type-metadata">
                 <div>
                   <span className="type-caption text-ink-tertiary">
                     {source === 'musicxml' ? 'Score measures' : 'Total pages'}

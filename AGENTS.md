@@ -51,11 +51,16 @@ Before creating or styling any UI element:
    - Selects: `<NativeSelect>` or Radix `<Select>`
    - Containers & Surfaces: `<AppPage size="form|standard|wide|compact|full">`, `<Surface tone="panel|canvas|raised" elevation="none|raised|overlay">`
    - Flow & Layout: `<PageHeader>`, `<SectionHeader>`, `<Stepper>`, `<ChoiceCard>`, `<RepertoireGrid>`
-2. **Use semantic typography roles instead of raw font sizes:**
-   - Titles: `.type-display`, `.type-page-title`, `.type-section-title`, `.type-subsection`
+2. **Use semantic typography roles instead of raw font sizes (Page Typography Ownership Contract):**
+   - **Pages compose. The Design System decides appearance.**
+   - **Serif tells the story. Sans explains the product.** Cormorant Garamond is reserved for identity, titles, musical voice, and reflective moments; Inter is for controls, reading copy, explanations, and metadata.
+   - Public & marketing: `.type-hero-title`, `.type-marketing-title`, `.type-eyebrow`, `.type-editorial-quote`, `.type-marketing-body`
+   - Titles: `.type-display`, `.type-experience-title`, `.type-page-title`, `.type-section-title`, `.type-subsection`
    - Body & content: `.type-body`, `.type-body-small`, `.type-label`
    - Captions & stats: `.type-caption`, `.type-metadata`, `.type-metric`
    - **Never combine** semantic typography with conflicting font sizes (e.g. do NOT write `type-page-title text-2xl`).
+   - **All pages under `src/pages/**` must strictly consume semantic `type-*` roles.** Raw font-size utilities (`text-xs..6xl`), raw `font-display`, raw `uppercase`, and raw tracking in page files are banned and enforced by `npm run check:design-system`.
+   - Rare exceptions require an explicit, non-trivial `{/* ds-allow: <specific reason> */}` comment. Generic reasons like "marketing" or "custom" are prohibited.
 3. **Use semantic colors & respect the Color Contract:**
    - Text: `text-ink-primary`, `text-ink-secondary`, `text-ink-tertiary`, `text-ink-subtle`
    - Surfaces & 3 Canonical Surfaces:

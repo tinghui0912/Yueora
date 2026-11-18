@@ -33,14 +33,14 @@ export default function HelpArticle() {
   return (
     <PublicShell>
       <AppPage size="form" className="pt-28 md:pt-32 pb-12">
-        <nav className="flex items-center gap-1.5 text-sm text-ink-tertiary">
+        <nav className="flex items-center gap-1.5 type-body-small text-ink-tertiary">
           <Link to="/help" className="hover:text-ink-primary">Help</Link>
           <ChevronRight className="h-3.5 w-3.5" />
           <span className="text-ink-secondary">{article.category}</span>
         </nav>
 
         <h1 className="mt-4 type-page-title text-ink-primary">{article.title}</h1>
-        <p className="mt-2 text-sm text-ink-tertiary">Updated {article.updated}</p>
+        <p className="mt-2 type-metadata text-ink-tertiary">Updated {article.updated}</p>
 
         <div className="mt-8 space-y-4 type-body leading-relaxed text-ink-secondary">
           {article.body.map((p, i) => <p key={i}>{p}</p>)}
@@ -67,11 +67,11 @@ export default function HelpArticle() {
         )}
 
         <div className="mt-8 rounded-container border border-line-subtle bg-surface-panel p-5">
-          <p className="text-sm font-medium text-ink-primary">Was this helpful?</p>
+          <p className="type-body-small font-medium text-ink-primary">Was this helpful?</p>
           <div className="mt-3 flex items-center gap-2">
             <Button intent={feedback === 'up' ? 'primary' : 'secondary'} size="sm" onClick={() => setFeedback('up')}><ThumbsUp className="mr-1.5" /> Yes</Button>
             <Button intent={feedback === 'down' ? 'primary' : 'secondary'} size="sm" onClick={() => setFeedback('down')}><ThumbsDown className="mr-1.5" /> No</Button>
-            {feedback && <span className="text-sm text-ink-tertiary">Thanks for the feedback.</span>}
+            {feedback && <span className="type-body-small text-ink-tertiary">Thanks for the feedback.</span>}
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
             <Button intent="secondary" size="sm" onClick={() => openContact()}><LifeBuoy className="mr-1.5" /> Contact support</Button>

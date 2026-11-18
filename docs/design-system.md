@@ -55,6 +55,14 @@ Repeated product hierarchy roles use semantic typography roles. Do not override 
 > [!NOTE] Caption vs. Metadata Boundary
 > `.type-caption` is strictly for short uppercase micro-labels, category tags, table column headers, status badges, and overlines/eyebrows (uppercase, `0.2em` tracking). It must **never** be used for full sentences or toggle descriptions. For helper text, toggle descriptions, timestamps, and secondary explanatory sentences, always use `.type-metadata` (sentence case, natural tracking).
 
+> [!IMPORTANT] Page Typography Ownership Contract
+> **Pages compose. The Design System decides appearance.**
+> - **Serif tells the story. Sans explains the product.** Cormorant Garamond is reserved for identity, titles, musical voice, and reflective editorial moments; Inter is for controls, reading copy, explanations, and metadata.
+> - All pages under `src/pages/**` must strictly consume the 16 canonical semantic `type-*` roles.
+> - Raw font-size utilities (`text-xs..6xl`), raw `font-display`, raw `uppercase`, and raw tracking utilities are **banned** in page JSX and enforced by `npm run check:design-system`.
+> - Rare exceptions (e.g. ambient oversized watermarks, OTP pin tracking) require an explicit, non-trivial `{/* ds-allow: <specific reason> */}` comment. Generic reasons like "marketing" or "custom" are prohibited and rejected by CI.
+> - Shared domain components (e.g. `ScoreCanvas`, `VirtualKeyboard`) own domain-specific coordinate typography.
+
 ### 2.2 Color Vocabulary & Usage Contract (WCAG 2.2 AA)
 
 Yueora enforces **one canonical visual language**: a **Warm Editorial Music Workspace**.
