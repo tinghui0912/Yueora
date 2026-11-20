@@ -55,11 +55,11 @@ export default function MfaManage({ session, returnTo }) {
                 </div>
                 {/* On a narrow screen the actions drop below the method instead of squeezing it. */}
                 <div className="flex gap-2 ml-auto">
-                  <Button size="sm" variant="outline" onClick={() => setView({ name: "setup", method: id })}>
+                  <Button size="sm" intent="secondary" onClick={() => setView({ name: "setup", method: id })}>
                     {enrolled ? "Replace" : "Enable"}
                   </Button>
                   {enrolled && (
-                    <Button size="sm" variant="ghost" onClick={() => setView({ name: "disable", method: id })}>
+                    <Button size="sm" intent="quiet" onClick={() => setView({ name: "disable", method: id })}>
                       Disable
                     </Button>
                   )}
@@ -67,7 +67,7 @@ export default function MfaManage({ session, returnTo }) {
               </div>
             );
           })}
-          <Button className="w-full h-12 font-medium" onClick={() => { window.location.href = returnTo; }}>
+          <Button size="lg" className="w-full" onClick={() => { window.location.href = returnTo; }}>
             Done
           </Button>
         </div>
@@ -122,14 +122,14 @@ function Disable({ session, method, onDone, onBack }) {
           {method === "sms" && <ResendLine cooldown={cooldown} disabled={busy} onResend={sendCode} />}
         </>
       ) : (
-        <Button className="w-full h-11" disabled={busy} onClick={sendCode}>
+        <Button size="lg" className="w-full" disabled={busy} onClick={sendCode}>
           {busy && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
           Send Code
         </Button>
       )}
       <div className="grid grid-cols-2 gap-3 pt-2">
-        <Button variant="outline" className="h-11" disabled={busy} onClick={onBack}>Cancel</Button>
-        <Button className="h-11" disabled={busy || !codeSent || code.length < 6} onClick={() => confirm()}>
+        <Button intent="secondary" size="lg" disabled={busy} onClick={onBack}>Cancel</Button>
+        <Button size="lg" disabled={busy || !codeSent || code.length < 6} onClick={() => confirm()}>
           {busy && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
           Verify & Disable
         </Button>

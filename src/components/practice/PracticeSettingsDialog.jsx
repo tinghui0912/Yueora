@@ -74,8 +74,8 @@ export default function PracticeSettingsDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Close</Button>
-          <Button asChild variant="outline">
+          <Button intent="secondary" onClick={() => onOpenChange(false)}>Close</Button>
+          <Button asChild intent="secondary">
             <Link to={`/score/${scoreId}/setup`}>Return to setup</Link>
           </Button>
         </DialogFooter>

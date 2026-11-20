@@ -205,7 +205,7 @@ export default function ShareVideoDialog({
         )}
 
         <DialogFooter>
-          <Button variant="outline" onClick={close}>
+          <Button intent="secondary" onClick={close}>
             {stage === 'generating' ? 'Stop and close' : 'Close'}
           </Button>
           {hasSource && stage !== 'ready' && (

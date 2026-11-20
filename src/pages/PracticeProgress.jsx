@@ -9,6 +9,7 @@ import PageHeader from '@/components/patterns/PageHeader';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import Metric from '@/components/patterns/Metric';
 import StateMessage from '@/components/patterns/StateMessage';
+import { Surface } from '@/components/patterns/Surface';
 import { Button } from '@/components/ui/button';
 import { Sparkles, BarChart2, Calendar, Music } from 'lucide-react';
 
@@ -38,7 +39,7 @@ export default function PracticeProgress() {
           />
         </div>
 
-        <div className="mt-8 rounded-container border border-line-subtle bg-surface-panel p-6 sm:p-8">
+        <Surface className="mt-8" padding="lg">
           <div className="max-w-xl">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-neutral-muted px-3 py-1 type-caption text-ink-primary">
               <Sparkles className="icon-xs text-brand" /> Plus Feature
@@ -87,7 +88,7 @@ export default function PracticeProgress() {
               </Button>
             </div>
           </div>
-        </div>
+        </Surface>
       </AppPage>
     );
   }

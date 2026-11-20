@@ -120,7 +120,7 @@ export default function AccountSettings() {
                     Simulate confirm
                   </Button>
                 )}
-                <Button intent="quiet" size="xs" onClick={cancelPendingEmail} className="text-ink-tertiary hover:text-ink-primary">
+                <Button intent="quiet" size="xs" onClick={cancelPendingEmail}>
                   Cancel change
                 </Button>
               </div>

@@ -94,7 +94,6 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
             asChild
             intent="subtle"
             size="xs"
-            className="font-semibold text-brand hover:text-brand"
           >
             <Link
               to={`/score/${score.id}/setup`}
@@ -109,7 +108,6 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
             asChild
             intent="quiet"
             size="xs"
-            className="type-caption text-ink-secondary hover:text-ink-primary"
           >
             <Link to={`/score/${score.id}`}>
               View score →

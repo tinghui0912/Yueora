@@ -23,7 +23,7 @@ export default function SavePerformanceDialog({ open, onOpenChange, scoreTitle, 
         {error && <p className="type-body-small text-destructive">{error}</p>}
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>Cancel</Button>
+          <Button intent="secondary" onClick={() => onOpenChange(false)} disabled={saving}>Cancel</Button>
           <Button onClick={onSave} disabled={saving}>
             {saving ? <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Saving…</> : 'Save performance'}
           </Button>

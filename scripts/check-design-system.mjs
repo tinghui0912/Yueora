@@ -1397,6 +1397,137 @@ function verifyRenderingCodeTokens(issues = []) {
 }
 verifyRenderingCodeTokens(totalViolations);
 
+// Phase 9: Verify Button Semantic API & Page Appearance Ownership (Visual Freedom Contraction)
+function verifyVisualFreedomContraction(issues = []) {
+  const PAGES_DIR = path.resolve('src/pages');
+  const SRC_DIR = path.resolve('src');
+
+  // 1. Button API Invariants across all src files:
+  // - Ban legacy variant= attribute on Button (only intent is supported)
+  // - Ban legacy variant aliases (variant="default|outline|ghost|destructive")
+  // - Ban legacy button sizes (size="hero" or size="default")
+  function scanButtonApi(dir) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (entry.name !== 'node_modules' && entry.name !== '.git' && entry.name !== 'dist') {
+          scanButtonApi(full);
+        }
+      } else if (entry.isFile() && /\.(js|jsx|ts|tsx)$/.test(entry.name)) {
+        const code = fs.readFileSync(full, 'utf8');
+        const rel = path.relative(process.cwd(), full);
+
+        const btnVariantMatches = code.matchAll(/<Button\b[^>]*\bvariant\s*=/g);
+        for (const m of btnVariantMatches) {
+          const line = code.slice(0, m.index).split('\n').length;
+          issues.push({
+            file: rel,
+            line,
+            matched: 'variant=',
+            message: `Legacy Button 'variant' prop is retired. Use semantic 'intent' prop (primary, secondary, quiet, danger, subtle, link, inverse, inverse-secondary).`,
+          });
+        }
+
+        const btnSizeMatches = code.matchAll(/<Button\b[^>]*\bsize=["'](hero|default)["']/g);
+        for (const m of btnSizeMatches) {
+          const line = code.slice(0, m.index).split('\n').length;
+          issues.push({
+            file: rel,
+            line,
+            matched: m[0],
+            message: `Legacy Button size '${m[1]}' is retired. Button sizes are strictly canonical: 'xs', 'sm', 'md', 'lg', 'xl'.`,
+          });
+        }
+      }
+    }
+  }
+  scanButtonApi(SRC_DIR);
+
+  // 2. Page Appearance Ownership Invariants (src/pages/**):
+  // - No arbitrary radii: rounded-[...]
+  // - No arbitrary shadows: shadow-[...]
+  // - No generic Tailwind elevation: shadow-sm, shadow-md, shadow-lg, shadow-xl, shadow-2xl
+  // - No Button visual overrides in className: bg-, border-, shadow-, rounded- on <Button>
+  function scanPageAppearance(dir) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanPageAppearance(full);
+      } else if (entry.isFile() && /\.(jsx|js)$/.test(entry.name)) {
+        const code = fs.readFileSync(full, 'utf8');
+        const rel = path.relative(process.cwd(), full);
+        const lines = code.split('\n');
+
+        lines.forEach((line, idx) => {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+          if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
+
+          const arbRadiusMatch = line.match(/\b(rounded-\[[^\]]+\])/);
+          if (arbRadiusMatch) {
+            issues.push({
+              file: rel,
+              line: idx + 1,
+              matched: arbRadiusMatch[1],
+              message: `Arbitrary radius '${arbRadiusMatch[1]}' is banned in pages. Pages compose; the Design System decides appearance via semantic radii (rounded-control, rounded-container, rounded-overlay, rounded-full).`,
+            });
+          }
+
+          const arbShadowMatch = line.match(/\b(shadow-\[[^\]]+\])/);
+          if (arbShadowMatch) {
+            issues.push({
+              file: rel,
+              line: idx + 1,
+              matched: arbShadowMatch[1],
+              message: `Arbitrary shadow '${arbShadowMatch[1]}' is banned in pages. Shadows are reserved for elevated surfaces using canonical tokens: shadow-overlay or shadow-raised.`,
+            });
+          }
+
+          const genericShadowMatch = line.match(/\b(shadow-(?:sm|md|lg|xl|2xl))\b/);
+          if (genericShadowMatch) {
+            issues.push({
+              file: rel,
+              line: idx + 1,
+              matched: genericShadowMatch[1],
+              message: `Generic elevation '${genericShadowMatch[1]}' is banned in pages. Standard panels are flat by default. Overlays strictly use shadow-overlay or shadow-raised.`,
+            });
+          }
+        });
+
+        const btnTagRegex = /<Button\b([^>]*)>/gs;
+        let btnMatch;
+        while ((btnMatch = btnTagRegex.exec(code)) !== null) {
+          const attrs = btnMatch[1];
+          const classMatch = attrs.match(/\bclassName=(?:\{cn\()?["']([^"']+)["']/);
+          if (classMatch) {
+            const cls = classMatch[1];
+            const visualOverrides = cls.split(/\s+/).filter(token =>
+              /^(rounded-|bg-|border-|shadow-|h-\d|px-\d|py-\d)/.test(token)
+            );
+            if (visualOverrides.length > 0) {
+              const lineNo = code.slice(0, btnMatch.index).split('\n').length;
+              issues.push({
+                file: rel,
+                line: lineNo,
+                matched: visualOverrides.join(' '),
+                message: `Button appearance override in page JSX: [${visualOverrides.join(' ')}]. Pages compose; Button completely owns its visual appearance via 'intent' and 'size'.`,
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+  if (fs.existsSync(PAGES_DIR)) {
+    scanPageAppearance(PAGES_DIR);
+  }
+
+  return issues;
+}
+verifyVisualFreedomContraction(totalViolations);
+
 if (totalViolations.length === 0) {
   console.log('✅ Design System integrity checks passed.');
   console.log(`   - Verified ${REQUIRED_TYPOGRAPHY.length} semantic typography roles in src/index.css`);
@@ -1421,6 +1552,10 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified retired paper tokens & MusicPaper completely removed from product code (zero exceptions)`);
   console.log(`   - Verified zero DialogTitle typography overrides & zero conflicting font-size overrides on semantic typography`);
   console.log('   - Verified Page Typography Ownership & Consumption (zero raw font-size, font-display, uppercase, or tracking across all pages in src/pages)');
+  console.log(`   - Verified Button Semantic API & Visual Freedom Contraction (zero variant= props, zero legacy aliases, zero hero/default sizes)`);
+  console.log(`   - Verified Page Appearance Ownership (zero arbitrary radii rounded-[...], zero arbitrary shadows shadow-[...], zero generic shadows in src/pages)`);
+  console.log(`   - Verified Button Visual Ownership Guard (zero button appearance overrides in page JSX)`);
+  console.log(`   - Verified documentation and AI instruction truth sync (AGENTS.md & docs/design-system.md)`);
   console.log(`   - Verified documentation and AI instruction truth sync (AGENTS.md & docs/design-system.md)`);
   console.log(`   - Verified zero banned full-width Landing surfaces`);
   console.log(`   - Verified retired tokens permanently removed and forbidden from product code`);

@@ -223,7 +223,7 @@ const SidebarTrigger = React.forwardRef(({ className, onClick, asChild = false, 
     (<Button
       ref={ref}
       data-sidebar="trigger"
-      variant="ghost"
+      intent="quiet"
       size="sm"
       className={cn("h-7 w-7", className)}
       onClick={(event) => {

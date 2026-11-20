@@ -279,14 +279,14 @@ export default function SharingDialog({ score, open, onOpenChange }) {
 
             <div className="mt-4 flex items-center gap-2">
               {sharing.link.access !== 'Off' && sharing.link.token ? (
-                <Button variant="outline" onClick={copyLink} className="flex-1">
+                <Button intent="secondary" onClick={copyLink} className="flex-1">
                   {copied ? <Check className="mr-1.5 h-4 w-4 text-brand" /> : <Copy className="mr-1.5 h-4 w-4" />}
                   {copied ? 'Link copied' : 'Copy link'}
                 </Button>
               ) : (
                 <p className="flex-1 type-body-small text-ink-secondary">Turn on link sharing to copy a link.</p>
               )}
-              <Button variant="outline" onClick={() => setLinkSettingsOpen(true)}>Link settings</Button>
+              <Button intent="secondary" onClick={() => setLinkSettingsOpen(true)}>Link settings</Button>
             </div>
           </div>
         </DialogContent>
@@ -320,16 +320,16 @@ export default function SharingDialog({ score, open, onOpenChange }) {
               <Switch checked={sharing.link.practice} onCheckedChange={(v) => setLinkPractice(score.id, v)} />
             </div>
             <div className="flex gap-2 border-t border-line-subtle pt-3">
-              <Button variant="outline" size="sm" className="flex-1" onClick={() => { regenerateLink(score.id); toast({ title: 'Link regenerated', description: 'The old link no longer works.' }); }}>
+              <Button intent="secondary" size="sm" className="flex-1" onClick={() => { regenerateLink(score.id); toast({ title: 'Link regenerated', description: 'The old link no longer works.' }); }}>
                 <RefreshCw className="mr-1.5 h-3.5 w-3.5" /> Regenerate
               </Button>
-              <Button variant="outline" size="sm" className="flex-1 text-danger hover:bg-danger/10 hover:text-danger" onClick={() => setConfirmDisable(true)}>
+              <Button intent="danger" size="sm" className="flex-1" onClick={() => setConfirmDisable(true)}>
                 <Ban className="mr-1.5 h-3.5 w-3.5" /> Disable
               </Button>
             </div>
           </div>
           <div className="flex justify-end">
-            <Button variant="outline" onClick={() => setLinkSettingsOpen(false)}>Done</Button>
+            <Button intent="secondary" onClick={() => setLinkSettingsOpen(false)}>Done</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -344,7 +344,7 @@ export default function SharingDialog({ score, open, onOpenChange }) {
             Free accounts include view-only sharing. Upgrade to Plus or Pro to invite collaborators who can edit fingering, dynamics, and annotations directly with you.
           </p>
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" onClick={() => setShowUpgradeModal(false)}>
+            <Button intent="secondary" onClick={() => setShowUpgradeModal(false)}>
               Maybe later
             </Button>
             <Button asChild onClick={() => setShowUpgradeModal(false)}>
@@ -362,8 +362,8 @@ export default function SharingDialog({ score, open, onOpenChange }) {
           <DialogHeader><DialogTitle>Disable link?</DialogTitle></DialogHeader>
           <p className="type-body-small text-ink-secondary">No one will be able to access this score via the link. You can turn it back on anytime.</p>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setConfirmDisable(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDisable}>Disable link</Button>
+            <Button intent="secondary" onClick={() => setConfirmDisable(false)}>Cancel</Button>
+            <Button intent="danger" onClick={handleDisable}>Disable link</Button>
           </div>
         </DialogContent>
       </Dialog>

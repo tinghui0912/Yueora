@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { helpArticles, helpCategories } from '@/lib/mockData';
 import PublicShell from '@/components/public/PublicShell';
 import AppPage from '@/components/patterns/AppPage';
+import { Surface } from '@/components/patterns/Surface';
 import ContactSupportDialog from '@/components/help/ContactSupportDialog';
 
 export default function Help() {
@@ -80,11 +81,11 @@ export default function Help() {
           )}
         </div>
 
-        <div className="mt-10 rounded-container border border-line-subtle bg-surface-panel p-5">
+        <Surface className="mt-10" padding="md">
           <h2 className="type-section-title font-medium text-ink-primary">Still need help?</h2>
           <p className="mt-0.5 type-body-small text-ink-secondary">Reach out and we’ll get back to you.</p>
           <Button className="mt-3" onClick={() => setSupportOpen(true)}><LifeBuoy className="mr-1.5" /> Contact support</Button>
-        </div>
+        </Surface>
       </AppPage>
 
       <ContactSupportDialog open={supportOpen} onOpenChange={setSupportOpen} />

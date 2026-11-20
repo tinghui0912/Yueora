@@ -5,6 +5,7 @@ import { getHelpArticle } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import PublicShell from '@/components/public/PublicShell';
 import AppPage from '@/components/patterns/AppPage';
+import { Surface } from '@/components/patterns/Surface';
 import ContactSupportDialog from '@/components/help/ContactSupportDialog';
 
 export default function HelpArticle() {
@@ -66,7 +67,7 @@ export default function HelpArticle() {
           </div>
         )}
 
-        <div className="mt-8 rounded-container border border-line-subtle bg-surface-panel p-5">
+        <Surface className="mt-8" padding="md">
           <p className="type-body-small font-medium text-ink-primary">Was this helpful?</p>
           <div className="mt-3 flex items-center gap-2">
             <Button intent={feedback === 'up' ? 'primary' : 'secondary'} size="sm" onClick={() => setFeedback('up')}><ThumbsUp className="mr-1.5" /> Yes</Button>
@@ -77,7 +78,7 @@ export default function HelpArticle() {
             <Button intent="secondary" size="sm" onClick={() => openContact()}><LifeBuoy className="mr-1.5" /> Contact support</Button>
             <Button intent="quiet" size="sm" onClick={() => openContact(`Problem report: ${article.title}`)}><Flag className="mr-1.5" /> Report a problem</Button>
           </div>
-        </div>
+        </Surface>
       </AppPage>
 
       <ContactSupportDialog

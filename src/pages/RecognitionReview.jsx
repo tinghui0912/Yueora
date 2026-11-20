@@ -78,7 +78,7 @@ export default function RecognitionReview() {
         <div className="hidden w-1/3 shrink-0 flex-col border-r border-line-subtle md:flex">
           <p className="border-b border-line-subtle px-4 py-2 type-caption text-ink-tertiary">Original scan</p>
           <div className="flex-1 overflow-auto bg-surface-canvas p-4">
-            <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-3 shadow-sm">
+            <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-3">
               <MockScanPage seed={importId + '-scan'} className="aspect-[3/4] w-full" showHighlight={!!active} highlightMeasure={active?.measure} />
               <p className="mt-2 text-center type-metadata text-ink-tertiary">Page 1 (scan)</p>
               {active && <p className="mt-1 text-center type-metadata text-warning">Highlight near measure {active.measure}</p>}
@@ -89,7 +89,7 @@ export default function RecognitionReview() {
         {/* Original scan — mobile */}
         {mobileView === 'original' && (
           <div className="flex-1 overflow-auto bg-surface-canvas p-4 md:hidden">
-            <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-3 shadow-sm">
+            <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-3">
               <MockScanPage seed={importId + '-scan'} className="aspect-[3/4] w-full" showHighlight={!!active} highlightMeasure={active?.measure} />
               <p className="mt-2 text-center type-metadata text-ink-tertiary">Page 1 (scan)</p>
               {active && <p className="mt-1 text-center type-metadata text-warning">Highlight near measure {active.measure}</p>}
@@ -101,7 +101,7 @@ export default function RecognitionReview() {
         {(mobileView === 'recognized' || typeof window !== 'undefined') && (
           <div className={`min-w-0 flex-1 overflow-auto bg-surface-canvas p-6 ${mobileView === 'original' ? 'hidden md:block' : ''}`}>
             <p className="mb-3 type-caption text-ink-tertiary">Recognized score</p>
-            <div className="mx-auto max-w-3xl rounded-md border border-line-subtle bg-surface-panel p-6 shadow-sm">
+            <div className="mx-auto max-w-3xl rounded-md border border-line-subtle bg-surface-panel p-6">
               <ScoreCanvas notes={notes} selectedIds={new Set()} onSelect={() => {}} zoom={1} activeIssueMeasure={active?.measure} />
               {active && (
                 <div className="mt-3 rounded-md border border-warning/40 bg-warning/10 px-3 py-2">
@@ -142,8 +142,8 @@ export default function RecognitionReview() {
           </div>
           {active && (
             <div className="mt-3 border-t border-line-subtle pt-3">
-              <Button variant="outline" size="sm" className="w-full" onClick={handleMarkFixed}>{active.resolved ? 'Mark as unresolved' : 'Mark as fixed'}</Button>
-              <Button variant="outline" size="sm" className="mt-2 w-full" onClick={() => navigate(`/score/${imp.scoreId}/edit`, { state: { importId, activeIssueId: active?.id } })}><Pencil className="mr-1.5 h-3.5 w-3.5" /> Fix in editor</Button>
+              <Button intent="secondary" size="sm" className="w-full" onClick={handleMarkFixed}>{active.resolved ? 'Mark as unresolved' : 'Mark as fixed'}</Button>
+              <Button intent="secondary" size="sm" className="mt-2 w-full" onClick={() => navigate(`/score/${imp.scoreId}/edit`, { state: { importId, activeIssueId: active?.id } })}><Pencil className="mr-1.5 h-3.5 w-3.5" /> Fix in editor</Button>
             </div>
           )}
         </SheetContent>

@@ -52,7 +52,7 @@ export default function Copyright() {
           <DialogFooter>
             {sent ? <Button onClick={() => setOpen(false)}>Done</Button> : (
               <>
-                <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                <Button intent="secondary" onClick={() => setOpen(false)}>Cancel</Button>
                 <Button onClick={() => setSent(true)}>Submit</Button>
               </>
             )}

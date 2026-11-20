@@ -130,7 +130,7 @@ export default function ContactSupportDialog({
             <Button onClick={handleClose}>Done</Button>
           ) : (
             <>
-              <Button variant="outline" onClick={handleClose}>
+              <Button intent="secondary" onClick={handleClose}>
                 Cancel
               </Button>
               <Button

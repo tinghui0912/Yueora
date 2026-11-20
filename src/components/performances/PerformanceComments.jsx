@@ -72,7 +72,7 @@ export default function PerformanceComments({ performance }) {
             <Textarea value={editDraft} onChange={(e) => setEditDraft(e.target.value)} rows={2} aria-label="Edit comment" />
             <div className="mt-2 flex gap-2">
               <Button size="sm" onClick={() => saveEdit(comment.id)}>Save</Button>
-              <Button size="sm" variant="ghost" onClick={() => { setEditingId(null); setEditDraft(''); }}>Cancel</Button>
+              <Button size="sm" intent="quiet" onClick={() => { setEditingId(null); setEditDraft(''); }}>Cancel</Button>
             </div>
           </div>
         ) : (
@@ -129,7 +129,7 @@ export default function PerformanceComments({ performance }) {
             />
             <div className="mt-2 flex gap-2">
               <Button size="sm" onClick={() => submitReply(comment.id)} disabled={!replyDraft.trim()}>Reply</Button>
-              <Button size="sm" variant="ghost" onClick={() => setReplyTo(null)}>Cancel</Button>
+              <Button size="sm" intent="quiet" onClick={() => setReplyTo(null)}>Cancel</Button>
             </div>
           </div>
         )}

@@ -63,19 +63,19 @@ export default function PublicMobileMenu({ open, onClose }) {
 
             <div className="pt-5 mt-2 flex flex-col gap-3">
               {isAuthenticated ? (
-                <Button asChild intent="primary" size="hero" className="w-full">
+                <Button asChild intent="primary" size="xl" className="w-full">
                   <Link to="/practice" onClick={onClose}>
                     Open Yueora
                   </Link>
                 </Button>
               ) : (
                 <>
-                  <Button asChild intent="primary" size="hero" className="w-full">
+                  <Button asChild intent="primary" size="xl" className="w-full">
                     <Link to="/register?returnTo=%2Fadd-score" onClick={onClose}>
                       Start playing
                     </Link>
                   </Button>
-                  <Button asChild intent="secondary" size="hero" className="w-full">
+                  <Button asChild intent="secondary" size="xl" className="w-full">
                     <Link to="/login" onClick={onClose}>
                       Log in
                     </Link>

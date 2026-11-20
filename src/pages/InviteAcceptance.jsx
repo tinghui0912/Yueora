@@ -82,21 +82,21 @@ export default function InviteAcceptance() {
                     <p className="type-body-small text-ink-secondary">This invitation was sent to <strong>{invitedEmail}</strong>, but you are signed in as <strong>{user?.email}</strong>. Switch accounts to accept it.</p>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => navigate(`/login?returnTo=/invite/${inviteToken}`)}>Switch account</Button>
-                    <Button variant="ghost" onClick={decline}>Decline</Button>
+                    <Button intent="secondary" onClick={() => navigate(`/login?returnTo=/invite/${inviteToken}`)}>Switch account</Button>
+                    <Button intent="quiet" onClick={decline}>Decline</Button>
                   </div>
                 </div>
               ) : (
-                <Button onClick={accept} className="mt-8 bg-brand px-6 text-white hover:bg-brand-hover"><CheckCircle2 className="mr-1.5 h-4 w-4" /> Accept invitation</Button>
+                <Button intent="primary" size="lg" onClick={accept} className="mt-8"><CheckCircle2 className="mr-1.5 h-4 w-4" /> Accept invitation</Button>
               )
             ) : (
               <div className="mt-8 flex flex-col items-center gap-3">
-                <Button onClick={() => navigate(`/login?returnTo=/invite/${inviteToken}`)} className="bg-brand px-6 text-white hover:bg-brand-hover"><LogIn className="mr-1.5 h-4 w-4" /> Continue to log in</Button>
+                <Button intent="primary" size="lg" onClick={() => navigate(`/login?returnTo=/invite/${inviteToken}`)}><LogIn className="mr-1.5 h-4 w-4" /> Continue to log in</Button>
                 <p className="type-body-small text-ink-secondary">You will return here to accept after logging in.</p>
                 <Link to={`/register?returnTo=/invite/${inviteToken}`} className="type-body-small font-medium text-brand hover:underline">Don't have an account? Sign up</Link>
               </div>
             )}
-            <Button variant="ghost" onClick={decline} className="mt-4 type-body-small text-ink-secondary hover:text-ink-primary">Decline invitation</Button>
+            <Button intent="quiet" size="sm" onClick={decline} className="mt-4">Decline invitation</Button>
           </>
         )}
 
@@ -104,8 +104,8 @@ export default function InviteAcceptance() {
           <>
             <StateMessage tone="warning" icon={UserX} title="This invitation is not for this account" description={`It was sent to ${invitedEmail}. Sign in with that email to accept.`} />
             <div className="mt-6 flex gap-2">
-              <Button variant="outline" onClick={() => navigate('/login')}>Switch account</Button>
-              <Button variant="ghost" onClick={decline}>Decline</Button>
+              <Button intent="secondary" onClick={() => navigate('/login')}>Switch account</Button>
+              <Button intent="quiet" onClick={decline}>Decline</Button>
             </div>
           </>
         )}
@@ -114,13 +114,13 @@ export default function InviteAcceptance() {
         {status === 'declined' && (
           <>
             <StateMessage tone="neutral" icon={Ban} title="Invitation declined" description="You declined this invitation. It will not appear again." />
-            <Button variant="outline" onClick={() => navigate('/')} className="mt-6">Back to home</Button>
+            <Button intent="secondary" onClick={() => navigate('/')} className="mt-6">Back to home</Button>
           </>
         )}
         {status === 'already_accepted' && (
           <div className="flex flex-col items-center gap-4">
             <StateMessage tone="success" icon={CheckCircle2} title="You already accepted this" description="This score is in your library under Shared with me." />
-            <Button variant="outline" onClick={() => navigate('/library?view=shared')}>Go to Shared with me</Button>
+            <Button intent="secondary" onClick={() => navigate('/library?view=shared')}>Go to Shared with me</Button>
           </div>
         )}
       </div>

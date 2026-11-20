@@ -4,6 +4,7 @@ import { ArrowLeft, FileMusic, RefreshCw, AlertTriangle, CheckCircle2, Pencil, A
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { Button } from '@/components/ui/button';
 import AppPage from '@/components/patterns/AppPage';
+import { Surface } from '@/components/patterns/Surface';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -63,7 +64,7 @@ export default function ImportDetail() {
       </div>
 
       {/* Progress / status */}
-      <div className="mt-6 rounded-container border border-line-subtle bg-surface-panel p-5">
+      <Surface className="mt-6" padding="md">
         {imp.status === 'processing' && (
           <>
             <div className="mb-1 flex justify-between type-body-small"><span className="text-ink-secondary">Recognizing notation…</span><span>{imp.progress}%</span></div>
@@ -92,7 +93,7 @@ export default function ImportDetail() {
             <p className="type-body-small text-ink-secondary">Recognition complete. Your score is ready.</p>
           </div>
         )}
-      </div>
+      </Surface>
 
       {/* Source files */}
       <div className="mt-6">
@@ -110,13 +111,13 @@ export default function ImportDetail() {
 
       {/* Resulting score */}
       {imp.status === 'completed' && imp.scoreId && (
-        <div className="mt-6 rounded-container border border-line-subtle bg-surface-panel p-5">
+        <Surface className="mt-6" padding="md">
           <p className="type-caption text-ink-tertiary">Resulting score</p>
           <Link to={`/score/${imp.scoreId}`} className="mt-2 flex items-center justify-between rounded-control p-2 hover:bg-neutral-hover transition-colors">
             <span className="type-body-small font-medium text-ink-primary">{imp.title}</span>
             <span className="flex items-center gap-1 type-body-small text-brand">Open score <ArrowRight className="h-4 w-4" /></span>
           </Link>
-        </div>
+        </Surface>
       )}
 
       {/* Actions */}
@@ -151,7 +152,7 @@ export default function ImportDetail() {
             <p className="mt-2 type-caption text-ink-secondary">Drop a file here, or click to browse</p>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setReplaceOpen(false)}>Cancel</Button>
+            <Button intent="secondary" onClick={() => setReplaceOpen(false)}>Cancel</Button>
             <Button onClick={handleReplace}>Replace and restart</Button>
           </DialogFooter>
         </DialogContent>
@@ -163,8 +164,8 @@ export default function ImportDetail() {
           <DialogHeader><DialogTitle>Remove from import history?</DialogTitle></DialogHeader>
           <p className="type-body-small text-ink-secondary">This removes the import record only. The score in your library will not be deleted.</p>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRemoveOpen(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleRemove}>Remove</Button>
+            <Button intent="secondary" onClick={() => setRemoveOpen(false)}>Cancel</Button>
+            <Button intent="danger" onClick={handleRemove}>Remove</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -182,13 +182,13 @@ export default function Landing() {
               transition={{ duration: 0.7, delay: 0.4 }}
               className="mt-10 flex flex-col sm:flex-row gap-4"
             >
-              <Button asChild intent="primary" size="hero">
+              <Button asChild intent="primary" size="xl">
                 <Link to={primaryPlayDestination}>
                   <span>Start playing</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
-              <Button asChild intent="secondary" size="hero">
+              <Button asChild intent="secondary" size="xl">
                 <a href="#lifecycle">
                   <span>See the lifecycle</span>
                   <ArrowDown className="w-4 h-4 text-ink-tertiary" />
@@ -221,11 +221,11 @@ export default function Landing() {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full max-w-[300px] sm:max-w-[380px] lg:max-w-[390px] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.25)] border border-line-subtle/80 bg-surface-panel p-2 sm:p-3"
+              className="relative w-full max-w-[300px] sm:max-w-[380px] lg:max-w-[390px] rounded-container overflow-hidden shadow-overlay border border-line-subtle/80 bg-surface-panel p-2 sm:p-3"
             >
               <HeroProductVisual />
               <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
-                <span className="px-3.5 py-1.5 rounded-full bg-white/90 text-ink-primary type-eyebrow backdrop-blur border border-line-subtle shadow-sm">
+                <span className="px-3.5 py-1.5 rounded-full bg-white/90 text-ink-primary type-eyebrow backdrop-blur border border-line-subtle">
                   Clair de Lune
                 </span>
                 <span className="type-metadata font-medium font-serif italic text-ink-secondary">Debussy</span>
@@ -327,7 +327,7 @@ export default function Landing() {
                     onClick={() => setActiveStep(idx)}
                     className={`w-full text-left rounded-2xl p-5 transition-all duration-300 ${
                       isActive
-                        ? 'bg-surface-panel border border-line-subtle shadow-[0_20px_40px_-20px_rgba(0,0,0,0.12)]'
+                        ? 'bg-surface-panel border border-line-subtle'
                         : 'border border-transparent hover:bg-neutral-hover'
                     }`}
                   >
@@ -357,7 +357,7 @@ export default function Landing() {
 
             {/* Dynamic Stage Preview Visual — 7 columns */}
             <div className="lg:col-span-7">
-              <div className="rounded-[2.5rem] border border-line-subtle bg-surface-panel p-6 sm:p-8 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.15)]">
+              <div className="rounded-container border border-line-subtle bg-surface-panel p-6 sm:p-8">
                 {activeStep === 0 && (
                   <div>
                     <div className="flex items-center justify-between border-b border-line-subtle pb-4">
@@ -435,7 +435,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left 5 Columns — Visual */}
           <Reveal className="lg:col-span-5" y={36}>
-            <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.25)] border border-line-subtle bg-surface-panel p-4">
+            <div className="relative aspect-[4/5] rounded-container overflow-hidden shadow-overlay border border-line-subtle bg-surface-panel p-4">
               <PracticeWorkspaceVisual />
             </div>
           </Reveal>
@@ -514,7 +514,7 @@ export default function Landing() {
           {/* 3-Column Work Showcase Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             <Reveal delay={0}>
-              <div className="group rounded-[2rem] border border-line-subtle bg-surface-panel p-6 transition-all duration-500 hover:-translate-y-1 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.15)]">
+              <div className="group rounded-container border border-line-subtle bg-surface-panel p-6 transition-all duration-300 hover:border-line-strong hover:-translate-y-1">
                 <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-line-subtle bg-surface-canvas/50">
                   <ScorePreview id="rep-clair" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
                 </div>
@@ -531,7 +531,7 @@ export default function Landing() {
             </Reveal>
 
             <Reveal delay={0.08}>
-              <div className="group rounded-[2rem] border border-line-subtle bg-surface-panel p-6 transition-all duration-500 hover:-translate-y-1 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.15)]">
+              <div className="group rounded-container border border-line-subtle bg-surface-panel p-6 transition-all duration-300 hover:border-line-strong hover:-translate-y-1">
                 <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-line-subtle bg-surface-canvas/50">
                   <ScorePreview id="rep-gymno" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
                 </div>
@@ -548,7 +548,7 @@ export default function Landing() {
             </Reveal>
 
             <Reveal delay={0.16}>
-              <div className="group rounded-[2rem] border border-line-subtle bg-surface-panel p-6 transition-all duration-500 hover:-translate-y-1 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.15)]">
+              <div className="group rounded-container border border-line-subtle bg-surface-panel p-6 transition-all duration-300 hover:border-line-strong hover:-translate-y-1">
                 <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-line-subtle bg-surface-canvas/50 flex items-center justify-center">
                   <div className="text-center p-6">
                     <ScoreSheetGlyph className="h-8 w-8 text-ink-primary mx-auto mb-3" />
@@ -594,14 +594,14 @@ export default function Landing() {
 
           <div className="grid gap-8 lg:grid-cols-2 min-w-0">
             <Reveal delay={0.05} className="min-w-0">
-              <div className="rounded-[2rem] border border-line-subtle bg-surface-panel p-3 sm:p-8 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.15)] min-w-0 overflow-hidden">
+              <div className="rounded-container border border-line-subtle bg-surface-panel p-3 sm:p-8 min-w-0 overflow-hidden">
                 <p className="type-eyebrow text-ink-tertiary mb-4">Reflective Immersion</p>
                 <ProgressVisual />
               </div>
             </Reveal>
 
             <Reveal delay={0.1} className="min-w-0">
-              <div className="rounded-[2rem] border border-line-subtle bg-surface-panel p-3 sm:p-8 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.15)] min-w-0 overflow-hidden">
+              <div className="rounded-container border border-line-subtle bg-surface-panel p-3 sm:p-8 min-w-0 overflow-hidden">
                 <p className="type-eyebrow text-ink-tertiary mb-4">Intimate Sharing Door</p>
                 <SharingVisual />
               </div>
@@ -630,7 +630,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl">
             {/* Free Plan (White Panel) */}
             <Reveal delay={0.05}>
-              <div className="h-full rounded-[2rem] p-8 md:p-9 flex flex-col justify-between bg-surface-panel border border-line-subtle hover:border-line-strong transition-all duration-300">
+              <div className="h-full rounded-container p-8 md:p-9 flex flex-col justify-between bg-surface-panel border border-line-subtle hover:border-line-strong transition-all duration-300">
                 <div>
                   <span className="type-eyebrow text-ink-tertiary">
                     Starter
@@ -666,7 +666,7 @@ export default function Landing() {
                 </div>
 
                 <div className="mt-10">
-                  <Button asChild intent="secondary" size="hero" className="w-full rounded-full">
+                  <Button asChild intent="secondary" size="xl" className="w-full">
                     <Link to={freeDestination}>Get Started Free</Link>
                   </Button>
                 </div>
@@ -675,7 +675,7 @@ export default function Landing() {
 
             {/* Plus Plan — Featured Middle Inverse Dark Card (Most Popular) */}
             <Reveal delay={0.1}>
-              <div className="h-full rounded-[2rem] p-8 md:p-9 flex flex-col justify-between bg-ink-primary text-surface-canvas border border-ink-primary shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] transition-all duration-300 hover:-translate-y-1">
+              <div className="h-full rounded-container p-8 md:p-9 flex flex-col justify-between bg-ink-primary text-surface-canvas border border-ink-primary shadow-overlay transition-all duration-300 hover:-translate-y-1">
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="type-eyebrow text-surface-canvas/60">
@@ -716,7 +716,7 @@ export default function Landing() {
                 </div>
 
                 <div className="mt-10">
-                  <Button asChild size="hero" className="w-full bg-surface-canvas text-ink-primary hover:bg-white font-semibold rounded-full">
+                  <Button asChild intent="inverse" size="xl" className="w-full">
                     <Link to={plusDestination}>Start Plus</Link>
                   </Button>
                 </div>
@@ -725,7 +725,7 @@ export default function Landing() {
 
             {/* Pro Plan — Highest Capability Tier (White Panel) */}
             <Reveal delay={0.15}>
-              <div className="h-full rounded-[2rem] p-8 md:p-9 flex flex-col justify-between bg-surface-panel border border-line-subtle hover:border-line-strong transition-all duration-300">
+              <div className="h-full rounded-container p-8 md:p-9 flex flex-col justify-between bg-surface-panel border border-line-subtle hover:border-line-strong transition-all duration-300">
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="type-eyebrow text-ink-tertiary">
@@ -766,7 +766,7 @@ export default function Landing() {
                 </div>
 
                 <div className="mt-10">
-                  <Button asChild intent="primary" size="hero" className="w-full rounded-full">
+                  <Button asChild intent="primary" size="xl" className="w-full">
                     <Link to={proDestination}>Start Pro</Link>
                   </Button>
                 </div>
@@ -811,7 +811,7 @@ export default function Landing() {
       {/* 9. FINAL INVERSE CONVERSION BLOCK — UGC ContactCTA Parity */}
       <section className="py-24 md:py-36">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
-          <div className="rounded-[2.5rem] bg-ink-primary text-surface-canvas overflow-hidden relative shadow-[0_40px_80px_-20px_rgba(0,0,0,0.35)]">
+          <div className="rounded-container bg-ink-primary text-surface-canvas overflow-hidden relative shadow-overlay">
             {/* ambient oversized word */}
             <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
               {/* ds-allow: ambient oversized background wordmark */}
@@ -852,7 +852,7 @@ export default function Landing() {
                       Upload your first score in under two minutes.
                     </p>
                     <div className="mt-8 flex flex-col gap-3">
-                      <Button asChild size="hero" className="w-full bg-surface-canvas text-ink-primary hover:bg-white font-semibold rounded-full">
+                      <Button asChild intent="inverse" size="xl" className="w-full">
                         <Link to={primaryPlayDestination}>
                           <span>Start playing</span>
                           <ArrowRight className="h-4 w-4" />

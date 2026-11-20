@@ -7,6 +7,7 @@ import { Field } from '@/components/ui/field';
 import { NativeSelect } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { usePrototypeStore } from '@/stores/prototypeStore';
+import { Surface } from '@/components/patterns/Surface';
 import SettingsSection from '@/components/patterns/SettingsSection';
 import { checkoutPath, formatPrice, intervalLabel, intervalNoun, PLAN_ORDER, yearlySavingPercent } from '@/lib/commercial';
 import { getStorageUsageState, parseStorageToBytes } from '@/lib/commercialEntitlements';
@@ -105,7 +106,7 @@ export default function PlanSettings() {
           ? (isCancelling ? `${currentPlan.name} until ${subscription.cancelAt}, then Free.` : `You're on ${currentPlan.name}. Thanks for being on Yueora.`)
           : "You're on the Free plan."}
       >
-        <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
+        <Surface padding="md">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="type-subsection font-medium text-ink-primary">{currentPlan.name}</p>
@@ -118,8 +119,8 @@ export default function PlanSettings() {
             <div className="flex flex-wrap gap-2">
               {isPaid && !isCancelling ? (
                 <>
-                  <Button variant="outline" size="sm" onClick={() => setDialog('downgrade')}>Downgrade</Button>
-                  <Button variant="outline" size="sm" onClick={() => setDialog('cancel')}>Cancel subscription</Button>
+                  <Button intent="secondary" size="sm" onClick={() => setDialog('downgrade')}>Downgrade</Button>
+                  <Button intent="secondary" size="sm" onClick={() => setDialog('cancel')}>Cancel subscription</Button>
                 </>
               ) : isPaid && isCancelling ? (
                 <Button size="sm" onClick={() => { resumeSubscription(); setDone('resume'); setTimeout(() => setDone(null), 2500); }}>
@@ -135,7 +136,7 @@ export default function PlanSettings() {
             <li>{currentPlan.storage} of storage</li>
             <li>{currentPlan.sharing} sharing</li>
           </ul>
-        </div>
+        </Surface>
 
         {isPaid && isCancelling && (
           <div className="mt-3 flex items-start gap-2 rounded-container border border-line-subtle bg-surface-panel p-3 type-body-small text-ink-secondary">
@@ -232,7 +233,7 @@ export default function PlanSettings() {
 
       {/* 4. Payment Method */}
       <SettingsSection title="Payment method" desc={`How you pay for ${isPaid ? currentPlan.name : 'your subscription'}.`}>
-        <div className="rounded-container border border-line-subtle bg-surface-panel p-4 flex flex-wrap items-center justify-between gap-3">
+        <Surface padding="md" className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 items-center justify-center rounded-control bg-neutral-muted text-ink-primary shrink-0">
               <CreditCard className="icon-sm" />
@@ -246,10 +247,10 @@ export default function PlanSettings() {
               </p>
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={() => setEditCardOpen(true)}>
+          <Button intent="secondary" size="sm" onClick={() => setEditCardOpen(true)}>
             Change payment method
           </Button>
-        </div>
+        </Surface>
       </SettingsSection>
 
       {/* 5. Billing History */}
@@ -270,7 +271,7 @@ export default function PlanSettings() {
                       </span>
                     </p>
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => setSelectedReceipt(b)}>
+                  <Button intent="secondary" size="sm" onClick={() => setSelectedReceipt(b)}>
                     <Receipt className="mr-1.5 icon-xs" /> View receipt
                   </Button>
                 </div>
@@ -292,8 +293,8 @@ export default function PlanSettings() {
               : `Your ${currentPlan.name} plan will end at the next renewal. You can resume anytime.`}
           </p>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialog(null)}>Keep {currentPlan.name}</Button>
-            <Button variant={dialog === 'cancel' ? 'destructive' : 'default'} onClick={confirm}>Confirm</Button>
+            <Button intent="secondary" onClick={() => setDialog(null)}>Keep {currentPlan.name}</Button>
+            <Button intent={dialog === 'cancel' ? 'danger' : 'primary'} onClick={confirm}>Confirm</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -366,7 +367,7 @@ export default function PlanSettings() {
               </NativeSelect>
             </Field>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setEditCardOpen(false)}>Cancel</Button>
+              <Button type="button" intent="secondary" onClick={() => setEditCardOpen(false)}>Cancel</Button>
               <Button type="submit">Save card</Button>
             </DialogFooter>
           </form>
@@ -438,10 +439,10 @@ export default function PlanSettings() {
               </div>
 
               <div className="flex justify-between items-center pt-1">
-                <Button variant="outline" size="sm" onClick={() => window.print()}>
+                <Button intent="secondary" size="sm" onClick={() => window.print()}>
                   <Printer className="mr-1.5 icon-xs" /> Print receipt
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => setSelectedReceipt(null)}>
+                <Button intent="secondary" size="sm" onClick={() => setSelectedReceipt(null)}>
                   Close
                 </Button>
               </div>

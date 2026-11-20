@@ -59,7 +59,7 @@ export default function ImportDropzone({ onImport }) {
             <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-secondary" />
             <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="Paste a PDF or MusicXML URL" className="pl-9" />
           </div>
-          <Button type="submit" variant="outline">Import</Button>
+          <Button type="submit" intent="secondary">Import</Button>
         </form>
       </div>
 

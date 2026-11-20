@@ -145,15 +145,15 @@ export default function PerformanceDetail() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" onClick={() => setVideoOpen(true)}>
+          <Button intent="secondary" onClick={() => setVideoOpen(true)}>
             <Wand2 className="mr-1.5 h-4 w-4" /> Make share video
           </Button>
           {canDownload ? (
-            <Button variant="outline" onClick={download}>
+            <Button intent="secondary" onClick={download}>
               <Download className="mr-1.5 h-4 w-4" /> Download recording
             </Button>
           ) : (
-            <Button variant="outline" onClick={() => setDownloadUpgradeModal(true)}>
+            <Button intent="secondary" onClick={() => setDownloadUpgradeModal(true)}>
               <Lock className="mr-1.5 h-3.5 w-3.5 text-ink-tertiary" /> Download recording · Pro
             </Button>
           )}
@@ -252,9 +252,9 @@ export default function PerformanceDetail() {
             {performance.scoreTitleSnapshot} — the recording is removed from Performances. Your practice history stays.
           </p>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmDelete(false)}>Cancel</Button>
+            <Button intent="secondary" onClick={() => setConfirmDelete(false)}>Cancel</Button>
             <Button
-              variant="destructive"
+              intent="danger"
               onClick={() => { deletePerformance(performance.id); setConfirmDelete(false); navigate('/performances'); }}
             >
               Delete
@@ -272,7 +272,7 @@ export default function PerformanceDetail() {
             Recording downloads are included with Pro. Upgrade to Pro to export original audio and video files at full fidelity, along with unlimited repertoire and 10 GB storage.
           </p>
           <DialogFooter className="mt-2">
-            <Button variant="outline" onClick={() => setDownloadUpgradeModal(false)}>
+            <Button intent="secondary" onClick={() => setDownloadUpgradeModal(false)}>
               Not now
             </Button>
             <Button asChild onClick={() => setDownloadUpgradeModal(false)}>

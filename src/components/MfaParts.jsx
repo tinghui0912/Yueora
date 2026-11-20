@@ -133,8 +133,8 @@ function DialCodePicker({ value, onChange }) {
   return (
     <Popover open={open} onOpenChange={handleOpenChange} modal>
       <PopoverTrigger asChild>
-        <Button type="button" variant="outline" role="combobox" aria-expanded={open} aria-label="Country code"
-          className="h-10 w-[100px] justify-between px-2.5 font-normal shadow-none">
+        <Button type="button" intent="secondary" size="lg" role="combobox" aria-expanded={open} aria-label="Country code"
+          className="w-[100px] justify-between">
           {value}
           <ChevronsUpDown className="ml-1 h-3.5 w-3.5 shrink-0 opacity-50" aria-hidden="true" />
         </Button>
@@ -192,7 +192,7 @@ export function CopyKeyButton({ text, wide = false }) {
   };
   if (wide) {
     return (
-      <Button type="button" variant="outline" className="w-full h-11" onClick={copy}>
+      <Button type="button" intent="secondary" size="lg" className="w-full" onClick={copy}>
         {copied ? "Copied" : "Copy key"}
       </Button>
     );

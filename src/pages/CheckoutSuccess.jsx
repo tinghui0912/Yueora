@@ -31,7 +31,7 @@ export default function CheckoutSuccess() {
         icon={AlertCircle}
         title="No completed checkout"
         description="This page confirms a subscription you completed. Nothing has been purchased yet and your plan is unchanged."
-        secondaryAction={<Button variant="outline" asChild><Link to="/settings/plan">View Plan &amp; billing</Link></Button>}
+        secondaryAction={<Button intent="secondary" asChild><Link to="/settings/plan">View Plan &amp; billing</Link></Button>}
         primaryAction={<Button asChild><Link to="/pricing">Back to pricing</Link></Button>}
       />
     );
@@ -68,7 +68,7 @@ export default function CheckoutSuccess() {
         <Button asChild>
           <Link to="/practice">Start playing</Link>
         </Button>
-        <Button variant="outline" asChild>
+        <Button intent="secondary" asChild>
           <Link to="/settings/plan">View plan &amp; billing</Link>
         </Button>
       </div>

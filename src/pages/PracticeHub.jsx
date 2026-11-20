@@ -4,6 +4,7 @@ import { usePrototypeStore } from '@/stores/prototypeStore';
 import { practiceWeek } from '@/lib/practiceStats';
 import ScorePreview from '@/components/library/ScorePreview';
 import AppPage from '@/components/patterns/AppPage';
+import { Surface } from '@/components/patterns/Surface';
 import { Button } from '@/components/ui/button';
 import { PracticeGlyph } from '@/components/brand/MusicalGlyphs';
 
@@ -195,21 +196,21 @@ export default function PracticeHub() {
           This Week in Music
         </p>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
+          <Surface padding="md">
             <p className="type-metric text-ink-primary">
               {thisWeekMinutes} <span className="type-body-small font-normal text-ink-secondary">min</span>
             </p>
             <p className="type-metadata text-ink-secondary mt-1">across {thisWeekSessions} calm sessions</p>
-          </div>
+          </Surface>
 
-          <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
+          <Surface padding="md">
             <p className="type-metric text-ink-primary">
               {thisWeekPieces}
             </p>
             <p className="type-metadata text-ink-secondary mt-1">pieces brought to life</p>
-          </div>
+          </Surface>
 
-          <div className="flex flex-col justify-between rounded-container border border-line-subtle bg-surface-panel p-4">
+          <Surface padding="md" className="flex flex-col justify-between">
             <div className="flex justify-between items-center pt-1">
               {week.days.map((d, i) => (
                 <div key={d.key} className="flex flex-col items-center gap-1.5">
@@ -223,7 +224,7 @@ export default function PracticeHub() {
             <p className="type-metadata text-ink-secondary mt-2">
               {thisWeekMarks.filter(Boolean).length} days of music
             </p>
-          </div>
+          </Surface>
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3">

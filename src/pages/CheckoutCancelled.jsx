@@ -14,7 +14,7 @@ export default function CheckoutCancelled() {
         icon={Info}
         title="Checkout cancelled"
         description="No payment was made and your subscription has not changed."
-        secondaryAction={<Button variant="outline" asChild><Link to="/settings/plan">Plan &amp; billing</Link></Button>}
+        secondaryAction={<Button intent="secondary" asChild><Link to="/settings/plan">Plan &amp; billing</Link></Button>}
         primaryAction={<Button asChild><Link to="/pricing">Return to Pricing</Link></Button>}
       />
       <p className="mx-auto max-w-md text-center type-metadata text-ink-tertiary">

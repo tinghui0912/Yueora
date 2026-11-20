@@ -22,7 +22,7 @@ export default function About() {
           <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left 5 Columns: Framed Real Domain Score Preview */}
             <Reveal className="lg:col-span-5" y={36}>
-              <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.25)] border border-line-subtle bg-surface-panel p-6 sm:p-8 flex flex-col justify-between select-none">
+              <div className="relative aspect-[4/5] rounded-container overflow-hidden shadow-overlay border border-line-subtle bg-surface-panel p-6 sm:p-8 flex flex-col justify-between select-none">
                 {/* Score Header */}
                 <div className="border-b border-line-subtle pb-4">
                   <div className="flex items-center justify-between type-eyebrow text-ink-tertiary">
@@ -283,7 +283,7 @@ export default function About() {
         <section className="py-24 md:py-36">
           <div className="max-w-7xl mx-auto px-6 md:px-10">
             <Reveal y={36}>
-              <div className="relative rounded-[2.5rem] bg-ink-primary text-surface-canvas p-10 md:p-16 lg:p-20 overflow-hidden shadow-[0_40px_80px_-30px_rgba(0,0,0,0.35)]">
+              <div className="relative rounded-container bg-ink-primary text-surface-canvas p-10 md:p-16 lg:p-20 overflow-hidden shadow-overlay">
                 {/* Ambient watermark */}
                 <div aria-hidden className="pointer-events-none absolute -bottom-10 -right-8 select-none">
                   {/* ds-allow: ambient oversized background typography */}
@@ -312,8 +312,9 @@ export default function About() {
                   <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4">
                     <Button
                       asChild
-                      size="hero"
-                      className="w-full bg-surface-canvas text-ink-primary hover:bg-surface-canvas/90 font-medium rounded-full flex items-center justify-center gap-2"
+                      intent="inverse"
+                      size="xl"
+                      className="w-full flex items-center justify-center gap-2"
                     >
                       <Link to={ctaDestination}>
                         <span>Start playing free</span>
@@ -323,9 +324,9 @@ export default function About() {
                     {!isAuthenticated && (
                       <Button
                         asChild
-                        variant="outline"
-                        size="hero"
-                        className="w-full border-surface-canvas/20 text-surface-canvas hover:bg-surface-canvas/10 rounded-full"
+                        intent="inverse-secondary"
+                        size="xl"
+                        className="w-full"
                       >
                         <Link to="/login">Sign into your repertoire</Link>
                       </Button>

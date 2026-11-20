@@ -75,13 +75,13 @@ export default function PrivacySettings() {
         {exported ? (
           <p className="type-body-small text-brand">Export ready — we've saved a copy to your downloads.</p>
         ) : (
-          <Button variant="outline" onClick={exportData} disabled={exporting}>{exporting ? 'Preparing export…' : 'Export my data'}</Button>
+          <Button intent="secondary" onClick={exportData} disabled={exporting}>{exporting ? 'Preparing export…' : 'Export my data'}</Button>
         )}
       </SettingsSection>
 
       <SettingsSection title="Delete account" desc="Permanently delete your account, scores, and practice history.">
         <p className="type-body-small text-ink-secondary">This can't be undone. If you just want a break, you can sign out instead.</p>
-        <Button variant="outline" className="mt-3 text-danger hover:text-danger hover:bg-danger/10" onClick={() => setDeleteOpen(true)}>Delete account</Button>
+        <Button intent="danger" size="md" className="mt-3" onClick={() => setDeleteOpen(true)}>Delete account</Button>
       </SettingsSection>
 
       <Dialog open={deleteOpen} onOpenChange={(o) => { if (!o && deleteState !== 'scheduled') setDeleteOpen(false); }}>
@@ -101,8 +101,8 @@ export default function PrivacySettings() {
               <p className="type-body-small text-ink-secondary">This permanently deletes your scores, practice history, and account. To confirm, type <strong>DELETE</strong> below.</p>
               <Input value={confirmText} onChange={(e) => setConfirmText(e.target.value)} placeholder="DELETE" className="mt-3" disabled={deleteState === 'processing'} />
               <DialogFooter>
-                <Button variant="outline" onClick={() => setDeleteOpen(false)} disabled={deleteState === 'processing'}>Cancel</Button>
-                <Button variant="destructive" onClick={doDelete} disabled={confirmText !== 'DELETE' || deleteState === 'processing'}>
+                <Button intent="secondary" onClick={() => setDeleteOpen(false)} disabled={deleteState === 'processing'}>Cancel</Button>
+                <Button intent="danger" onClick={doDelete} disabled={confirmText !== 'DELETE' || deleteState === 'processing'}>
                   {deleteState === 'processing' ? <><Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> Processing…</> : 'Delete account'}
                 </Button>
               </DialogFooter>

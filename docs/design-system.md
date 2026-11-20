@@ -210,8 +210,9 @@ One visual decision has one owner. All interactive controls, inputs, and icon el
   - Overlay radius: `--radius-overlay: 1rem` (`16px`) for popovers, menus.
   - Button geometry: pill buttons (`rounded-full`), circular icon buttons (`rounded-full`).
   - Badge geometry: pill badges (`rounded-full`).
-- **Flat Controls:** Ordinary controls are flat (no `shadow-xs` on buttons, inputs, checkboxes).
-- **Media-Driven Elevation:** Shadows are strictly reserved for elevated overlays (`shadow-raised` / `shadow-overlay` on menus, popovers, modal dialogs) and floating media artwork.
+  - **Zero Arbitrary Radii:** Arbitrary radius utilities (`rounded-[...]`) are banned across all application pages. Pages must strictly use semantic radii.
+- **Flat Controls & Flat Content Panels:** Ordinary controls and standard content panels are flat by default (no `shadow-xs` on buttons, inputs, checkboxes, or static panels). Repetitive panel patterns (`rounded-container border border-line-subtle bg-surface-panel`) should compose `<Surface padding="...">`.
+- **Media-Driven Elevation:** Shadows are strictly reserved for elevated overlays (`shadow-raised` / `shadow-overlay` on menus, popovers, modal dialogs) and floating media artwork. Arbitrary shadows (`shadow-[...]`) and generic Tailwind shadows (`shadow-sm`, `shadow-md`, etc.) are banned in page code.
 
 ---
 
@@ -233,13 +234,23 @@ Pages compose using `<AppPage size="...">` rather than arbitrary `max-w-*` strin
 
 ### 4.1 Button
 
-Yueora defines a strict boundary between the **Canonical Product API** and the **Legacy Compatibility API**:
+Yueora enforces a contracted, single-owner Button API. **Pages compose; Button completely owns appearance.**
 
 #### Canonical Yueora Button API
 - **Geometry:** Pill buttons (`rounded-full`). Planar (no `shadow-xs`).
-- **Intents:** `primary` (near-black `#121212` CTA), `secondary` (planar white panel with subtle line), `quiet` (subtle action), `danger` (terracotta alert), `subtle` (neutral muted action), `link` (inline text action).
-- **Sizes:** `xs` (`28px`), `sm` (`32px`), `md` (`36px`, default), `lg` (`40px`), `xl` (`44px`), and `hero` (`52px`).
+- **Single Prop Contract:** Button exposes a single semantic prop: `intent`. The legacy `variant` prop and legacy aliases (`default`, `outline`, `ghost`, `destructive`) are permanently retired and banned in CI.
+- **Intents:**
+  - `primary`: Near-black (`#121212`) identity CTA with white text.
+  - `secondary`: Planar white panel (`bg-surface-panel`) with subtle line (`border-line-subtle`).
+  - `quiet`: Subtle action with neutral hover (`hover:bg-neutral-hover`).
+  - `danger`: Terracotta alert action for destructive confirmation (`bg-danger text-white`).
+  - `subtle`: Neutral muted action (`bg-neutral-muted`).
+  - `link`: Inline text action with underline hover.
+  - `inverse`: High-contrast ivory pill action (`bg-surface-canvas text-ink-primary`) for dark editorial surfaces.
+  - `inverse-secondary`: High-contrast transparent outlined pill (`border border-surface-canvas/30 text-surface-canvas`) for dark surfaces.
+- **Sizes (5 Canonical Tiers):** `xs` (`28px`), `sm` (`32px`), `md` (`36px`, default), `lg` (`40px`), `xl` (`44px`). Legacy `hero` (`52px`) and `default` sizes are retired; button sizes map 1:1 with the canonical control tokens `--control-height-xs..xl`.
 - **Icon-Only Actions:** Dedicated primitive `<IconButton>` is used for all icon-only triggers.
+- **Appearance Ownership:** Pages compose buttons via `intent` and `size`. Pages MUST NOT override button colors, borders, shadows, or radii in `className`.
 
 | Size Key | Height Token | Typography Token | Icon Token | Usage |
 | :--- | :--- | :--- | :--- | :--- |
@@ -247,8 +258,7 @@ Yueora defines a strict boundary between the **Canonical Product API** and the *
 | `sm` | `h-control-sm` (`32px`) | `.type-body-small font-medium` | `icon-sm` (`16px`) | Compact secondary actions |
 | `md` | `h-control-md` (`36px`) | `.type-body-small font-medium` | `icon-sm` (`16px`) | Standard buttons, dialog actions |
 | `lg` | `h-control-lg` (`40px`) | `.type-body-small font-semibold`| `icon-md` (`18px`) | Large buttons, public header CTA |
-| `xl` | `h-control-xl` (`44px`) | `.type-body-small font-semibold`| `icon-md` (`18px`) | Stand buttons, large dialog actions |
-| `hero` | `h-[3.25rem]` (`52px`) | `text-sm font-medium tracking-wide` | `icon-md` (`18px`) | Major marketing/landing hero CTAs |
+| `xl` | `h-control-xl` (`44px`) | `.type-body-small font-semibold`| `icon-md` (`18px`) | Stand buttons, prominent hero actions |
 
 ```jsx
 import { Button } from '@/components/ui/button';
@@ -264,12 +274,10 @@ import { Button } from '@/components/ui/button';
 
 // Destructive action
 <Button intent="danger" size="md">Delete forever</Button>
-```
 
-#### Legacy Compatibility API (Existing Consumers + Excluded UI)
-Existing compatibility aliases retained for legacy product consumers and excluded / third-party UI scaffolding:
-- `variant`: `default`, `destructive`, `outline`, `ghost`
-- `size`: `default` (resolves to `md`)
+// High-contrast action on dark editorial cards
+<Button intent="inverse" size="xl">Start playing</Button>
+```
 
 ### 4.2 IconButton
 

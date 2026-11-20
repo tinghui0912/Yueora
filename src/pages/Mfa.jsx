@@ -111,13 +111,13 @@ function ConfirmIdentity({ returnTo, onChallenge, onManage, initialError }) {
       {options && (
         <div className="space-y-4">
           {providers.map((provider) => (
-            <Button key={provider.id} variant="outline" className="w-full h-12 type-body-small font-medium" onClick={() => withProvider(provider.id)}>
+            <Button key={provider.id} intent="secondary" size="lg" className="w-full" onClick={() => withProvider(provider.id)}>
               {provider.id === "google" && <GoogleIcon className="w-5 h-5 mr-2" />}
               Continue with {provider.name}
             </Button>
           ))}
           {(options.enable_sso_login || options.use_workspace_sso) && (
-            <Button variant="outline" className="w-full h-12 type-body-small font-medium" onClick={() => withProvider("sso")}>
+            <Button intent="secondary" size="lg" className="w-full" onClick={() => withProvider("sso")}>
               Continue with SSO
             </Button>
           )}
@@ -139,7 +139,7 @@ function ConfirmIdentity({ returnTo, onChallenge, onManage, initialError }) {
                     onChange={(e) => setPassword(e.target.value)} className="pl-10 h-12" required />
                 </div>
               </div>
-              <Button type="submit" className="w-full h-12 font-medium" disabled={busy}>
+              <Button type="submit" size="lg" className="w-full" disabled={busy}>
                 {busy && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 Continue
               </Button>

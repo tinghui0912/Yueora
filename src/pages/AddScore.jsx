@@ -479,7 +479,7 @@ export default function AddScore() {
                 </div>
 
                 <div>
-                  <Button intent="quiet" size="sm" onClick={addFile} className="gap-1.5 text-brand">
+                  <Button intent="secondary" size="sm" onClick={addFile}>
                     <Plus className="icon-sm" />
                     <span>{source === 'images' ? 'Add another photo' : 'Add another page'}</span>
                   </Button>

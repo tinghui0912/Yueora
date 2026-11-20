@@ -272,7 +272,7 @@ export default function ScoreDetail() {
         {/* Right Column: Journey Hub & Musical Relationship */}
         <div className="lg:col-span-4 space-y-6">
           {/* Journey of this Piece */}
-          <div className="rounded-container border border-line-subtle bg-surface-panel p-5">
+          <Surface padding="md">
             <h2 className="type-subsection text-ink-primary">
               The Journey of this Piece
             </h2>
@@ -287,7 +287,7 @@ export default function ScoreDetail() {
                 performances={scorePerformances}
               />
             </div>
-          </div>
+          </Surface>
 
           {/* Recent practice & preserved moments */}
           <div className="space-y-4">

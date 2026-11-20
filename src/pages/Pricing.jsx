@@ -91,7 +91,7 @@ export default function Pricing() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Free Plan (White Panel) */}
             <Reveal delay={0.05} y={32}>
-              <div className="h-full rounded-[2rem] p-6 sm:p-8 md:p-9 bg-surface-panel border border-line-subtle flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
+              <div className="h-full rounded-container p-6 sm:p-8 md:p-9 bg-surface-panel border border-line-subtle flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <span className="type-eyebrow text-ink-tertiary">
@@ -144,7 +144,7 @@ export default function Pricing() {
                 </div>
 
                 <div className="mt-8">
-                  <Button asChild intent="secondary" size="hero" className="w-full rounded-full">
+                  <Button asChild intent="secondary" size="xl" className="w-full">
                     <Link to={freeDestination}>
                       Start free
                     </Link>
@@ -155,7 +155,7 @@ export default function Pricing() {
 
             {/* Plus Plan — Featured Middle Near-Black Inverse Card (Most Popular) */}
             <Reveal delay={0.1} y={32}>
-              <div className="relative h-full rounded-[2rem] p-6 sm:p-8 md:p-9 bg-ink-primary text-surface-canvas border border-ink-primary shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div className="relative h-full rounded-container p-6 sm:p-8 md:p-9 bg-ink-primary text-surface-canvas border border-ink-primary shadow-overlay flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                 {/* Ambient glow decoration */}
                 <div aria-hidden className="pointer-events-none absolute -bottom-8 -right-8 select-none">
                   <Sparkles className="w-40 h-40 text-surface-canvas/[0.04]" />
@@ -222,9 +222,9 @@ export default function Pricing() {
                   {onPlus ? (
                     <Button
                       asChild
-                      variant="outline"
-                      size="hero"
-                      className="w-full border-surface-canvas/30 text-surface-canvas hover:bg-surface-canvas/10 rounded-full"
+                      intent="inverse-secondary"
+                      size="xl"
+                      className="w-full"
                     >
                       <Link to="/settings/plan">Manage your plan</Link>
                     </Button>
@@ -232,8 +232,9 @@ export default function Pricing() {
                     <>
                       <Button
                         asChild
-                        size="hero"
-                        className="w-full bg-surface-canvas text-ink-primary hover:bg-surface-canvas/90 font-medium rounded-full flex items-center justify-center gap-2"
+                        intent="inverse"
+                        size="xl"
+                        className="w-full flex items-center justify-center gap-2"
                       >
                         <Link to={plusDestination}>
                           <span>Start Plus</span>
@@ -251,7 +252,7 @@ export default function Pricing() {
 
             {/* Pro Plan — Highest Capability Tier (White Panel) */}
             <Reveal delay={0.15} y={32}>
-              <div className="h-full rounded-[2rem] p-6 sm:p-8 md:p-9 bg-surface-panel border border-line-subtle flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
+              <div className="h-full rounded-container p-6 sm:p-8 md:p-9 bg-surface-panel border border-line-subtle flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <span className="type-eyebrow text-ink-tertiary">
@@ -317,9 +318,9 @@ export default function Pricing() {
                   {onPro ? (
                     <Button
                       asChild
-                      variant="outline"
-                      size="hero"
-                      className="w-full rounded-full"
+                      intent="secondary"
+                      size="xl"
+                      className="w-full"
                     >
                       <Link to="/settings/plan">Manage your plan</Link>
                     </Button>
@@ -328,8 +329,8 @@ export default function Pricing() {
                       <Button
                         asChild
                         intent="primary"
-                        size="hero"
-                        className="w-full rounded-full flex items-center justify-center gap-2"
+                        size="xl"
+                        className="w-full flex items-center justify-center gap-2"
                       >
                         <Link to={proDestination}>
                           <span>Start Pro</span>

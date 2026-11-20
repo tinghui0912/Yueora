@@ -26,7 +26,7 @@ export default function Sidebar() {
         <Button
           intent="secondary"
           size="md"
-          className="w-full justify-center gap-2 border-line-subtle bg-surface-panel text-ink-primary hover:bg-neutral-hover hover:border-line-strong active:translate-y-px"
+          className="w-full justify-center"
           onClick={() => navigate('/add-score')}
         >
           <Plus className="text-brand" />

@@ -259,7 +259,7 @@ export default function PracticeSetup() {
               }
               action={
                 midiStatus === 'connected' ? null : (
-                  <Button variant="outline" size="sm" onClick={detectMidi} disabled={midiStatus === 'detecting'}>
+                  <Button intent="secondary" size="sm" onClick={detectMidi} disabled={midiStatus === 'detecting'}>
                     {midiStatus === 'detecting' ? 'Detecting…' : 'Detect devices'}
                   </Button>
                 )
@@ -279,7 +279,7 @@ export default function PracticeSetup() {
               statusText={micStatusText}
               action={
                 micStatus === 'ready' ? null : (
-                  <Button variant="outline" size="sm" onClick={checkMic} disabled={micStatus === 'requesting'}>
+                  <Button intent="secondary" size="sm" onClick={checkMic} disabled={micStatus === 'requesting'}>
                     {micStatus === 'requesting' ? 'Checking…' : 'Check microphone'}
                   </Button>
                 )
@@ -318,7 +318,7 @@ export default function PracticeSetup() {
               }
               action={
                 cameraStatus === 'ready' ? null : (
-                  <Button variant="outline" size="sm" onClick={checkCamera} disabled={cameraStatus === 'requesting'}>
+                  <Button intent="secondary" size="sm" onClick={checkCamera} disabled={cameraStatus === 'requesting'}>
                     {cameraStatus === 'requesting' ? 'Checking…' : 'Check camera'}
                   </Button>
                 )
@@ -352,7 +352,7 @@ export default function PracticeSetup() {
             size="lg"
             onClick={start}
             disabled={!allReady}
-            className="w-full sm:w-auto sm:min-w-[200px] shadow-sm"
+            className="w-full sm:w-auto sm:min-w-[200px]"
           >
             {preparing && !allReady ? 'Preparing…' : 'Start practice'}
           </Button>

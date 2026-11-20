@@ -56,7 +56,7 @@ export default function Checkout() {
         tone="brand"
         title={`You're already on ${plan.name}`}
         description={`Your ${plan.name} subscription is active and renews ${subscription.renewal}. Nothing needs to be purchased again.`}
-        secondaryAction={<Button variant="outline" asChild><Link to="/pricing">View pricing</Link></Button>}
+        secondaryAction={<Button intent="secondary" asChild><Link to="/pricing">View pricing</Link></Button>}
         primaryAction={<Button asChild><Link to="/settings/plan">Manage plan</Link></Button>}
       />
     );

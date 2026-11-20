@@ -240,7 +240,7 @@ export default function DesignSystemPreview() {
               <Button intent="primary" size="md">Size MD (36px Default)</Button>
               <Button intent="primary" size="lg">Size LG (40px)</Button>
               <Button intent="primary" size="xl">Size XL (44px)</Button>
-              <Button intent="primary" size="hero">Size Hero (52px Major CTA)</Button>
+              <Button intent="primary" size="xl">Size Hero (52px Major CTA)</Button>
             </div>
           </div>
 
@@ -257,8 +257,8 @@ export default function DesignSystemPreview() {
           <div className="space-y-2">
             <span className="type-caption text-ink-secondary/70">Pill Buttons (UGC Editorial Language)</span>
             <div className="flex flex-wrap items-center gap-3">
-              <Button intent="primary" className="rounded-full">Pill Primary</Button>
-              <Button intent="secondary" className="rounded-full">Pill Secondary</Button>
+              <Button intent="primary">Pill Primary</Button>
+              <Button intent="secondary">Pill Secondary</Button>
               <div className="inline-flex items-center gap-1 rounded-full border border-line-subtle bg-surface-panel p-1">
                 <span className="rounded-full bg-neutral-muted px-4 py-1.5 type-caption text-ink-primary border border-line-subtle">Active Toggle</span>
                 <span className="rounded-full px-4 py-1.5 type-caption font-medium text-ink-secondary">Inactive</span>
@@ -419,7 +419,7 @@ export default function DesignSystemPreview() {
           title="Inverse Editorial Surface (UGC Conversion Pattern)"
           description="Dramatic near-black container (bg-ink-primary text-surface-canvas) with ambient background typography and high-contrast pill actions."
         />
-        <div className="relative rounded-[2rem] bg-ink-primary text-surface-canvas p-8 md:p-10 overflow-hidden shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)]">
+        <div className="relative rounded-container bg-ink-primary text-surface-canvas p-8 md:p-10 overflow-hidden shadow-overlay">
           <div aria-hidden className="pointer-events-none absolute -bottom-6 -right-6 select-none">
             {/* ds-allow: ambient oversized background typography showcase */}
             <span className="font-display italic text-8xl text-surface-canvas/[0.04]">music</span>
@@ -431,10 +431,10 @@ export default function DesignSystemPreview() {
               Near-black is identity. White / ivory is content surface. Chromatic color communicates functional status.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button size="sm" className="rounded-full bg-surface-canvas text-ink-primary hover:bg-surface-canvas/90">
+              <Button intent="inverse" size="sm">
                 White Pill Action
               </Button>
-              <Button size="sm" variant="outline" className="rounded-full border-surface-canvas/30 text-surface-canvas hover:bg-surface-canvas/10">
+              <Button intent="inverse-secondary" size="sm">
                 Outlined Pill Action
               </Button>
             </div>

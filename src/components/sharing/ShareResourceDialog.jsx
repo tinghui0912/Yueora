@@ -59,7 +59,7 @@ export default function ShareResourceDialog({ open, onOpenChange, title, members
         </p>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button intent="secondary" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button
             onClick={() => onSave({ visibility: scope === 'shared' ? 'shared' : 'private', sharedWith: scope === 'shared' ? selected : [] })}
             disabled={scope === 'shared' && selected.length === 0}
