@@ -90,7 +90,7 @@ export async function composeShareVideo({
 
     ctx.textAlign = 'left';
     ctx.fillStyle = colors.inkPrimary;
-    ctx.font = `600 ${titleSize}px "Cormorant Garamond", Georgia, serif`;
+    ctx.font = `600 ${titleSize}px "Playfair Display", Georgia, serif`;
     ctx.fillText(meta.title || 'Performance', box.x + pad, box.y + pad + titleSize);
 
     ctx.fillStyle = colors.brand;

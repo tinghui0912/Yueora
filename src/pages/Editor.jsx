@@ -344,7 +344,7 @@ export default function Editor() {
       {/* Playback bar */}
       <div className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 type-body-small text-ink-secondary">
         <div className="flex items-center gap-2">
-          <button className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-white hover:bg-brand-hover transition-colors" aria-label="Play"><Play className="h-4 w-4 fill-current" /></button>
+          <button className="flex h-8 w-8 items-center justify-center rounded-control bg-brand text-brand-foreground hover:bg-brand-hover transition-colors" aria-label="Play"><Play className="h-4 w-4 fill-current" /></button>
           <span className="font-medium text-ink-primary">Playback</span>
         </div>
         <div className="flex items-center gap-2">

@@ -71,7 +71,7 @@ export default function AccountSettings() {
             {account.avatar ? (
               <img src={account.avatar} alt="Avatar" className="h-12 w-12 rounded-full object-cover border border-line-subtle" />
             ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand text-white font-medium">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand text-brand-foreground font-medium">
                 {name.slice(0, 1).toUpperCase()}
               </div>
             )}

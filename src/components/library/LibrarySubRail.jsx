@@ -39,7 +39,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
               className={cn(
                 'flex w-full min-w-0 items-center rounded-control px-2.5 py-1.5 text-left type-body-small transition-colors',
                 active === item.key
-                  ? 'bg-neutral-muted font-semibold text-ink-primary'
+                  ? 'bg-brand-soft font-semibold text-ink-primary'
                   : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
               )}
             >
@@ -123,7 +123,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
                     className={cn(
                       'flex w-full min-w-0 items-center gap-2 rounded-control px-2.5 py-1.5 pr-14 text-left type-body-small transition-colors',
                       active === `folder:${f.id}`
-                        ? 'bg-neutral-muted font-semibold text-ink-primary'
+                        ? 'bg-brand-soft font-semibold text-ink-primary'
                         : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
                     )}
                   >

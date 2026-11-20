@@ -131,7 +131,7 @@ export default function PracticeProgress() {
             tone="neutral"
             title="Nothing to look back on yet"
             description="Once you practise, this page shows how much time you've spent and which pieces you keep returning to."
-            primaryAction={<Link to="/practice" className="rounded-control bg-brand px-4 py-2 type-body-small font-semibold text-white hover:bg-brand-hover">Go to Practice</Link>}
+            primaryAction={<Link to="/practice" className="rounded-control bg-brand px-4 py-2 type-body-small font-semibold text-brand-foreground hover:bg-brand-hover">Go to Practice</Link>}
           />
         </div>
       ) : (

@@ -5,33 +5,35 @@
 @layer base {
   :root {
     /* ==========================================================================
-       1. PRIMITIVE PHYSICAL PALETTE (15 Core Primitives)
+       1. PRIMITIVE PHYSICAL PALETTE (16 Core Primitives)
        Restrained physical foundation. Pages compose semantic tokens;
        semantic tokens reference these primitives.
        Direct consumption of primitive-* in application code is strictly forbidden.
        ========================================================================== */
-    /* Neutral / Warm Ivory */
-    --primitive-neutral-0: 0 0% 100%;       /* Pure White: panels, cards, overlays */
-    --primitive-neutral-25: 40 33% 96%;     /* Warm Ivory Canvas: global page backdrop (#F8F6F1) */
-    --primitive-neutral-50: 40 24% 94%;     /* Warm Neutral: subrail, passive tracks */
-    --primitive-neutral-75: 40 20% 91%;     /* Neutral Hover / Selected Soft (#ECE9E2) */
-    --primitive-neutral-100: 40 14% 86%;    /* Neutral Muted: muted tracks, subtle lines (#E0DDD6) */
-    --primitive-neutral-200: 40 12% 76%;    /* Neutral Strong: control borders, strong lines */
-    --primitive-neutral-300: 0 0% 60%;      /* Neutral Subtle: ink subtle, quiet dividers */
+    /* Neutral / Warm Paper */
+    --primitive-neutral-0: 40 25% 99%;       /* Warm White Card / Panels / Overlays (#FDFDFC) */
+    --primitive-neutral-25: 40 20% 97%;      /* Warm Archive Paper Canvas (#F9F8F6) */
+    --primitive-neutral-50: 40 18% 95%;      /* Warm Subrail, Passive Tracks (#F4F2EE) */
+    --primitive-neutral-75: 35 20% 92%;      /* Neutral Hover (#EBE7E0) */
+    --primitive-neutral-100: 35 15% 93%;     /* Neutral Muted Blocks (#F0EEEA) */
+    --primitive-neutral-200: 35 15% 88%;     /* Neutral Line Subtle: Card borders (#E5E1DC) */
+    --primitive-neutral-300: 35 12% 76%;     /* Neutral Line Strong: Control borders (#C6C1B9) */
 
-    /* Ink (Dark contrast hierarchy) */
-    --primitive-ink-500: 0 0% 44%;          /* Ink Tertiary: readable muted metadata (>=4.5:1 on white and canvas) */
-    --primitive-ink-700: 0 0% 33%;          /* Ink Secondary: readable secondary copy (>7:1 on white and canvas) */
-    --primitive-ink-800: 0 0% 15%;          /* Ink Strong / Brand Hover: interactive CTA hover */
-    --primitive-ink-900: 0 0% 7%;           /* Ink Primary / Near-Black Identity (#121212) */
+    /* Ink (Dark warm contrast hierarchy) */
+    --primitive-ink-500: 30 5% 44%;          /* Ink Tertiary: readable muted metadata (>=4.5:1 on white and canvas) (#76706B) */
+    --primitive-ink-700: 30 8% 32%;          /* Ink Secondary: readable secondary copy (>7:1 on white and canvas) (#58524B) */
+    --primitive-ink-800: 30 10% 18%;         /* Ink Strong / Dark Hover (#2E2A27) */
+    --primitive-ink-900: 30 10% 12%;         /* Ink Primary: warm near-black (#221F1C) */
 
-    /* Musical Accent */
-    --primitive-gold-500: 44 67% 46%;       /* Gold: favorites, special musical detail */
+    /* Brand / Antique Bronze Gold */
+    --primitive-gold-100: 36 45% 90%;        /* Tinted Warm Gold Soft (#F2E8D9) */
+    --primitive-gold-500: 36 70% 45%;        /* Antique Bronze / Gold Brand (#C38322) */
+    --primitive-gold-600: 36 72% 49%;        /* Brighter Antique Gold Hover (#D39029) */
 
     /* Functional Status */
-    --primitive-success-500: 148 30% 38%;   /* Success confirmation & practice following (>=4.5:1 on white) */
-    --primitive-warning-500: 38 58% 45%;    /* Warning notice & practice resyncing */
-    --primitive-danger-500: 0 65% 45%;      /* Terracotta alert (>=4.5:1 on white) */
+    --primitive-success-500: 148 35% 36%;    /* Success confirmation & practice following (>=4.5:1 on white) */
+    --primitive-warning-500: 38 65% 45%;     /* Warning notice & practice resyncing */
+    --primitive-danger-500: 0 65% 45%;       /* Terracotta alert (>=4.5:1 on white) */
 
     /* ==========================================================================
        2. SEMANTIC TOKENS (Product Meaning)
@@ -42,7 +44,7 @@
     --surface-panel: var(--primitive-neutral-0);
     --surface-raised: var(--primitive-neutral-0);
     --surface-subrail: var(--primitive-neutral-50);
-    --surface-subrail-border: var(--primitive-neutral-100);
+    --surface-subrail-border: var(--primitive-neutral-200);
 
     /* ---- Text hierarchy (ink) ---- */
     --ink-primary: var(--primitive-ink-900);
@@ -51,14 +53,15 @@
     --ink-subtle: var(--primitive-neutral-300);
 
     /* ---- Border hierarchy (line) ---- */
-    --line-subtle: var(--primitive-neutral-100);
-    --line-strong: var(--primitive-neutral-200);
+    --line-subtle: var(--primitive-neutral-200);
+    --line-strong: var(--primitive-neutral-300);
 
-    /* ---- Brand (Near-black identity, warm-neutral soft) ---- */
-    --brand: var(--primitive-ink-900);
-    --brand-hover: var(--primitive-ink-800);
-    --brand-soft: var(--primitive-neutral-75);
+    /* ---- Brand (Antique Bronze Gold, warm-dark text, warm gold soft) ---- */
+    --brand: var(--primitive-gold-500);
+    --brand-hover: var(--primitive-gold-600);
+    --brand-soft: var(--primitive-gold-100);
     --brand-soft-foreground: var(--primitive-ink-900);
+    --brand-foreground: var(--primitive-ink-900);
 
     /* ---- Neutral quiet & hover (Warm ivory-gray, NOT green) ---- */
     --neutral-muted: var(--primitive-neutral-100);
@@ -77,7 +80,7 @@
     --info-foreground: var(--primitive-ink-900);
 
     /* ---- Selection (Compact canvas selection alias) ---- */
-    --selection: var(--primitive-neutral-75);
+    --selection: var(--primitive-gold-100);
 
     /* ---- Practice semantic colors (non-judgmental) ---- */
     --practice-following: var(--primitive-success-500);
@@ -106,30 +109,30 @@
     --card-foreground: var(--primitive-ink-900);
     --popover: var(--primitive-neutral-0);
     --popover-foreground: var(--primitive-ink-900);
-    --primary: var(--primitive-ink-900);
-    --primary-foreground: var(--primitive-neutral-0);
+    --primary: var(--primitive-gold-500);
+    --primary-foreground: var(--primitive-ink-900);
     --secondary: var(--primitive-neutral-75);
     --secondary-foreground: var(--primitive-ink-900);
     --muted: var(--primitive-neutral-100);
     --muted-foreground: var(--primitive-ink-700);
-    --accent: var(--primitive-neutral-50);
+    --accent: var(--primitive-gold-100);
     --accent-foreground: var(--primitive-ink-900);
     --destructive: var(--primitive-danger-500);
     --destructive-foreground: var(--primitive-neutral-0);
-    --border: var(--primitive-neutral-100);
-    --input: var(--primitive-neutral-100);
-    --ring: var(--primitive-ink-900);
+    --border: var(--primitive-neutral-200);
+    --input: var(--primitive-neutral-200);
+    --ring: var(--primitive-gold-500);
 
-    --radius: 0.75rem;
-    --font-heading: "Cormorant Garamond", ui-serif, Georgia, serif;
+    --radius: 0.625rem;
+    --font-heading: "Playfair Display", ui-serif, Georgia, serif;
     --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
-    --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+    --font-display: "Playfair Display", ui-serif, Georgia, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
     /* ---- Radius semantic ---- */
-    --radius-control: 0.75rem;
-    --radius-container: 1.5rem;
-    --radius-overlay: 1rem;
+    --radius-control: 0.625rem;
+    --radius-container: 1rem;
+    --radius-overlay: 0.75rem;
 
     /* ---- Motion ---- */
     --motion-fast: 150ms;
@@ -138,8 +141,8 @@
     --motion-easing: cubic-bezier(0.22, 1, 0.36, 1);
 
     /* ---- Elevation ---- */
-    --shadow-raised: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.03);
-    --shadow-overlay: 0 10px 38px -10px rgb(0 0 0 / 0.16), 0 8px 20px -12px rgb(0 0 0 / 0.10);
+    --shadow-raised: 0 1px 3px 0 rgb(34 31 28 / 0.06), 0 4px 12px 0 rgb(34 31 28 / 0.04);
+    --shadow-overlay: 0 6px 20px -4px rgb(34 31 28 / 0.12), 0 4px 12px -2px rgb(34 31 28 / 0.08);
 
     /* ---- Control Heights ---- */
     --control-height-xs: 1.75rem; /* 28px */

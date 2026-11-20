@@ -21,7 +21,7 @@ export default function ExternalHeader({ sharedBy }) {
           )}
         </div>
         {isAuthenticated ? (
-          <Link to="/library" className="rounded-control bg-brand px-4 py-2 type-body-small font-semibold text-white hover:bg-brand-hover">Open library</Link>
+          <Link to="/library" className="rounded-control bg-brand px-4 py-2 type-body-small font-semibold text-brand-foreground shadow-raised hover:bg-brand-hover">Open library</Link>
         ) : (
           <Link to="/login" className="rounded-control border border-line-subtle px-4 py-2 type-body-small font-semibold text-ink-primary hover:bg-neutral-hover">Log in</Link>
         )}

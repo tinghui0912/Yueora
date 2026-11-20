@@ -45,8 +45,8 @@ export default function PerformanceMemoryVisual() {
 
         {/* Tactile Play Trigger */}
         <div className="flex flex-col items-center justify-center rounded-control border border-line-subtle bg-surface-canvas/60 px-4 py-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand text-white shadow-sm transition hover:scale-105">
-            <Play className="h-5 w-5 fill-white pl-0.5" />
+          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand text-brand-foreground shadow-raised transition hover:scale-105">
+            <Play className="h-5 w-5 fill-current pl-0.5" />
           </span>
           <span className="mt-2 type-metadata font-medium text-ink-secondary">3:42 take</span>
         </div>

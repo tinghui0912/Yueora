@@ -50,7 +50,7 @@ export default function SharingVisual() {
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-3.5 py-2.5 gap-2">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-semibold text-white">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-semibold text-brand-foreground shadow-raised">
               E
             </div>
             <div className="min-w-0">

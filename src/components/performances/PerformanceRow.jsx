@@ -92,7 +92,7 @@ export default function PerformanceRow({
           onClick={onToggle}
           disabled={!canPlay || loading}
           aria-label={playing ? `Pause ${performance.scoreTitleSnapshot}` : `Play ${performance.scoreTitleSnapshot}`}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line-subtle bg-surface-panel text-brand transition-[color,background-color,border-color,transform] hover:bg-brand hover:text-white active:scale-95 disabled:opacity-40"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line-subtle bg-surface-panel text-brand transition-[color,background-color,border-color,transform] hover:bg-brand hover:text-brand-foreground active:scale-95 disabled:opacity-40"
         >
           {loading ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />

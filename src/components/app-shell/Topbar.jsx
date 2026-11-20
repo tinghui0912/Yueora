@@ -93,7 +93,7 @@ export default function Topbar() {
           <DropdownMenuTrigger asChild>
             <button className="flex h-control-md items-center gap-1.5 rounded-control px-1.5 transition-colors hover:bg-neutral-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40">
               <Avatar className="h-8 w-8 border border-line-subtle">
-                <AvatarFallback className="bg-brand text-xs font-semibold text-white">{initials}</AvatarFallback>
+                <AvatarFallback className="bg-brand text-xs font-semibold text-brand-foreground">{initials}</AvatarFallback>
               </Avatar>
               <ChevronDown className="icon-sm text-ink-tertiary" />
             </button>

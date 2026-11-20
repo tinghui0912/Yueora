@@ -74,6 +74,8 @@ module.exports = {
 					DEFAULT: 'hsl(var(--brand))',
 					hover: 'hsl(var(--brand-hover))',
 					soft: 'hsl(var(--brand-soft))',
+					'soft-foreground': 'hsl(var(--brand-soft-foreground))',
+					foreground: 'hsl(var(--brand-foreground))',
 				},
 				/* ---- Neutral quiet & hover ---- */
 				neutral: {

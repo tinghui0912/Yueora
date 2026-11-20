@@ -123,12 +123,12 @@ export default function ImportDetail() {
       {/* Actions */}
       <div className="mt-6 flex flex-wrap gap-2">
         {imp.status === 'needs_review' && (
-          <Link to={`/review/${imp.id}`} className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 type-body-small font-semibold text-white hover:bg-brand-hover transition-colors">
+          <Link to={`/review/${imp.id}`} className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 type-body-small font-semibold text-brand-foreground hover:bg-brand-hover transition-colors">
             <Pencil className="h-4 w-4" /> Review recognition
           </Link>
         )}
         {imp.status === 'completed' && imp.scoreId && (
-          <Link to={`/score/${imp.scoreId}`} className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 type-body-small font-semibold text-white hover:bg-brand-hover transition-colors">
+          <Link to={`/score/${imp.scoreId}`} className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 type-body-small font-semibold text-brand-foreground hover:bg-brand-hover transition-colors">
             Open score
           </Link>
         )}

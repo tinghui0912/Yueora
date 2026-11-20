@@ -124,7 +124,7 @@ export default function DesignSystemPreview() {
       <section className="space-y-4">
         <SectionHeader
           title="Color System & Interaction Matrix"
-          description="One canonical visual language. Near-black is identity. Chromatic color communicates functional meaning."
+          description="One canonical visual language. Antique gold is brand accent. Warm paper is content surface. Chromatic color communicates functional status."
         />
         <Surface tone="panel" padding="md" className="space-y-6">
           {/* Swatches */}
@@ -143,9 +143,9 @@ export default function DesignSystemPreview() {
                 <span className="type-caption text-ink-primary">Raised</span>
                 <p className="type-metadata text-ink-tertiary">Overlay / Menu</p>
               </Surface>
-              <div className="rounded-control border border-transparent bg-brand p-3 text-center text-white">
-                <span className="type-caption text-white">Brand CTA</span>
-                <p className="type-metadata text-white/80">Primary</p>
+              <div className="rounded-control border border-transparent bg-brand p-3 text-center text-brand-foreground">
+                <span className="type-caption text-brand-foreground">Brand CTA</span>
+                <p className="type-metadata text-brand-foreground/80">Primary</p>
               </div>
               <div className="rounded-control border border-brand bg-brand-soft p-3 text-center">
                 <span className="type-caption text-brand-soft-foreground">Brand Soft</span>
@@ -184,7 +184,7 @@ export default function DesignSystemPreview() {
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
                 <p className="type-caption text-ink-primary">Nav Active</p>
-                <div className="mt-2 flex items-center justify-center gap-1.5 rounded-control bg-neutral-muted px-3 py-1.5 type-body-small font-semibold text-ink-primary">
+                <div className="mt-2 flex items-center justify-center gap-1.5 rounded-control bg-brand-soft px-3 py-1.5 type-body-small font-semibold text-ink-primary">
                   <span className="h-1.5 w-1.5 rounded-full bg-brand" />
                   Nav Active
                 </div>
@@ -254,13 +254,13 @@ export default function DesignSystemPreview() {
           </div>
 
           <div className="space-y-2">
-            <span className="type-caption text-ink-secondary/70">Pill Buttons (UGC Editorial Language)</span>
+            <span className="type-caption text-ink-secondary/70">Compact Controls (10px Rounded Control)</span>
             <div className="flex flex-wrap items-center gap-3">
-              <Button intent="primary">Pill Primary</Button>
-              <Button intent="secondary">Pill Secondary</Button>
-              <div className="inline-flex items-center gap-1 rounded-full border border-line-subtle bg-surface-panel p-1">
-                <span className="rounded-full bg-neutral-muted px-4 py-1.5 type-caption text-ink-primary border border-line-subtle">Active Toggle</span>
-                <span className="rounded-full px-4 py-1.5 type-caption font-medium text-ink-secondary">Inactive</span>
+              <Button intent="primary">Primary Control</Button>
+              <Button intent="secondary">Secondary Control</Button>
+              <div className="inline-flex items-center gap-1 rounded-control border border-line-subtle bg-surface-panel p-1">
+                <span className="rounded-control bg-brand-soft px-4 py-1.5 type-caption text-ink-primary">Active Toggle</span>
+                <span className="rounded-control px-4 py-1.5 type-caption font-medium text-ink-secondary">Inactive</span>
               </div>
             </div>
           </div>
@@ -416,7 +416,7 @@ export default function DesignSystemPreview() {
       <section className="space-y-4">
         <SectionHeader
           title="Inverse Editorial Surface (UGC Conversion Pattern)"
-          description="Dramatic near-black container (bg-ink-primary text-surface-canvas) with ambient background typography and high-contrast pill actions."
+          description="Dramatic deep archive container (bg-ink-primary text-surface-canvas) with ambient background typography and tactile compact actions."
         />
         <div className="relative rounded-container bg-ink-primary text-surface-canvas p-8 md:p-10 overflow-hidden">
           <div aria-hidden className="pointer-events-none absolute -bottom-6 -right-6 select-none">
@@ -427,14 +427,14 @@ export default function DesignSystemPreview() {
             <p className="type-eyebrow text-surface-canvas/60 mb-3">Sanctuary Callout</p>
             <h3 className="type-display font-medium text-surface-canvas">Play what you love.</h3>
             <p className="mt-2 type-body-small text-surface-canvas/75">
-              Near-black is identity. White / ivory is content surface. Chromatic color communicates functional status.
+              Warm paper and antique gold define identity. Ivory is content surface. Chromatic color communicates functional status.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button intent="inverse" size="sm">
-                White Pill Action
+                Inverse Action
               </Button>
               <Button intent="inverse-secondary" size="sm">
-                Outlined Pill Action
+                Outlined Action
               </Button>
             </div>
           </div>

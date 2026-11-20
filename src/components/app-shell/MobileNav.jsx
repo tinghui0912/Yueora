@@ -39,7 +39,7 @@ export default function MobileNav() {
         className="flex flex-col items-center justify-center py-1 select-none"
         aria-label="Add sheet or file"
       >
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand text-white shadow-sm transition-transform active:scale-[0.98]">
+        <span className="flex h-9 w-9 items-center justify-center rounded-control bg-brand text-brand-foreground shadow-raised transition-transform active:scale-[0.98]">
           <Plus className="h-4 w-4" />
         </span>
       </button>
