@@ -7,6 +7,7 @@ import { dayLabel } from '@/lib/practiceUtils';
 import PerformanceRow from '@/components/performances/PerformanceRow';
 import StateMessage from '@/components/patterns/StateMessage';
 import AppPage from '@/components/patterns/AppPage';
+import PageHeader from '@/components/patterns/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -147,16 +148,13 @@ export default function Performances() {
   };
 
   return (
-    <AppPage size="standard" className="py-8">
+    <AppPage size="standard" className="py-7 sm:py-8">
       {/* Page Title */}
-      <div>
-        <h1 className="type-experience-title text-ink-primary">
-          Preserved Moments
-        </h1>
-        <p className="mt-1 type-body-small text-ink-secondary">
-          The musical takes you chose to keep.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Performance Archive"
+        title="Preserved Moments"
+        description="The musical takes you chose to keep."
+      />
 
       {contextualScore && (
         <div className="mt-4 flex flex-wrap items-center gap-2 type-metadata text-ink-secondary">

@@ -7,7 +7,7 @@ export default function AppShell() {
   return (
     <div className="flex min-h-dvh flex-col bg-surface-canvas">
       <div className="flex min-h-0 flex-1 lg:flex-row">
-        <aside className="hidden w-[220px] shrink-0 border-r border-line-subtle bg-surface-canvas/90 backdrop-blur-md lg:sticky lg:top-0 lg:h-dvh lg:block">
+        <aside className="hidden w-64 shrink-0 border-r border-line-subtle bg-surface-canvas/90 backdrop-blur-md lg:sticky lg:top-0 lg:h-dvh lg:flex lg:flex-col">
           <Sidebar />
         </aside>
         <div className="flex min-w-0 flex-1 flex-col">

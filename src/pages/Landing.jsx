@@ -302,7 +302,7 @@ export default function Landing() {
       </section>
 
       {/* 3. THE CONNECTED LIFECYCLE — UGC CaseStudies Parity */}
-      <section id="lifecycle" className="py-24 md:py-36">
+      <section id="lifecycle" className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
@@ -438,7 +438,7 @@ export default function Landing() {
       </section>
 
       {/* 4. THE PRACTICE STAND — UGC 5/7 Editorial Asymmetry */}
-      <section id="practice" className="py-24 md:py-36 bg-surface-panel/30 border-y border-line-subtle/80">
+      <section id="practice" className="py-16 md:py-24 bg-surface-panel/30 border-y border-line-subtle/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left 5 Columns — Visual */}
           <Reveal className="lg:col-span-5" y={36}>
@@ -498,7 +498,7 @@ export default function Landing() {
       </section>
 
       {/* 5. PERSONAL REPERTOIRE — UGC SelectedWork Parity */}
-      <section id="repertoire" className="py-24 md:py-36">
+      <section id="repertoire" className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
@@ -579,12 +579,12 @@ export default function Landing() {
       </section>
 
       {/* 6. PRESERVED PERFORMANCES & INTIMATE SHARING */}
-      <section id="performances" className="py-24 md:py-36 bg-surface-panel/30 border-y border-line-subtle/80">
+      <section id="performances" className="py-16 md:py-24 bg-surface-panel/30 border-y border-line-subtle/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
               <div>
-                <p className="type-eyebrow text-ink-tertiary mb-4">
+                <p className="type-eyebrow text-ink-tertiary mb-3">
                   04 · Preserved Moments &amp; Intimate Sharing
                 </p>
                 <h2 className="type-marketing-title text-balance max-w-2xl text-ink-primary">
@@ -599,7 +599,7 @@ export default function Landing() {
             </div>
           </Reveal>
 
-          <div className="grid gap-8 lg:grid-cols-2 min-w-0">
+          <div className="grid gap-6 lg:grid-cols-2 min-w-0">
             <Reveal delay={0.05} className="min-w-0">
               <div className="rounded-container border border-line-subtle bg-surface-panel p-3 sm:p-8 min-w-0 overflow-hidden">
                 <p className="type-eyebrow text-ink-tertiary mb-4">Reflective Immersion</p>
@@ -618,23 +618,23 @@ export default function Landing() {
       </section>
 
       {/* 7. TRANSPARENT PRICING — UGC Services Parity */}
-      <section id="pricing" className="py-24 md:py-36">
+      <section id="pricing" className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
-            <div className="mb-16 max-w-2xl">
-              <p className="type-eyebrow text-ink-tertiary mb-4">
+            <div className="mb-12 max-w-2xl">
+              <p className="type-eyebrow text-ink-tertiary mb-3">
                 05 · Simple &amp; Durable
               </p>
               <h2 className="type-marketing-title text-balance text-ink-primary">
                 Simple, transparent <span className="italic">pricing.</span>
               </h2>
-              <p className="mt-4 type-marketing-body text-ink-secondary">
+              <p className="mt-3 type-marketing-body text-ink-secondary">
                 Start free. Upgrade when your repertoire grows.
               </p>
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-7xl">
             {/* Free Plan (White Panel) */}
             <Reveal delay={0.05}>
               <div className="h-full rounded-container p-8 md:p-9 flex flex-col justify-between bg-surface-panel border border-line-subtle hover:border-line-strong transition-all duration-300">
@@ -784,7 +784,7 @@ export default function Landing() {
       </section>
 
       {/* 8. EDITORIAL FAQ */}
-      <section className="py-24 md:py-36 border-t border-line-subtle/80 bg-surface-panel/30">
+      <section className="py-16 md:py-24 border-t border-line-subtle/80 bg-surface-panel/30">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <div className="text-center">
@@ -816,7 +816,7 @@ export default function Landing() {
       </section>
 
       {/* 9. FINAL INVERSE CONVERSION BLOCK — UGC ContactCTA Parity */}
-      <section className="py-24 md:py-36">
+      <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <div className="rounded-container bg-ink-primary text-surface-canvas overflow-hidden relative">
             {/* ambient oversized word */}
