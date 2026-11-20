@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Play, Star } from 'lucide-react';
 import ScorePreview from './ScorePreview';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -11,7 +11,6 @@ const ownershipLabel = {
 };
 
 export default function ScoreCard({ score, selected, onToggleSelect }) {
-  const navigate = useNavigate();
   if (!score) return null;
 
   const isPlayed = score.lastPlayed && score.lastPlayed !== 'never';
@@ -19,23 +18,33 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
 
   return (
     <div
-      onClick={() => navigate(`/score/${score.id}`)}
       data-qa="score-card"
       data-score-id={score.id}
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-container border border-line-subtle bg-surface-panel transition-all duration-300 hover:border-brand/40 hover:shadow-raised hover:-translate-y-1 cursor-pointer select-none',
+        'group relative flex flex-col overflow-hidden rounded-container border border-line-subtle bg-surface-panel transition-all duration-300 hover:border-brand/40 hover:shadow-raised hover:-translate-y-1 select-none',
         selected && 'border-brand ring-2 ring-brand'
       )}
     >
-      {/* Visual Artifact Preview Zone (Modeled on NumisCollection ItemCard) */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden border-b border-line-subtle bg-surface-canvas/50">
+      {/* Semantic Stretched Navigation Link for accessible mouse & keyboard activation */}
+      <Link
+        to={`/score/${score.id}`}
+        data-qa="score-card-link"
+        className="absolute inset-0 z-0 rounded-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+        aria-label={`Open score: ${score.title} by ${score.composer}`}
+      />
+
+      {/* Visual Artifact Preview Zone (~50% height, modeled on NumisCollection ItemCard) */}
+      <div
+        data-qa="score-card-visual"
+        className="relative aspect-[4/3] w-full overflow-hidden border-b border-line-subtle bg-surface-canvas/50 pointer-events-none"
+      >
         <ScorePreview
           id={score.id}
           className="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.03]"
         />
 
         {/* Top Overlay Badges */}
-        <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 z-10">
+        <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 z-10 pointer-events-auto">
           {sharedText && (
             <span className="rounded-control bg-surface-panel/90 backdrop-blur-xs px-2 py-0.5 type-caption text-ink-secondary border border-line-subtle/60">
               {sharedText}
@@ -43,7 +52,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
           )}
         </div>
 
-        <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-10">
+        <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-10 pointer-events-auto">
           {score.favorite && (
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-surface-panel/90 backdrop-blur-xs border border-line-subtle/60">
               <Star className="icon-xs fill-gold text-gold" />
@@ -60,6 +69,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
                 checked={selected}
                 onCheckedChange={() => onToggleSelect(score.id)}
                 aria-label={`Select ${score.title}`}
+                data-qa="score-card-checkbox"
                 className="bg-surface-panel/90 backdrop-blur-xs"
               />
             </div>
@@ -68,18 +78,27 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
       </div>
 
       {/* Card Content & Musical Metadata */}
-      <div className="flex flex-1 flex-col justify-between p-4 space-y-3">
+      <div className="flex flex-1 flex-col justify-between p-4 space-y-3 pointer-events-none">
         <div>
-          <h3 className="truncate font-display text-base font-semibold leading-snug text-ink-primary transition-colors group-hover:text-brand">
+          <h3
+            data-qa="score-card-title"
+            className="truncate font-display text-base font-semibold text-ink-primary transition-colors group-hover:text-brand"
+          >
             {score.title}
           </h3>
-          <p className="truncate type-metadata text-ink-secondary mt-0.5">
+          <p
+            data-qa="score-card-composer"
+            className="truncate type-metadata text-ink-secondary mt-0.5"
+          >
             {score.composer}
           </p>
         </div>
 
         {/* Divider & Prominent Value / State Row */}
-        <div className="pt-2.5 border-t border-line-subtle flex items-center justify-between">
+        <div
+          data-qa="score-card-status"
+          className="pt-2.5 border-t border-line-subtle flex items-center justify-between"
+        >
           <div className="min-w-0 flex-1">
             <p className="type-caption text-ink-tertiary">
               {isPlayed ? 'Last session' : 'Status'}

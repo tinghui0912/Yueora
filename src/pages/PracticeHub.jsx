@@ -21,9 +21,6 @@ export default function PracticeHub() {
       })[0]
     : null;
 
-  // Recently loved — favorites
-  const recentlyLoved = activeScores.filter((s) => s.favorite).slice(0, 3);
-
   // Recent active pieces for quick dashboard access
   const recentPieces = activeScores.slice(0, 4);
 
@@ -107,14 +104,23 @@ export default function PracticeHub() {
 
       {/* Hero Resume Module */}
       {continueScore && (
-        <section className="space-y-3">
+        <section className="space-y-3" data-qa="practice-resume-section">
           <p className="type-caption text-ink-secondary">Pick up where you left off</p>
           <Surface
             interactive
             padding="md"
-            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            data-qa="practice-resume-module"
           >
-            <div className="flex items-center gap-4 min-w-0">
+            {/* Semantic Stretched Link so clicking the resume module anywhere launches practice setup */}
+            <Link
+              to={`/score/${continueScore.id}/setup`}
+              data-qa="practice-resume-link"
+              className="absolute inset-0 z-0 rounded-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+              aria-label={`Resume playing ${continueScore.title} by ${continueScore.composer}`}
+            />
+
+            <div className="flex items-center gap-4 min-w-0 pointer-events-none">
               <div className="hidden h-16 w-24 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel/95 sm:block">
                 <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
               </div>
@@ -132,7 +138,7 @@ export default function PracticeHub() {
               </div>
             </div>
 
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="relative z-10 flex shrink-0 items-center gap-2 pointer-events-auto">
               <Button intent="primary" size="md" asChild>
                 <Link to={`/score/${continueScore.id}/setup`}>
                   <Play className="icon-sm fill-current" />

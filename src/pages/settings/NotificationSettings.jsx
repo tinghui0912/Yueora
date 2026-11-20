@@ -81,7 +81,7 @@ export default function NotificationSettings() {
         title="Practice reminder tone"
         desc="We never say “you haven’t practiced.” Instead, an invitation to enjoy your piano."
       >
-        <div className="max-w-md rounded-container border border-line-subtle bg-surface-panel p-4 space-y-2.5">
+        <div className="max-w-md rounded-control border border-line-subtle bg-neutral-muted/40 p-4 space-y-2.5">
           <div className="flex items-center gap-2">
             <MessageCircle className="icon-xs text-ink-primary" />
             <span className="type-caption text-ink-tertiary">

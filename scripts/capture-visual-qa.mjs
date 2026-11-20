@@ -69,6 +69,10 @@ const TARGETS = [
   { name: 'hover-score-card', category: 'Interaction', path: '/library?demo=true', w: 1440, h: 900, isInteraction: 'hover-score-card' },
   { name: 'hover-sidebar-nav', category: 'Interaction', path: '/library?demo=true', w: 1440, h: 900, isInteraction: 'hover-sidebar-nav' },
   { name: 'open-dropdown', category: 'Interaction', path: '/library?demo=true', w: 1440, h: 900, isInteraction: 'open-dropdown' },
+  { name: 'score-card-focus', category: 'Interaction', path: '/library?demo=true', w: 1440, h: 900, isInteraction: 'score-card-focus' },
+  { name: 'mobile-shell-practice', category: 'DEV Demo', path: '/practice?demo=true', w: 390, h: 844 },
+  { name: 'mobile-account-menu-open', category: 'Interaction', path: '/practice?demo=true', w: 390, h: 844, isInteraction: 'mobile-account-menu-open' },
+  { name: 'mobile-search-open', category: 'Interaction', path: '/practice?demo=true', w: 390, h: 844, isInteraction: 'mobile-search-open' },
 ];
 
 console.log('📸 Starting Yueora Automated Visual QA Screenshot Capture...');
@@ -608,7 +612,7 @@ async function verifyPageStructure(client, baseUrl) {
     const cards = Array.from(document.querySelectorAll('[data-qa="score-card"]'));
     const firstCard = cards[0];
     const aspectVisual = firstCard ? firstCard.querySelector('[class*="aspect-"]') : null;
-    const cardTitle = firstCard ? firstCard.querySelector('h3, h2, [class*="type-"]') : null;
+    const cardTitle = firstCard ? (firstCard.querySelector('[data-qa="score-card-title"]') || firstCard.querySelector('h3')) : null;
     const titleFont = cardTitle ? window.getComputedStyle(cardTitle).fontFamily : '';
     // Check if card has legacy 2-button toolbar footer
     const footerButtons = firstCard ? Array.from(firstCard.querySelectorAll('button')).filter(b => !b.closest('.absolute')) : [];
@@ -647,6 +651,71 @@ async function verifyPageStructure(client, baseUrl) {
   if (shellAndLibrary.footerButtonCount > 0) {
     throw new Error(`ScoreCard must not have legacy two-button toolbar footer, found: ${shellAndLibrary.footerButtonCount} buttons`);
   }
+
+  // 1a. ScoreCard 4 rendered columns check
+  const columnData = await ev(`(() => {
+    const cards = Array.from(document.querySelectorAll('[data-qa="score-card"]'));
+    if (cards.length === 0) return { columnCount: 0 };
+    const firstCardTop = Math.round(cards[0].getBoundingClientRect().top);
+    const firstRowCards = cards.filter(c => Math.abs(Math.round(c.getBoundingClientRect().top) - firstCardTop) < 15);
+    return {
+      columnCount: firstRowCards.length,
+      leftOffsets: firstRowCards.map(c => Math.round(c.getBoundingClientRect().left)),
+    };
+  })()`);
+  console.log(`  Library Desktop Grid: ${columnData.columnCount} columns rendered in first row at 1440px (offsets: ${columnData.leftOffsets.join(', ')})`);
+  if (columnData.columnCount !== 4) {
+    throw new Error(`Library desktop grid must render exactly 4 columns at 1440px, found: ${columnData.columnCount}`);
+  }
+
+  // 1b. ScoreCard visual artwork ratio check (visualHeight / cardHeight between 0.40 and 0.65)
+  const visualRatio = await ev(`(() => {
+    const card = document.querySelector('[data-qa="score-card"]');
+    if (!card) return 0;
+    const cardRect = card.getBoundingClientRect();
+    const visual = card.querySelector('[data-qa="score-card-visual"]') || card.querySelector('[class*="aspect-"]');
+    const visualRect = visual ? visual.getBoundingClientRect() : null;
+    return visualRect && cardRect.height > 0 ? (visualRect.height / cardRect.height) : 0;
+  })()`);
+  console.log(`  ScoreCard Visual Ratio: ${(visualRatio * 100).toFixed(1)}% (expected 40% - 65%)`);
+  if (visualRatio < 0.40 || visualRatio > 0.65) {
+    throw new Error(`ScoreCard visual artwork ratio ${(visualRatio * 100).toFixed(1)}% is outside expected range (40% - 65%)`);
+  }
+
+  // 1c. ScoreCard keyboard Enter navigation test via CDP
+  const linkFocused = await ev(`(() => {
+    const link = document.querySelector('[data-qa="score-card-link"]');
+    if (!link) return false;
+    link.focus();
+    return document.activeElement === link;
+  })()`);
+  if (!linkFocused) throw new Error('Failed to focus score-card-link');
+  await S('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
+  await S('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
+  await new Promise((r) => setTimeout(r, 400));
+  const navPath = await ev('window.location.pathname');
+  if (!navPath.startsWith('/score/')) {
+    throw new Error(`ScoreCard Enter navigation failed: expected /score/*, got ${navPath}`);
+  }
+  console.log(`  ✓ ScoreCard Enter navigation verified: navigated to ${navPath}`);
+
+  // Navigate back to /library?demo=true
+  await navigateAndWait(`${baseUrl}/library?demo=true`);
+
+  // 1d. ScoreCard checkbox independent click test (does not navigate)
+  const checkboxClicked = await ev(`(() => {
+    const cb = document.querySelector('[data-qa="score-card-checkbox"]');
+    if (!cb) return false;
+    cb.click();
+    return true;
+  })()`);
+  if (!checkboxClicked) throw new Error('Checkbox not found on score card');
+  await new Promise((r) => setTimeout(r, 200));
+  const stayPath = await ev('window.location.pathname');
+  if (stayPath !== '/library') {
+    throw new Error(`ScoreCard checkbox click must NOT navigate: expected /library, got ${stayPath}`);
+  }
+  console.log(`  ✓ ScoreCard checkbox independent click verified: stayed on /library`);
   console.log(`  ✓ App Shell & Library Collection Page assertions passed.`);
 
   // 2. PracticeHub Dashboard (1440px)
@@ -655,13 +724,14 @@ async function verifyPageStructure(client, baseUrl) {
     const dashboard = document.querySelector('[data-qa="practice-dashboard"]');
     const statCardsContainer = document.querySelector('[data-qa="practice-stat-cards"]');
     const statCards = statCardsContainer ? statCardsContainer.children.length : 0;
-    const text = document.body ? document.body.innerText : '';
-    const hasResumeModule = text.includes('Pick up where you left off') || text.includes('Ready to play');
+    const resumeModule = document.querySelector('[data-qa="practice-resume-module"]');
+    const resumeLink = resumeModule ? resumeModule.querySelector('[data-qa="practice-resume-link"]') : null;
 
     return {
       hasDashboard: !!dashboard,
       statCardCount: statCards,
-      hasResumeModule,
+      hasResumeModule: !!resumeModule,
+      resumeHref: resumeLink ? resumeLink.getAttribute('href') : '',
     };
   })()`);
 
@@ -671,7 +741,10 @@ async function verifyPageStructure(client, baseUrl) {
   if (practiceData.statCardCount !== 4) {
     throw new Error(`PracticeHub must feature 4 StatCards, found: ${practiceData.statCardCount}`);
   }
-  console.log(`  ✓ Practice Dashboard: 4 StatCards & Resume module verified.`);
+  if (!practiceData.hasResumeModule || !practiceData.resumeHref.includes('/setup')) {
+    throw new Error(`PracticeHub resume module must link to setup route, got href: ${practiceData.resumeHref}`);
+  }
+  console.log(`  ✓ Practice Dashboard: 4 StatCards & Resume module verified (link: ${practiceData.resumeHref}).`);
 
   // 3. Settings Card (1440px)
   await navigateAndWait(`${baseUrl}/settings/account?demo=true`);
@@ -682,20 +755,27 @@ async function verifyPageStructure(client, baseUrl) {
     return {
       hasPage: !!page,
       hasCard: !!card,
-      radius: cardCs ? cardCs.borderRadius : '',
-      borderWidth: cardCs ? cardCs.borderWidth : '',
+      radius: cardCs ? parseFloat(cardCs.borderRadius) : 0,
+      borderWidth: cardCs ? parseFloat(cardCs.borderWidth) : 0,
+      paddingLeft: cardCs ? parseFloat(cardCs.paddingLeft) : 0,
     };
   })()`);
 
   if (!settingsData.hasPage || !settingsData.hasCard) {
     throw new Error('Settings must contain data-qa="settings-page" and data-qa="settings-card"');
   }
-  if (Math.round(parseFloat(settingsData.radius)) !== 16) {
-    throw new Error(`Settings card must use rounded-container (16px), got: ${settingsData.radius}`);
+  if (Math.round(settingsData.radius) !== 16) {
+    throw new Error(`Settings card must use rounded-container (16px), got: ${settingsData.radius}px`);
   }
-  console.log(`  ✓ Settings Page: canonical 16px Surface card verified.`);
+  if (settingsData.borderWidth <= 0) {
+    throw new Error(`Settings card must have a visible border, got: ${settingsData.borderWidth}px`);
+  }
+  if (settingsData.paddingLeft < 16) {
+    throw new Error(`Settings card padding must be >= 16px, got: ${settingsData.paddingLeft}px`);
+  }
+  console.log(`  ✓ Settings Page: canonical 16px Surface card verified (radius=${settingsData.radius}px, border=${settingsData.borderWidth}px, padding=${settingsData.paddingLeft}px).`);
 
-  // 4. Mobile Navigation (390px)
+  // 4. Mobile Navigation & Header Feature Reachability (390px)
   await S('Emulation.setDeviceMetricsOverride', {
     width: 390,
     height: 844,
@@ -706,20 +786,83 @@ async function verifyPageStructure(client, baseUrl) {
   await navigateAndWait(`${baseUrl}/practice?demo=true`);
   const mobileNavData = await ev(`(() => {
     const nav = document.querySelector('[data-qa="mobile-navigation"]');
-    const items = nav ? nav.querySelectorAll('a, button') : [];
+    const slots = nav ? Array.from(nav.querySelectorAll('[data-qa="mobile-nav-slot"]')) : [];
+    const widths = slots.map(s => s.getBoundingClientRect().width);
+    const scrollWidth = document.documentElement.scrollWidth;
+    const clientWidth = document.documentElement.clientWidth;
     return {
       hasNav: !!nav,
-      itemCount: items.length,
+      slotCount: slots.length,
+      widths,
+      delta: widths.length > 0 ? (Math.max(...widths) - Math.min(...widths)) : 999,
+      hasHorizontalOverflow: scrollWidth > clientWidth,
     };
   })()`);
 
   if (!mobileNavData.hasNav) {
     throw new Error('Mobile navigation must be rendered at 390px viewport');
   }
-  if (mobileNavData.itemCount !== 5) {
-    throw new Error(`Mobile navigation must feature 5 items, found: ${mobileNavData.itemCount}`);
+  if (mobileNavData.slotCount !== 5) {
+    throw new Error(`Mobile navigation must feature 5 slots, found: ${mobileNavData.slotCount}`);
   }
-  console.log(`  ✓ Mobile Navigation: 5 items verified.`);
+  if (mobileNavData.delta > 4) {
+    throw new Error(`Mobile navigation slot width delta is too large: ${mobileNavData.delta.toFixed(2)}px (expected <= 4px, widths: ${mobileNavData.widths.map(w => w.toFixed(1)).join(', ')})`);
+  }
+  if (mobileNavData.hasHorizontalOverflow) {
+    throw new Error('Mobile viewport has horizontal overflow at 390px');
+  }
+  console.log(`  ✓ Mobile Navigation: 5 equal-width slots verified (delta=${mobileNavData.delta.toFixed(2)}px, widths: [${mobileNavData.widths.map(w => w.toFixed(1)).join(', ')}]).`);
+
+  // 5. Mobile Header Feature Reachability (390px)
+  const mobileHeaderData = await ev(`(() => {
+    const searchTrigger = document.querySelector('[data-qa="mobile-search-trigger"]');
+    const notifLink = document.querySelector('[data-qa="mobile-notifications-link"]');
+    const notifBadge = document.querySelector('[data-qa="mobile-notification-badge"]');
+    const accountTrigger = document.querySelector('[data-qa="mobile-account-trigger"]');
+    return {
+      hasSearch: !!searchTrigger,
+      hasNotif: !!notifLink,
+      hasBadge: !!notifBadge,
+      hasAccount: !!accountTrigger,
+    };
+  })()`);
+
+  if (!mobileHeaderData.hasSearch) throw new Error('Mobile header missing search trigger [data-qa="mobile-search-trigger"]');
+  if (!mobileHeaderData.hasNotif) throw new Error('Mobile header missing notifications link [data-qa="mobile-notifications-link"]');
+  if (!mobileHeaderData.hasBadge) throw new Error('Mobile header missing notification badge [data-qa="mobile-notification-badge"]');
+  if (!mobileHeaderData.hasAccount) throw new Error('Mobile header missing account trigger [data-qa="mobile-account-trigger"]');
+
+  // Click mobile account menu to verify Account, Help, and Sign out reachability
+  const accountTriggerCoords = await ev(`(() => {
+    const btn = document.querySelector('[data-qa="mobile-account-trigger"]');
+    if (!btn) return null;
+    const r = btn.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  })()`);
+  if (accountTriggerCoords) {
+    await S('Input.dispatchMouseEvent', { type: 'mousePressed', x: accountTriggerCoords.x, y: accountTriggerCoords.y, button: 'left', clickCount: 1 });
+    await S('Input.dispatchMouseEvent', { type: 'mouseReleased', x: accountTriggerCoords.x, y: accountTriggerCoords.y, button: 'left', clickCount: 1 });
+    await new Promise((r) => setTimeout(r, 400));
+
+    const menuItems = await ev(`(() => {
+      const text = document.body.innerText;
+      return {
+        hasAccountLink: text.includes('Account'),
+        hasHelpLink: text.includes('Help'),
+        hasSignout: !!document.querySelector('[data-qa="mobile-signout-button"]') || text.includes('Sign out'),
+      };
+    })()`);
+
+    if (!menuItems.hasAccountLink || !menuItems.hasHelpLink || !menuItems.hasSignout) {
+      throw new Error(`Mobile account menu items missing: Account=${menuItems.hasAccountLink}, Help=${menuItems.hasHelpLink}, Signout=${menuItems.hasSignout}`);
+    }
+    console.log(`  ✓ Mobile feature reachability verified: Search, Notifications with badge, Account menu with Account, Help, and Sign out.`);
+
+    // Close menu
+    await S('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+    await S('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+    await new Promise((r) => setTimeout(r, 200));
+  }
 
   // Reset viewport to desktop
   await S('Emulation.setDeviceMetricsOverride', {
@@ -869,6 +1012,41 @@ async function captureAndValidateTarget(client, target, baseUrl) {
         await new Promise((r) => setTimeout(r, 400));
       }
       assertionDescription = 'Open state on action / dropdown trigger captured';
+    } else if (target.isInteraction === 'score-card-focus') {
+      const focused = await ev(`(() => {
+        const link = document.querySelector('[data-qa="score-card-link"]');
+        if (!link) return false;
+        link.focus();
+        return true;
+      })()`);
+      await new Promise((r) => setTimeout(r, 200));
+      assertionDescription = 'Focus ring state on ScoreCard link captured';
+    } else if (target.isInteraction === 'mobile-account-menu-open') {
+      const coords = await ev(`(() => {
+        const btn = document.querySelector('[data-qa="mobile-account-trigger"]');
+        if (!btn) return null;
+        const r = btn.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      })()`);
+      if (coords) {
+        await S('Input.dispatchMouseEvent', { type: 'mousePressed', x: coords.x, y: coords.y, button: 'left', clickCount: 1 });
+        await S('Input.dispatchMouseEvent', { type: 'mouseReleased', x: coords.x, y: coords.y, button: 'left', clickCount: 1 });
+        await new Promise((r) => setTimeout(r, 400));
+      }
+      assertionDescription = 'Mobile account menu dropdown opened';
+    } else if (target.isInteraction === 'mobile-search-open') {
+      const coords = await ev(`(() => {
+        const btn = document.querySelector('[data-qa="mobile-search-trigger"]');
+        if (!btn) return null;
+        const r = btn.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      })()`);
+      if (coords) {
+        await S('Input.dispatchMouseEvent', { type: 'mousePressed', x: coords.x, y: coords.y, button: 'left', clickCount: 1 });
+        await S('Input.dispatchMouseEvent', { type: 'mouseReleased', x: coords.x, y: coords.y, button: 'left', clickCount: 1 });
+        await new Promise((r) => setTimeout(r, 400));
+      }
+      assertionDescription = 'Mobile search palette modal opened';
     }
   }
 
@@ -969,6 +1147,36 @@ async function captureAndValidateTarget(client, target, baseUrl) {
     const check = await ev(`document.body.innerText.includes('MusicXML') || document.body.innerText.includes('Digital score')`);
     if (!check) throw new Error('add-score-musicxml missing MusicXML verification state');
     assertionDescription = 'Displays MusicXML digital score verification state';
+  } else if (target.name === 'score-card-focus') {
+    const check = await ev(`(() => {
+      const link = document.querySelector('[data-qa="score-card-link"]');
+      return link && document.activeElement === link;
+    })()`);
+    if (!check) throw new Error('score-card-focus link is not focused');
+    assertionDescription = 'ScoreCard stretched navigation link is actively focused';
+  } else if (target.name === 'mobile-shell-practice') {
+    const check = await ev(`(() => {
+      const header = document.querySelector('[data-qa="mobile-search-trigger"]');
+      const nav = document.querySelector('[data-qa="mobile-navigation"]');
+      return !!header && !!nav;
+    })()`);
+    if (!check) throw new Error('mobile-shell-practice missing mobile header or mobile nav');
+    assertionDescription = 'Mobile application shell rendered with top header and bottom nav';
+  } else if (target.name === 'mobile-account-menu-open') {
+    const check = await ev(`(() => {
+      const text = document.body.innerText;
+      return text.includes('Account') && (text.includes('Sign out') || !!document.querySelector('[data-qa="mobile-signout-button"]'));
+    })()`);
+    if (!check) throw new Error('mobile-account-menu-open missing menu contents');
+    assertionDescription = 'Mobile account menu rendered with navigation and signout options';
+  } else if (target.name === 'mobile-search-open') {
+    const check = await ev(`(() => {
+      const dlg = document.querySelector('[role="dialog"]');
+      const input = dlg ? dlg.querySelector('input') : null;
+      return !!input;
+    })()`);
+    if (!check) throw new Error('mobile-search-open missing search dialog input');
+    assertionDescription = 'Search palette dialog rendered with active search input';
   }
 
   // 3. Capture Screenshot via CDP
