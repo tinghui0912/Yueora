@@ -22,11 +22,11 @@ export const ALLOWED_BUTTON_COMPOSITION = /^(?:w-|min-w-|max-w-|flex-1$|flex-ini
 // Allowed composition utilities on DialogContent, DropdownMenuContent, PopoverContent
 export const ALLOWED_OVERLAY_COMPOSITION = /^(?:w-|min-w-|max-w-|h-|min-h-|max-h-|overflow-(?:hidden|auto|scroll|visible|x-auto|y-auto|x-hidden|y-hidden)$|-?m(?:t|b|l|r|x|y)?-)/;
 
-// Banned appearance properties on Surface
-export const BANNED_SURFACE_APPEARANCE = /^(?:bg-|border(?:-|$)|rounded(?:-|$)|shadow(?:-|$)|ring(?:-|$)|backdrop-|opacity-)/;
+// Banned appearance and motion properties on Surface
+export const BANNED_SURFACE_APPEARANCE = /^(?:bg-|border(?:-|$)|rounded(?:-|$)|shadow(?:-|$)|ring(?:-|$)|backdrop-|opacity-|transition(?:-|$)|duration(?:-|$)|ease(?:-|$)|-?translate-(?:x|y)-|scale(?:-|$)|rotate(?:-|$)|animate(?:-|$))/;
 
 // Allowed composition utilities on Surface
-export const ALLOWED_SURFACE_COMPOSITION = /^(?:relative$|absolute$|fixed$|sticky$|inset-|top-|bottom-|left-|right-|z-|w-|min-w-|max-w-|h-|min-h-|max-h-|aspect-|-?m(?:t|b|l|r|x|y)?-|p(?:t|b|l|r|x|y)?-|space-(?:x|y)-|grid$|grid-cols-|col-span-|col-start-|col-end-|row-span-|row-start-|row-end-|flex$|inline-flex$|inline-grid$|inline-block$|block$|inline$|flex-col$|flex-row$|flex-wrap$|flex-nowrap$|flex-1$|flex-initial$|flex-auto$|flex-none$|shrink-0$|shrink$|grow-0$|grow$|items-|justify-|content-|self-|gap-|select-none$|truncate$|text-(?:left|center|right|justify)$|overflow-|group$|transition-|duration-|ease-|-?translate-(?:x|y)-)/;
+export const ALLOWED_SURFACE_COMPOSITION = /^(?:relative$|absolute$|fixed$|sticky$|inset-|top-|bottom-|left-|right-|z-|w-|min-w-|max-w-|h-|min-h-|max-h-|aspect-|-?m(?:t|b|l|r|x|y)?-|p(?:t|b|l|r|x|y)?-|space-(?:x|y)-|grid$|grid-cols-|col-span-|col-start-|col-end-|row-span-|row-start-|row-end-|flex$|inline-flex$|inline-grid$|inline-block$|block$|inline$|flex-col$|flex-row$|flex-wrap$|flex-nowrap$|flex-1$|flex-initial$|flex-auto$|flex-none$|shrink-0$|shrink$|grow-0$|grow$|items-|justify-|content-|self-|gap-|select-none$|truncate$|text-(?:left|center|right|justify)$|overflow-)/;
 
 // Generic Tailwind radius regex (allowed: rounded-control, rounded-container, rounded-overlay, rounded-full)
 export const GENERIC_RADIUS_REGEX = /(?<![a-zA-Z0-9_-])(rounded|rounded-(?:none|sm|md|lg|xl|2xl|3xl)|rounded-(?:t|b|l|r|tl|tr|bl|br)(?:-(?:none|sm|md|lg|xl|2xl|3xl))?)(?![a-zA-Z0-9_-])/;
@@ -199,19 +199,84 @@ export function scanPageAppearanceContent(content, filePath = 'anonymous.jsx') {
     });
   }
 
-  // Map local import names to canonical primitives
-  const localToCanonical = new Map();
-
+  // Canonical protected primitive module source mappings
   const CANONICAL_SOURCES = [
-    { match: /components\/ui\/button/, name: 'Button' },
-    { match: /components\/ui\/icon-button/, name: 'IconButton' },
-    { match: /components\/ui\/dialog/, name: 'DialogContent', memberMatch: 'DialogContent' },
-    { match: /components\/ui\/dropdown-menu/, name: 'DropdownMenuContent', memberMatch: 'DropdownMenuContent' },
-    { match: /components\/ui\/popover/, name: 'PopoverContent', memberMatch: 'PopoverContent' },
-    { match: /components\/patterns\/Surface/, name: 'Surface' },
+    {
+      match: /components\/ui\/button/,
+      name: 'Button',
+      exports: new Set(['Button', 'buttonVariants']),
+    },
+    {
+      match: /components\/ui\/icon-button/,
+      name: 'IconButton',
+      exports: new Set(['IconButton', 'iconButtonVariants']),
+    },
+    {
+      match: /components\/ui\/dialog/,
+      name: 'DialogContent',
+      memberMatch: 'DialogContent',
+      exports: new Set([
+        'Dialog',
+        'DialogPortal',
+        'DialogOverlay',
+        'DialogTrigger',
+        'DialogClose',
+        'DialogContent',
+        'DialogHeader',
+        'DialogFooter',
+        'DialogTitle',
+        'DialogDescription',
+      ]),
+    },
+    {
+      match: /components\/ui\/dropdown-menu/,
+      name: 'DropdownMenuContent',
+      memberMatch: 'DropdownMenuContent',
+      exports: new Set([
+        'DropdownMenu',
+        'DropdownMenuTrigger',
+        'DropdownMenuContent',
+        'DropdownMenuItem',
+        'DropdownMenuCheckboxItem',
+        'DropdownMenuRadioItem',
+        'DropdownMenuLabel',
+        'DropdownMenuSeparator',
+        'DropdownMenuShortcut',
+        'DropdownMenuGroup',
+        'DropdownMenuPortal',
+        'DropdownMenuSub',
+        'DropdownMenuSubContent',
+        'DropdownMenuSubTrigger',
+        'DropdownMenuRadioGroup',
+      ]),
+    },
+    {
+      match: /components\/ui\/popover/,
+      name: 'PopoverContent',
+      memberMatch: 'PopoverContent',
+      exports: new Set(['Popover', 'PopoverTrigger', 'PopoverContent', 'PopoverAnchor']),
+    },
+    {
+      match: /components\/patterns\/Surface/,
+      name: 'Surface',
+      exports: new Set(['Surface', 'default']),
+    },
   ];
 
-  // Pass 1: Build import bindings
+  // Map local names and namespace identifiers to canonical primitives
+  const localToCanonical = new Map();
+  const namespaceImports = new Map();
+
+  function resolveNamespaceMember(cs, memberName) {
+    if (!cs || !cs.exports.has(memberName)) return null;
+    if (cs.name === 'Button' && memberName === 'Button') return 'Button';
+    if (cs.name === 'IconButton' && memberName === 'IconButton') return 'IconButton';
+    if (cs.memberMatch && memberName === cs.memberMatch) return cs.name;
+    if (cs.name === 'Surface' && (memberName === 'Surface' || memberName === 'default')) return 'Surface';
+    return null;
+  }
+
+  // Pass 1: Build import bindings (named, default, and namespace imports)
   traverse(ast, {
     ImportDeclaration(importPath) {
       const source = importPath.node.source.value;
@@ -239,7 +304,37 @@ export function scanPageAppearanceContent(content, filePath = 'anonymous.jsx') {
           if (/components\/patterns\/Surface/.test(source)) {
             localToCanonical.set(local, 'Surface');
           }
+        } else if (spec.type === 'ImportNamespaceSpecifier') {
+          for (const cs of CANONICAL_SOURCES) {
+            if (cs.match.test(source)) {
+              namespaceImports.set(local, cs);
+            }
+          }
         }
+      }
+    },
+    // Track simple local primitive aliases (e.g. const ActionButton = Button; const ModalBody = DialogContent;)
+    VariableDeclarator(varPath) {
+      const id = varPath.node.id;
+      const init = varPath.node.init;
+      if (!init || id.type !== 'Identifier') return;
+
+      let resolved = null;
+      if (init.type === 'Identifier') {
+        resolved =
+          localToCanonical.get(init.name) ||
+          (PROTECTED_PRIMITIVES.has(init.name) ? init.name : null);
+      } else if (init.type === 'MemberExpression') {
+        const objName = init.object?.name;
+        const propName = init.property?.name;
+        const cs = namespaceImports.get(objName);
+        if (cs) {
+          resolved = resolveNamespaceMember(cs, propName);
+        }
+      }
+
+      if (resolved) {
+        localToCanonical.set(id.name, resolved);
       }
     },
   });
@@ -255,13 +350,42 @@ export function scanPageAppearanceContent(content, filePath = 'anonymous.jsx') {
         return name;
       }
     } else if (elemNode.type === 'JSXMemberExpression') {
-      const objName = elemNode.object?.name;
+      // Check namespace import (e.g. <ButtonUI.Button>) or component member (e.g. <Dialog.Content>)
+      const objNode = elemNode.object;
       const propName = elemNode.property?.name;
-      if (propName === 'Content') {
-        const mappedObj = localToCanonical.get(objName) || objName;
-        if (mappedObj === 'Dialog') return 'DialogContent';
-        if (mappedObj === 'DropdownMenu') return 'DropdownMenuContent';
-        if (mappedObj === 'Popover') return 'PopoverContent';
+
+      if (objNode.type === 'JSXIdentifier') {
+        const objName = objNode.name;
+        // Case A: Namespace import (e.g. ButtonUI.Button, DialogUI.DialogContent, SurfaceUI.Surface)
+        if (namespaceImports.has(objName)) {
+          const cs = namespaceImports.get(objName);
+          const resolved = resolveNamespaceMember(cs, propName);
+          if (resolved) return resolved;
+        }
+
+        // Case B: Radix-style compound component (e.g. Dialog.Content, DropdownMenu.Content, Popover.Content)
+        if (propName === 'Content') {
+          const mappedObj = localToCanonical.get(objName) || objName;
+          if (mappedObj === 'Dialog') return 'DialogContent';
+          if (mappedObj === 'DropdownMenu') return 'DropdownMenuContent';
+          if (mappedObj === 'Popover') return 'PopoverContent';
+        }
+      } else if (objNode.type === 'JSXMemberExpression') {
+        // Nested namespace compound (e.g. <DialogUI.Dialog.Content>)
+        const nsName = objNode.object?.name;
+        const parentMember = objNode.property?.name;
+        if (namespaceImports.has(nsName)) {
+          const cs = namespaceImports.get(nsName);
+          if (cs.name === 'DialogContent' && parentMember === 'Dialog' && propName === 'Content') {
+            return 'DialogContent';
+          }
+          if (cs.name === 'DropdownMenuContent' && parentMember === 'DropdownMenu' && propName === 'Content') {
+            return 'DropdownMenuContent';
+          }
+          if (cs.name === 'PopoverContent' && parentMember === 'Popover' && propName === 'Content') {
+            return 'PopoverContent';
+          }
+        }
       }
     }
     return null;
@@ -407,20 +531,30 @@ export function scanPageAppearanceContent(content, filePath = 'anonymous.jsx') {
                   matched: token,
                   message: `Arbitrary selector variant on <Surface> className: [${token}] is prohibited.`,
                 });
-              } else if (BANNED_SURFACE_APPEARANCE.test(base)) {
-                issues.push({
-                  file: filePath,
-                  line,
-                  matched: token,
-                  message: `Surface appearance override in page JSX: [${token}]. <Surface> owns tone, border, and elevation; do not override via className.`,
-                });
-              } else if (!ALLOWED_SURFACE_COMPOSITION.test(base)) {
-                issues.push({
-                  file: filePath,
-                  line,
-                  matched: token,
-                  message: `Non-composition utility on <Surface>: [${token}]. Pages compose; <Surface> owns appearance.`,
-                });
+              } else {
+                const nonResponsive = modifiers.find((m) => !ALLOWED_RESPONSIVE_MODIFIERS.has(m));
+                if (nonResponsive) {
+                  issues.push({
+                    file: filePath,
+                    line,
+                    matched: token,
+                    message: `Non-responsive modifier '${nonResponsive}' on <Surface> className: [${token}]. Pages compose; <Surface> completely owns interaction states, hover, active, focus, and motion.`,
+                  });
+                } else if (BANNED_SURFACE_APPEARANCE.test(base)) {
+                  issues.push({
+                    file: filePath,
+                    line,
+                    matched: token,
+                    message: `Surface appearance override in page JSX: [${token}]. <Surface> owns tone, border, radius, elevation, and motion; do not override via className.`,
+                  });
+                } else if (!ALLOWED_SURFACE_COMPOSITION.test(base)) {
+                  issues.push({
+                    file: filePath,
+                    line,
+                    matched: token,
+                    message: `Non-composition utility on <Surface>: [${token}]. Pages compose; <Surface> owns appearance.`,
+                  });
+                }
               }
             }
 

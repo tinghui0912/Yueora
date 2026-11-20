@@ -385,17 +385,17 @@ import { Upload } from 'lucide-react';
    - `<Button>` and `<IconButton>` completely own visual styling (background, border, radius, height, padding, gap, typography, hover, active, focus states).
    - Enforced via a strict **Composition Allowlist**: page consumers may ONLY pass external composition layout utilities (`w-*`, `min-w-*`, `max-w-*`, `flex-1`, `shrink-0`, `self-*`, `m-*`) with responsive modifiers only (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`).
    - Arbitrary selector variants (`[&>svg]:`, `[&_svg]:`, `[&>*]:`) and non-composition utilities (e.g. `bg-*`, `text-*`, `border-*`, `shadow-*`, `ring-*`, `font-*`, `opacity-*`, `backdrop-*`, `animate-*`) are banned.
-   - Dynamic or unanalyzable `className` expressions and JSX spread attributes (`{...props}`) on Button or IconButton are prohibited and fail closed.
+   - Dynamic or unanalyzable `className` expressions and JSX spread attributes (`{...props}`) on Button or IconButton are prohibited and fail closed across named, namespace, and local variable aliasing patterns.
 
 2. **Overlay Primitive Ownership (`DialogContent`, `DropdownMenuContent`, `PopoverContent`):**
    - Overlay primitives define their canonical background (`bg-surface-panel` / `bg-surface-raised`), borders (`border-line-subtle`), radius (`rounded-container` / `rounded-overlay`), and elevation (`shadow-overlay`).
-   - Enforced via an **Overlay Composition Allowlist**: page consumers may only pass sizing and overflow constraints (`w-*`, `min-w-*`, `max-w-*`, `h-*`, `min-h-*`, `max-h-*`, `overflow-*`).
-   - Dynamic unanalyzable className and JSX spread attributes on overlay primitives fail closed.
+   - Enforced via an **Overlay Composition Allowlist**: page consumers may only pass sizing and overflow constraints (`w-*`, `min-w-*`, `max-w-*`, `h-*`, `min-h-*`, `max-h-*`, `overflow-*`) with responsive modifiers only.
+   - Dynamic unanalyzable className and JSX spread attributes on overlay primitives fail closed across named, namespace, and local variable aliases.
 
 3. **Surface Primitive Ownership (`<Surface>`):**
-   - `<Surface>` owns surface tones (`panel`, `canvas`, `raised`), container border (`border-line-subtle`), radius (`rounded-container`), and elevations (`none`, `raised`, `overlay`).
-   - Page consumers MUST NOT pass background, border, radius, shadow, or ring utilities in `className`.
-   - Consumer `className` on `<Surface>` is restricted to layout, grid, flex, position, and spacing composition.
+   - `<Surface>` completely owns surface tones (`panel`, `canvas`, `raised`), container border (`border-line-subtle`), radius (`rounded-container`), elevations (`none`, `raised`, `overlay`), and interaction/hover/motion identity.
+   - Page consumers MUST NOT pass background, border, radius, shadow, ring, hover, focus, active, transition, duration, ease, translate, or group utilities in `className`.
+   - Consumer `className` on `<Surface>` is strictly restricted to layout, grid, flex, position, and spacing composition with responsive modifiers only.
 
 4. **Elevation Ownership (`shadow-overlay`, `shadow-raised`):**
    - Direct usage of `shadow-overlay` or `shadow-raised` on arbitrary `<div>` or layout elements in `src/pages/**` is banned.

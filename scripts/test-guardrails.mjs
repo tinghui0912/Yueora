@@ -311,6 +311,148 @@ assertNegative(
   '{...surfaceProps}'
 );
 
+// 1.37 Namespace Button import bypass rejected
+assertNegative(
+  'Namespace import Button bypass rejected (ButtonUI.Button with bg-danger)',
+  `import * as ButtonUI from "@/components/ui/button";
+  export default function Page() {
+    return <ButtonUI.Button className="bg-danger">Action</ButtonUI.Button>;
+  }`,
+  'bg-danger'
+);
+
+// 1.38 Namespace Button spread rejected
+assertNegative(
+  'Namespace import Button spread rejected (ButtonUI.Button {...buttonProps})',
+  `import * as ButtonUI from "@/components/ui/button";
+  export default function Page() {
+    return <ButtonUI.Button {...buttonProps} />;
+  }`,
+  '{...buttonProps}'
+);
+
+// 1.39 Namespace DialogContent appearance override rejected
+assertNegative(
+  'Namespace import DialogContent override rejected (DialogUI.DialogContent with bg-surface-panel)',
+  `import * as DialogUI from "@/components/ui/dialog";
+  export default function Page() {
+    return <DialogUI.DialogContent className="max-w-sm bg-surface-panel" />;
+  }`,
+  'bg-surface-panel'
+);
+
+// 1.40 Namespace DropdownMenuContent appearance override rejected
+assertNegative(
+  'Namespace import DropdownMenuContent override rejected (MenuUI.DropdownMenuContent with shadow-overlay)',
+  `import * as MenuUI from "@/components/ui/dropdown-menu";
+  export default function Page() {
+    return <MenuUI.DropdownMenuContent className="w-52 shadow-overlay" />;
+  }`,
+  'shadow-overlay'
+);
+
+// 1.41 Namespace PopoverContent appearance override rejected
+assertNegative(
+  'Namespace import PopoverContent override rejected (PopoverUI.PopoverContent with bg-brand)',
+  `import * as PopoverUI from "@/components/ui/popover";
+  export default function Page() {
+    return <PopoverUI.PopoverContent className="w-72 bg-brand" />;
+  }`,
+  'bg-brand'
+);
+
+// 1.42 Namespace Surface appearance override rejected
+assertNegative(
+  'Namespace import Surface override rejected (SurfaceUI.Surface with bg-brand)',
+  `import * as SurfaceUI from "@/components/patterns/Surface";
+  export default function Page() {
+    return <SurfaceUI.Surface tone="raised" className="bg-brand" />;
+  }`,
+  'bg-brand'
+);
+
+// 1.43 Local Button alias override rejected
+assertNegative(
+  'Local Button alias override rejected (const ActionButton = Button; with bg-danger)',
+  `import { Button } from "@/components/ui/button";
+  const ActionButton = Button;
+  export default function Page() {
+    return <ActionButton className="bg-danger">Action</ActionButton>;
+  }`,
+  'bg-danger'
+);
+
+// 1.44 Local Surface alias override rejected
+assertNegative(
+  'Local Surface alias override rejected (const Panel = Surface; with bg-brand)',
+  `import { Surface } from "@/components/patterns/Surface";
+  const Panel = Surface;
+  export default function Page() {
+    return <Panel className="bg-brand">Content</Panel>;
+  }`,
+  'bg-brand'
+);
+
+// 1.45 Local DialogContent alias override rejected
+assertNegative(
+  'Local DialogContent alias override rejected (const ModalBody = DialogContent; with shadow-overlay)',
+  `import { DialogContent } from "@/components/ui/dialog";
+  const ModalBody = DialogContent;
+  export default function Page() {
+    return <ModalBody className="max-w-sm shadow-overlay" />;
+  }`,
+  'shadow-overlay'
+);
+
+// 1.46 Surface hover motion override rejected
+assertNegative(
+  'Surface hover motion override rejected (hover:-translate-y-1)',
+  `<Surface interactive className="hover:-translate-y-1" />`,
+  'hover:-translate-y-1'
+);
+
+// 1.47 Surface transition timing override rejected
+assertNegative(
+  'Surface transition override rejected (transition-all)',
+  `<Surface interactive className="transition-all" />`,
+  'transition-all'
+);
+
+// 1.48 Surface duration timing override rejected
+assertNegative(
+  'Surface duration override rejected (duration-300)',
+  `<Surface interactive className="duration-300" />`,
+  'duration-300'
+);
+
+// 1.49 Surface state modifier hover rejected
+assertNegative(
+  'Surface state modifier hover rejected (hover:bg-brand)',
+  `<Surface className="hover:bg-brand" />`,
+  'hover:bg-brand'
+);
+
+// 1.50 Surface state modifier focus rejected
+assertNegative(
+  'Surface state modifier focus rejected (focus:ring-danger)',
+  `<Surface className="focus:ring-danger" />`,
+  'focus:ring-danger'
+);
+
+// 1.51 Surface group hover escape hatch rejected
+assertNegative(
+  'Surface group class rejected (group)',
+  `<Surface className="group" />`,
+  'group'
+);
+
+// 1.52 Surface transition and duration motion bundle rejected
+assertNegative(
+  'Surface transition and duration bundle rejected (transition-all duration-300)',
+  `<Surface className="transition-all duration-300" />`,
+  'transition-all'
+);
+
 // -----------------------------------------------------------------------------
 // 2. POSITIVE FIXTURES (Must be accepted by Guardrails)
 // -----------------------------------------------------------------------------
@@ -356,6 +498,23 @@ assertPositive(
 );
 
 assertPositive(
+  'Namespace import Button with valid composition (ButtonUI.Button with w-full)',
+  `import * as ButtonUI from "@/components/ui/button";
+  export default function Page() {
+    return <ButtonUI.Button className="w-full">Action</ButtonUI.Button>;
+  }`
+);
+
+assertPositive(
+  'Local Button alias with valid composition (const ActionButton = Button; with w-full mt-4)',
+  `import { Button } from "@/components/ui/button";
+  const ActionButton = Button;
+  export default function Page() {
+    return <ActionButton className="w-full mt-4">Action</ActionButton>;
+  }`
+);
+
+assertPositive(
   'DialogContent with standard sizing (max-w-sm)',
   `<DialogContent className="max-w-sm" />`
 );
@@ -370,6 +529,23 @@ assertPositive(
   `import { DialogContent as ModalBody } from "@/components/ui/dialog";
   export default function Page() {
     return <ModalBody className="max-w-sm" />;
+  }`
+);
+
+assertPositive(
+  'Namespace import DialogContent with standard sizing (DialogUI.DialogContent)',
+  `import * as DialogUI from "@/components/ui/dialog";
+  export default function Page() {
+    return <DialogUI.DialogContent className="max-w-sm" />;
+  }`
+);
+
+assertPositive(
+  'Local DialogContent alias with standard sizing (const ModalBody = DialogContent; with max-w-md)',
+  `import { DialogContent } from "@/components/ui/dialog";
+  const ModalBody = DialogContent;
+  export default function Page() {
+    return <ModalBody className="max-w-md" />;
   }`
 );
 
@@ -404,8 +580,26 @@ assertPositive(
 );
 
 assertPositive(
-  'Surface with interactive hover motion',
-  `<Surface padding="lg" interactive className="group hover:-translate-y-1 transition-all duration-300" />`
+  'Surface with responsive grid composition (grid-cols-1 md:grid-cols-2)',
+  `<Surface className="grid grid-cols-1 gap-4 md:grid-cols-2" />`
+);
+
+assertPositive(
+  'Surface with responsive flex layout composition (flex-col md:flex-row)',
+  `<Surface className="flex flex-col gap-4 md:flex-row" />`
+);
+
+assertPositive(
+  'Surface with spacing and width constraint (mt-6 max-w-4xl)',
+  `<Surface className="mt-6 max-w-4xl" />`
+);
+
+assertPositive(
+  'Namespace import Surface with positioning composition (SurfaceUI.Surface with absolute right-0 w-56)',
+  `import * as SurfaceUI from "@/components/patterns/Surface";
+  export default function Page() {
+    return <SurfaceUI.Surface className="absolute right-0 w-56" />;
+  }`
 );
 
 // -----------------------------------------------------------------------------

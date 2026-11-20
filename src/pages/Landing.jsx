@@ -471,21 +471,21 @@ export default function Landing() {
 
             <Reveal delay={0.15}>
               <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Surface padding="md" interactive className="hover:-translate-y-0.5 transition-all duration-300">
+                <Surface padding="md" interactive>
                   <h3 className="type-subsection text-ink-primary">Paced Following</h3>
                   <p className="mt-2 type-body-small text-ink-secondary">
                     Respects expressive rubato, slowing down and accelerating naturally with you.
                   </p>
                 </Surface>
 
-                <Surface padding="md" interactive className="hover:-translate-y-0.5 transition-all duration-300">
+                <Surface padding="md" interactive>
                   <h3 className="type-subsection text-ink-primary">Phrase Looping</h3>
                   <p className="mt-2 type-body-small text-ink-secondary">
                     Select measures 14 to 22 with one tap to work through tricky transitions calmly.
                   </p>
                 </Surface>
 
-                <Surface padding="md" interactive className="hover:-translate-y-0.5 transition-all duration-300 sm:col-span-2">
+                <Surface padding="md" interactive className="sm:col-span-2">
                   <h3 className="type-subsection text-ink-primary">Zero Accuracy Scoring</h3>
                   <p className="mt-2 type-body-small text-ink-secondary">
                     No percentage grades, no stars, no shaming—just a quiet, supportive companion at the keys.
@@ -521,9 +521,9 @@ export default function Landing() {
           {/* 3-Column Work Showcase Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             <Reveal delay={0}>
-              <Surface padding="lg" interactive className="group transition-all duration-300 hover:-translate-y-1">
+              <Surface padding="lg" interactive>
                 <div className="aspect-[4/3] overflow-hidden rounded-container border border-line-subtle bg-surface-canvas/50">
-                  <ScorePreview id="rep-clair" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+                  <ScorePreview id="rep-clair" className="h-full w-full object-cover" />
                 </div>
                 <div className="mt-5">
                   <span className="type-caption text-ink-tertiary">Debussy</span>
@@ -538,9 +538,9 @@ export default function Landing() {
             </Reveal>
 
             <Reveal delay={0.08}>
-              <Surface padding="lg" interactive className="group transition-all duration-300 hover:-translate-y-1">
+              <Surface padding="lg" interactive>
                 <div className="aspect-[4/3] overflow-hidden rounded-container border border-line-subtle bg-surface-canvas/50">
-                  <ScorePreview id="rep-gymno" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+                  <ScorePreview id="rep-gymno" className="h-full w-full object-cover" />
                 </div>
                 <div className="mt-5">
                   <span className="type-caption text-ink-tertiary">Satie</span>
@@ -555,7 +555,7 @@ export default function Landing() {
             </Reveal>
 
             <Reveal delay={0.16}>
-              <Surface padding="lg" interactive className="group transition-all duration-300 hover:-translate-y-1">
+              <Surface padding="lg" interactive>
                 <div className="aspect-[4/3] overflow-hidden rounded-container border border-line-subtle bg-surface-canvas/50 flex items-center justify-center">
                   <div className="text-center p-6">
                     <ScoreSheetGlyph className="h-8 w-8 text-ink-primary mx-auto mb-3" />
