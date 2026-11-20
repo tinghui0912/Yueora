@@ -453,6 +453,75 @@ assertNegative(
   'transition-all'
 );
 
+// 1.53 Alias before namespace import for Button override rejected
+assertNegative(
+  'Alias before namespace import for Button override rejected (const ActionButton = ButtonUI.Button before import)',
+  `const ActionButton = ButtonUI.Button;
+
+  import * as ButtonUI from "@/components/ui/button";
+
+  export default function Page() {
+    return (
+      <ActionButton className="bg-danger">
+        Action
+      </ActionButton>
+    );
+  }`,
+  'bg-danger'
+);
+
+// 1.54 Alias before namespace import for Surface override rejected
+assertNegative(
+  'Alias before namespace import for Surface override rejected (const Panel = SurfaceUI.Surface before import)',
+  `const Panel = SurfaceUI.Surface;
+
+  import * as SurfaceUI from "@/components/patterns/Surface";
+
+  export default function Page() {
+    return (
+      <Panel className="bg-brand">
+        Content
+      </Panel>
+    );
+  }`,
+  'bg-brand'
+);
+
+// 1.55 Out-of-order multi-hop Button alias override rejected
+assertNegative(
+  'Out-of-order multi-hop Button alias override rejected (ActionButton = BaseButton before BaseButton = Button)',
+  `const ActionButton = BaseButton;
+  const BaseButton = Button;
+
+  import { Button } from "@/components/ui/button";
+
+  export default function Page() {
+    return (
+      <ActionButton className="bg-danger">
+        Action
+      </ActionButton>
+    );
+  }`,
+  'bg-danger'
+);
+
+// 1.56 Mutable alias of protected primitive rejected
+assertNegative(
+  'Mutable alias of protected primitive rejected (let ActionButton = Button;)',
+  `import { Button } from "@/components/ui/button";
+
+  let ActionButton = Button;
+
+  export default function Page() {
+    return (
+      <ActionButton className="w-full">
+        Action
+      </ActionButton>
+    );
+  }`,
+  'Mutable alias of protected primitive'
+);
+
 // -----------------------------------------------------------------------------
 // 2. POSITIVE FIXTURES (Must be accepted by Guardrails)
 // -----------------------------------------------------------------------------
@@ -599,6 +668,50 @@ assertPositive(
   `import * as SurfaceUI from "@/components/patterns/Surface";
   export default function Page() {
     return <SurfaceUI.Surface className="absolute right-0 w-56" />;
+  }`
+);
+
+assertPositive(
+  'Alias before namespace import for Button with valid composition (ActionButton with w-full)',
+  `const ActionButton = ButtonUI.Button;
+
+  import * as ButtonUI from "@/components/ui/button";
+
+  export default function Page() {
+    return (
+      <ActionButton className="w-full">
+        Action
+      </ActionButton>
+    );
+  }`
+);
+
+assertPositive(
+  'Alias before namespace import for Surface with valid composition (Panel with grid grid-cols-2 gap-4)',
+  `const Panel = SurfaceUI.Surface;
+
+  import * as SurfaceUI from "@/components/patterns/Surface";
+
+  export default function Page() {
+    return (
+      <Panel className="grid grid-cols-2 gap-4" />
+    );
+  }`
+);
+
+assertPositive(
+  'Out-of-order multi-hop Button alias with valid composition (ActionButton with w-full)',
+  `const ActionButton = BaseButton;
+  const BaseButton = Button;
+
+  import { Button } from "@/components/ui/button";
+
+  export default function Page() {
+    return (
+      <ActionButton className="w-full">
+        Action
+      </ActionButton>
+    );
   }`
 );
 

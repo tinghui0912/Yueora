@@ -411,7 +411,7 @@ To verify Design System compliance:
 # Automated Design System linter & token integrity validator (AST appearance guard)
 npm run check:design-system
 
-# Guardrail AST regression test suite (36 negative + 17 positive fixtures; verified in CI)
+# Guardrail AST regression test suite (negative + positive production-guard fixtures; executed in CI)
 npm run test:design-system-guardrails
 
 # Codebase ESLint verification

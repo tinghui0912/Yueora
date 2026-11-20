@@ -277,6 +277,7 @@ export function scanPageAppearanceContent(content, filePath = 'anonymous.jsx') {
   }
 
   // Pass 1: Build import bindings (named, default, and namespace imports)
+  // Guarantees all module import bindings are known regardless of statement order
   traverse(ast, {
     ImportDeclaration(importPath) {
       const source = importPath.node.source.value;
@@ -288,15 +289,6 @@ export function scanPageAppearanceContent(content, filePath = 'anonymous.jsx') {
             if (cs.match.test(source)) {
               if (imported === cs.name || imported === cs.memberMatch) {
                 localToCanonical.set(local, cs.name);
-              }
-              if (source.includes('dialog') && imported === 'Dialog') {
-                localToCanonical.set(local, 'Dialog');
-              }
-              if (source.includes('dropdown-menu') && imported === 'DropdownMenu') {
-                localToCanonical.set(local, 'DropdownMenu');
-              }
-              if (source.includes('popover') && imported === 'Popover') {
-                localToCanonical.set(local, 'Popover');
               }
             }
           }
@@ -313,31 +305,97 @@ export function scanPageAppearanceContent(content, filePath = 'anonymous.jsx') {
         }
       }
     },
-    // Track simple local primitive aliases (e.g. const ActionButton = Button; const ModalBody = DialogContent;)
-    VariableDeclarator(varPath) {
-      const id = varPath.node.id;
-      const init = varPath.node.init;
-      if (!init || id.type !== 'Identifier') return;
+  });
 
-      let resolved = null;
-      if (init.type === 'Identifier') {
-        resolved =
-          localToCanonical.get(init.name) ||
-          (PROTECTED_PRIMITIVES.has(init.name) ? init.name : null);
-      } else if (init.type === 'MemberExpression') {
-        const objName = init.object?.name;
-        const propName = init.property?.name;
-        const cs = namespaceImports.get(objName);
-        if (cs) {
-          resolved = resolveNamespaceMember(cs, propName);
+  function unwrapExpression(node) {
+    let current = node;
+    while (
+      current &&
+      (current.type === 'TSAsExpression' ||
+        current.type === 'TSTypeAssertion' ||
+        current.type === 'TSNonNullExpression' ||
+        current.type === 'ParenthesizedExpression')
+    ) {
+      current = current.expression;
+    }
+    return current;
+  }
+
+  function resolveRhs(rawInit) {
+    const init = unwrapExpression(rawInit);
+    if (!init) return null;
+
+    if (init.type === 'Identifier') {
+      if (localToCanonical.has(init.name)) {
+        return localToCanonical.get(init.name);
+      }
+      if (PROTECTED_PRIMITIVES.has(init.name)) {
+        return init.name;
+      }
+    } else if (init.type === 'MemberExpression' && !init.computed) {
+      if (init.object?.type === 'Identifier' && init.property?.type === 'Identifier') {
+        const objName = init.object.name;
+        const propName = init.property.name;
+        if (namespaceImports.has(objName)) {
+          const cs = namespaceImports.get(objName);
+          return resolveNamespaceMember(cs, propName);
         }
       }
+    }
+    return null;
+  }
 
-      if (resolved) {
-        localToCanonical.set(id.name, resolved);
+  // Pass 2: Resolve supported local aliases and reject mutable aliases of protected primitives
+  // Uses fixed-point propagation to handle declaration order independence and multi-hop aliases
+  const declaratorCandidates = [];
+  traverse(ast, {
+    VariableDeclaration(declPath) {
+      const kind = declPath.node.kind; // 'const' | 'let' | 'var'
+      for (const decl of declPath.node.declarations) {
+        declaratorCandidates.push({ kind, decl });
       }
     },
   });
+
+  const reportedMutableNodes = new Set();
+  let changed = true;
+  let iterations = 0;
+  const MAX_ITERATIONS = 20;
+
+  while (changed && iterations < MAX_ITERATIONS) {
+    changed = false;
+    iterations++;
+
+    for (const { kind, decl } of declaratorCandidates) {
+      const id = decl.id;
+      const init = decl.init;
+      if (!init || id.type !== 'Identifier') continue;
+
+      const resolved = resolveRhs(init);
+      if (!resolved) continue;
+
+      if (kind === 'const') {
+        if (!localToCanonical.has(id.name)) {
+          localToCanonical.set(id.name, resolved);
+          changed = true;
+        }
+      } else if (kind === 'let' || kind === 'var') {
+        if (!reportedMutableNodes.has(decl)) {
+          reportedMutableNodes.add(decl);
+          issues.push({
+            file: filePath,
+            line: decl.loc?.start?.line || 1,
+            matched: `${kind} ${id.name}`,
+            message: `Mutable alias of protected primitive <${resolved}> via '${kind}' is prohibited. Use a const alias or canonical primitive import.`,
+          });
+        }
+        if (!localToCanonical.has(id.name)) {
+          localToCanonical.set(id.name, resolved);
+          changed = true;
+        }
+      }
+    }
+  }
 
   function resolveCanonical(elemNode) {
     if (!elemNode) return null;
@@ -350,48 +408,20 @@ export function scanPageAppearanceContent(content, filePath = 'anonymous.jsx') {
         return name;
       }
     } else if (elemNode.type === 'JSXMemberExpression') {
-      // Check namespace import (e.g. <ButtonUI.Button>) or component member (e.g. <Dialog.Content>)
-      const objNode = elemNode.object;
-      const propName = elemNode.property?.name;
-
-      if (objNode.type === 'JSXIdentifier') {
-        const objName = objNode.name;
-        // Case A: Namespace import (e.g. ButtonUI.Button, DialogUI.DialogContent, SurfaceUI.Surface)
+      if (elemNode.object.type === 'JSXIdentifier') {
+        const objName = elemNode.object.name;
+        const propName = elemNode.property?.name;
         if (namespaceImports.has(objName)) {
           const cs = namespaceImports.get(objName);
           const resolved = resolveNamespaceMember(cs, propName);
           if (resolved) return resolved;
-        }
-
-        // Case B: Radix-style compound component (e.g. Dialog.Content, DropdownMenu.Content, Popover.Content)
-        if (propName === 'Content') {
-          const mappedObj = localToCanonical.get(objName) || objName;
-          if (mappedObj === 'Dialog') return 'DialogContent';
-          if (mappedObj === 'DropdownMenu') return 'DropdownMenuContent';
-          if (mappedObj === 'Popover') return 'PopoverContent';
-        }
-      } else if (objNode.type === 'JSXMemberExpression') {
-        // Nested namespace compound (e.g. <DialogUI.Dialog.Content>)
-        const nsName = objNode.object?.name;
-        const parentMember = objNode.property?.name;
-        if (namespaceImports.has(nsName)) {
-          const cs = namespaceImports.get(nsName);
-          if (cs.name === 'DialogContent' && parentMember === 'Dialog' && propName === 'Content') {
-            return 'DialogContent';
-          }
-          if (cs.name === 'DropdownMenuContent' && parentMember === 'DropdownMenu' && propName === 'Content') {
-            return 'DropdownMenuContent';
-          }
-          if (cs.name === 'PopoverContent' && parentMember === 'Popover' && propName === 'Content') {
-            return 'PopoverContent';
-          }
         }
       }
     }
     return null;
   }
 
-  // Pass 2: Inspect JSX elements
+  // Pass 3: Inspect JSX elements
   traverse(ast, {
     JSXOpeningElement(path) {
       const canonicalPrimitive = resolveCanonical(path.node.name);
