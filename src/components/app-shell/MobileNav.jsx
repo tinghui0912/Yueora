@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { Plus, Settings } from 'lucide-react';
 import { RepertoireGlyph, PracticeGlyph, MemoryGlyph } from '@/components/brand/MusicalGlyphs';
 
-const navTabBase = 'flex flex-col items-center justify-center gap-1 min-h-12 py-1.5 type-caption font-medium transition-colors select-none min-w-0';
+const navTabBase = 'flex flex-col items-center justify-center gap-1 min-h-12 py-1.5 text-xs font-medium leading-tight transition-colors select-none min-w-0';
 
 export default function MobileNav() {
   return (

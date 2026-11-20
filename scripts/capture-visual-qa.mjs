@@ -17,6 +17,17 @@ if (!fs.existsSync(OUT_DIR)) {
   }
 }
 
+function getPngDimensions(filePath) {
+  const fd = fs.openSync(filePath, 'r');
+  const buffer = Buffer.alloc(24);
+  fs.readSync(fd, buffer, 0, 24, 0);
+  fs.closeSync(fd);
+  if (buffer[0] !== 0x89 || buffer[1] !== 0x50 || buffer[2] !== 0x4E || buffer[3] !== 0x47) {
+    throw new Error(`File ${filePath} is not a valid PNG`);
+  }
+  return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
+}
+
 const PORT = process.env.PORT || 5350;
 const BASE_URL = process.env.BASE_URL || `http://127.0.0.1:${PORT}`;
 
@@ -682,27 +693,36 @@ async function verifyPageStructure(client, baseUrl) {
     throw new Error(`ScoreCard visual artwork ratio ${(visualRatio * 100).toFixed(1)}% is outside expected range (40% - 65%)`);
   }
 
-  // 1c. ScoreCard keyboard Enter navigation test via CDP
-  const linkFocused = await ev(`(() => {
-    const link = document.querySelector('[data-qa="score-card-link"]');
-    if (!link) return false;
+  // 1c. ScoreCard keyboard focus treatment & exact Enter navigation test via CDP
+  const cardData = await ev(`(() => {
+    const card = document.querySelector('[data-qa="score-card"]');
+    const link = card ? card.querySelector('[data-qa="score-card-link"]') : null;
+    if (!link) return null;
     link.focus();
-    return document.activeElement === link;
+    const cs = window.getComputedStyle(link);
+    return {
+      scoreId: card.getAttribute('data-score-id'),
+      isFocused: document.activeElement === link,
+      hasOutlineOrRing: cs.outline !== 'none' || (cs.boxShadow && cs.boxShadow !== 'none'),
+    };
   })()`);
-  if (!linkFocused) throw new Error('Failed to focus score-card-link');
+  if (!cardData || !cardData.isFocused) throw new Error('Failed to focus score-card-link');
+  if (!cardData.scoreId) throw new Error('data-score-id missing on score-card');
+  console.log(`  ✓ ScoreCard link focused (scoreId: ${cardData.scoreId}, hasFocusTreatment: ${cardData.hasOutlineOrRing})`);
+
   await S('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
   await S('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13 });
   await new Promise((r) => setTimeout(r, 400));
   const navPath = await ev('window.location.pathname');
-  if (!navPath.startsWith('/score/')) {
-    throw new Error(`ScoreCard Enter navigation failed: expected /score/*, got ${navPath}`);
+  if (navPath !== `/score/${cardData.scoreId}`) {
+    throw new Error(`ScoreCard Enter navigation failed: expected /score/${cardData.scoreId}, got ${navPath}`);
   }
-  console.log(`  ✓ ScoreCard Enter navigation verified: navigated to ${navPath}`);
+  console.log(`  ✓ ScoreCard Enter navigation verified: navigated to exact score path ${navPath}`);
 
   // Navigate back to /library?demo=true
   await navigateAndWait(`${baseUrl}/library?demo=true`);
 
-  // 1d. ScoreCard checkbox independent click test (does not navigate)
+  // 1d-i. ScoreCard checkbox independent mouse click test (does not navigate)
   const checkboxClicked = await ev(`(() => {
     const cb = document.querySelector('[data-qa="score-card-checkbox"]');
     if (!cb) return false;
@@ -711,11 +731,29 @@ async function verifyPageStructure(client, baseUrl) {
   })()`);
   if (!checkboxClicked) throw new Error('Checkbox not found on score card');
   await new Promise((r) => setTimeout(r, 200));
-  const stayPath = await ev('window.location.pathname');
+  let stayPath = await ev('window.location.pathname');
   if (stayPath !== '/library') {
     throw new Error(`ScoreCard checkbox click must NOT navigate: expected /library, got ${stayPath}`);
   }
   console.log(`  ✓ ScoreCard checkbox independent click verified: stayed on /library`);
+
+  // 1d-ii. ScoreCard checkbox keyboard Space activation test (does not navigate)
+  const cbFocused = await ev(`(() => {
+    const cb = document.querySelector('[data-qa="score-card-checkbox"]');
+    if (!cb) return false;
+    cb.focus();
+    return document.activeElement === cb;
+  })()`);
+  if (cbFocused) {
+    await S('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: ' ', code: 'Space', windowsVirtualKeyCode: 32 });
+    await S('Input.dispatchKeyEvent', { type: 'keyUp', key: ' ', code: 'Space', windowsVirtualKeyCode: 32 });
+    await new Promise((r) => setTimeout(r, 200));
+    stayPath = await ev('window.location.pathname');
+    if (stayPath !== '/library') {
+      throw new Error(`ScoreCard checkbox Space key must NOT navigate: expected /library, got ${stayPath}`);
+    }
+    console.log(`  ✓ ScoreCard checkbox keyboard Space toggle verified: stayed on /library`);
+  }
   console.log(`  ✓ App Shell & Library Collection Page assertions passed.`);
 
   // 2. PracticeHub Dashboard (1440px)
@@ -1179,44 +1217,51 @@ async function captureAndValidateTarget(client, target, baseUrl) {
     assertionDescription = 'Search palette dialog rendered with active search input';
   }
 
-  // 3. Capture Screenshot via CDP
-  if (target.isDialog || target.isInteraction) {
-    // Viewport screenshot for dialog overlay or interactive state
-    await S('Emulation.setDeviceMetricsOverride', {
-      width: target.w,
-      height: target.h,
-      deviceScaleFactor: 1,
-      mobile: target.w < 600,
-      dontSetVisibleSize: false,
-    });
-    await new Promise((r) => setTimeout(r, 200));
-    const { data } = await S('Page.captureScreenshot', { format: 'png' });
-    fs.writeFileSync(outFile, Buffer.from(data, 'base64'));
-  } else {
-    // Content height screenshot for regular pages
-    const contentH = await ev('Math.min(16000, Math.max(document.documentElement.scrollHeight, document.body.scrollHeight, window.innerHeight))');
-    await S('Emulation.setDeviceMetricsOverride', {
-      width: target.w,
-      height: contentH,
-      deviceScaleFactor: 1,
-      mobile: target.w < 600,
-      dontSetVisibleSize: false,
-    });
-    await new Promise((r) => setTimeout(r, 150));
-    const { data } = await S('Page.captureScreenshot', { format: 'png', captureBeyondViewport: true });
-    fs.writeFileSync(outFile, Buffer.from(data, 'base64'));
-    // Reset back to viewport height
-    await S('Emulation.setDeviceMetricsOverride', {
-      width: target.w,
-      height: target.h,
-      deviceScaleFactor: 1,
-      mobile: target.w < 600,
-      dontSetVisibleSize: false,
-    });
+  // 3. Capture Viewport Screenshot via CDP (viewport remains strictly target.w × target.h)
+  await S('Emulation.setDeviceMetricsOverride', {
+    width: target.w,
+    height: target.h,
+    deviceScaleFactor: 1,
+    mobile: target.w < 600,
+    dontSetVisibleSize: false,
+  });
+  await new Promise((r) => setTimeout(r, 200));
+
+  // Primary human-review viewport screenshot: EXACT declared viewport dimensions
+  const { data: viewportData } = await S('Page.captureScreenshot', { format: 'png' });
+  fs.writeFileSync(outFile, Buffer.from(viewportData, 'base64'));
+
+  // Assert actual PNG dimensions equal declared viewport dimensions
+  const pngDim = getPngDimensions(outFile);
+  if (pngDim.width !== target.w || pngDim.height !== target.h) {
+    throw new Error(`Viewport screenshot dimension mismatch for ${target.name}.png: actual ${pngDim.width}x${pngDim.height} !== declared ${target.w}x${target.h}`);
+  }
+
+  // B. Optional Full-Page Screenshot (for scrollable regular pages, without altering viewport dimensions!)
+  let fullInfo = '';
+  if (!target.isDialog && !target.isInteraction) {
+    const scrollH = await ev('Math.max(document.documentElement.scrollHeight, document.body.scrollHeight, window.innerHeight)');
+    if (scrollH > target.h + 20) {
+      const fullOutFile = path.join(OUT_DIR, `${target.name}-full.png`);
+      const { data: fullData } = await S('Page.captureScreenshot', {
+        format: 'png',
+        captureBeyondViewport: true,
+        clip: {
+          x: 0,
+          y: 0,
+          width: target.w,
+          height: Math.min(16000, scrollH),
+          scale: 1,
+        },
+      });
+      fs.writeFileSync(fullOutFile, Buffer.from(fullData, 'base64'));
+      const fullDim = getPngDimensions(fullOutFile);
+      fullInfo = ` + full-page: ${target.name}-full.png (${fullDim.width}x${fullDim.height})`;
+    }
   }
 
   const stat = fs.statSync(outFile);
-  console.log(`✓ [${target.category}] ${target.name} (${target.w}x${target.h}) -> ${path.relative(process.cwd(), outFile)} (${Math.round(stat.size / 1024)} KB)`);
+  console.log(`✓ [${target.category}] ${target.name} (${pngDim.width}x${pngDim.height}) -> ${path.relative(process.cwd(), outFile)} (${Math.round(stat.size / 1024)} KB)${fullInfo}`);
 
   return {
     Target: target.name,
@@ -1224,6 +1269,7 @@ async function captureAndValidateTarget(client, target, baseUrl) {
     Category: target.category,
     Status: 'PASS',
     Assertion: assertionDescription,
+    Dimensions: `${pngDim.width}x${pngDim.height}`,
   };
 }
 
@@ -1269,8 +1315,8 @@ async function main() {
     console.log('\n📊 Visual QA Semantic DOM Assertions Table:');
     console.table(assertionResults);
 
-    // 4. Verify file counts and non-zero bytes on disk
-    console.log('\n🔍 Verifying screenshot artifacts on disk...');
+    // 4. Verify file counts and non-zero bytes on disk, and assert exact PNG dimensions
+    console.log('\n🔍 Verifying screenshot artifacts and PNG dimensions on disk...');
     for (const target of TARGETS) {
       const filePath = path.join(OUT_DIR, `${target.name}.png`);
       if (!fs.existsSync(filePath)) {
@@ -1281,6 +1327,11 @@ async function main() {
         if (stat.size < 1000) {
           failures++;
           console.error(`❌ Screenshot file is too small (${stat.size} bytes): ${target.name}.png`);
+        }
+        const dim = getPngDimensions(filePath);
+        if (dim.width !== target.w || dim.height !== target.h) {
+          failures++;
+          console.error(`❌ PNG dimension assertion failed for ${target.name}.png: actual ${dim.width}x${dim.height} !== declared ${target.w}x${target.h}`);
         }
       }
     }

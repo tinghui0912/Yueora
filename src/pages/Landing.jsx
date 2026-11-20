@@ -127,7 +127,7 @@ export default function Landing() {
       <section id="top" className="relative min-h-screen flex items-center overflow-hidden">
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center pt-28 pb-24 lg:py-0">
           {/* Left 7 Columns — Identity & Editorial Statement */}
-          <div className="lg:col-span-7 order-2 lg:order-1">
+          <div className="lg:col-span-7 order-1">
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -209,7 +209,7 @@ export default function Landing() {
           </div>
 
           {/* Right 5 Columns — Elevated Musical Media Object (Harmonized with headline hierarchy) */}
-          <div className="lg:col-span-5 order-1 lg:order-2 flex justify-center">
+          <div className="lg:col-span-5 order-2 flex justify-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}

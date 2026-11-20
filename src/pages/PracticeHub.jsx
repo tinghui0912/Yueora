@@ -140,7 +140,7 @@ export default function PracticeHub() {
 
             <div className="relative z-10 flex shrink-0 items-center gap-2 pointer-events-auto">
               <Button intent="primary" size="md" asChild>
-                <Link to={`/score/${continueScore.id}/setup`}>
+                <Link to={`/score/${continueScore.id}/setup`} tabIndex={-1} aria-hidden="true">
                   <Play className="icon-sm fill-current" />
                   <span>Resume playing</span>
                 </Link>

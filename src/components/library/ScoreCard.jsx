@@ -29,7 +29,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
       <Link
         to={`/score/${score.id}`}
         data-qa="score-card-link"
-        className="absolute inset-0 z-0 rounded-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+        className="absolute inset-0 z-0 rounded-container focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
         aria-label={`Open score: ${score.title} by ${score.composer}`}
       />
 
