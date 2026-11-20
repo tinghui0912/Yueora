@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import PublicShell from '@/components/public/PublicShell';
 import Reveal from '@/components/public/Reveal';
+import Surface from '@/components/patterns/Surface';
 import ScorePreview from '@/components/library/ScorePreview';
 import HeroProductVisual from '@/components/visuals/HeroProductVisual';
 import PracticeWorkspaceVisual from '@/components/visuals/PracticeWorkspaceVisual';
@@ -175,7 +176,7 @@ export default function Landing() {
               judgment, and preserves the musical moments worth keeping.
             </motion.p>
 
-            {/* Tactile Actions — UGC Hero CTA scale: 52px high, 28px horizontal padding */}
+            {/* Primary Actions — Canonical xl CTA: 44px high */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -225,7 +226,7 @@ export default function Landing() {
             >
               <HeroProductVisual />
               <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
-                <span className="px-3.5 py-1.5 rounded-full bg-white/90 text-ink-primary type-eyebrow backdrop-blur border border-line-subtle">
+                <span className="px-3.5 py-1.5 rounded-full bg-surface-panel/90 text-ink-primary type-eyebrow backdrop-blur border border-line-subtle">
                   Clair de Lune
                 </span>
                 <span className="type-metadata font-medium font-serif italic text-ink-secondary">Debussy</span>
@@ -264,7 +265,7 @@ export default function Landing() {
           </Reveal>
 
           <Reveal delay={0.05}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-line-subtle/80 rounded-2xl overflow-hidden border border-line-subtle/80">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-line-subtle/80 rounded-container overflow-hidden border border-line-subtle/80">
               <div className="bg-surface-canvas px-6 py-8 text-center">
                 <div className="type-display text-ink-primary">0</div>
                 <div className="mt-2 type-eyebrow text-ink-secondary">
@@ -325,7 +326,7 @@ export default function Landing() {
                     key={s.step}
                     type="button"
                     onClick={() => setActiveStep(idx)}
-                    className={`w-full text-left rounded-2xl p-5 transition-all duration-300 ${
+                    className={`w-full text-left rounded-container p-5 transition-all duration-300 ${
                       isActive
                         ? 'bg-surface-panel border border-line-subtle'
                         : 'border border-transparent hover:bg-neutral-hover'
@@ -364,7 +365,7 @@ export default function Landing() {
                       <p className="type-eyebrow text-ink-tertiary">Step 01 · Original Paper Scan</p>
                       <span className="type-body-small font-medium text-ink-primary">Debussy · Clair de Lune</span>
                     </div>
-                    <div className="mt-6 overflow-hidden rounded-2xl border border-line-subtle bg-surface-canvas/50">
+                    <div className="mt-6 overflow-hidden rounded-container border border-line-subtle bg-surface-canvas/50">
                       <MockScanPage seed="step-scan-original" className="aspect-[16/10] w-full" />
                     </div>
                     <p className="mt-4 text-center type-metadata text-ink-tertiary italic">
@@ -381,7 +382,7 @@ export default function Landing() {
                         OMR Recognized
                       </span>
                     </div>
-                    <div className="mt-6 overflow-hidden rounded-2xl border border-line-subtle bg-white">
+                    <div className="mt-6 overflow-hidden rounded-container border border-line-subtle bg-surface-panel">
                       <ScorePreview id="step-score-review" className="aspect-[16/10] w-full" />
                     </div>
                     <div className="mt-4 flex items-center justify-between type-metadata text-ink-secondary">
@@ -397,7 +398,7 @@ export default function Landing() {
                       <p className="type-eyebrow text-ink-tertiary">Step 03 · Living Repertoire</p>
                       <span className="type-body-small font-medium text-ink-primary">Curated Collection</span>
                     </div>
-                    <div className="mt-6 rounded-2xl border border-line-subtle bg-surface-canvas/50 p-5">
+                    <div className="mt-6 rounded-container border border-line-subtle bg-surface-canvas/50 p-5">
                       <div className="flex items-start justify-between">
                         <div>
                           <h4 className="type-subsection text-ink-primary">
@@ -415,7 +416,7 @@ export default function Landing() {
                         <span className="text-ink-primary font-medium">Continue from bar 14</span>
                       </div>
                     </div>
-                    <div className="mt-4 aspect-[16/8] overflow-hidden rounded-2xl border border-line-subtle bg-white">
+                    <div className="mt-4 aspect-[16/8] overflow-hidden rounded-container border border-line-subtle bg-surface-panel">
                       <ScorePreview id="step-score-view" className="h-full w-full" />
                     </div>
                   </div>
@@ -435,7 +436,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left 5 Columns — Visual */}
           <Reveal className="lg:col-span-5" y={36}>
-            <div className="relative aspect-[4/5] rounded-container overflow-hidden shadow-overlay border border-line-subtle bg-surface-panel p-4">
+            <div className="relative aspect-[4/5] rounded-container overflow-hidden border border-line-subtle bg-surface-panel p-4">
               <PracticeWorkspaceVisual />
             </div>
           </Reveal>
@@ -464,26 +465,26 @@ export default function Landing() {
 
             <Reveal delay={0.15}>
               <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300">
+                <Surface padding="md" interactive className="hover:-translate-y-0.5 transition-all duration-300">
                   <h3 className="type-subsection text-ink-primary">Paced Following</h3>
                   <p className="mt-2 type-body-small text-ink-secondary">
                     Respects expressive rubato, slowing down and accelerating naturally with you.
                   </p>
-                </div>
+                </Surface>
 
-                <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300">
+                <Surface padding="md" interactive className="hover:-translate-y-0.5 transition-all duration-300">
                   <h3 className="type-subsection text-ink-primary">Phrase Looping</h3>
                   <p className="mt-2 type-body-small text-ink-secondary">
                     Select measures 14 to 22 with one tap to work through tricky transitions calmly.
                   </p>
-                </div>
+                </Surface>
 
-                <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300 sm:col-span-2">
+                <Surface padding="md" interactive className="hover:-translate-y-0.5 transition-all duration-300 sm:col-span-2">
                   <h3 className="type-subsection text-ink-primary">Zero Accuracy Scoring</h3>
                   <p className="mt-2 type-body-small text-ink-secondary">
                     No percentage grades, no stars, no shaming—just a quiet, supportive companion at the keys.
                   </p>
-                </div>
+                </Surface>
               </div>
             </Reveal>
           </div>
@@ -514,8 +515,8 @@ export default function Landing() {
           {/* 3-Column Work Showcase Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             <Reveal delay={0}>
-              <div className="group rounded-container border border-line-subtle bg-surface-panel p-6 transition-all duration-300 hover:border-line-strong hover:-translate-y-1">
-                <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-line-subtle bg-surface-canvas/50">
+              <Surface padding="lg" interactive className="group transition-all duration-300 hover:-translate-y-1">
+                <div className="aspect-[4/3] overflow-hidden rounded-container border border-line-subtle bg-surface-canvas/50">
                   <ScorePreview id="rep-clair" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
                 </div>
                 <div className="mt-5">
@@ -527,12 +528,12 @@ export default function Landing() {
                     <span>Active study · 2 takes preserved</span>
                   </div>
                 </div>
-              </div>
+              </Surface>
             </Reveal>
 
             <Reveal delay={0.08}>
-              <div className="group rounded-container border border-line-subtle bg-surface-panel p-6 transition-all duration-300 hover:border-line-strong hover:-translate-y-1">
-                <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-line-subtle bg-surface-canvas/50">
+              <Surface padding="lg" interactive className="group transition-all duration-300 hover:-translate-y-1">
+                <div className="aspect-[4/3] overflow-hidden rounded-container border border-line-subtle bg-surface-canvas/50">
                   <ScorePreview id="rep-gymno" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
                 </div>
                 <div className="mt-5">
@@ -544,12 +545,12 @@ export default function Landing() {
                     <span>Polishing · 3 takes preserved</span>
                   </div>
                 </div>
-              </div>
+              </Surface>
             </Reveal>
 
             <Reveal delay={0.16}>
-              <div className="group rounded-container border border-line-subtle bg-surface-panel p-6 transition-all duration-300 hover:border-line-strong hover:-translate-y-1">
-                <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-line-subtle bg-surface-canvas/50 flex items-center justify-center">
+              <Surface padding="lg" interactive className="group transition-all duration-300 hover:-translate-y-1">
+                <div className="aspect-[4/3] overflow-hidden rounded-container border border-line-subtle bg-surface-canvas/50 flex items-center justify-center">
                   <div className="text-center p-6">
                     <ScoreSheetGlyph className="h-8 w-8 text-ink-primary mx-auto mb-3" />
                     <p className="type-subsection text-ink-primary">Your Next Piece</p>
@@ -565,7 +566,7 @@ export default function Landing() {
                     <span>No subscription limit to begin</span>
                   </div>
                 </div>
-              </div>
+              </Surface>
             </Reveal>
           </div>
         </div>
@@ -675,7 +676,7 @@ export default function Landing() {
 
             {/* Plus Plan — Featured Middle Inverse Dark Card (Most Popular) */}
             <Reveal delay={0.1}>
-              <div className="h-full rounded-container p-8 md:p-9 flex flex-col justify-between bg-ink-primary text-surface-canvas border border-ink-primary shadow-overlay transition-all duration-300 hover:-translate-y-1">
+              <div className="h-full rounded-container p-8 md:p-9 flex flex-col justify-between bg-ink-primary text-surface-canvas border border-ink-primary transition-all duration-300 hover:-translate-y-1">
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="type-eyebrow text-surface-canvas/60">
@@ -811,7 +812,7 @@ export default function Landing() {
       {/* 9. FINAL INVERSE CONVERSION BLOCK — UGC ContactCTA Parity */}
       <section className="py-24 md:py-36">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
-          <div className="rounded-container bg-ink-primary text-surface-canvas overflow-hidden relative shadow-overlay">
+          <div className="rounded-container bg-ink-primary text-surface-canvas overflow-hidden relative">
             {/* ambient oversized word */}
             <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
               {/* ds-allow: ambient oversized background wordmark */}
@@ -841,7 +842,7 @@ export default function Landing() {
               {/* Right 5 Columns — Action Card */}
               <div className="lg:col-span-5 flex flex-col justify-center">
                 <Reveal delay={0.1}>
-                  <div className="rounded-3xl border border-surface-canvas/15 p-8 md:p-10 bg-surface-canvas/5 backdrop-blur-md">
+                  <div className="rounded-container border border-surface-canvas/15 p-8 md:p-10 bg-surface-canvas/5 backdrop-blur-md">
                     <p className="type-caption text-surface-canvas/60 mb-2">
                       Get Started Today
                     </p>

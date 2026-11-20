@@ -150,7 +150,7 @@ export default function PracticeProgress() {
                   <div key={i} className="flex flex-1 flex-col items-center gap-1">
                     <span className="type-metadata tabular-nums text-ink-secondary/70">{d.minutes > 0 ? d.minutes : ''}</span>
                     <div
-                      className={`w-full rounded-t transition-colors ${d.isToday ? 'bg-brand' : 'bg-neutral-muted hover:bg-neutral-hover'}`}
+                      className={`w-full rounded-t-control transition-colors ${d.isToday ? 'bg-brand' : 'bg-neutral-muted hover:bg-neutral-hover'}`}
                       style={{ height: `${(d.minutes / max) * 100}%`, minHeight: d.minutes > 0 ? 3 : 0 }}
                     />
                     <span className="type-metadata font-medium text-ink-secondary/80">{d.label}</span>

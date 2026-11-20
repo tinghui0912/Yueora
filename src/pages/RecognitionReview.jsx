@@ -7,6 +7,7 @@ import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import MockScanPage from '@/components/visuals/MockScanPage';
 import { Button } from '@/components/ui/button';
 import BackLink from '@/components/patterns/BackLink';
+import Surface from '@/components/patterns/Surface';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import StateMessage from '@/components/patterns/StateMessage';
 import { useToast } from '@/components/ui/use-toast';
@@ -101,15 +102,15 @@ export default function RecognitionReview() {
         {(mobileView === 'recognized' || typeof window !== 'undefined') && (
           <div className={`min-w-0 flex-1 overflow-auto bg-surface-canvas p-6 ${mobileView === 'original' ? 'hidden md:block' : ''}`}>
             <p className="mb-3 type-caption text-ink-tertiary">Recognized score</p>
-            <div className="mx-auto max-w-3xl rounded-md border border-line-subtle bg-surface-panel p-6">
+            <Surface padding="lg" className="mx-auto max-w-3xl">
               <ScoreCanvas notes={notes} selectedIds={new Set()} onSelect={() => {}} zoom={1} activeIssueMeasure={active?.measure} />
               {active && (
-                <div className="mt-3 rounded-md border border-warning/40 bg-warning/10 px-3 py-2">
+                <div className="mt-3 rounded-control border border-warning/40 bg-warning/10 px-3 py-2">
                   <p className="type-body-small font-medium text-warning">Measure {active.measure}: {active.type}</p>
                   <p className="type-metadata text-ink-secondary">{active.detail}</p>
                 </div>
               )}
-            </div>
+            </Surface>
           </div>
         )}
 

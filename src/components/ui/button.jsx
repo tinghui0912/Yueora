@@ -22,7 +22,7 @@ const buttonVariants = cva(
         link:
           "text-ink-primary underline-offset-4 hover:underline",
         inverse:
-          "bg-surface-canvas text-ink-primary hover:bg-white active:scale-[0.98]",
+          "bg-surface-canvas text-ink-primary hover:bg-surface-panel active:scale-[0.98]",
         "inverse-secondary":
           "border border-surface-canvas/30 text-surface-canvas hover:bg-surface-canvas/10 active:scale-[0.98]",
       },

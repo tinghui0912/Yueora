@@ -289,7 +289,7 @@ export default function Editor() {
         <div className="min-w-0 flex-1 overflow-auto bg-surface-canvas p-6">
           {view === 'original' ? (
             <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-4">
-              <div className="staff-bg aspect-[3/4] w-full rounded border border-line-subtle opacity-60" />
+              <div className="staff-bg aspect-[3/4] w-full rounded-control border border-line-subtle opacity-60" />
               <p className="mt-2 text-center type-metadata text-ink-secondary">Original scan · Page 1</p>
             </div>
           ) : view === 'split' ? (
@@ -297,7 +297,7 @@ export default function Editor() {
               <div className="flex-1">
                 <p className="mb-2 type-caption text-ink-secondary/70">Original</p>
                 <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
-                  <div className="staff-bg aspect-[3/4] w-full rounded border border-line-subtle opacity-60" />
+                  <div className="staff-bg aspect-[3/4] w-full rounded-control border border-line-subtle opacity-60" />
                 </div>
               </div>
               <div className="flex-1">

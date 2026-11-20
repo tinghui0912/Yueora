@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
  * - Full available viewport width
  * - Warm translucent surface: bg-surface-canvas/95 backdrop-blur-xl
  * - Vertical text-lg link rows with subtle border-b
- * - Large 52px CTA below (touch target >= 44px)
+ * - Large 44px CTA below (touch target >= 44px)
  */
 export default function PublicMobileMenu({ open, onClose }) {
   const { isAuthenticated } = useAuth();

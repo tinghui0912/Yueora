@@ -35,7 +35,7 @@ export default function PreferencesSettings() {
                 <button
                   key={v}
                   onClick={() => update({ pageFit: v })}
-                  className={`rounded-sm px-3 py-1.5 type-body-small transition-all ${
+                  className={`rounded-control px-3 py-1.5 type-body-small transition-all ${
                     prefs.pageFit === v
                       ? 'bg-surface-panel font-medium text-ink-primary'
                       : 'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover'

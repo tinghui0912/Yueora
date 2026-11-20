@@ -366,7 +366,7 @@ export default function PracticeSession() {
       >
         <button
           onClick={() => (phase === 'ready' ? navigate(`/score/${scoreId}`) : setExitOpen(true))}
-          className="flex min-w-0 items-center gap-2 type-label font-medium text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
+          className="flex min-w-0 items-center gap-2 type-label font-medium text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded-control"
         >
           <ArrowLeft className="h-4 w-4 shrink-0" />
           <span className="truncate type-subsection text-ink-primary">{score.title}</span>
@@ -381,7 +381,7 @@ export default function PracticeSession() {
             >
               <Video className="h-3.5 w-3.5 text-ink-secondary" aria-hidden="true" />
               {isPlaying && (
-                <span className="absolute left-1 top-1 flex items-center gap-1 rounded bg-danger px-1 py-px text-[9px] font-bold uppercase tracking-wider text-white"> {/* ds-allow: miniature simulation badge */}
+                <span className="absolute left-1 top-1 flex items-center gap-1 rounded-control bg-danger px-1 py-px text-[9px] font-bold uppercase tracking-wider text-white"> {/* ds-allow: miniature simulation badge */}
                   REC
                 </span>
               )}

@@ -3,6 +3,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import PublicShell from '@/components/public/PublicShell';
 import AppPage from '@/components/patterns/AppPage';
+import Surface from '@/components/patterns/Surface';
 import Reveal from '@/components/public/Reveal';
 import ScorePreview from '@/components/library/ScorePreview';
 import { Button } from '@/components/ui/button';
@@ -36,7 +37,7 @@ export default function About() {
                 </div>
 
                 {/* Real Domain Score Preview */}
-                <div className="my-auto overflow-hidden rounded-2xl border border-line-subtle bg-white">
+                <div className="my-auto overflow-hidden rounded-container border border-line-subtle bg-surface-panel">
                   <ScorePreview id="about-score-clair" className="aspect-[16/11] w-full object-cover" />
                 </div>
 
@@ -83,7 +84,7 @@ export default function About() {
               {/* Shift cards */}
               <Reveal delay={0.15}>
                 <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5">
+                  <Surface padding="md">
                     <p className="type-eyebrow text-ink-tertiary">Traditional Tools</p>
                     <p className="mt-2 type-subsection text-ink-primary font-medium">
                       &ldquo;Here is what you must practice.&rdquo;
@@ -91,8 +92,8 @@ export default function About() {
                     <p className="mt-1.5 type-body-small text-ink-secondary">
                       A curriculum, a syllabus, daily streak badges, and forced grading matrices.
                     </p>
-                  </div>
-                  <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5">
+                  </Surface>
+                  <Surface padding="md">
                     <p className="type-eyebrow text-ink-primary">Yueora Sanctuary</p>
                     <p className="mt-2 type-subsection text-ink-primary font-medium">
                       &ldquo;What do you feel like playing?&rdquo;
@@ -100,7 +101,7 @@ export default function About() {
                     <p className="mt-1.5 type-body-small text-ink-secondary">
                       You bring the sheet music that already matters to you. Everything follows from your devotion.
                     </p>
-                  </div>
+                  </Surface>
                 </div>
               </Reveal>
             </div>
@@ -162,9 +163,9 @@ export default function About() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <Reveal delay={0.05} y={28}>
-                <div className="h-full rounded-2xl border border-line-subtle bg-surface-panel p-6 sm:p-7 flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
+                <Surface padding="lg" interactive className="h-full flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
                   <div>
-                    <div className="w-10 h-10 rounded-xl bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
+                    <div className="w-10 h-10 rounded-control bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
                       <Music2 className="w-5 h-5" />
                     </div>
                     <h3 className="type-subsection text-ink-primary font-medium">Choice over curriculum</h3>
@@ -173,13 +174,13 @@ export default function About() {
                     </p>
                   </div>
                   <p className="mt-6 type-eyebrow text-ink-tertiary">Autonomy</p>
-                </div>
+                </Surface>
               </Reveal>
 
               <Reveal delay={0.1} y={28}>
-                <div className="h-full rounded-2xl border border-line-subtle bg-surface-panel p-6 sm:p-7 flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
+                <Surface padding="lg" interactive className="h-full flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
                   <div>
-                    <div className="w-10 h-10 rounded-xl bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
+                    <div className="w-10 h-10 rounded-control bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
                       <Heart className="w-5 h-5" />
                     </div>
                     <h3 className="type-subsection text-ink-primary font-medium">Joy over obligation</h3>
@@ -188,13 +189,13 @@ export default function About() {
                     </p>
                   </div>
                   <p className="mt-6 type-eyebrow text-ink-tertiary">Affection</p>
-                </div>
+                </Surface>
               </Reveal>
 
               <Reveal delay={0.15} y={28}>
-                <div className="h-full rounded-2xl border border-line-subtle bg-surface-panel p-6 sm:p-7 flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
+                <Surface padding="lg" interactive className="h-full flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
                   <div>
-                    <div className="w-10 h-10 rounded-xl bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
+                    <div className="w-10 h-10 rounded-control bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
                       <Eye className="w-5 h-5" />
                     </div>
                     <h3 className="type-subsection text-ink-primary font-medium">Feedback without judgment</h3>
@@ -203,13 +204,13 @@ export default function About() {
                     </p>
                   </div>
                   <p className="mt-6 type-eyebrow text-ink-tertiary">Listening</p>
-                </div>
+                </Surface>
               </Reveal>
 
               <Reveal delay={0.2} y={28}>
-                <div className="h-full rounded-2xl border border-line-subtle bg-surface-panel p-6 sm:p-7 flex flex-col justify-between hover:border-line-strong hover:-translate-y-1 transition-all duration-300">
+                <Surface padding="lg" interactive className="h-full flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
                   <div>
-                    <div className="w-10 h-10 rounded-xl bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
+                    <div className="w-10 h-10 rounded-control bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
                       <TrendingUp className="w-5 h-5" />
                     </div>
                     <h3 className="type-subsection text-ink-primary font-medium">Progress without pressure</h3>
@@ -218,7 +219,7 @@ export default function About() {
                     </p>
                   </div>
                   <p className="mt-6 type-eyebrow text-ink-tertiary">Serenity</p>
-                </div>
+                </Surface>
               </Reveal>
             </div>
           </div>
@@ -251,7 +252,7 @@ export default function About() {
 
             <div className="lg:col-span-6">
               <Reveal delay={0.1}>
-                <div className="rounded-3xl border border-line-subtle bg-surface-panel p-8 sm:p-10">
+                <Surface padding="lg" className="p-8 sm:p-10">
                   <div className="flex items-center gap-3 mb-6">
                     <Shield className="w-6 h-6 text-ink-primary" />
                     <h3 className="type-section-title text-ink-primary">
@@ -273,7 +274,7 @@ export default function About() {
                     <span>Encrypted Repertoire</span>
                     <span>Zero Public Discoverability</span>
                   </div>
-                </div>
+                </Surface>
               </Reveal>
             </div>
           </div>
@@ -283,7 +284,7 @@ export default function About() {
         <section className="py-24 md:py-36">
           <div className="max-w-7xl mx-auto px-6 md:px-10">
             <Reveal y={36}>
-              <div className="relative rounded-container bg-ink-primary text-surface-canvas p-10 md:p-16 lg:p-20 overflow-hidden shadow-overlay">
+              <div className="relative rounded-container bg-ink-primary text-surface-canvas p-10 md:p-16 lg:p-20 overflow-hidden">
                 {/* Ambient watermark */}
                 <div aria-hidden className="pointer-events-none absolute -bottom-10 -right-8 select-none">
                   {/* ds-allow: ambient oversized background typography */}
@@ -314,7 +315,7 @@ export default function About() {
                       asChild
                       intent="inverse"
                       size="xl"
-                      className="w-full flex items-center justify-center gap-2"
+                      className="w-full"
                     >
                       <Link to={ctaDestination}>
                         <span>Start playing free</span>

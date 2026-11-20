@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Check, ArrowRight, Sparkles } from 'lucide-react';
 import PublicShell from '@/components/public/PublicShell';
 import AppPage from '@/components/patterns/AppPage';
+import Surface from '@/components/patterns/Surface';
 import Reveal from '@/components/public/Reveal';
 import { useAuth } from '@/lib/AuthContext';
 import { usePrototypeStore } from '@/stores/prototypeStore';
@@ -155,7 +156,7 @@ export default function Pricing() {
 
             {/* Plus Plan — Featured Middle Near-Black Inverse Card (Most Popular) */}
             <Reveal delay={0.1} y={32}>
-              <div className="relative h-full rounded-container p-6 sm:p-8 md:p-9 bg-ink-primary text-surface-canvas border border-ink-primary shadow-overlay flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div className="relative h-full rounded-container p-6 sm:p-8 md:p-9 bg-ink-primary text-surface-canvas border border-ink-primary flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                 {/* Ambient glow decoration */}
                 <div aria-hidden className="pointer-events-none absolute -bottom-8 -right-8 select-none">
                   <Sparkles className="w-40 h-40 text-surface-canvas/[0.04]" />
@@ -234,7 +235,7 @@ export default function Pricing() {
                         asChild
                         intent="inverse"
                         size="xl"
-                        className="w-full flex items-center justify-center gap-2"
+                        className="w-full"
                       >
                         <Link to={plusDestination}>
                           <span>Start Plus</span>
@@ -330,7 +331,7 @@ export default function Pricing() {
                         asChild
                         intent="primary"
                         size="xl"
-                        className="w-full flex items-center justify-center gap-2"
+                        className="w-full"
                       >
                         <Link to={proDestination}>
                           <span>Start Pro</span>
@@ -357,7 +358,7 @@ export default function Pricing() {
                 </h2>
               </div>
 
-              <div className="overflow-x-auto rounded-2xl border border-line-subtle bg-surface-panel">
+              <Surface className="overflow-x-auto">
                 <table className="w-full type-body-small">
                   <thead>
                     <tr className="border-b border-line-subtle bg-neutral-muted/40">
@@ -378,7 +379,7 @@ export default function Pricing() {
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </Surface>
             </Reveal>
 
             {/* Prototype and Legal Footnote */}

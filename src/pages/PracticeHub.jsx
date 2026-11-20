@@ -62,7 +62,7 @@ export default function PracticeHub() {
               className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 transition-colors hover:border-line-strong sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex items-center gap-4 min-w-0">
-                <div className="h-16 w-24 shrink-0 overflow-hidden rounded border border-line-subtle bg-white/95">
+                <div className="h-16 w-24 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel/95">
                   <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
                 </div>
                 <div className="min-w-0">
@@ -98,7 +98,7 @@ export default function PracticeHub() {
             {recentlyLoved.map((r) => (
               <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="block">
                 <div className="flex items-center gap-3.5 rounded-container border border-line-subtle bg-surface-panel p-3.5 transition-colors hover:border-line-strong">
-                  <div className="h-14 w-20 shrink-0 overflow-hidden rounded border border-line-subtle bg-white">
+                  <div className="h-14 w-20 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
                     <ScorePreview id={r.scoreId} className="h-full w-full object-cover" />
                   </div>
                   <div className="min-w-0">
@@ -149,7 +149,7 @@ export default function PracticeHub() {
                 className="flex flex-col justify-between rounded-container border border-line-subtle bg-surface-panel p-4 transition-colors hover:border-line-strong"
               >
                 <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="h-14 w-20 shrink-0 overflow-hidden rounded border border-line-subtle bg-white">
+                  <div className="h-14 w-20 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
                     <ScorePreview id={s.id} className="h-full w-full object-cover" />
                   </div>
                   <div className="min-w-0">

@@ -233,14 +233,13 @@ export default function DesignSystemPreview() {
           </div>
 
           <div className="space-y-2">
-            <span className="type-caption text-ink-secondary/70">Sizes (xs: 28px, sm: 32px, md: 36px, lg: 40px, xl: 44px, hero: 52px)</span>
+            <span className="type-caption text-ink-secondary/70">Sizes (xs: 28px, sm: 32px, md: 36px, lg: 40px, xl: 44px)</span>
             <div className="flex flex-wrap items-center gap-3">
               <Button intent="primary" size="xs">Size XS (28px)</Button>
               <Button intent="primary" size="sm">Size SM (32px)</Button>
               <Button intent="primary" size="md">Size MD (36px Default)</Button>
               <Button intent="primary" size="lg">Size LG (40px)</Button>
               <Button intent="primary" size="xl">Size XL (44px)</Button>
-              <Button intent="primary" size="xl">Size Hero (52px Major CTA)</Button>
             </div>
           </div>
 
@@ -419,7 +418,7 @@ export default function DesignSystemPreview() {
           title="Inverse Editorial Surface (UGC Conversion Pattern)"
           description="Dramatic near-black container (bg-ink-primary text-surface-canvas) with ambient background typography and high-contrast pill actions."
         />
-        <div className="relative rounded-container bg-ink-primary text-surface-canvas p-8 md:p-10 overflow-hidden shadow-overlay">
+        <div className="relative rounded-container bg-ink-primary text-surface-canvas p-8 md:p-10 overflow-hidden">
           <div aria-hidden className="pointer-events-none absolute -bottom-6 -right-6 select-none">
             {/* ds-allow: ambient oversized background typography showcase */}
             <span className="font-display italic text-8xl text-surface-canvas/[0.04]">music</span>

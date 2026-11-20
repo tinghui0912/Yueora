@@ -1439,6 +1439,17 @@ function verifyVisualFreedomContraction(issues = []) {
             message: `Legacy Button size '${m[1]}' is retired. Button sizes are strictly canonical: 'xs', 'sm', 'md', 'lg', 'xl'.`,
           });
         }
+
+        const staleHeroMatches = code.matchAll(/(?:hero:\s*52px|Size Hero)/gi);
+        for (const m of staleHeroMatches) {
+          const line = code.slice(0, m.index).split('\n').length;
+          issues.push({
+            file: rel,
+            line,
+            matched: m[0],
+            message: `Stale 'hero 52px' reference detected. Button sizes are strictly canonical: 'xs' (28px), 'sm' (32px), 'md' (36px), 'lg' (40px), 'xl' (44px).`,
+          });
+        }
       }
     }
   }
@@ -1475,6 +1486,16 @@ function verifyVisualFreedomContraction(issues = []) {
             });
           }
 
+          const genericRadiusMatch = line.match(/(?<![a-zA-Z0-9_-])(rounded|rounded-(?:none|sm|md|lg|xl|2xl|3xl)|rounded-(?:t|b|l|r|tl|tr|bl|br)(?:-(?:none|sm|md|lg|xl|2xl|3xl))?)(?![a-zA-Z0-9_-])/);
+          if (genericRadiusMatch) {
+            issues.push({
+              file: rel,
+              line: idx + 1,
+              matched: genericRadiusMatch[1],
+              message: `Generic radius '${genericRadiusMatch[1]}' is banned in pages. Pages compose; the Design System decides appearance via semantic radii (rounded-control, rounded-container, rounded-overlay, rounded-full).`,
+            });
+          }
+
           const arbShadowMatch = line.match(/\b(shadow-\[[^\]]+\])/);
           if (arbShadowMatch) {
             issues.push({
@@ -1494,17 +1515,27 @@ function verifyVisualFreedomContraction(issues = []) {
               message: `Generic elevation '${genericShadowMatch[1]}' is banned in pages. Standard panels are flat by default. Overlays strictly use shadow-overlay or shadow-raised.`,
             });
           }
+
+          const physicalColorMatch = line.match(/(?<![a-zA-Z0-9_-])(bg-white(?:\/\d+)?|bg-black(?:\/\d+)?)(?![a-zA-Z0-9_-])/);
+          if (physicalColorMatch) {
+            issues.push({
+              file: rel,
+              line: idx + 1,
+              matched: physicalColorMatch[1],
+              message: `Physical color '${physicalColorMatch[1]}' is banned in pages. Surfaces must be mediated by semantic tokens (bg-surface-panel, bg-surface-canvas, text-white, text-ink-primary).`,
+            });
+          }
         });
 
         const btnTagRegex = /<Button\b([^>]*)>/gs;
         let btnMatch;
         while ((btnMatch = btnTagRegex.exec(code)) !== null) {
           const attrs = btnMatch[1];
-          const classMatch = attrs.match(/\bclassName=(?:\{cn\()?["']([^"']+)["']/);
+          const classMatch = attrs.match(/\bclassName=(?:(?:\{cn\()?[`"']|{\s*[`"'])([^`"'}]+)/);
           if (classMatch) {
             const cls = classMatch[1];
             const visualOverrides = cls.split(/\s+/).filter(token =>
-              /^(rounded-|bg-|border-|shadow-|h-\d|px-\d|py-\d)/.test(token)
+              /^(rounded-|bg-|border-|shadow-|h-\d|px-\d|py-\d|gap-|items-|justify-|ring-|font-)/.test(token)
             );
             if (visualOverrides.length > 0) {
               const lineNo = code.slice(0, btnMatch.index).split('\n').length;
@@ -1553,9 +1584,8 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified zero DialogTitle typography overrides & zero conflicting font-size overrides on semantic typography`);
   console.log('   - Verified Page Typography Ownership & Consumption (zero raw font-size, font-display, uppercase, or tracking across all pages in src/pages)');
   console.log(`   - Verified Button Semantic API & Visual Freedom Contraction (zero variant= props, zero legacy aliases, zero hero/default sizes)`);
-  console.log(`   - Verified Page Appearance Ownership (zero arbitrary radii rounded-[...], zero arbitrary shadows shadow-[...], zero generic shadows in src/pages)`);
+  console.log(`   - Verified Page Appearance Ownership (zero arbitrary/generic radii, zero arbitrary/generic shadows, zero raw physical colors in src/pages)`);
   console.log(`   - Verified Button Visual Ownership Guard (zero button appearance overrides in page JSX)`);
-  console.log(`   - Verified documentation and AI instruction truth sync (AGENTS.md & docs/design-system.md)`);
   console.log(`   - Verified documentation and AI instruction truth sync (AGENTS.md & docs/design-system.md)`);
   console.log(`   - Verified zero banned full-width Landing surfaces`);
   console.log(`   - Verified retired tokens permanently removed and forbidden from product code`);

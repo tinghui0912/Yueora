@@ -228,7 +228,7 @@ export default function Library() {
           <div className="mx-4 mt-6 md:mx-8">
             <div className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 transition-colors hover:border-line-strong sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4 min-w-0">
-                <div className="hidden h-14 w-20 shrink-0 overflow-hidden rounded border border-line-subtle bg-white/90 sm:block">
+                <div className="hidden h-14 w-20 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel/90 sm:block">
                   <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
                 </div>
                 <div className="min-w-0">
@@ -313,7 +313,7 @@ export default function Library() {
                         <button
                           key={ins}
                           onClick={() => setFilterInstrument(ins)}
-                          className={`rounded px-2 py-1 type-body-small ${
+                          className={`rounded-control px-2 py-1 type-body-small ${
                             filterInstrument === ins ? 'bg-brand-soft font-semibold text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover'
                           }`}
                         >
@@ -327,7 +327,7 @@ export default function Library() {
                         <button
                           key={k}
                           onClick={() => setFilterPlayed(k)}
-                          className={`rounded px-2 py-1 type-body-small ${
+                          className={`rounded-control px-2 py-1 type-body-small ${
                             filterPlayed === k ? 'bg-brand-soft font-semibold text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover'
                           }`}
                         >
@@ -364,7 +364,7 @@ export default function Library() {
                       <button
                         key={o.key}
                         onClick={() => { setParam('sort', o.key); setShowSort(false); }}
-                        className={`flex w-full items-center justify-between rounded px-2.5 py-2 text-left type-body-small ${
+                        className={`flex w-full items-center justify-between rounded-control px-2.5 py-2 text-left type-body-small ${
                           sort === o.key ? 'bg-brand-soft font-semibold text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover'
                         }`}
                       >
@@ -410,7 +410,6 @@ export default function Library() {
                   intent="secondary"
                   size="sm"
                   onClick={favSelected}
-                  className="gap-1.5"
                 >
                   <Heart className="h-3.5 w-3.5" /> Favorite
                 </Button>
@@ -418,7 +417,6 @@ export default function Library() {
                   intent="secondary"
                   size="sm"
                   onClick={() => setMoveOpen(true)}
-                  className="gap-1.5"
                 >
                   <FolderInput className="h-3.5 w-3.5" /> Move to folder
                 </Button>
@@ -426,7 +424,6 @@ export default function Library() {
                   intent="danger"
                   size="sm"
                   onClick={() => setTrashConfirm({ selected: [...selected] })}
-                  className="gap-1.5"
                 >
                   <RemoveIcon className="h-3.5 w-3.5" /> {removeLabel}
                 </Button>
@@ -464,7 +461,7 @@ export default function Library() {
               <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
                 {filtered.map((s) => (
                   <div key={s.id} className="flex items-center gap-4 p-3.5">
-                    <div className="h-12 w-16 shrink-0 overflow-hidden rounded border border-line-subtle bg-white">
+                    <div className="h-12 w-16 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
                       <ScorePreview id={s.id} className="h-full w-full object-cover" />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -520,7 +517,7 @@ export default function Library() {
                   />
 
                   <Link to={`/score/${s.id}`} className="flex min-w-0 flex-1 items-center gap-4">
-                    <div className="h-11 w-14 shrink-0 overflow-hidden rounded border border-line-subtle bg-white">
+                    <div className="h-11 w-14 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
                       <ScorePreview id={s.id} className="h-full w-full object-cover" />
                     </div>
                     <div className="min-w-0 flex-1">

@@ -106,7 +106,7 @@ export default function ScoreDetail() {
             </h1>
             <button
               onClick={handleFavorite}
-              className="text-ink-tertiary hover:text-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded p-0.5"
+              className="text-ink-tertiary hover:text-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded-control p-0.5"
               aria-label={score.favorite ? 'Remove favorite' : 'Add to favorites'}
             >
               {score.favorite ? (
@@ -215,7 +215,7 @@ export default function ScoreDetail() {
         <div className="lg:col-span-8 space-y-6">
           <Surface tone="panel" className="p-4 sm:p-6">
             {/* Score folio viewer */}
-            <div className="flex justify-center overflow-auto rounded bg-surface-canvas/60 p-4">
+            <div className="flex justify-center overflow-auto rounded-container bg-surface-canvas/60 p-4">
               <div
                 style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
                 className="aspect-[16/10] w-full max-w-2xl transition-transform duration-fast"

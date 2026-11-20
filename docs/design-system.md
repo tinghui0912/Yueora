@@ -210,7 +210,7 @@ One visual decision has one owner. All interactive controls, inputs, and icon el
   - Overlay radius: `--radius-overlay: 1rem` (`16px`) for popovers, menus.
   - Button geometry: pill buttons (`rounded-full`), circular icon buttons (`rounded-full`).
   - Badge geometry: pill badges (`rounded-full`).
-  - **Zero Arbitrary Radii:** Arbitrary radius utilities (`rounded-[...]`) are banned across all application pages. Pages must strictly use semantic radii.
+  - **Zero Arbitrary & Generic Radii:** Arbitrary radius utilities (`rounded-[...]`) and generic Tailwind radius utilities (`rounded`, `rounded-sm..3xl`, and directional variants) are banned across all application pages in `src/pages/**`. Pages must strictly use semantic radii (`rounded-control`, `rounded-container`, `rounded-overlay`, and justified `rounded-full` for badges/pills/dots).
 - **Flat Controls & Flat Content Panels:** Ordinary controls and standard content panels are flat by default (no `shadow-xs` on buttons, inputs, checkboxes, or static panels). Repetitive panel patterns (`rounded-container border border-line-subtle bg-surface-panel`) should compose `<Surface padding="...">`.
 - **Media-Driven Elevation:** Shadows are strictly reserved for elevated overlays (`shadow-raised` / `shadow-overlay` on menus, popovers, modal dialogs) and floating media artwork. Arbitrary shadows (`shadow-[...]`) and generic Tailwind shadows (`shadow-sm`, `shadow-md`, etc.) are banned in page code.
 

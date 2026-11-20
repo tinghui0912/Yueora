@@ -372,7 +372,7 @@ export default function AddScore() {
                 <div className="relative aspect-[4/3] rounded-container border border-line-subtle bg-surface-canvas overflow-hidden flex flex-col items-center justify-center p-6 text-center">
                   {/* Framing outline */}
                   <div className="absolute inset-6 rounded-control border-2 border-dashed border-line-strong pointer-events-none flex items-center justify-center">
-                    <span className="type-caption text-ink-tertiary bg-surface-canvas/90 px-3 py-1 rounded">
+                    <span className="type-caption text-ink-tertiary bg-surface-canvas/90 px-3 py-1 rounded-full">
                       Align sheet within borders
                     </span>
                   </div>
@@ -395,7 +395,7 @@ export default function AddScore() {
                   <div className="flex items-center gap-3 overflow-x-auto pb-2 min-h-[5rem]">
                     {files.map((f, i) => (
                       <div key={f.id} className="relative flex-shrink-0 rounded-control border border-line-subtle bg-surface-panel p-2 flex flex-col items-center gap-1">
-                        <FileThumbnail seed={f.id} className="h-16 w-12 rounded" />
+                        <FileThumbnail seed={f.id} className="h-16 w-12 rounded-control" />
                         <span className="type-caption text-ink-secondary">Page {i + 1}</span>
                         <button
                           type="button"
@@ -427,7 +427,7 @@ export default function AddScore() {
                       padding="sm"
                       className="flex items-center gap-3"
                     >
-                      <FileThumbnail seed={f.id} className="h-14 w-12 shrink-0 rounded" />
+                      <FileThumbnail seed={f.id} className="h-14 w-12 shrink-0 rounded-control" />
                       <div className="flex-1 min-w-0">
                         <p className="type-body-small font-medium text-ink-primary truncate">
                           {f.name}
