@@ -28,7 +28,7 @@ const surfaceVariants = cva(
         lg: 'p-6 sm:p-8',
       },
       interactive: {
-        true: 'hover:border-brand/40 hover:shadow-raised hover:-translate-y-0.5 cursor-pointer',
+        true: 'hover:border-brand/40 hover:shadow-raised hover:-translate-y-1 cursor-pointer transition-all duration-300',
       },
     },
     defaultVariants: {

@@ -19,7 +19,7 @@ const SelectTrigger = React.forwardRef(({ className = '', children = null, hasEr
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-control-lg min-h-control-lg w-full items-center justify-between whitespace-nowrap rounded-control border border-line-subtle bg-surface-panel px-3.5 py-2 type-body-small text-ink-primary shadow-xs ring-offset-background transition-colors placeholder:text-ink-tertiary focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+      "flex h-control-md min-h-control-md w-full items-center justify-between whitespace-nowrap rounded-control border border-line-subtle bg-surface-panel px-3.5 py-1.5 type-body-small text-ink-primary shadow-xs ring-offset-background transition-colors placeholder:text-ink-tertiary hover:border-line-strong focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
       hasError && "border-danger focus:border-danger focus:ring-danger/20",
       className
     )}
@@ -152,7 +152,7 @@ const NativeSelect = React.forwardRef(({ className = '', hasError = false, child
     <select
       ref={ref}
       className={cn(
-        "flex h-control-lg min-h-control-lg w-full appearance-none rounded-control border border-line-subtle bg-surface-panel px-3.5 py-2 pr-9 type-body-small text-ink-primary shadow-xs transition-colors focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex h-control-md min-h-control-md w-full appearance-none rounded-control border border-line-subtle bg-surface-panel px-3.5 py-1.5 pr-9 type-body-small text-ink-primary shadow-xs transition-colors hover:border-line-strong focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:cursor-not-allowed disabled:opacity-50",
         hasError && "border-danger focus:border-danger focus:ring-danger/20",
         className
       )}

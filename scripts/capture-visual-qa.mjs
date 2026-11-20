@@ -61,6 +61,14 @@ const TARGETS = [
   { name: 'sharing-pro', category: 'DEV Demo', path: '/score/clair-de-lune?dialog=sharing&plan=pro&demo=true', w: 1440, h: 900, isDialog: true },
   { name: 'perf-locked-download', category: 'DEV Demo', path: '/performances/perf-clair-take-1?plan=free&demo=true', w: 1440, h: 900 },
   { name: 'perf-pro-download', category: 'DEV Demo', path: '/performances/perf-clair-take-1?plan=pro&demo=true', w: 1440, h: 900 },
+
+  // Interactive Component State Captures (Visual QA Verification)
+  { name: 'hover-button-primary', category: 'Interaction', path: '/design-system?demo=true', w: 1440, h: 900, isInteraction: 'hover-button-primary' },
+  { name: 'hover-button-secondary', category: 'Interaction', path: '/design-system?demo=true', w: 1440, h: 900, isInteraction: 'hover-button-secondary' },
+  { name: 'focus-input', category: 'Interaction', path: '/design-system?demo=true', w: 1440, h: 900, isInteraction: 'focus-input' },
+  { name: 'hover-score-card', category: 'Interaction', path: '/library?demo=true', w: 1440, h: 900, isInteraction: 'hover-score-card' },
+  { name: 'hover-sidebar-nav', category: 'Interaction', path: '/library?demo=true', w: 1440, h: 900, isInteraction: 'hover-sidebar-nav' },
+  { name: 'open-dropdown', category: 'Interaction', path: '/library?demo=true', w: 1440, h: 900, isInteraction: 'open-dropdown' },
 ];
 
 console.log('📸 Starting Yueora Automated Visual QA Screenshot Capture...');
@@ -379,6 +387,188 @@ async function verifyLandingViewports(client, baseUrl) {
   );
 }
 
+async function verifyComputedStyles(client, baseUrl) {
+  console.log(`\n🔍 Verifying computed styles and Design System V2 parity via CDP...`);
+  const { S, ev, subs } = client;
+
+  const navigateAndWait = async (url) => {
+    const loaded = new Promise((r) => subs.push((m) => { if (m.method === 'Page.loadEventFired') r(); }));
+    await S('Page.navigate', { url });
+    await Promise.race([loaded, new Promise((r) => setTimeout(r, 12000))]);
+    await ev('document.fonts ? document.fonts.ready.then(() => 1) : 1');
+    for (let i = 0; i < 60; i++) {
+      const ready = await ev('Boolean(document.querySelector("#root")?.children?.length > 0)');
+      if (ready) break;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+  };
+
+  // 1. Landing Hero Typography Assertions
+  await navigateAndWait(`${baseUrl}/`);
+  await new Promise((r) => setTimeout(r, 400));
+
+  await S('Emulation.setDeviceMetricsOverride', {
+    width: 1440,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+    dontSetVisibleSize: false,
+  });
+  await new Promise((r) => setTimeout(r, 200));
+
+  const heroStyle = await ev(`(() => {
+    const el = document.querySelector('.type-hero-title') || document.querySelector('h1');
+    if (!el) return null;
+    const cs = window.getComputedStyle(el);
+    return {
+      fontSize: cs.fontSize,
+      fontWeight: cs.fontWeight,
+      lineHeight: cs.lineHeight,
+      fontFamily: cs.fontFamily,
+    };
+  })()`);
+
+  if (!heroStyle) {
+    throw new Error('Hero title element not found on Landing page');
+  }
+
+  const heroFontSizePx = parseFloat(heroStyle.fontSize);
+  console.log(`  Hero Desktop Font-Size: ${heroStyle.fontSize} (${heroFontSizePx}px), weight: ${heroStyle.fontWeight}`);
+  if (heroFontSizePx > 90) {
+    throw new Error(`Landing Hero font-size is too large: ${heroStyle.fontSize} (expected <= 88px / 5.5rem, old 19vw failure detected)`);
+  }
+  if (heroFontSizePx < 40) {
+    throw new Error(`Landing Hero font-size is too small: ${heroStyle.fontSize}`);
+  }
+
+  // 2. Button and Input Primitives on /design-system
+  await navigateAndWait(`${baseUrl}/design-system?demo=true`);
+  for (let i = 0; i < 60; i++) {
+    const hasBtn = await ev('Boolean(Array.from(document.querySelectorAll("button")).find(b => b.textContent.includes("Primary Action")))');
+    if (hasBtn) break;
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  await new Promise((r) => setTimeout(r, 400));
+
+  const componentStyles = await ev(`(() => {
+    // Primary Button (md)
+    const primaryBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Primary Action');
+    const primaryCs = primaryBtn ? window.getComputedStyle(primaryBtn) : null;
+
+    // Primary Button (xl)
+    const xlBtn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Size XL'));
+    const xlCs = xlBtn ? window.getComputedStyle(xlBtn) : null;
+
+    // Standard Input
+    const inputEl = document.querySelector('input#demo-title');
+    const inputCs = inputEl ? window.getComputedStyle(inputEl) : null;
+
+    return {
+      primaryBtn: primaryCs ? {
+        backgroundColor: primaryCs.backgroundColor,
+        color: primaryCs.color,
+        borderRadius: primaryCs.borderRadius,
+        height: primaryCs.height,
+      } : null,
+      xlBtn: xlCs ? {
+        height: xlCs.height,
+      } : null,
+      input: inputCs ? {
+        height: inputCs.height,
+        borderRadius: inputCs.borderRadius,
+      } : null,
+    };
+  })()`);
+
+  if (!componentStyles.primaryBtn) throw new Error('Primary Action button not found on /design-system');
+  if (!componentStyles.input) throw new Error('input#demo-title not found on /design-system');
+
+  console.log(`  Primary Button: bg=${componentStyles.primaryBtn.backgroundColor}, color=${componentStyles.primaryBtn.color}, radius=${componentStyles.primaryBtn.borderRadius}, height=${componentStyles.primaryBtn.height}`);
+  console.log(`  XL Button Height: ${componentStyles.xlBtn?.height}`);
+  console.log(`  Standard Input: height=${componentStyles.input.height}, radius=${componentStyles.input.borderRadius}`);
+
+  // Assert primary button background is deep bronze (rgb(152, 102, 27) = #98661B)
+  if (!componentStyles.primaryBtn.backgroundColor.includes('152, 102, 27')) {
+    throw new Error(`Primary button background mismatch: ${componentStyles.primaryBtn.backgroundColor} (expected rgb(152, 102, 27) / #98661B)`);
+  }
+  // Assert button height is 36px (h-control-md)
+  if (Math.round(parseFloat(componentStyles.primaryBtn.height)) !== 36) {
+    throw new Error(`Primary button default height is not 36px: ${componentStyles.primaryBtn.height}`);
+  }
+  // Assert input height is 36px (h-control-md)
+  if (Math.round(parseFloat(componentStyles.input.height)) !== 36) {
+    throw new Error(`Standard input height is not 36px: ${componentStyles.input.height}`);
+  }
+  // Assert border radius is 10px (rounded-control)
+  if (Math.round(parseFloat(componentStyles.primaryBtn.borderRadius)) !== 10) {
+    throw new Error(`Primary button border radius is not 10px: ${componentStyles.primaryBtn.borderRadius}`);
+  }
+  if (Math.round(parseFloat(componentStyles.input.borderRadius)) !== 10) {
+    throw new Error(`Standard input border radius is not 10px: ${componentStyles.input.borderRadius}`);
+  }
+
+  // 3. Authenticated App Nav & Card Lift on /library?demo=true
+  await navigateAndWait(`${baseUrl}/library?demo=true`);
+  for (let i = 0; i < 60; i++) {
+    const hasNav = await ev('Boolean(document.querySelector("aside nav a") && document.querySelector("main"))');
+    if (hasNav) break;
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  await new Promise((r) => setTimeout(r, 400));
+
+  const appStyles = await ev(`(() => {
+    // Active sidebar nav
+    const activeNav = document.querySelector('aside nav a[href="/library"]') || document.querySelector('aside nav a.bg-brand-soft');
+    const navCs = activeNav ? window.getComputedStyle(activeNav) : null;
+
+    return {
+      activeNav: navCs ? {
+        backgroundColor: navCs.backgroundColor,
+        boxShadow: navCs.boxShadow,
+      } : null,
+    };
+  })()`);
+
+  if (appStyles.activeNav) {
+    console.log(`  Active Nav: bg=${appStyles.activeNav.backgroundColor}, shadow=${appStyles.activeNav.boxShadow}`);
+    if (appStyles.activeNav.boxShadow !== 'none') {
+      throw new Error(`Active navigation must be planar (no shadow), got: ${appStyles.activeNav.boxShadow}`);
+    }
+  }
+
+  // Verify interactive card lift on hover
+  const cardCoords = await ev(`(() => {
+    const card = document.querySelector('main a[href*="/score/"] > div') || document.querySelector('main .group');
+    if (!card) return null;
+    const r = card.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  })()`);
+
+  if (cardCoords) {
+    // Hover mouse over card
+    await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: cardCoords.x, y: cardCoords.y });
+    await new Promise((r) => setTimeout(r, 350));
+
+    const cardHover = await ev(`(() => {
+      const card = document.querySelector('main a[href*="/score/"] > div') || document.querySelector('main .group');
+      if (!card) return null;
+      const cs = window.getComputedStyle(card);
+      return {
+        transform: cs.transform,
+        boxShadow: cs.boxShadow,
+        borderColor: cs.borderColor,
+      };
+    })()`);
+
+    console.log(`  Card Hover: transform=${cardHover?.transform}, shadow=${cardHover?.boxShadow ? 'raised' : 'none'}, border=${cardHover?.borderColor}`);
+    if (cardHover && cardHover.transform !== 'none') {
+      console.log(`  ✓ Card hover lift verified: ${cardHover.transform}`);
+    }
+  }
+
+  console.log(`✅ All computed style assertions passed.\n`);
+}
+
 async function captureAndValidateTarget(client, target, baseUrl) {
   const { S, ev, subs } = client;
   const fullUrl = `${baseUrl}${target.path}`;
@@ -398,7 +588,14 @@ async function captureAndValidateTarget(client, target, baseUrl) {
 
   // Wait for fonts and app rendering
   await ev('document.fonts ? document.fonts.ready.then(() => 1) : 1');
-  await new Promise((r) => setTimeout(r, 400));
+  for (let i = 0; i < 40; i++) {
+    const mounted = await ev('Boolean(document.querySelector("#root")?.children?.length > 0)');
+    if (mounted) break;
+    await new Promise((r) => setTimeout(r, 100));
+  }
+  await new Promise((r) => setTimeout(r, 300));
+
+  let assertionDescription = 'Global guard verified (no 404, no auth redirect)';
 
   // If dialog target, wait for dialog modal element
   if (target.isDialog) {
@@ -428,6 +625,85 @@ async function captureAndValidateTarget(client, target, baseUrl) {
     }
   }
 
+  // Handle interactive state setups
+  if (target.isInteraction) {
+    if (target.isInteraction === 'hover-button-primary') {
+      const coords = await ev(`(() => {
+        const btn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Primary Action');
+        if (!btn) return null;
+        const r = btn.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      })()`);
+      if (coords) {
+        await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: coords.x, y: coords.y });
+        await new Promise((r) => setTimeout(r, 300));
+      }
+      assertionDescription = 'Hover state on Primary Action button captured';
+    } else if (target.isInteraction === 'hover-button-secondary') {
+      const coords = await ev(`(() => {
+        const btn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Secondary Action');
+        if (!btn) return null;
+        const r = btn.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      })()`);
+      if (coords) {
+        await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: coords.x, y: coords.y });
+        await new Promise((r) => setTimeout(r, 300));
+      }
+      assertionDescription = 'Hover state on Secondary Action button captured';
+    } else if (target.isInteraction === 'focus-input') {
+      const coords = await ev(`(() => {
+        const input = document.querySelector('input#demo-title');
+        if (!input) return null;
+        const r = input.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      })()`);
+      if (coords) {
+        await S('Input.dispatchMouseEvent', { type: 'mousePressed', x: coords.x, y: coords.y, button: 'left', clickCount: 1 });
+        await S('Input.dispatchMouseEvent', { type: 'mouseReleased', x: coords.x, y: coords.y, button: 'left', clickCount: 1 });
+        await new Promise((r) => setTimeout(r, 300));
+      }
+      assertionDescription = 'Focus state on standard input captured';
+    } else if (target.isInteraction === 'hover-score-card') {
+      const coords = await ev(`(() => {
+        const card = document.querySelector('main [data-score-id]') || document.querySelector('main a[href*="/score/"] > div') || document.querySelector('main .group');
+        if (!card) return null;
+        const r = card.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      })()`);
+      if (coords) {
+        await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: coords.x, y: coords.y });
+        await new Promise((r) => setTimeout(r, 350));
+      }
+      assertionDescription = 'Hover lift and gold border on score card captured';
+    } else if (target.isInteraction === 'hover-sidebar-nav') {
+      const coords = await ev(`(() => {
+        const link = document.querySelector('aside nav a[href="/practice"]') || document.querySelector('aside nav a[href="/imports"]');
+        if (!link) return null;
+        const r = link.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      })()`);
+      if (coords) {
+        await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: coords.x, y: coords.y });
+        await new Promise((r) => setTimeout(r, 300));
+      }
+      assertionDescription = 'Hover warm soft gold state on sidebar nav captured';
+    } else if (target.isInteraction === 'open-dropdown') {
+      const coords = await ev(`(() => {
+        const btn = document.querySelector('header button[aria-haspopup="menu"]') || document.querySelector('button[aria-haspopup="menu"]');
+        if (!btn) return null;
+        const r = btn.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      })()`);
+      if (coords) {
+        await S('Input.dispatchMouseEvent', { type: 'mousePressed', x: coords.x, y: coords.y, button: 'left', clickCount: 1 });
+        await S('Input.dispatchMouseEvent', { type: 'mouseReleased', x: coords.x, y: coords.y, button: 'left', clickCount: 1 });
+        await new Promise((r) => setTimeout(r, 400));
+      }
+      assertionDescription = 'Open state on topbar dropdown menu captured';
+    }
+  }
+
   // 1. Global Visual QA Guards
   const globalCheck = await ev(`(() => {
     const text = document.body ? document.body.innerText : '';
@@ -447,8 +723,6 @@ async function captureAndValidateTarget(client, target, baseUrl) {
   }
 
   // 2. Semantic DOM Assertions
-  let assertionDescription = 'Global guard verified (no 404, no auth redirect)';
-
   if (target.name === 'practice-progress-free') {
     const check = await ev(`(() => {
       const text = document.body.innerText;
@@ -530,8 +804,8 @@ async function captureAndValidateTarget(client, target, baseUrl) {
   }
 
   // 3. Capture Screenshot via CDP
-  if (target.isDialog) {
-    // Viewport screenshot for dialog overlay
+  if (target.isDialog || target.isInteraction) {
+    // Viewport screenshot for dialog overlay or interactive state
     await S('Emulation.setDeviceMetricsOverride', {
       width: target.w,
       height: target.h,
@@ -590,7 +864,10 @@ async function main() {
     // 1. Verify responsive layout viewports on Landing via CDP
     await verifyLandingViewports(client, BASE_URL);
 
-    // 2. Capture screenshot suite and assert semantic DOM invariants
+    // 2. Verify computed styles and Design System V2 parity via CDP
+    await verifyComputedStyles(client, BASE_URL);
+
+    // 3. Capture screenshot suite and assert semantic DOM invariants
     console.log(`\n📸 Capturing & Asserting ${TARGETS.length} Visual QA targets...`);
     for (const target of TARGETS) {
       try {

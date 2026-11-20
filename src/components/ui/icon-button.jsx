@@ -9,11 +9,11 @@ const iconButtonVariants = cva(
     variants: {
       tone: {
         quiet:
-          'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover active:scale-[0.98]',
+          'text-ink-secondary hover:text-ink-primary hover:bg-brand-soft/50 active:scale-[0.98]',
         outline:
-          'border border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover shadow-raised active:scale-[0.98]',
+          'border border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-brand-soft/60 hover:border-brand/40 shadow-raised active:scale-[0.98]',
         primary:
-          'bg-brand text-brand-foreground shadow-raised hover:bg-brand-hover active:scale-[0.98]',
+          'bg-brand-fill text-brand-fill-foreground shadow-raised hover:bg-brand-fill-hover active:scale-[0.98]',
         danger:
           'text-danger hover:bg-danger/10 hover:text-danger active:scale-[0.98]',
       },
@@ -24,7 +24,7 @@ const iconButtonVariants = cva(
         lg: 'h-control-lg w-control-lg min-h-control-lg min-w-control-lg p-2.5 [&_svg]:icon-lg',
       },
       active: {
-        true: 'bg-neutral-muted text-ink-primary font-semibold ring-1 ring-line-subtle',
+        true: 'bg-brand-soft text-ink-primary font-semibold ring-1 ring-brand/40',
       },
     },
     defaultVariants: {

@@ -20,7 +20,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
   return (
     <div
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-container border border-line-subtle bg-surface-panel transition-[border-color,box-shadow] duration-base hover:border-line-strong',
+        'group relative flex flex-col overflow-hidden rounded-container border border-line-subtle bg-surface-panel transition-all duration-300 hover:border-brand/40 hover:shadow-raised hover:-translate-y-1',
         selected && 'border-brand ring-2 ring-brand'
       )}
     >
