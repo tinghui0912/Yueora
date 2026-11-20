@@ -377,6 +377,25 @@ import { Upload } from 'lucide-react';
 - Musical notation is domain content and renders within the standard `Surface` container.
 - **Do not** wrap every trivial element in a card. Let whitespace separate content naturally.
 
+### 4.8 Primitive Appearance Ownership Contract
+
+> **One visual decision has one owner. Primitives own appearance; pages own composition.**
+
+1. **Button & IconButton Ownership:**
+   - `<Button>` and `<IconButton>` completely own visual styling (background, border, radius, height, padding, gap, typography, hover, active, focus states).
+   - Pages MUST NOT pass appearance overrides (`bg-*`, `text-*`, `border-*`, `shadow-*`, `ring-*`, `font-*`, `h-*`, `px-*`, `py-*`, `gap-*`, `items-*`, `justify-*`, `scale-*`, `rounded-*`) via `className`.
+   - Pages may ONLY pass external composition layout utilities (`w-*`, `max-w-*`, `min-w-*`, `flex-1`, `shrink-0`, `self-*`, `m-*`).
+   - Dynamic or unanalyzable `className` expressions on Button or IconButton are prohibited in page files.
+
+2. **Overlay Primitive Ownership (`DialogContent`, `DropdownMenuContent`, `PopoverContent`):**
+   - Overlay primitives already define their canonical background (`bg-surface-panel` / `bg-surface-raised`), borders (`border-line-subtle`), radius (`rounded-container` / `rounded-overlay`), and elevation (`shadow-overlay`).
+   - Pages MUST NOT duplicate or override visual styles on overlay primitives.
+   - Pages may only pass dimension / layout constraints (e.g. `DialogContent className="max-w-sm"`, `DropdownMenuContent className="w-52"`).
+
+3. **Elevation Ownership (`shadow-overlay`, `shadow-raised`):**
+   - Direct usage of `shadow-overlay` or `shadow-raised` on arbitrary `<div>` or layout elements in `src/pages/**` is banned.
+   - Elevation belongs to canonical overlay primitives or `<Surface elevation="overlay|raised">`.
+
 ---
 
 ## 5. Verification & Automated Guardrails
@@ -384,8 +403,11 @@ import { Upload } from 'lucide-react';
 To verify Design System compliance:
 
 ```bash
-# Automated Design System linter & token integrity validator
+# Automated Design System linter & token integrity validator (AST appearance guard)
 npm run check:design-system
+
+# Guardrail AST regression test suite (17 negative + 9 positive fixtures)
+npm run test:design-system-guardrails
 
 # Codebase ESLint verification
 npm run lint

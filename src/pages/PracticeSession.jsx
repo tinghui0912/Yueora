@@ -556,7 +556,7 @@ export default function PracticeSession() {
 
       {/* Bottom Transport System */}
       <footer
-        className="border-t border-line-subtle bg-surface-panel px-4 py-3 md:px-6 shadow-overlay"
+        className="border-t border-line-subtle bg-surface-panel px-4 py-3 md:px-6"
         style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
       >
         <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3">
@@ -681,7 +681,7 @@ export default function PracticeSession() {
                   label="More session actions"
                 />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 border-line-subtle bg-surface-panel shadow-overlay">
+              <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem onClick={() => setSettingsOpen(true)}>
                   <Settings2 className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Session settings
                 </DropdownMenuItem>
@@ -689,7 +689,7 @@ export default function PracticeSession() {
                   <RotateCcw className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Restart from bar 1
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-line-subtle" />
-                <DropdownMenuItem onClick={finish} disabled={!startedAt.current} className="text-brand font-medium">
+                <DropdownMenuItem onClick={finish} disabled={!startedAt.current}>
                   <Flag className="mr-2 h-3.5 w-3.5" /> Finish &amp; preserve
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -721,7 +721,7 @@ export default function PracticeSession() {
 
       {/* Exit confirmation dialog */}
       <Dialog open={exitOpen} onOpenChange={setExitOpen}>
-        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Leave practice?</DialogTitle></DialogHeader>
           <p className="type-body-small text-ink-secondary mt-1">You can preserve this session in your repertoire history, or discard it.</p>
           <DialogFooter className="mt-4 gap-2">

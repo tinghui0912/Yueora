@@ -23,7 +23,7 @@ export default function About() {
           <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left 5 Columns: Framed Real Domain Score Preview */}
             <Reveal className="lg:col-span-5" y={36}>
-              <div className="relative aspect-[4/5] rounded-container overflow-hidden shadow-overlay border border-line-subtle bg-surface-panel p-6 sm:p-8 flex flex-col justify-between select-none">
+              <Surface tone="panel" elevation="overlay" className="relative aspect-[4/5] overflow-hidden p-6 sm:p-8 flex flex-col justify-between select-none">
                 {/* Score Header */}
                 <div className="border-b border-line-subtle pb-4">
                   <div className="flex items-center justify-between type-eyebrow text-ink-tertiary">
@@ -48,7 +48,7 @@ export default function About() {
                   </span>
                   <span>Personal Repertoire · Page 1</span>
                 </div>
-              </div>
+              </Surface>
             </Reveal>
 
             {/* Right 7 Columns: Editorial Manifesto */}

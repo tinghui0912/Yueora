@@ -176,7 +176,7 @@ export default function ScoreDetail() {
                 label="More score options"
               />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-52 border-line-subtle bg-surface-panel shadow-overlay">
+            <DropdownMenuContent align="end" className="w-52">
               <DropdownMenuItem onClick={handleFavorite}>
                 <Star className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> {score.favorite ? 'Remove favorite' : 'Add to favorites'}
               </DropdownMenuItem>
@@ -190,18 +190,18 @@ export default function ScoreDetail() {
               )}
               <DropdownMenuSeparator className="bg-line-subtle" />
               {score.ownership === 'mine' && (
-                <DropdownMenuItem className="text-destructive" onClick={() => setConfirmDelete(true)}>
-                  <Trash2 className="mr-2 h-3.5 w-3.5" /> Move to trash
+                <DropdownMenuItem onClick={() => setConfirmDelete(true)}>
+                  <Trash2 className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Move to trash
                 </DropdownMenuItem>
               )}
               {score.ownership === 'shared' && (
-                <DropdownMenuItem className="text-destructive" onClick={() => setConfirmLeave(true)}>
-                  <LogOut className="mr-2 h-3.5 w-3.5" /> Leave shared score
+                <DropdownMenuItem onClick={() => setConfirmLeave(true)}>
+                  <LogOut className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Leave shared score
                 </DropdownMenuItem>
               )}
               {score.ownership === 'saved' && (
-                <DropdownMenuItem className="text-destructive" onClick={() => setConfirmRemove(true)}>
-                  <BookmarkMinus className="mr-2 h-3.5 w-3.5" /> Remove from library
+                <DropdownMenuItem onClick={() => setConfirmRemove(true)}>
+                  <BookmarkMinus className="mr-2 h-3.5 w-3.5 text-ink-secondary" /> Remove from library
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
@@ -336,7 +336,7 @@ export default function ScoreDetail() {
 
       {/* Move to folder dialog */}
       <Dialog open={moveFolderOpen} onOpenChange={setMoveFolderOpen}>
-        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Move to folder</DialogTitle></DialogHeader>
           <div className="space-y-1 mt-2">
             {folders.map((f) => (
@@ -357,7 +357,7 @@ export default function ScoreDetail() {
 
       {/* Versions dialog */}
       <Dialog open={versionsOpen} onOpenChange={setVersionsOpen}>
-        <DialogContent className="max-w-md border-line-subtle bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>Version history</DialogTitle></DialogHeader>
           <div className="space-y-2 mt-2">
             {(() => {
@@ -392,7 +392,7 @@ export default function ScoreDetail() {
 
       {/* Delete confirm */}
       <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Move to trash?</DialogTitle></DialogHeader>
           <p className="type-body-small text-ink-secondary mt-1">{score.title} will move to Trash for 30 days before permanent deletion.</p>
           <DialogFooter className="mt-4">
@@ -404,7 +404,7 @@ export default function ScoreDetail() {
 
       {/* Leave confirm */}
       <Dialog open={confirmLeave} onOpenChange={setConfirmLeave}>
-        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Leave shared score?</DialogTitle></DialogHeader>
           <p className="type-body-small text-ink-secondary mt-1">You will lose access to {score.title}.</p>
           <DialogFooter className="mt-4">
@@ -416,7 +416,7 @@ export default function ScoreDetail() {
 
       {/* Remove saved confirm */}
       <Dialog open={confirmRemove} onOpenChange={setConfirmRemove}>
-        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Remove from library?</DialogTitle></DialogHeader>
           <p className="type-body-small text-ink-secondary mt-1">{score.title} will be removed from your repertoire.</p>
           <DialogFooter className="mt-4">

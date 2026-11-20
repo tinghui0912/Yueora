@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { scanFile } from './lib/typography-scanner.mjs';
+import { scanPageAppearanceContent } from './lib/appearance-guard.mjs';
 
 // 1. Verify CSS Foundations & Token Integrity
 const INDEX_CSS_PATH = path.resolve('src/index.css');
@@ -1402,10 +1403,11 @@ function verifyVisualFreedomContraction(issues = []) {
   const PAGES_DIR = path.resolve('src/pages');
   const SRC_DIR = path.resolve('src');
 
-  // 1. Button API Invariants across all src files:
+  // 1. Button API Invariants across all src files (.js, .jsx, .ts, .tsx):
   // - Ban legacy variant= attribute on Button (only intent is supported)
   // - Ban legacy variant aliases (variant="default|outline|ghost|destructive")
   // - Ban legacy button sizes (size="hero" or size="default")
+  // - Ban stale hero documentation / preview references
   function scanButtonApi(dir) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
@@ -1414,7 +1416,7 @@ function verifyVisualFreedomContraction(issues = []) {
         if (entry.name !== 'node_modules' && entry.name !== '.git' && entry.name !== 'dist') {
           scanButtonApi(full);
         }
-      } else if (entry.isFile() && /\.(js|jsx|ts|tsx)$/.test(entry.name)) {
+      } else if (entry.isFile() && /\.(jsx?|tsx?)$/.test(entry.name)) {
         const code = fs.readFileSync(full, 'utf8');
         const rel = path.relative(process.cwd(), full);
 
@@ -1455,104 +1457,31 @@ function verifyVisualFreedomContraction(issues = []) {
   }
   scanButtonApi(SRC_DIR);
 
-  // 2. Page Appearance Ownership Invariants (src/pages/**):
-  // - No arbitrary radii: rounded-[...]
-  // - No arbitrary shadows: shadow-[...]
-  // - No generic Tailwind elevation: shadow-sm, shadow-md, shadow-lg, shadow-xl, shadow-2xl
-  // - No Button visual overrides in className: bg-, border-, shadow-, rounded- on <Button>
-  function scanPageAppearance(dir) {
+  // 2. Comprehensive Page Appearance Ownership via AST-based Appearance Guard
+  // Covers .js, .jsx, .ts, .tsx across src/pages/**
+  // Enforces:
+  // - Zero generic/arbitrary radii
+  // - Zero direct shadow-overlay / shadow-raised on non-primitive elements
+  // - Zero physical colors (bg-white/black)
+  // - Zero Button / IconButton appearance overrides
+  // - Zero DialogContent / DropdownMenuContent appearance overrides
+  // - Unconditional enforcement (no ds-allow bypass for appearance rules)
+  function scanPages(dir) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
-        scanPageAppearance(full);
-      } else if (entry.isFile() && /\.(jsx|js)$/.test(entry.name)) {
+        scanPages(full);
+      } else if (entry.isFile() && /\.(jsx?|tsx?)$/.test(entry.name)) {
         const code = fs.readFileSync(full, 'utf8');
         const rel = path.relative(process.cwd(), full);
-        const lines = code.split('\n');
-
-        lines.forEach((line, idx) => {
-          const trimmed = line.trim();
-          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
-          if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
-
-          const arbRadiusMatch = line.match(/\b(rounded-\[[^\]]+\])/);
-          if (arbRadiusMatch) {
-            issues.push({
-              file: rel,
-              line: idx + 1,
-              matched: arbRadiusMatch[1],
-              message: `Arbitrary radius '${arbRadiusMatch[1]}' is banned in pages. Pages compose; the Design System decides appearance via semantic radii (rounded-control, rounded-container, rounded-overlay, rounded-full).`,
-            });
-          }
-
-          const genericRadiusMatch = line.match(/(?<![a-zA-Z0-9_-])(rounded|rounded-(?:none|sm|md|lg|xl|2xl|3xl)|rounded-(?:t|b|l|r|tl|tr|bl|br)(?:-(?:none|sm|md|lg|xl|2xl|3xl))?)(?![a-zA-Z0-9_-])/);
-          if (genericRadiusMatch) {
-            issues.push({
-              file: rel,
-              line: idx + 1,
-              matched: genericRadiusMatch[1],
-              message: `Generic radius '${genericRadiusMatch[1]}' is banned in pages. Pages compose; the Design System decides appearance via semantic radii (rounded-control, rounded-container, rounded-overlay, rounded-full).`,
-            });
-          }
-
-          const arbShadowMatch = line.match(/\b(shadow-\[[^\]]+\])/);
-          if (arbShadowMatch) {
-            issues.push({
-              file: rel,
-              line: idx + 1,
-              matched: arbShadowMatch[1],
-              message: `Arbitrary shadow '${arbShadowMatch[1]}' is banned in pages. Shadows are reserved for elevated surfaces using canonical tokens: shadow-overlay or shadow-raised.`,
-            });
-          }
-
-          const genericShadowMatch = line.match(/\b(shadow-(?:sm|md|lg|xl|2xl))\b/);
-          if (genericShadowMatch) {
-            issues.push({
-              file: rel,
-              line: idx + 1,
-              matched: genericShadowMatch[1],
-              message: `Generic elevation '${genericShadowMatch[1]}' is banned in pages. Standard panels are flat by default. Overlays strictly use shadow-overlay or shadow-raised.`,
-            });
-          }
-
-          const physicalColorMatch = line.match(/(?<![a-zA-Z0-9_-])(bg-white(?:\/\d+)?|bg-black(?:\/\d+)?)(?![a-zA-Z0-9_-])/);
-          if (physicalColorMatch) {
-            issues.push({
-              file: rel,
-              line: idx + 1,
-              matched: physicalColorMatch[1],
-              message: `Physical color '${physicalColorMatch[1]}' is banned in pages. Surfaces must be mediated by semantic tokens (bg-surface-panel, bg-surface-canvas, text-white, text-ink-primary).`,
-            });
-          }
-        });
-
-        const btnTagRegex = /<Button\b([^>]*)>/gs;
-        let btnMatch;
-        while ((btnMatch = btnTagRegex.exec(code)) !== null) {
-          const attrs = btnMatch[1];
-          const classMatch = attrs.match(/\bclassName=(?:(?:\{cn\()?[`"']|{\s*[`"'])([^`"'}]+)/);
-          if (classMatch) {
-            const cls = classMatch[1];
-            const visualOverrides = cls.split(/\s+/).filter(token =>
-              /^(rounded-|bg-|border-|shadow-|h-\d|px-\d|py-\d|gap-|items-|justify-|ring-|font-)/.test(token)
-            );
-            if (visualOverrides.length > 0) {
-              const lineNo = code.slice(0, btnMatch.index).split('\n').length;
-              issues.push({
-                file: rel,
-                line: lineNo,
-                matched: visualOverrides.join(' '),
-                message: `Button appearance override in page JSX: [${visualOverrides.join(' ')}]. Pages compose; Button completely owns its visual appearance via 'intent' and 'size'.`,
-              });
-            }
-          }
-        }
+        const fileIssues = scanPageAppearanceContent(code, rel);
+        issues.push(...fileIssues);
       }
     }
   }
   if (fs.existsSync(PAGES_DIR)) {
-    scanPageAppearance(PAGES_DIR);
+    scanPages(PAGES_DIR);
   }
 
   return issues;

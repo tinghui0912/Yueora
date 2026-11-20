@@ -165,7 +165,7 @@ export default function PerformanceDetail() {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
-                <DropdownMenuItem className="text-destructive" onClick={() => setConfirmDelete(true)}>
+                <DropdownMenuItem onClick={() => setConfirmDelete(true)}>
                   <Trash2 className="mr-2 h-4 w-4" /> Delete performance
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

@@ -264,7 +264,7 @@ export default function Performances() {
 
       {/* Delete confirmation dialog */}
       <Dialog open={!!pendingDelete} onOpenChange={(o) => !o && setPendingDelete(null)}>
-        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Delete preserved moment?</DialogTitle></DialogHeader>
           <p className="type-body-small text-ink-secondary mt-1">
             This will permanently remove the preserved recording of {pendingDelete?.scoreTitleSnapshot}.

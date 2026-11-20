@@ -139,10 +139,10 @@ export default function DesignSystemPreview() {
                 <span className="type-caption text-ink-primary">Panel</span>
                 <p className="type-metadata text-ink-tertiary">surface-panel</p>
               </div>
-              <div className="rounded-control border border-line-subtle bg-surface-raised p-3 text-center shadow-overlay">
+              <Surface tone="raised" elevation="overlay" padding="none" className="rounded-control p-3 text-center">
                 <span className="type-caption text-ink-primary">Raised</span>
                 <p className="type-metadata text-ink-tertiary">Overlay / Menu</p>
-              </div>
+              </Surface>
               <div className="rounded-control border border-transparent bg-brand p-3 text-center text-white">
                 <span className="type-caption text-white">Brand CTA</span>
                 <p className="type-metadata text-white/80">Primary</p>
@@ -357,11 +357,11 @@ export default function DesignSystemPreview() {
             <p className="type-metadata text-ink-secondary mt-1">All cards, lists, forms, and musical notation containers (surface-panel). Flat by default.</p>
           </div>
 
-          <div className="rounded-container border border-line-subtle bg-surface-raised p-4 shadow-overlay">
+          <Surface tone="raised" elevation="overlay" padding="none" className="p-4">
             <span className="type-caption text-ink-tertiary">3. Elevated Overlay</span>
             <p className="type-subsection text-ink-primary mt-1">Raised Overlay</p>
             <p className="type-metadata text-ink-secondary mt-1">Menus, dialogs, popovers (surface-raised).</p>
-          </div>
+          </Surface>
         </div>
 
         {/* Live Pick up where you left off sample */}

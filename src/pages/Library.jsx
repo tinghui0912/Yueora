@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { IconButton } from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
+import Surface from '@/components/patterns/Surface';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -306,7 +307,7 @@ export default function Library() {
                   )}
                 </Button>
                 {showFilters && (
-                  <div className="absolute right-0 z-20 mt-1 w-56 rounded-container border border-line-subtle bg-surface-panel p-3 shadow-overlay">
+                  <Surface tone="raised" elevation="overlay" padding="sm" className="absolute right-0 z-20 mt-1 w-56">
                     <p className="type-caption text-ink-tertiary">Instrument</p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {instruments.map((ins) => (
@@ -343,7 +344,7 @@ export default function Library() {
                       />
                       <span>Favorites only</span>
                     </label>
-                  </div>
+                  </Surface>
                 )}
               </div>
 
@@ -359,7 +360,7 @@ export default function Library() {
                   <span className="hidden sm:inline">Sort</span>
                 </Button>
                 {showSort && (
-                  <div className="absolute right-0 z-20 mt-1 w-44 rounded-container border border-line-subtle bg-surface-panel p-1 shadow-overlay">
+                  <Surface tone="raised" elevation="overlay" padding="none" className="absolute right-0 z-20 mt-1 w-44 p-1">
                     {sortOptions.map((o) => (
                       <button
                         key={o.key}
@@ -372,7 +373,7 @@ export default function Library() {
                         {sort === o.key && <Check className="h-3 w-3" />}
                       </button>
                     ))}
-                  </div>
+                  </Surface>
                 )}
               </div>
 
@@ -384,7 +385,6 @@ export default function Library() {
                   tone={view === 'grid' ? 'outline' : 'quiet'}
                   label="Grid view"
                   onClick={() => setParam('layout', 'grid')}
-                  className={view === 'grid' ? 'text-brand' : 'text-ink-tertiary hover:text-ink-primary'}
                 />
                 <IconButton
                   icon={List}
@@ -392,7 +392,6 @@ export default function Library() {
                   tone={view === 'list' ? 'outline' : 'quiet'}
                   label="List view"
                   onClick={() => setParam('layout', 'list')}
-                  className={view === 'list' ? 'text-brand' : 'text-ink-tertiary hover:text-ink-primary'}
                 />
               </div>
             </div>
@@ -478,10 +477,9 @@ export default function Library() {
                       Restore
                     </Button>
                     <Button
-                      intent="quiet"
+                      intent="danger"
                       size="xs"
                       onClick={() => deleteScoreForever(s.id)}
-                      className="text-danger hover:text-danger hover:bg-danger/10"
                     >
                       Delete
                     </Button>
@@ -550,7 +548,7 @@ export default function Library() {
 
       {/* Move to folder dialog */}
       <Dialog open={moveOpen} onOpenChange={setMoveOpen}>
-        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Move to folder</DialogTitle></DialogHeader>
           <div className="space-y-1 mt-2">
             {folders.map((f) => (
@@ -573,7 +571,7 @@ export default function Library() {
 
       {/* Folder delete confirmation */}
       <Dialog open={!!folderDelete} onOpenChange={(o) => !o && setFolderDelete(null)}>
-        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
           <p className="type-body-small text-ink-secondary mt-1">Scores in this folder will stay in your library — only the folder is removed.</p>
           <DialogFooter className="mt-4">
@@ -585,7 +583,7 @@ export default function Library() {
 
       {/* Bulk remove confirmation */}
       <Dialog open={!!trashConfirm} onOpenChange={(o) => !o && setTrashConfirm(null)}>
-        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>{removeLabel}?</DialogTitle></DialogHeader>
           <p className="type-body-small text-ink-secondary mt-1">
             {allMine && 'These pieces will move to Trash for 30 days.'}
@@ -602,7 +600,7 @@ export default function Library() {
 
       {/* Manage folders dialog (mobile) */}
       <Dialog open={manageFoldersOpen} onOpenChange={setManageFoldersOpen}>
-        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Manage folders</DialogTitle></DialogHeader>
           <div className="space-y-2 mt-2">
             {folders.length === 0 && <p className="py-4 text-center type-metadata text-ink-tertiary">No folders created yet.</p>}
@@ -673,7 +671,7 @@ export default function Library() {
 
       {/* Folder delete confirmation (mobile) */}
       <Dialog open={!!folderToDelete} onOpenChange={(o) => !o && setFolderToDelete(null)}>
-        <DialogContent className="max-w-sm border-line-subtle bg-surface-panel shadow-overlay">
+        <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
           <p className="type-body-small text-ink-secondary mt-1">Scores in this folder will remain in your library.</p>
           <DialogFooter className="mt-4">

@@ -222,15 +222,21 @@ export default function Landing() {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full max-w-[300px] sm:max-w-[380px] lg:max-w-[390px] rounded-container overflow-hidden shadow-overlay border border-line-subtle/80 bg-surface-panel p-2 sm:p-3"
+              className="w-full max-w-[300px] sm:max-w-[380px] lg:max-w-[390px]"
             >
-              <HeroProductVisual />
-              <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
-                <span className="px-3.5 py-1.5 rounded-full bg-surface-panel/90 text-ink-primary type-eyebrow backdrop-blur border border-line-subtle">
-                  Clair de Lune
-                </span>
-                <span className="type-metadata font-medium font-serif italic text-ink-secondary">Debussy</span>
-              </div>
+              <Surface
+                tone="panel"
+                elevation="overlay"
+                className="relative overflow-hidden p-2 sm:p-3"
+              >
+                <HeroProductVisual />
+                <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
+                  <span className="px-3.5 py-1.5 rounded-full bg-surface-panel/90 text-ink-primary type-eyebrow backdrop-blur border border-line-subtle">
+                    Clair de Lune
+                  </span>
+                  <span className="type-metadata font-medium font-serif italic text-ink-secondary">Debussy</span>
+                </div>
+              </Surface>
             </motion.div>
           </div>
         </div>
