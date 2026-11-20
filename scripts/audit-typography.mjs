@@ -1,107 +1,101 @@
 #!/usr/bin/env node
-import fs from 'node:fs';
 import path from 'node:path';
+import { scanDirectory } from './lib/typography-scanner.mjs';
 
+const targetFilter = process.argv[2] || null;
 const pagesDir = path.resolve('src/pages');
-const RAW_TEXT_REGEX = /\b(text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|\[\d+px\]))\b/g;
-const FONT_DISPLAY_REGEX = /\bfont-display\b/g;
-const RAW_UPPERCASE_REGEX = /\buppercase\b/g;
-const RAW_TRACKING_REGEX = /\btracking-(?:wide|wider|widest|\[[^\]]+\])\b/g;
-const SEMANTIC_TYPE_REGEX = /\btype-(?:hero-title|marketing-title|editorial-quote|marketing-body|display|experience-title|page-title|section-title|subsection|body-small|body|label|caption|eyebrow|metadata|metric)\b/g;
+
+const { discoveredCount, scannedCount, results } = scanDirectory(pagesDir, targetFilter);
 
 let totalRaw = 0;
 let totalSemantic = 0;
-let totalDsAllow = 0;
-const fileStats = [];
-const targetFile = process.argv[2];
+let totalRedundant = 0;
+let totalLeading = 0;
+const allExceptions = [];
 
-function scan(dir) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  for (const entry of entries) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      scan(full);
-    } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
-      const relPath = path.relative('src/pages', full).replace(/\\/g, '/');
-      if (targetFile && !relPath.includes(targetFile)) continue;
-      const content = fs.readFileSync(full, 'utf8');
-      const lines = content.split('\n');
-      let fileRaw = 0;
-      let fileSemantic = 0;
-      let fileDsAllow = 0;
+let filesWithSemantic = 0;
+let filesWithRaw = 0;
+let filesWithExceptions = 0;
 
-      lines.forEach((line, idx) => {
-        const trimmed = line.trim();
-        if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) {
-          if (line.includes('ds-allow:') || line.includes('ds-ignore:')) {
-            fileDsAllow++;
-          }
-          return;
-        }
+const fileRows = [];
 
-        const isLineAllow = line.includes('ds-allow:')
-          || line.includes('ds-ignore:')
-          || (idx > 0 && lines.slice(Math.max(0, idx - 4), idx).some(l => l.includes('ds-allow:') || l.includes('ds-ignore:')));
-        if (isLineAllow) {
-          fileDsAllow++;
-          return; // excused
-        }
+for (const res of results) {
+  if (res.error) {
+    console.error(`Error in ${res.filePath}: ${res.error}`);
+    continue;
+  }
 
-        // Count semantic types
-        const semMatches = line.match(SEMANTIC_TYPE_REGEX) || [];
-        fileSemantic += semMatches.length;
+  const rawCount = res.rawFindings.length;
+  const semCount = res.semanticUsages.length;
+  const redCount = res.redundantUsages.length;
+  const leadCount = res.leadingOverrides.length;
+  const excCount = res.explicitExceptions.length;
 
-        // Check for class attributes
-        const classMatches = [...line.matchAll(/className=["']([^"']+)["']/g)];
-        for (const cm of classMatches) {
-          const str = cm[1] || '';
-          const textSizes = str.match(RAW_TEXT_REGEX) || [];
-          if (textSizes.length > 0 && targetFile) {
-            console.log(`[${relPath}:${idx + 1}] raw size:`, textSizes.join(', '), '-> line:', trimmed);
-          }
-          fileRaw += textSizes.length;
+  totalRaw += rawCount;
+  totalSemantic += semCount;
+  totalRedundant += redCount;
+  totalLeading += leadCount;
 
-          // Check raw font-display (if not accompanied by a semantic type role)
-          if (FONT_DISPLAY_REGEX.test(str) && !SEMANTIC_TYPE_REGEX.test(str)) {
-            if (targetFile) console.log(`[${relPath}:${idx + 1}] raw font-display ->`, trimmed);
-            fileRaw += (str.match(FONT_DISPLAY_REGEX) || []).length;
-          }
+  if (semCount > 0) filesWithSemantic++;
+  if (rawCount > 0) filesWithRaw++;
+  if (excCount > 0) filesWithExceptions++;
 
-          // Check raw uppercase without type-caption or type-eyebrow
-          if (RAW_UPPERCASE_REGEX.test(str) && !/\btype-(?:caption|eyebrow)\b/.test(str)) {
-            if (targetFile) console.log(`[${relPath}:${idx + 1}] raw uppercase ->`, trimmed);
-            fileRaw += (str.match(RAW_UPPERCASE_REGEX) || []).length;
-          }
+  res.explicitExceptions.forEach((e) => allExceptions.push(e));
 
-          // Check raw tracking without type-caption or type-eyebrow
-          if (RAW_TRACKING_REGEX.test(str) && !/\btype-(?:caption|eyebrow)\b/.test(str)) {
-            if (targetFile) console.log(`[${relPath}:${idx + 1}] raw tracking ->`, trimmed);
-            fileRaw += (str.match(RAW_TRACKING_REGEX) || []).length;
-          }
-        }
-      });
+  if (rawCount > 0 || redCount > 0 || leadCount > 0 || targetFilter) {
+    fileRows.push({
+      file: res.filePath.replace(/^src\/pages\//, ''),
+      raw: rawCount,
+      semantic: semCount,
+      redundant: redCount,
+      leading: leadCount,
+      exceptions: excCount,
+    });
+  }
 
-      totalRaw += fileRaw;
-      totalSemantic += fileSemantic;
-      totalDsAllow += fileDsAllow;
-      if (fileRaw > 0 || fileSemantic > 0 || fileDsAllow > 0) {
-        fileStats.push({
-          file: path.relative('src/pages', full).replace(/\\/g, '/'),
-          raw: fileRaw,
-          semantic: fileSemantic,
-          dsAllow: fileDsAllow,
-        });
-      }
-    }
+  // Print line details if a specific file was targeted
+  if (targetFilter) {
+    res.rawFindings.forEach((f) => {
+      console.log(`[${res.filePath}:${f.line}] RAW: [${f.matched}] ${f.message}`);
+    });
+    res.redundantUsages.forEach((f) => {
+      console.log(`[${res.filePath}:${f.line}] REDUNDANT: [${f.matched}] ${f.message}`);
+    });
+    res.leadingOverrides.forEach((f) => {
+      console.log(`[${res.filePath}:${f.line}] LEADING OVERRIDE: [${f.matched}] ${f.message}`);
+    });
   }
 }
 
-scan(pagesDir);
-fileStats.sort((a, b) => b.raw - a.raw);
-console.log('--- BASELINE AUDIT (src/pages) ---');
-console.log('Total files scanned in src/pages:', fileStats.length);
-console.log('page-level raw typography decisions =', totalRaw);
-console.log('semantic type-* usages =', totalSemantic);
-console.log('ds-allow typography exceptions =', totalDsAllow);
-console.log('\nTop files with raw typography decisions:');
-console.table(fileStats.slice(0, 20));
+fileRows.sort((a, b) => (b.raw + b.redundant + b.leading) - (a.raw + a.redundant + a.leading));
+
+console.log('--- YUEORA TYPOGRAPHY AUDIT REPORT ---');
+console.log(`Files discovered in src/pages:            ${discoveredCount}`);
+console.log(`Files scanned:                            ${scannedCount}`);
+console.log(`Files with semantic typography:           ${filesWithSemantic}`);
+console.log(`Files with raw typography findings:       ${filesWithRaw}`);
+console.log(`Files with redundant style overrides:     ${fileRows.filter((r) => r.redundant > 0 || r.leading > 0).length}`);
+console.log(`Files with explicit typography exceptions: ${filesWithExceptions}`);
+console.log('--------------------------------------');
+console.log(`Total Semantic type-* Usages:             ${totalSemantic}`);
+console.log(`Total Raw Typography Findings:            ${totalRaw}`);
+console.log(`Total Redundant Caption Declarations:     ${totalRedundant}`);
+console.log(`Total Semantic Leading Overrides:         ${totalLeading}`);
+console.log(`Total Unique Explicit ds-allow Exceptions: ${allExceptions.length}\n`);
+
+if (fileRows.length > 0) {
+  console.log('Files with Typography Findings or Overrides:');
+  console.table(fileRows);
+}
+
+if (allExceptions.length > 0 && !targetFilter) {
+  console.log('Unique Explicit ds-allow Exceptions:');
+  console.table(
+    allExceptions.map((e) => ({
+      file: e.file.replace(/^src\/pages\//, ''),
+      line: e.line,
+      reason: e.reason,
+      trivial: e.isTrivial ? 'YES (BANNED)' : 'NO',
+    }))
+  );
+}

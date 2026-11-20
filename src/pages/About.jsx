@@ -88,7 +88,7 @@ export default function About() {
                     <p className="mt-2 type-subsection text-ink-primary font-medium">
                       &ldquo;Here is what you must practice.&rdquo;
                     </p>
-                    <p className="mt-1.5 type-body-small text-ink-secondary leading-relaxed">
+                    <p className="mt-1.5 type-body-small text-ink-secondary">
                       A curriculum, a syllabus, daily streak badges, and forced grading matrices.
                     </p>
                   </div>
@@ -97,7 +97,7 @@ export default function About() {
                     <p className="mt-2 type-subsection text-ink-primary font-medium">
                       &ldquo;What do you feel like playing?&rdquo;
                     </p>
-                    <p className="mt-1.5 type-body-small text-ink-secondary leading-relaxed">
+                    <p className="mt-1.5 type-body-small text-ink-secondary">
                       You bring the sheet music that already matters to you. Everything follows from your devotion.
                     </p>
                   </div>
@@ -168,7 +168,7 @@ export default function About() {
                       <Music2 className="w-5 h-5" />
                     </div>
                     <h3 className="type-subsection text-ink-primary font-medium">Choice over curriculum</h3>
-                    <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
+                    <p className="mt-2 type-body-small text-ink-secondary">
                       You decide what to play. No mandated progression, no grading hurdles, no arbitrary prerequisites.
                     </p>
                   </div>
@@ -183,7 +183,7 @@ export default function About() {
                       <Heart className="w-5 h-5" />
                     </div>
                     <h3 className="type-subsection text-ink-primary font-medium">Joy over obligation</h3>
-                    <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
+                    <p className="mt-2 type-body-small text-ink-secondary">
                       Liking a piece is reason enough. You never have to justify playing a pop ballad or a favorite prelude.
                     </p>
                   </div>
@@ -198,7 +198,7 @@ export default function About() {
                       <Eye className="w-5 h-5" />
                     </div>
                     <h3 className="type-subsection text-ink-primary font-medium">Feedback without judgment</h3>
-                    <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
+                    <p className="mt-2 type-body-small text-ink-secondary">
                       Acoustic cues help you listen and hear where you stopped, without humiliating red failure marks.
                     </p>
                   </div>
@@ -213,7 +213,7 @@ export default function About() {
                       <TrendingUp className="w-5 h-5" />
                     </div>
                     <h3 className="type-subsection text-ink-primary font-medium">Progress without pressure</h3>
-                    <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
+                    <p className="mt-2 type-body-small text-ink-secondary">
                       Progress is worth seeing, not worrying about. If you leave for two months, Yueora warmly welcomes you back.
                     </p>
                   </div>
@@ -258,7 +258,7 @@ export default function About() {
                       Your repertoire is private.
                     </h3>
                   </div>
-                  <div className="space-y-4 type-body text-ink-secondary leading-relaxed">
+                  <div className="space-y-4 type-body text-ink-secondary">
                     <p>
                       Your scores, recordings, and rehearsal notes belong exclusively to you.
                       We do not sell your practice audio, train public AI models on your private playing,
@@ -297,14 +297,14 @@ export default function About() {
                     <p className="type-eyebrow text-surface-canvas/60 mb-5">
                       Start Your Sanctuary
                     </p>
-                    <h2 className="type-marketing-title text-surface-canvas leading-[1.04]">
+                    <h2 className="type-marketing-title text-surface-canvas">
                       Play what you love.
                       <br />
                       <span className="italic font-normal text-surface-canvas/80">
                         Bring the music that matters.
                       </span>
                     </h2>
-                    <p className="mt-6 max-w-xl type-marketing-body text-surface-canvas/75 leading-relaxed">
+                    <p className="mt-6 max-w-xl type-marketing-body text-surface-canvas/75">
                       Begin with whatever is sitting on your piano right now. Free to start, private forever.
                     </p>
                   </div>

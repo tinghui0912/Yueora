@@ -46,7 +46,7 @@ export default function PracticeProgress() {
             <h2 className="mt-4 type-section-title text-ink-primary">
               See how your playing unfolds over time.
             </h2>
-            <p className="mt-3 type-body text-ink-secondary leading-relaxed">
+            <p className="mt-3 type-body text-ink-secondary">
               Practice insights offer calm, reflective visibility into your music: time spent playing, pieces you keep returning to, and your weekly playing rhythms — never grades or streaks.
             </p>
 

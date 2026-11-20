@@ -87,7 +87,7 @@ export default function SharedScore() {
       <div className="mx-auto max-w-4xl px-5 py-8 md:px-8">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="type-page-title text-ink-primary leading-tight">{score.title}</h1>
+            <h1 className="type-page-title text-ink-primary">{score.title}</h1>
             <p className="type-body-small text-ink-secondary mt-1">{score.composer} · {score.instrument}</p>
           </div>
           <button

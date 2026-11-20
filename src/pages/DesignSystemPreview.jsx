@@ -171,39 +171,39 @@ export default function DesignSystemPreview() {
             <span className="type-caption text-ink-secondary/70">Component State Matrix</span>
             <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
-                <p className="type-caption text-ink-tertiary uppercase">Default</p>
+                <p className="type-caption text-ink-tertiary">Default</p>
                 <div className="mt-2 rounded-control border border-line-subtle bg-surface-panel px-3 py-1.5 type-body-small text-ink-primary">
                   Item Default
                 </div>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
-                <p className="type-caption text-ink-tertiary uppercase">Hover (Neutral)</p>
+                <p className="type-caption text-ink-tertiary">Hover (Neutral)</p>
                 <div className="mt-2 rounded-control border border-line-subtle bg-neutral-hover px-3 py-1.5 type-body-small text-ink-primary">
                   Item Hovered
                 </div>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
-                <p className="type-caption text-ink-primary uppercase font-semibold">Nav Active</p>
+                <p className="type-caption text-ink-primary">Nav Active</p>
                 <div className="mt-2 flex items-center justify-center gap-1.5 rounded-control bg-neutral-muted px-3 py-1.5 type-body-small font-semibold text-ink-primary">
                   <span className="h-1.5 w-1.5 rounded-full bg-brand" />
                   Nav Active
                 </div>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
-                <p className="type-caption text-brand uppercase font-semibold">Compact Selected</p>
+                <p className="type-caption text-brand">Compact Selected</p>
                 <div className="mt-2 rounded-control border border-brand bg-brand-soft px-3 py-1.5 type-body-small font-medium text-brand-soft-foreground">
                   Badge / Chip
                 </div>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
-                <p className="type-caption text-ink-primary uppercase font-semibold">Large Selected</p>
+                <p className="type-caption text-ink-primary">Large Selected</p>
                 <div className="mt-2 flex items-center justify-between rounded-control border border-brand bg-neutral-hover px-3 py-1.5 type-body-small font-medium text-ink-primary">
                   <span>Row / Option</span>
                   <span className="h-2 w-2 rounded-full bg-brand" />
                 </div>
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
-                <p className="type-caption text-ink-tertiary uppercase">Disabled</p>
+                <p className="type-caption text-ink-tertiary">Disabled</p>
                 <div className="mt-2 rounded-control border border-line-subtle bg-neutral-muted/50 px-3 py-1.5 type-body-small text-ink-tertiary opacity-60">
                   Item Disabled
                 </div>
@@ -260,7 +260,7 @@ export default function DesignSystemPreview() {
               <Button intent="primary" className="rounded-full">Pill Primary</Button>
               <Button intent="secondary" className="rounded-full">Pill Secondary</Button>
               <div className="inline-flex items-center gap-1 rounded-full border border-line-subtle bg-surface-panel p-1">
-                <span className="rounded-full bg-neutral-muted px-4 py-1.5 type-caption font-semibold text-ink-primary border border-line-subtle">Active Toggle</span>
+                <span className="rounded-full bg-neutral-muted px-4 py-1.5 type-caption text-ink-primary border border-line-subtle">Active Toggle</span>
                 <span className="rounded-full px-4 py-1.5 type-caption font-medium text-ink-secondary">Inactive</span>
               </div>
             </div>
@@ -347,19 +347,19 @@ export default function DesignSystemPreview() {
         />
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="rounded-container border border-line-subtle bg-surface-canvas p-4">
-            <span className="type-caption text-ink-tertiary uppercase">1. App Canvas</span>
+            <span className="type-caption text-ink-tertiary">1. App Canvas</span>
             <p className="type-subsection text-ink-primary mt-1">Surface Canvas</p>
             <p className="type-metadata text-ink-secondary mt-1">Warm ivory app backdrop (surface-canvas).</p>
           </div>
 
           <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
-            <span className="type-caption text-brand uppercase font-semibold">2. Universal Container</span>
+            <span className="type-caption text-brand">2. Universal Container</span>
             <p className="type-subsection text-ink-primary mt-1">Standard Panel</p>
             <p className="type-metadata text-ink-secondary mt-1">All cards, lists, forms, and musical notation containers (surface-panel). Flat by default.</p>
           </div>
 
           <div className="rounded-container border border-line-subtle bg-surface-raised p-4 shadow-overlay">
-            <span className="type-caption text-ink-tertiary uppercase">3. Elevated Overlay</span>
+            <span className="type-caption text-ink-tertiary">3. Elevated Overlay</span>
             <p className="type-subsection text-ink-primary mt-1">Raised Overlay</p>
             <p className="type-metadata text-ink-secondary mt-1">Menus, dialogs, popovers (surface-raised).</p>
           </div>
@@ -427,7 +427,7 @@ export default function DesignSystemPreview() {
           <div className="relative z-10 max-w-xl">
             <p className="type-eyebrow text-surface-canvas/60 mb-3">Sanctuary Callout</p>
             <h3 className="type-display font-medium text-surface-canvas">Play what you love.</h3>
-            <p className="mt-2 type-body-small text-surface-canvas/75 leading-relaxed">
+            <p className="mt-2 type-body-small text-surface-canvas/75">
               Near-black is identity. White / ivory is content surface. Chromatic color communicates functional status.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">

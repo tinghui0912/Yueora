@@ -207,13 +207,13 @@ export default function PracticeSetup() {
       </p>
 
       <section className="mt-6">
-        <h2 className="type-caption uppercase tracking-wider text-ink-tertiary">1. Practice Mode</h2>
+        <h2 className="type-caption text-ink-tertiary">1. Practice Mode</h2>
         <OptionGroup ariaLabel="Practice mode" value={mode} onChange={setMode} options={MODES} />
       </section>
 
       <section className="mt-6">
         <div className="flex items-baseline justify-between">
-          <h2 className="type-caption uppercase tracking-wider text-ink-tertiary">2. Audio &amp; Note Input</h2>
+          <h2 className="type-caption text-ink-tertiary">2. Audio &amp; Note Input</h2>
           <span className="type-metadata text-ink-secondary">
             {mode === 'follow' ? 'How Yueora follows you' : 'Recording & input source'}
           </span>
@@ -224,7 +224,7 @@ export default function PracticeSetup() {
       {mode === 'performance' && (
         <section className="mt-6">
           <div className="flex items-baseline justify-between">
-            <h2 className="type-caption uppercase tracking-wider text-ink-tertiary">3. Performance Recording</h2>
+            <h2 className="type-caption text-ink-tertiary">3. Performance Recording</h2>
             <span className="type-metadata text-ink-tertiary">Private by default</span>
           </div>
           <OptionGroup ariaLabel="Recording" value={recording} onChange={setRecording} options={RECORDINGS} />
@@ -233,7 +233,7 @@ export default function PracticeSetup() {
 
       <section className="mt-6 border-t border-line-subtle pt-5">
         <div className="flex items-baseline justify-between">
-          <h2 className="type-caption uppercase tracking-wider text-ink-tertiary">
+          <h2 className="type-caption text-ink-tertiary">
             {mode === 'performance' ? '4. Ready to play' : '3. Ready to play'}
           </h2>
           <span className="type-metadata font-medium text-ink-secondary">

@@ -45,7 +45,7 @@ export default function PracticeHub() {
         <h1 className="type-experience-title text-ink-primary">
           What do you feel like playing?
         </h1>
-        <p className="mt-1 type-body-small text-ink-secondary leading-relaxed">
+        <p className="mt-1 type-body-small text-ink-secondary">
           A quiet space to play. No streaks, no assignments, no pressure.
         </p>
       </div>
@@ -53,7 +53,7 @@ export default function PracticeHub() {
       {/* Pick up where you left off */}
       {continueScore && (
         <section className="mt-8">
-          <p className="type-caption font-semibold uppercase tracking-wider text-ink-secondary/70">
+          <p className="type-caption text-ink-secondary/70">
             Pick up where you left off
           </p>
           <div className="mt-3">
@@ -90,7 +90,7 @@ export default function PracticeHub() {
       {/* Recently loved */}
       {recentlyLoved.length > 0 && (
         <section className="mt-10">
-          <p className="type-caption font-semibold uppercase tracking-wider text-ink-secondary/70">
+          <p className="type-caption text-ink-secondary/70">
             Recently loved
           </p>
           <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -138,7 +138,7 @@ export default function PracticeHub() {
       {/* If scores exist but no continuation score, surface available pieces to play */}
       {!continueScore && activeScores.length > 0 && (
         <section className="mt-8">
-          <p className="type-caption font-semibold uppercase tracking-wider text-ink-secondary/70">
+          <p className="type-caption text-ink-secondary/70">
             Available from your Repertoire
           </p>
           <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -177,7 +177,7 @@ export default function PracticeHub() {
           <div className="flex flex-col items-center gap-3 rounded-container border border-line-subtle bg-surface-panel p-12 text-center">
             <PracticeGlyph className="h-8 w-8 text-brand" />
             <h2 className="type-section-title text-ink-primary">Welcome to Practice</h2>
-            <p className="max-w-sm type-body-small leading-relaxed text-ink-secondary">
+            <p className="max-w-sm type-body-small text-ink-secondary">
               Bring the sheet music you already care about. Add your first piece to begin playing without pressure.
             </p>
             <Button intent="primary" size="md" className="mt-3" asChild>
@@ -191,7 +191,7 @@ export default function PracticeHub() {
 
       {/* Reflective Time Spent Playing */}
       <section className="mt-12 pt-8 border-t border-line-subtle">
-        <p className="type-caption font-semibold uppercase tracking-wider text-ink-secondary/70">
+        <p className="type-caption text-ink-secondary/70">
           This Week in Music
         </p>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">

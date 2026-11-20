@@ -265,7 +265,7 @@ export default function PlanSettings() {
                     <p className="font-medium text-ink-primary">{b.date} · {b.amount}</p>
                     <p className="type-metadata text-ink-tertiary">
                       {b.plan} · {b.invoice}
-                      <span className="ml-2 rounded-control bg-neutral-muted px-2 py-0.5 type-caption font-semibold text-ink-primary">
+                      <span className="ml-2 rounded-control bg-neutral-muted px-2 py-0.5 type-caption text-ink-primary">
                         Paid
                       </span>
                     </p>
@@ -387,7 +387,7 @@ export default function PlanSettings() {
                     <p className="type-caption text-ink-tertiary">Invoice Number</p>
                     <p className="type-body-small font-mono font-medium text-ink-primary">{selectedReceipt.invoice}</p>
                   </div>
-                  <span className="rounded-control bg-neutral-muted px-2.5 py-0.5 type-caption font-semibold text-ink-primary">
+                  <span className="rounded-control bg-neutral-muted px-2.5 py-0.5 type-caption text-ink-primary">
                     Paid
                   </span>
                 </div>

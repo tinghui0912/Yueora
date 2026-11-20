@@ -76,7 +76,7 @@ export default function Register() {
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-line-subtle" />
         </div>
-        <div className="relative flex justify-center type-caption font-semibold uppercase tracking-wider">
+        <div className="relative flex justify-center type-caption">
           <span className="bg-surface-canvas px-3 text-ink-secondary/70">or</span>
         </div>
       </div>
@@ -147,7 +147,7 @@ export default function Register() {
             "Create account"
           )}
         </Button>
-        <p className="pt-2 text-center type-caption text-ink-tertiary leading-relaxed">
+        <p className="pt-2 text-center type-caption text-ink-tertiary">
           By creating an account, you agree to Yueora's{" "}
           <Link to="/legal/terms" className="text-ink-secondary hover:text-ink-primary underline">
             Terms of Service

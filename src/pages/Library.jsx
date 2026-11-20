@@ -183,7 +183,7 @@ export default function Library() {
             <button
               key={item.key}
               onClick={() => { setParam('view', item.key); clearSelect(); }}
-              className={`whitespace-nowrap rounded-control px-3 py-1.5 text-xs transition-colors ${
+              className={`whitespace-nowrap rounded-control px-3 py-1.5 type-body-small transition-colors ${
                 active === item.key
                   ? 'bg-neutral-muted font-semibold text-ink-primary'
                   : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
@@ -196,7 +196,7 @@ export default function Library() {
             <button
               key={f.id}
               onClick={() => { setParam('view', `folder:${f.id}`); clearSelect(); }}
-              className={`whitespace-nowrap rounded-control px-3 py-1.5 text-xs transition-colors ${
+              className={`whitespace-nowrap rounded-control px-3 py-1.5 type-body-small transition-colors ${
                 active === `folder:${f.id}`
                   ? 'bg-neutral-muted font-semibold text-ink-primary'
                   : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
@@ -307,13 +307,13 @@ export default function Library() {
                 </Button>
                 {showFilters && (
                   <div className="absolute right-0 z-20 mt-1 w-56 rounded-container border border-line-subtle bg-surface-panel p-3 shadow-overlay">
-                    <p className="type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Instrument</p>
+                    <p className="type-caption text-ink-tertiary">Instrument</p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {instruments.map((ins) => (
                         <button
                           key={ins}
                           onClick={() => setFilterInstrument(ins)}
-                          className={`rounded px-2 py-1 text-xs ${
+                          className={`rounded px-2 py-1 type-body-small ${
                             filterInstrument === ins ? 'bg-brand-soft font-semibold text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover'
                           }`}
                         >
@@ -321,13 +321,13 @@ export default function Library() {
                         </button>
                       ))}
                     </div>
-                    <p className="mt-3 type-caption font-semibold uppercase tracking-wider text-ink-tertiary">Practice history</p>
+                    <p className="mt-3 type-caption text-ink-tertiary">Practice history</p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {[['any', 'Any'], ['recent', 'Played recently'], ['notplayed', 'Not played yet']].map(([k, l]) => (
                         <button
                           key={k}
                           onClick={() => setFilterPlayed(k)}
-                          className={`rounded px-2 py-1 text-xs ${
+                          className={`rounded px-2 py-1 type-body-small ${
                             filterPlayed === k ? 'bg-brand-soft font-semibold text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover'
                           }`}
                         >
@@ -364,7 +364,7 @@ export default function Library() {
                       <button
                         key={o.key}
                         onClick={() => { setParam('sort', o.key); setShowSort(false); }}
-                        className={`flex w-full items-center justify-between rounded px-2.5 py-2 text-left text-xs ${
+                        className={`flex w-full items-center justify-between rounded px-2.5 py-2 text-left type-body-small ${
                           sort === o.key ? 'bg-brand-soft font-semibold text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover'
                         }`}
                       >
@@ -703,7 +703,7 @@ function EmptyState({ active, isTrash }) {
     return (
       <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
         <h2 className="type-section-title text-ink-primary">Start with something you love.</h2>
-        <p className="mt-2 max-w-sm type-body-small leading-relaxed text-ink-secondary">
+        <p className="mt-2 max-w-sm type-body-small text-ink-secondary">
           Add sheet music you have always wanted to play — whether scan, photo, or MusicXML.
         </p>
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">

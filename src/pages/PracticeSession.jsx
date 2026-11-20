@@ -342,7 +342,7 @@ export default function PracticeSession() {
     return (
       <div className="mx-auto max-w-md px-4 py-20 text-center">
         <p className="type-section-title text-ink-primary">Practice is not enabled for this score</p>
-        <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
+        <p className="mt-2 type-body-small text-ink-secondary">
           The link you received does not include practice permission.
         </p>
         <Button onClick={() => navigate(`/score/${scoreId}`)} className="mt-5">Back to score</Button>
@@ -381,7 +381,7 @@ export default function PracticeSession() {
             >
               <Video className="h-3.5 w-3.5 text-ink-secondary" aria-hidden="true" />
               {isPlaying && (
-                <span className="absolute left-1 top-1 flex items-center gap-1 rounded bg-danger px-1 py-px text-[7px] font-bold uppercase tracking-wider text-white"> {/* ds-allow: miniature simulation badge */}
+                <span className="absolute left-1 top-1 flex items-center gap-1 rounded bg-danger px-1 py-px text-[9px] font-bold uppercase tracking-wider text-white"> {/* ds-allow: miniature simulation badge */}
                   REC
                 </span>
               )}
@@ -401,7 +401,7 @@ export default function PracticeSession() {
           </div>
 
           {/* Current Bar Badge */}
-          <span className="rounded-control border border-line-subtle bg-surface-panel px-2.5 py-1 type-caption font-semibold text-ink-primary">
+          <span className="rounded-control border border-line-subtle bg-surface-panel px-2.5 py-1 type-caption text-ink-primary">
             Bar {activeMeasure}
           </span>
 

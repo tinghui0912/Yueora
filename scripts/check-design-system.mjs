@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { scanFile } from './lib/typography-scanner.mjs';
 
 // 1. Verify CSS Foundations & Token Integrity
 const INDEX_CSS_PATH = path.resolve('src/index.css');
@@ -623,19 +624,76 @@ for (const dir of SCAN_DIRECTORIES) {
   scanDirectory(dir, totalViolations);
 }
 
-// Phase 4.5: Verify Page-Level Typography Semantic Ownership & Consumption
+// Phase 4.5: Verify Page-Level Typography Semantic Ownership & Consumption (AST-Based)
 function verifyPageTypographyConsumption(issues = []) {
   const pagesDir = path.resolve('src/pages');
   if (!fs.existsSync(pagesDir)) return issues;
 
-  const RAW_TEXT_REGEX = /\b(text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|\[\d+px\]))\b/g;
-  const FONT_DISPLAY_REGEX = /\bfont-display\b/g;
-  const RAW_UPPERCASE_REGEX = /\buppercase\b/g;
-  const RAW_TRACKING_REGEX = /\btracking-(?:wide|wider|widest|\[[^\]]+\])\b/g;
-  const SEMANTIC_TYPE_REGEX = /\btype-(?:hero-title|marketing-title|editorial-quote|marketing-body|display|experience-title|page-title|section-title|subsection|body-small|body|label|caption|eyebrow|metadata|metric)\b/;
+  // 1. Self-test AST parser with standard test fixtures
+  const testFixtures = [
+    {
+      code: '<span className="text-xs">bad</span>',
+      shouldFail: true,
+      label: 'literal text-xs',
+    },
+    {
+      code: '<span className={`text-xs ${active}`}>bad</span>',
+      shouldFail: true,
+      label: 'template literal text-xs',
+    },
+    {
+      code: '<span className={cn("text-xs", active && "font-medium")}>bad</span>',
+      shouldFail: true,
+      label: 'CallExpression cn(text-xs)',
+    },
+    {
+      code: '<p className="type-body leading-tight">bad</p>',
+      shouldFail: true,
+      label: 'semantic leading override',
+    },
+    {
+      code: '<span className="type-caption uppercase tracking-wider">bad</span>',
+      shouldFail: true,
+      label: 'redundant caption styling',
+    },
+    {
+      code: '{/* ds-allow: specific narrow reason */}\n<span className="text-xs">good</span>',
+      shouldFail: false,
+      label: 'valid narrow ds-allow exception',
+    },
+    {
+      code: '{/* ds-allow: marketing */}\n<span className="text-xs">bad</span>',
+      shouldFail: true,
+      label: 'banned trivial ds-allow exception',
+    },
+  ];
 
-  const TRIVIAL_REASONS = /^(?:marketing|custom|looks better|test|override)$/i;
+  for (const fixture of testFixtures) {
+    const res = scanFile('test-fixture.jsx', fixture.code);
+    const hasViolations =
+      res.rawFindings.length > 0 ||
+      res.redundantUsages.length > 0 ||
+      res.leadingOverrides.length > 0 ||
+      res.explicitExceptions.some((e) => e.isTrivial);
 
+    if (fixture.shouldFail && !hasViolations) {
+      issues.push({
+        file: 'scripts/check-design-system.mjs',
+        line: 1,
+        matched: fixture.label,
+        message: `Typography AST scanner regression: expected failure for fixture '${fixture.label}', but none was reported.`,
+      });
+    } else if (!fixture.shouldFail && hasViolations) {
+      issues.push({
+        file: 'scripts/check-design-system.mjs',
+        line: 1,
+        matched: fixture.label,
+        message: `Typography AST scanner regression: expected pass for fixture '${fixture.label}', but violations were reported: ${JSON.stringify(res)}.`,
+      });
+    }
+  }
+
+  // 2. Scan all page files under src/pages
   function scanPages(dir) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
@@ -644,78 +702,55 @@ function verifyPageTypographyConsumption(issues = []) {
         scanPages(full);
       } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
         const content = fs.readFileSync(full, 'utf8');
-        const lines = content.split('\n');
+        const res = scanFile(full, content);
 
-        lines.forEach((line, idx) => {
-          const trimmed = line.trim();
-          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) {
-            return;
+        if (res.error) {
+          issues.push({
+            file: path.relative(process.cwd(), full),
+            line: 1,
+            matched: 'AST Parse Error',
+            message: res.error,
+          });
+          continue;
+        }
+
+        for (const f of res.rawFindings) {
+          issues.push({
+            file: path.relative(process.cwd(), full),
+            line: f.line,
+            matched: f.matched,
+            message: f.message,
+          });
+        }
+
+        for (const f of res.redundantUsages) {
+          issues.push({
+            file: path.relative(process.cwd(), full),
+            line: f.line,
+            matched: f.matched,
+            message: f.message,
+          });
+        }
+
+        for (const f of res.leadingOverrides) {
+          issues.push({
+            file: path.relative(process.cwd(), full),
+            line: f.line,
+            matched: f.matched,
+            message: f.message,
+          });
+        }
+
+        for (const e of res.explicitExceptions) {
+          if (e.isTrivial) {
+            issues.push({
+              file: path.relative(process.cwd(), full),
+              line: e.line,
+              matched: e.raw,
+              message: `Trivial or missing ds-allow reason '${e.reason}'. Explicit, domain-specific explanation required (do not use generic reasons like 'marketing', 'custom', or 'looks better').`,
+            });
           }
-
-          // Check if line or up to 4 preceding lines has ds-allow / ds-ignore
-          const allowMatch = line.match(/(?:ds-allow|ds-ignore):\s*([^\n*/]+)/) ||
-            (idx > 0 && lines.slice(Math.max(0, idx - 4), idx).reduce((found, l) => found || l.match(/(?:ds-allow|ds-ignore):\s*([^\n*/]+)/), null));
-
-          if (allowMatch) {
-            const reason = allowMatch[1].trim();
-            if (!reason || TRIVIAL_REASONS.test(reason)) {
-              issues.push({
-                file: path.relative(process.cwd(), full),
-                line: idx + 1,
-                matched: allowMatch[0].trim(),
-                message: `Trivial or missing ds-allow reason '${reason}'. Explicit, domain-specific explanation required (do not use generic reasons like 'marketing', 'custom', or 'looks better').`,
-              });
-            }
-            return; // excused with valid reason
-          }
-
-          // Extract className attributes
-          const classMatches = [...line.matchAll(/className=["']([^"']+)["']/g)];
-          for (const cm of classMatches) {
-            const str = cm[1] || '';
-
-            // 1. Raw font size
-            const sizeMatches = str.match(RAW_TEXT_REGEX);
-            if (sizeMatches) {
-              issues.push({
-                file: path.relative(process.cwd(), full),
-                line: idx + 1,
-                matched: sizeMatches.join(', '),
-                message: `Page Typography Ownership violation: raw font-size utility '${sizeMatches.join(', ')}' used in page. Pages must consume semantic type-* roles or provide a reasoned ds-allow: <reason> exception.`,
-              });
-            }
-
-            // 2. Raw font-display without semantic type
-            if (FONT_DISPLAY_REGEX.test(str) && !SEMANTIC_TYPE_REGEX.test(str)) {
-              issues.push({
-                file: path.relative(process.cwd(), full),
-                line: idx + 1,
-                matched: 'font-display',
-                message: `Page Typography Ownership violation: raw font-display used without semantic type role. Cormorant display typography must be owned by semantic type roles (e.g. type-page-title, type-section-title, type-subsection, type-editorial-quote, type-display).`,
-              });
-            }
-
-            // 3. Raw uppercase without type-caption or type-eyebrow
-            if (RAW_UPPERCASE_REGEX.test(str) && !/\btype-(?:caption|eyebrow)\b/.test(str)) {
-              issues.push({
-                file: path.relative(process.cwd(), full),
-                line: idx + 1,
-                matched: 'uppercase',
-                message: `Page Typography Ownership violation: raw uppercase utility used without type-caption or type-eyebrow. Micro-labels and tags must consume type-caption or type-eyebrow.`,
-              });
-            }
-
-            // 4. Raw tracking without type-caption or type-eyebrow
-            if (RAW_TRACKING_REGEX.test(str) && !/\btype-(?:caption|eyebrow)\b/.test(str)) {
-              issues.push({
-                file: path.relative(process.cwd(), full),
-                line: idx + 1,
-                matched: str.match(RAW_TRACKING_REGEX)[0],
-                message: `Page Typography Ownership violation: raw tracking utility used without type-caption or type-eyebrow. Tracking belongs to the design system typography definitions.`,
-              });
-            }
-          }
-        });
+        }
       }
     }
   }

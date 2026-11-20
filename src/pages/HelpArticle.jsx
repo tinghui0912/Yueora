@@ -42,7 +42,7 @@ export default function HelpArticle() {
         <h1 className="mt-4 type-page-title text-ink-primary">{article.title}</h1>
         <p className="mt-2 type-metadata text-ink-tertiary">Updated {article.updated}</p>
 
-        <div className="mt-8 space-y-4 type-body leading-relaxed text-ink-secondary">
+        <div className="mt-8 space-y-4 type-body text-ink-secondary">
           {article.body.map((p, i) => <p key={i}>{p}</p>)}
         </div>
 

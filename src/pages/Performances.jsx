@@ -153,7 +153,7 @@ export default function Performances() {
         <h1 className="type-experience-title text-ink-primary">
           Preserved Moments
         </h1>
-        <p className="mt-1 type-body-small text-ink-secondary leading-relaxed">
+        <p className="mt-1 type-body-small text-ink-secondary">
           The musical takes you chose to keep.
         </p>
       </div>

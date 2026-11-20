@@ -88,7 +88,7 @@ export default function NotificationSettings() {
               Invitation preview
             </span>
           </div>
-          <p className="type-editorial-quote text-ink-primary leading-relaxed">
+          <p className="type-editorial-quote text-ink-primary">
             &ldquo;Feel like returning to Moonlight Sonata today?&rdquo;
           </p>
           <p className="type-metadata text-ink-secondary">

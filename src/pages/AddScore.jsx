@@ -207,7 +207,7 @@ export default function AddScore() {
                     <h3 className="type-body-small font-medium text-ink-primary">
                       Repertoire limit reached ({effectiveCount} of {scoreQuota.limit} scores)
                     </h3>
-                    <p className="mt-1 type-metadata text-ink-secondary leading-relaxed">
+                    <p className="mt-1 type-metadata text-ink-secondary">
                       Your current plan has room for {scoreQuota.limit} scores. A score already being prepared also reserves a place in your repertoire.
                     </p>
                   </div>
@@ -232,7 +232,7 @@ export default function AddScore() {
                     <h3 className="type-body-small font-medium text-ink-primary">
                       Monthly import limit reached ({importsCount} of {importQuota.label})
                     </h3>
-                    <p className="mt-1 type-metadata text-ink-secondary leading-relaxed">
+                    <p className="mt-1 type-metadata text-ink-secondary">
                       You have used all import allowances for this billing cycle. Upgrade to continue importing sheet music or digital scores.
                     </p>
                   </div>
@@ -348,7 +348,7 @@ export default function AddScore() {
                         <p className="type-body-small font-medium text-ink-primary truncate">
                           {files[0]?.name || 'score.musicxml'}
                         </p>
-                        <span className="rounded-control bg-neutral-muted px-2 py-0.5 type-caption font-semibold uppercase tracking-wider text-ink-primary">
+                        <span className="rounded-control bg-neutral-muted px-2 py-0.5 type-caption text-ink-primary">
                           Parsed
                         </span>
                       </div>
@@ -372,7 +372,7 @@ export default function AddScore() {
                 <div className="relative aspect-[4/3] rounded-container border border-line-subtle bg-surface-canvas overflow-hidden flex flex-col items-center justify-center p-6 text-center">
                   {/* Framing outline */}
                   <div className="absolute inset-6 rounded-control border-2 border-dashed border-line-strong pointer-events-none flex items-center justify-center">
-                    <span className="type-caption uppercase tracking-wider text-ink-tertiary bg-surface-canvas/90 px-3 py-1 rounded">
+                    <span className="type-caption text-ink-tertiary bg-surface-canvas/90 px-3 py-1 rounded">
                       Align sheet within borders
                     </span>
                   </div>
@@ -623,7 +623,7 @@ export default function AddScore() {
                     {details.composer || 'Unknown composer'} · {details.instrument || 'Piano'}
                   </p>
                 </div>
-                <span className="rounded-control bg-neutral-muted px-2.5 py-1 type-caption font-semibold text-ink-primary">
+                <span className="rounded-control bg-neutral-muted px-2.5 py-1 type-caption text-ink-primary">
                   {sources.find((s) => s.id === source)?.label || 'PDF'}
                 </span>
               </div>

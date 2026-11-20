@@ -101,7 +101,7 @@ export default function SecuritySettings() {
               <p className="type-body-small font-medium text-ink-primary">
                 {isGoogleUser ? 'Google Authentication' : 'Email and password'}
               </p>
-              <p className="mt-1 type-metadata text-ink-secondary leading-relaxed">
+              <p className="mt-1 type-metadata text-ink-secondary">
                 {isGoogleUser
                   ? 'Your account is secured via Google OAuth. Multi-factor authentication, security keys, and session protection are managed directly through your Google Account.'
                   : 'Your account is authenticated via your verified email address and local account password.'}
@@ -123,7 +123,7 @@ export default function SecuritySettings() {
                 <KeyRound className="icon-xs text-ink-secondary shrink-0" />
                 <span className="type-body-small font-medium text-ink-primary">External credential management</span>
               </div>
-              <p className="mt-2 type-metadata text-ink-secondary leading-relaxed">
+              <p className="mt-2 type-metadata text-ink-secondary">
                 Because you sign in with Google, Yueora does not store or manage a local password for your account. You can update your credentials anytime in your Google Account dashboard.
               </p>
               <div className="mt-3">
@@ -270,7 +270,7 @@ export default function SecuritySettings() {
                     <div className="flex items-center gap-2">
                       <p className="type-body-small font-medium text-ink-primary truncate">{session.device}</p>
                       {session.current && (
-                        <span className="rounded-control bg-neutral-muted px-2 py-0.5 type-caption font-semibold uppercase tracking-wider text-ink-primary">
+                        <span className="rounded-control bg-neutral-muted px-2 py-0.5 type-caption text-ink-primary">
                           This device
                         </span>
                       )}
@@ -352,12 +352,12 @@ export default function SecuritySettings() {
               </div>
             </div>
             {account?.emailVerified ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-neutral-muted px-2.5 py-0.5 type-caption font-semibold text-ink-primary shrink-0">
+              <span className="inline-flex items-center gap-1 rounded-full bg-neutral-muted px-2.5 py-0.5 type-caption text-ink-primary shrink-0">
                 <CheckCircle2 className="h-3 w-3 text-brand" />
                 Verified
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 rounded-full bg-neutral-muted px-2.5 py-0.5 type-caption font-semibold text-ink-secondary shrink-0">
+              <span className="inline-flex items-center gap-1 rounded-full bg-neutral-muted px-2.5 py-0.5 type-caption text-ink-secondary shrink-0">
                 Not verified
               </span>
             )}

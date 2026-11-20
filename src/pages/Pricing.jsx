@@ -55,7 +55,7 @@ export default function Pricing() {
               <h1 className="type-marketing-title text-balance text-ink-primary">
                 Simple, transparent pricing.
               </h1>
-              <p className="mx-auto mt-4 max-w-xl type-marketing-body leading-relaxed text-ink-secondary">
+              <p className="mx-auto mt-4 max-w-xl type-marketing-body text-ink-secondary">
                 Start free. Upgrade when your repertoire grows. Cancel or change your plan whenever you like.
               </p>
 
@@ -105,7 +105,7 @@ export default function Pricing() {
                   <h3 className="type-display font-medium text-ink-primary">
                     {plans.free.name}
                   </h3>
-                  <p className="mt-2.5 type-body-small text-ink-secondary leading-relaxed">
+                  <p className="mt-2.5 type-body-small text-ink-secondary">
                     A personal starter library to begin your musical journey calmly.
                   </p>
 
@@ -174,7 +174,7 @@ export default function Pricing() {
                   <h3 className="type-display font-medium text-surface-canvas">
                     {plans.plus.name}
                   </h3>
-                  <p className="mt-2.5 type-body-small text-surface-canvas/75 leading-relaxed">
+                  <p className="mt-2.5 type-body-small text-surface-canvas/75">
                     For active players who build a solid repertoire and value practice insights.
                   </p>
 
@@ -265,7 +265,7 @@ export default function Pricing() {
                   <h3 className="type-display font-medium text-ink-primary">
                     {plans.pro.name}
                   </h3>
-                  <p className="mt-2.5 type-body-small text-ink-secondary leading-relaxed">
+                  <p className="mt-2.5 type-body-small text-ink-secondary">
                     For devoted musicians who play regularly, preserve takes, and archive recordings.
                   </p>
 
@@ -383,7 +383,7 @@ export default function Pricing() {
             {/* Prototype and Legal Footnote */}
             <Reveal delay={0.1}>
               <div className="mt-12 text-center space-y-4">
-                <p className="mx-auto max-w-xl type-metadata text-ink-tertiary leading-relaxed">
+                <p className="mx-auto max-w-xl type-metadata text-ink-tertiary">
                   Checkout is a prototype: no real payment is processed and no card details are collected. Prices are shown in US
                   dollars. By continuing you agree to our{' '}
                   <Link to="/legal/terms" className="underline hover:text-ink-primary">Terms</Link> and{' '}

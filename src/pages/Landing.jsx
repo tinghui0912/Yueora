@@ -228,7 +228,7 @@ export default function Landing() {
                 <span className="px-3.5 py-1.5 rounded-full bg-white/90 text-ink-primary type-eyebrow backdrop-blur border border-line-subtle shadow-sm">
                   Clair de Lune
                 </span>
-                <span className="type-editorial-quote text-ink-primary font-medium">Debussy</span>
+                <span className="type-metadata font-medium font-serif italic text-ink-secondary">Debussy</span>
               </div>
             </motion.div>
           </div>
@@ -308,7 +308,7 @@ export default function Landing() {
                 </h2>
               </div>
               <p className="type-marketing-body text-ink-secondary max-w-sm">
-                Follow how Claude Debussy’s <span className="type-editorial-quote font-medium text-ink-primary">Clair de Lune</span> journeys
+                Follow how Claude Debussy’s <span className="font-serif italic font-medium text-ink-primary">Clair de Lune</span> journeys
                 from a paper scan into a living performance memory.
               </p>
             </div>
@@ -342,11 +342,11 @@ export default function Landing() {
                     <h3 className="mt-2 type-subsection text-ink-primary">
                       {s.title}
                     </h3>
-                    <p className="mt-1 type-body-small text-ink-secondary leading-relaxed">
+                    <p className="mt-1 type-body-small text-ink-secondary">
                       {s.summary}
                     </p>
                     {isActive && (
-                      <p className="mt-3 border-t border-line-subtle pt-2.5 type-editorial-quote text-ink-secondary">
+                      <p className="mt-3 border-t border-line-subtle pt-2.5 type-body-small italic font-serif text-ink-secondary">
                         {s.description}
                       </p>
                     )}
@@ -466,21 +466,21 @@ export default function Landing() {
               <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300">
                   <h3 className="type-subsection text-ink-primary">Paced Following</h3>
-                  <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
+                  <p className="mt-2 type-body-small text-ink-secondary">
                     Respects expressive rubato, slowing down and accelerating naturally with you.
                   </p>
                 </div>
 
                 <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300">
                   <h3 className="type-subsection text-ink-primary">Phrase Looping</h3>
-                  <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
+                  <p className="mt-2 type-body-small text-ink-secondary">
                     Select measures 14 to 22 with one tap to work through tricky transitions calmly.
                   </p>
                 </div>
 
                 <div className="rounded-2xl border border-line-subtle bg-surface-panel p-5 hover:border-line-strong hover:-translate-y-0.5 transition-all duration-300 sm:col-span-2">
                   <h3 className="type-subsection text-ink-primary">Zero Accuracy Scoring</h3>
-                  <p className="mt-2 type-body-small text-ink-secondary leading-relaxed">
+                  <p className="mt-2 type-body-small text-ink-secondary">
                     No percentage grades, no stars, no shaming—just a quiet, supportive companion at the keys.
                   </p>
                 </div>
@@ -638,7 +638,7 @@ export default function Landing() {
                   <h3 className="type-display text-ink-primary mt-4">
                     {plans.free.name}
                   </h3>
-                  <p className="mt-3 type-body-small text-ink-secondary leading-relaxed">
+                  <p className="mt-3 type-body-small text-ink-secondary">
                     A personal starter library to begin your musical journey calmly.
                   </p>
                   <div className="mt-6 type-display text-ink-primary">
@@ -681,14 +681,14 @@ export default function Landing() {
                     <span className="type-eyebrow text-surface-canvas/60">
                       Regular Musician
                     </span>
-                    <span className="rounded-full bg-surface-canvas/15 px-3 py-1 type-caption text-surface-canvas font-semibold">
+                    <span className="rounded-full bg-surface-canvas/15 px-3 py-1 type-caption text-surface-canvas">
                       Most Popular
                     </span>
                   </div>
                   <h3 className="type-display text-surface-canvas mt-4">
                     {plans.plus.name}
                   </h3>
-                  <p className="mt-3 type-body-small text-surface-canvas/75 leading-relaxed">
+                  <p className="mt-3 type-body-small text-surface-canvas/75">
                     For active players building their repertoire with practice insights.
                   </p>
                   <div className="mt-6 type-display text-surface-canvas">
@@ -738,7 +738,7 @@ export default function Landing() {
                   <h3 className="type-display text-ink-primary mt-4">
                     {plans.pro.name}
                   </h3>
-                  <p className="mt-3 type-body-small text-ink-secondary leading-relaxed">
+                  <p className="mt-3 type-body-small text-ink-secondary">
                     Unlimited scores, phrase looping, and deep performance archives.
                   </p>
                   <div className="mt-6 type-display text-ink-primary">
@@ -799,7 +799,7 @@ export default function Landing() {
                     +
                   </span>
                 </summary>
-                <p className="mt-4 type-body text-ink-secondary leading-relaxed">
+                <p className="mt-4 type-body text-ink-secondary">
                   {f.a}
                 </p>
               </details>
@@ -848,7 +848,7 @@ export default function Landing() {
                     <p className="type-subsection text-surface-canvas">
                       No card required for free tier.
                     </p>
-                    <p className="type-body-small text-surface-canvas/75 mt-2 leading-relaxed">
+                    <p className="type-body-small text-surface-canvas/75 mt-2">
                       Upload your first score in under two minutes.
                     </p>
                     <div className="mt-8 flex flex-col gap-3">

@@ -82,11 +82,11 @@ export default function Login() {
       {/* Local Preview / Demo Bypass Banner (DEV only) */}
       {import.meta.env.DEV && (
         <div className="mb-6 rounded-container border border-line-subtle bg-neutral-muted p-4 text-left">
-          <div className="flex items-center gap-1.5 type-caption font-semibold text-brand">
+          <div className="flex items-center gap-1.5 type-caption text-brand">
             <Sparkles className="icon-sm shrink-0" aria-hidden="true" />
             <span>本地开发与重构效果预览</span>
           </div>
-          <p className="mt-1 type-caption text-ink-secondary leading-relaxed">
+          <p className="mt-1 type-caption text-ink-secondary">
             本地未连接云端 Base44 账户时，可直接一键免登录进入完整曲库，体验本次重构的乐谱纸张质感、演奏工作区与记忆留存。
           </p>
           <Button
@@ -114,7 +114,7 @@ export default function Login() {
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-line-subtle" />
         </div>
-        <div className="relative flex justify-center type-caption font-semibold uppercase tracking-wider">
+        <div className="relative flex justify-center type-caption">
           <span className="bg-surface-canvas px-3 text-ink-secondary/70">or email</span>
         </div>
       </div>

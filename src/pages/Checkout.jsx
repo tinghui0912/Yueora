@@ -166,7 +166,7 @@ export default function Checkout() {
                   disabled={processing}
                   required
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 type-caption font-semibold text-ink-tertiary">
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 type-caption text-ink-tertiary">
                   VISA
                 </span>
               </div>

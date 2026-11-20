@@ -101,7 +101,7 @@ export default function ScoreDetail() {
       <div className="mt-5 flex flex-col gap-5 border-b border-line-subtle pb-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
           <div className="flex items-baseline gap-3">
-            <h1 className="type-page-title text-ink-primary leading-tight">
+            <h1 className="type-page-title text-ink-primary">
               {score.title}
             </h1>
             <button
@@ -276,7 +276,7 @@ export default function ScoreDetail() {
             <h2 className="type-subsection text-ink-primary">
               The Journey of this Piece
             </h2>
-            <p className="mt-1 type-body-small text-ink-secondary leading-relaxed">
+            <p className="mt-1 type-body-small text-ink-secondary">
               Every piece of music has an organic life in Yueora.
             </p>
 

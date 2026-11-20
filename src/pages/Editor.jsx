@@ -174,7 +174,7 @@ export default function Editor() {
         <div className="flex items-center gap-3">
           <BackLink to={score._pending && importId ? `/imports/${importId}` : `/score/${scoreId}`} label={score.title} />
           {activeIssue && (
-            <span className="hidden items-center gap-1.5 rounded-control bg-gold/10 px-2.5 py-1 type-caption font-semibold text-gold sm:flex">
+            <span className="hidden items-center gap-1.5 rounded-control bg-gold/10 px-2.5 py-1 type-caption text-gold sm:flex">
               <AlertCircle className="icon-xs" /> Issue {issueIdx + 1} of {issues.length} · Measure {activeIssue.measure} · {activeIssue.type}
             </span>
           )}
@@ -238,7 +238,7 @@ export default function Editor() {
           <button
             key={t.id}
             onClick={() => setTool(t.id)}
-            className={`flex shrink-0 items-center gap-1.5 rounded-control px-2.5 py-1.5 text-xs font-medium transition-colors ${
+            className={`flex shrink-0 items-center gap-1.5 rounded-control px-2.5 py-1.5 type-body-small font-medium transition-colors ${
               tool === t.id
                 ? 'bg-neutral-muted font-semibold text-ink-primary'
                 : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
