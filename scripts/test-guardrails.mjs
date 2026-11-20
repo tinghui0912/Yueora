@@ -43,6 +43,19 @@ function assertPositive(name, code, filePath = 'test.jsx') {
   }
 }
 
+/**
+ * Generates an out-of-order reverse alias chain requiring `depth` propagation passes.
+ * e.g. depth = 21 generates A0 = A1; A1 = A2; ... A20 = A21; A21 = rootPrimitive;
+ */
+function generateReverseAliasChain(prefix, rootPrimitive, depth = 21) {
+  const lines = [];
+  for (let i = 0; i < depth; i++) {
+    lines.push(`const ${prefix}${i} = ${prefix}${i + 1};`);
+  }
+  lines.push(`const ${prefix}${depth} = ${rootPrimitive};`);
+  return lines.join('\n');
+}
+
 // -----------------------------------------------------------------------------
 // 1. NEGATIVE FIXTURES (Must be rejected by Guardrails)
 // -----------------------------------------------------------------------------
@@ -522,6 +535,40 @@ assertNegative(
   'Mutable alias of protected primitive'
 );
 
+// 1.57 Deep reverse Button alias chain (21+ levels) rejected on non-composition class
+assertNegative(
+  'Deep reverse Button alias chain (21+ levels) rejected on non-composition class (A0 with bg-danger)',
+  `${generateReverseAliasChain('A', 'Button', 21)}
+
+  import { Button } from "@/components/ui/button";
+
+  export default function Page() {
+    return (
+      <A0 className="bg-danger">
+        Action
+      </A0>
+    );
+  }`,
+  'bg-danger'
+);
+
+// 1.58 Deep reverse Surface alias chain (21+ levels) rejected on appearance override
+assertNegative(
+  'Deep reverse Surface alias chain (21+ levels) rejected on appearance override (S0 with bg-brand)',
+  `${generateReverseAliasChain('S', 'Surface', 21)}
+
+  import { Surface } from "@/components/patterns/Surface";
+
+  export default function Page() {
+    return (
+      <S0 className="bg-brand">
+        Content
+      </S0>
+    );
+  }`,
+  'bg-brand'
+);
+
 // -----------------------------------------------------------------------------
 // 2. POSITIVE FIXTURES (Must be accepted by Guardrails)
 // -----------------------------------------------------------------------------
@@ -711,6 +758,34 @@ assertPositive(
       <ActionButton className="w-full">
         Action
       </ActionButton>
+    );
+  }`
+);
+
+assertPositive(
+  'Deep reverse Button alias chain (21+ levels) accepted with valid composition (A0 with w-full)',
+  `${generateReverseAliasChain('A', 'Button', 21)}
+
+  import { Button } from "@/components/ui/button";
+
+  export default function Page() {
+    return (
+      <A0 className="w-full">
+        Action
+      </A0>
+    );
+  }`
+);
+
+assertPositive(
+  'Deep reverse Surface alias chain (21+ levels) accepted with valid composition (S0 with grid grid-cols-2 gap-4)',
+  `${generateReverseAliasChain('S', 'Surface', 21)}
+
+  import { Surface } from "@/components/patterns/Surface";
+
+  export default function Page() {
+    return (
+      <S0 className="grid grid-cols-2 gap-4" />
     );
   }`
 );

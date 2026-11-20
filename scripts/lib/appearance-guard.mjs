@@ -360,9 +360,10 @@ export function scanPageAppearanceContent(content, filePath = 'anonymous.jsx') {
   const reportedMutableNodes = new Set();
   let changed = true;
   let iterations = 0;
-  const MAX_ITERATIONS = 20;
+  // Structural upper bound: monotonic alias propagation over finite candidates must converge within |candidates| + 1
+  const maxIterations = declaratorCandidates.length + 1;
 
-  while (changed && iterations < MAX_ITERATIONS) {
+  while (changed && iterations < maxIterations) {
     changed = false;
     iterations++;
 
@@ -395,6 +396,17 @@ export function scanPageAppearanceContent(content, filePath = 'anonymous.jsx') {
         }
       }
     }
+  }
+
+  // Fail closed: If alias propagation did not reach convergence within the structural bound,
+  // we cannot safely guarantee primitive identity resolution.
+  if (changed) {
+    issues.push({
+      file: filePath,
+      line: 1,
+      matched: 'Alias convergence failure',
+      message: 'Protected primitive alias propagation did not converge; identity cannot be proven safe.',
+    });
   }
 
   function resolveCanonical(elemNode) {
