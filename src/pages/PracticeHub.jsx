@@ -36,8 +36,8 @@ export default function PracticeHub() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="type-page-title text-ink-primary">Practice Dashboard</h1>
-          <p className="mt-1 type-body-small text-ink-secondary">
+          <h1 className="type-dashboard-title text-ink-primary">Practice Dashboard</h1>
+          <p className="mt-1 type-page-subtitle text-ink-secondary">
             A calm space to play, reflect, and maintain your repertoire
           </p>
         </div>
@@ -57,46 +57,46 @@ export default function PracticeHub() {
 
       {/* 4-column StatCards row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-qa="practice-stat-cards">
-        <Surface tone="panel" padding="md" className="flex items-start justify-between">
+        <Surface tone="panel" padding="md" interactive="static-card" className="flex items-start justify-between" data-qa="practice-stat-card">
           <div>
-            <p className="type-caption text-ink-tertiary">Minutes Played</p>
-            <p className="type-display text-ink-primary mt-1.5">{thisWeekMinutes} <span className="type-body-small text-ink-secondary font-normal">min</span></p>
-            <p className="type-body-small text-ink-secondary mt-1">This week in music</p>
+            <p className="type-stat-label text-ink-tertiary" data-qa="practice-stat-label">Minutes Played</p>
+            <p className="type-metric text-ink-primary mt-1.5" data-qa="practice-stat-metric">{thisWeekMinutes} <span className="type-card-metadata text-ink-secondary font-normal">min</span></p>
+            <p className="type-card-metadata text-ink-secondary mt-1">This week in music</p>
           </div>
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-control bg-brand-soft text-brand">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nav bg-brand-soft text-brand" data-qa="practice-stat-icon">
             <Clock className="icon-md text-brand" />
           </div>
         </Surface>
 
-        <Surface tone="panel" padding="md" className="flex items-start justify-between">
+        <Surface tone="panel" padding="md" interactive="static-card" className="flex items-start justify-between" data-qa="practice-stat-card">
           <div>
-            <p className="type-caption text-ink-tertiary">Calm Sessions</p>
-            <p className="type-display text-ink-primary mt-1.5">{thisWeekSessions}</p>
-            <p className="type-body-small text-ink-secondary mt-1">Across 7 days</p>
+            <p className="type-stat-label text-ink-tertiary" data-qa="practice-stat-label">Calm Sessions</p>
+            <p className="type-metric text-ink-primary mt-1.5" data-qa="practice-stat-metric">{thisWeekSessions}</p>
+            <p className="type-card-metadata text-ink-secondary mt-1">Across 7 days</p>
           </div>
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-control bg-brand-soft text-brand">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nav bg-brand-soft text-brand" data-qa="practice-stat-icon">
             <Play className="icon-md text-brand fill-current" />
           </div>
         </Surface>
 
-        <Surface tone="panel" padding="md" className="flex items-start justify-between">
+        <Surface tone="panel" padding="md" interactive="static-card" className="flex items-start justify-between" data-qa="practice-stat-card">
           <div>
-            <p className="type-caption text-ink-tertiary">Active Pieces</p>
-            <p className="type-display text-ink-primary mt-1.5">{thisWeekPieces}</p>
-            <p className="type-body-small text-ink-secondary mt-1">{activeScores.length} total in repertoire</p>
+            <p className="type-stat-label text-ink-tertiary" data-qa="practice-stat-label">Active Pieces</p>
+            <p className="type-metric text-ink-primary mt-1.5" data-qa="practice-stat-metric">{thisWeekPieces}</p>
+            <p className="type-card-metadata text-ink-secondary mt-1">{activeScores.length} total in repertoire</p>
           </div>
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-control bg-brand-soft text-brand">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nav bg-brand-soft text-brand" data-qa="practice-stat-icon">
             <Music className="icon-md text-brand" />
           </div>
         </Surface>
 
-        <Surface tone="panel" padding="md" className="flex items-start justify-between">
+        <Surface tone="panel" padding="md" interactive="static-card" className="flex items-start justify-between" data-qa="practice-stat-card">
           <div>
-            <p className="type-caption text-ink-tertiary">Days Active</p>
-            <p className="type-display text-ink-primary mt-1.5">{thisWeekMarks.filter(Boolean).length} <span className="type-body-small text-ink-secondary font-normal">/ 7</span></p>
-            <p className="type-body-small text-ink-secondary mt-1">Weekly playing rhythm</p>
+            <p className="type-stat-label text-ink-tertiary" data-qa="practice-stat-label">Days Active</p>
+            <p className="type-metric text-ink-primary mt-1.5" data-qa="practice-stat-metric">{thisWeekMarks.filter(Boolean).length} <span className="type-card-metadata text-ink-secondary font-normal">/ 7</span></p>
+            <p className="type-card-metadata text-ink-secondary mt-1">Weekly playing rhythm</p>
           </div>
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-control bg-brand-soft text-brand">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nav bg-brand-soft text-brand" data-qa="practice-stat-icon">
             <Sparkles className="icon-md text-brand" />
           </div>
         </Surface>
@@ -105,7 +105,7 @@ export default function PracticeHub() {
       {/* Hero Resume Module */}
       {continueScore && (
         <section className="space-y-3" data-qa="practice-resume-section">
-          <p className="type-caption text-ink-secondary">Pick up where you left off</p>
+          <p className="type-card-metadata text-ink-secondary">Pick up where you left off</p>
           <Surface
             interactive
             padding="md"
@@ -121,35 +121,37 @@ export default function PracticeHub() {
             />
 
             <div className="flex items-center gap-4 min-w-0 pointer-events-none">
-              <div className="hidden h-16 w-24 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel/95 sm:block">
+              <div className="hidden h-16 w-24 shrink-0 overflow-hidden rounded-control border border-line-subtle/50 bg-surface-panel/95 sm:block">
                 <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
               </div>
               <div className="min-w-0">
-                <span className="inline-flex items-center gap-1.5 type-caption text-brand">
+                <span className="inline-flex items-center gap-1.5 type-card-value-label text-brand">
                   <Sparkles className="icon-xs" />
                   <span>Ready to play</span>
                 </span>
-                <h2 className="truncate type-section-title text-ink-primary mt-0.5">
+                <h2 className="truncate type-panel-title text-ink-primary mt-0.5">
                   {continueScore.title}
                 </h2>
-                <p className="truncate type-metadata text-ink-secondary mt-0.5">
+                <p className="truncate type-card-metadata text-ink-secondary mt-0.5">
                   {continueScore.composer} · Continue from bar {continueScore.lastMeasure} · Played {continueScore.lastPlayed}
                 </p>
               </div>
             </div>
 
-            <div className="relative z-10 flex shrink-0 items-center gap-2 pointer-events-auto">
-              <Button intent="primary" size="md" asChild>
-                <Link to={`/score/${continueScore.id}/setup`} tabIndex={-1} aria-hidden="true">
+            <div className="relative z-10 flex shrink-0 items-center gap-2">
+              <div className="pointer-events-none">
+                <Button intent="primary" size="md">
                   <Play className="icon-sm fill-current" />
                   <span>Resume playing</span>
-                </Link>
-              </Button>
-              <Button intent="secondary" size="md" asChild>
-                <Link to={`/score/${continueScore.id}`}>
-                  <span>Score details</span>
-                </Link>
-              </Button>
+                </Button>
+              </div>
+              <div className="pointer-events-auto">
+                <Button intent="secondary" size="md" asChild>
+                  <Link to={`/score/${continueScore.id}`}>
+                    <span>Score details</span>
+                  </Link>
+                </Button>
+              </div>
             </div>
           </Surface>
         </section>
@@ -160,24 +162,24 @@ export default function PracticeHub() {
         {/* Left Column: Recent Pieces */}
         <Surface tone="panel" padding="md" className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="type-section-title text-ink-primary">Recent Repertoire</h2>
+            <h2 className="type-panel-title text-ink-primary" data-qa="practice-recent-heading">Recent Repertoire</h2>
             <Link to="/library" className="type-body-small text-brand font-medium hover:underline">
               View all ({activeScores.length})
             </Link>
           </div>
 
-          <div className="divide-y divide-line-subtle">
+          <div className="divide-y divide-line-subtle/50">
             {recentPieces.map((s) => (
               <div key={s.id} className="flex items-center justify-between py-3 gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-10 w-14 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
+                  <div className="h-10 w-14 shrink-0 overflow-hidden rounded-control border border-line-subtle/50 bg-surface-panel">
                     <ScorePreview id={s.id} className="h-full w-full object-cover" />
                   </div>
                   <div className="min-w-0">
                     <Link to={`/score/${s.id}`} className="block truncate type-subsection text-ink-primary hover:text-brand transition-colors">
                       {s.title}
                     </Link>
-                    <p className="truncate type-metadata text-ink-secondary">{s.composer}</p>
+                    <p className="truncate type-card-metadata text-ink-secondary">{s.composer}</p>
                   </div>
                 </div>
 
@@ -200,11 +202,11 @@ export default function PracticeHub() {
         {/* Right Column: Weekly Rhythm & Reflective Stats */}
         <Surface tone="panel" padding="md" className="space-y-5">
           <div className="flex items-center justify-between">
-            <h2 className="type-section-title text-ink-primary">Weekly Rhythm</h2>
-            <span className="type-metadata text-ink-secondary">7-day view</span>
+            <h2 className="type-panel-title text-ink-primary">Weekly Rhythm</h2>
+            <span className="type-card-metadata text-ink-secondary">7-day view</span>
           </div>
 
-          <div className="flex justify-between items-center rounded-control bg-neutral-muted/60 p-4 border border-line-subtle">
+          <div className="flex justify-between items-center rounded-control bg-neutral-muted/60 p-4 border border-line-subtle/50">
             {week.days.map((d, i) => (
               <div key={d.key} className="flex flex-col items-center gap-2">
                 <span

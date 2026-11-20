@@ -164,7 +164,7 @@ export default function Library() {
           <h1 className="type-page-title text-ink-primary">
             {isTrash ? 'Trash' : activeFolderId ? (folders.find((f) => f.id === activeFolderId)?.name || 'Folder') : 'Repertoire'}
           </h1>
-          <p className="mt-1 type-body-small text-ink-secondary">
+          <p className="mt-1 type-page-subtitle text-ink-secondary">
             {isTrash
               ? `${filtered.length} in trash`
               : `${liveCount} ${liveCount === 1 ? 'piece' : 'pieces'} in your personal collection`}
@@ -277,7 +277,7 @@ export default function Library() {
             </Button>
             {showFilters && (
               <Surface tone="raised" elevation="overlay" padding="sm" className="absolute right-0 z-20 mt-1 w-56">
-                <p className="type-caption text-ink-tertiary">Instrument</p>
+                <p className="type-menu-label text-ink-primary">Instrument</p>
                 <div className="mt-1.5 flex flex-wrap gap-1">
                   {instruments.map((ins) => (
                     <button
@@ -291,7 +291,7 @@ export default function Library() {
                     </button>
                   ))}
                 </div>
-                <p className="mt-3 type-caption text-ink-tertiary">Practice history</p>
+                <p className="mt-3 type-menu-label text-ink-primary">Practice history</p>
                 <div className="mt-1.5 flex flex-wrap gap-1">
                   {[['any', 'Any'], ['recent', 'Played recently'], ['notplayed', 'Not played yet']].map(([k, l]) => (
                     <button
@@ -346,22 +346,32 @@ export default function Library() {
             )}
           </div>
 
-          {/* Grid / List switch */}
-          <div className="flex h-control-md items-center rounded-control border border-line-subtle bg-neutral-muted p-0.5">
-            <IconButton
-              icon={LayoutGrid}
-              size="xs"
-              tone={view === 'grid' ? 'outline' : 'quiet'}
-              label="Grid view"
+          {/* Grid / List switch (NumisCollection segmented grammar) */}
+          <div className="flex h-control-md items-center rounded-control border border-line-subtle/50 bg-neutral-muted p-1 gap-1">
+            <button
+              type="button"
               onClick={() => setParam('layout', 'grid')}
-            />
-            <IconButton
-              icon={List}
-              size="xs"
-              tone={view === 'list' ? 'outline' : 'quiet'}
-              label="List view"
+              aria-label="Grid view"
+              className={`flex h-7 w-7 items-center justify-center rounded-control transition-colors ${
+                view === 'grid'
+                  ? 'bg-surface-panel shadow-control text-ink-primary'
+                  : 'text-ink-tertiary hover:text-ink-primary'
+              }`}
+            >
+              <LayoutGrid className="icon-xs" />
+            </button>
+            <button
+              type="button"
               onClick={() => setParam('layout', 'list')}
-            />
+              aria-label="List view"
+              className={`flex h-7 w-7 items-center justify-center rounded-control transition-colors ${
+                view === 'list'
+                  ? 'bg-surface-panel shadow-control text-ink-primary'
+                  : 'text-ink-tertiary hover:text-ink-primary'
+              }`}
+            >
+              <List className="icon-xs" />
+            </button>
           </div>
         </div>
       </div>

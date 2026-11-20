@@ -46,8 +46,8 @@ export default function Sidebar() {
         >
           <Logo variant="full" size="md" />
         </NavLink>
-        <p className="mt-1.5 type-caption text-ink-tertiary">
-          Musical Sanctuary
+        <p data-qa="sidebar-descriptor" className="mt-1 type-sidebar-descriptor text-ink-tertiary">
+          Musical sanctuary
         </p>
       </div>
 
@@ -121,7 +121,7 @@ export default function Sidebar() {
       <div className="flex-1 min-h-6" />
 
       {/* Secondary Utilities */}
-      <div className="space-y-1 border-t border-line-subtle pt-4">
+      <div className="space-y-1 border-t border-line-subtle/50 pt-4">
         <SidebarNavItem
           to="/help"
           icon={HelpCircle}
@@ -135,13 +135,13 @@ export default function Sidebar() {
       </div>
 
       {/* User Profile Footer Row */}
-      <div className="mt-4 flex items-center justify-between rounded-control border border-line-subtle bg-surface-canvas p-2.5">
+      <div className="mt-4 flex items-center justify-between p-2">
         <NavLink
           to="/settings/account"
           className="flex items-center gap-2.5 min-w-0 flex-1 hover:opacity-85 transition-opacity"
         >
-          <Avatar className="h-8 w-8 border border-line-subtle shrink-0">
-            <AvatarFallback className="bg-brand text-xs font-semibold text-brand-foreground">
+          <Avatar className="h-8 w-8 border border-line-subtle/50 shrink-0">
+            <AvatarFallback className="bg-brand-soft text-brand text-xs font-semibold">
               {initials}
             </AvatarFallback>
           </Avatar>

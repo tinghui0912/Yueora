@@ -23,6 +23,17 @@ const REQUIRED_TYPOGRAPHY = [
   'type-eyebrow',
   'type-metadata',
   'type-metric',
+  'type-sidebar-descriptor',
+  'type-dashboard-title',
+  'type-page-subtitle',
+  'type-stat-label',
+  'type-panel-title',
+  'type-card-title',
+  'type-card-metadata',
+  'type-card-value-label',
+  'type-card-value',
+  'type-mobile-nav',
+  'type-menu-label',
 ];
 
 const CANONICAL_CONTROL_TOKENS = [

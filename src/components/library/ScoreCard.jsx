@@ -21,7 +21,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
       data-qa="score-card"
       data-score-id={score.id}
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-container border border-line-subtle bg-surface-panel transition-all duration-300 hover:border-brand/40 hover:shadow-raised hover:-translate-y-1 select-none',
+        'group relative flex flex-col overflow-hidden rounded-container border border-line-subtle/50 bg-surface-panel transition-all duration-300 hover:border-brand/40 hover:shadow-card-hover hover:-translate-y-1 select-none',
         selected && 'border-brand ring-2 ring-brand'
       )}
     >
@@ -36,7 +36,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
       {/* Visual Artifact Preview Zone (~50% height, modeled on NumisCollection ItemCard) */}
       <div
         data-qa="score-card-visual"
-        className="relative aspect-[4/3] w-full overflow-hidden border-b border-line-subtle bg-surface-canvas/50 pointer-events-none"
+        className="relative aspect-[4/3] w-full overflow-hidden border-b border-line-subtle/50 bg-surface-canvas/50 pointer-events-none"
       >
         <ScorePreview
           id={score.id}
@@ -82,13 +82,13 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
         <div>
           <h3
             data-qa="score-card-title"
-            className="truncate font-display text-base font-semibold text-ink-primary transition-colors group-hover:text-brand"
+            className="truncate type-card-title text-ink-primary transition-colors group-hover:text-brand"
           >
             {score.title}
           </h3>
           <p
             data-qa="score-card-composer"
-            className="truncate type-metadata text-ink-secondary mt-0.5"
+            className="truncate type-card-metadata text-ink-secondary mt-0.5"
           >
             {score.composer}
           </p>
@@ -97,13 +97,13 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
         {/* Divider & Prominent Value / State Row */}
         <div
           data-qa="score-card-status"
-          className="pt-2.5 border-t border-line-subtle flex items-center justify-between"
+          className="pt-2.5 border-t border-line-subtle/50 flex items-center justify-between"
         >
           <div className="min-w-0 flex-1">
-            <p className="type-caption text-ink-tertiary">
+            <p className="type-card-value-label text-ink-tertiary">
               {isPlayed ? 'Last session' : 'Status'}
             </p>
-            <p className="type-body-small font-semibold text-brand truncate mt-0.5">
+            <p className="type-card-value text-brand truncate mt-0.5">
               {isPlayed
                 ? `Played ${score.lastPlayed}${score.lastMeasure > 1 ? ` · Bar ${score.lastMeasure}` : ''}`
                 : 'Ready on stand'}
@@ -111,7 +111,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
           </div>
 
           {/* Quick status cue matching NumisCollection's indicator */}
-          <div className="flex items-center gap-1 type-caption font-medium text-ink-tertiary group-hover:text-brand transition-colors">
+          <div className="flex items-center gap-1 type-metadata font-medium text-ink-tertiary group-hover:text-brand transition-colors">
             <Play className="icon-xs fill-current" />
             <span>Stand</span>
           </div>

@@ -514,12 +514,80 @@ async function verifyComputedStyles(client, baseUrl) {
   if (Math.round(parseFloat(componentStyles.input.height)) !== 36) {
     throw new Error(`Standard input height is not 36px: ${componentStyles.input.height}`);
   }
-  // Assert border radius is 10px (rounded-control)
-  if (Math.round(parseFloat(componentStyles.primaryBtn.borderRadius)) !== 10) {
-    throw new Error(`Primary button border radius is not 10px: ${componentStyles.primaryBtn.borderRadius}`);
+  // Assert border radius is 6px (rounded-control)
+  if (Math.round(parseFloat(componentStyles.primaryBtn.borderRadius)) !== 6) {
+    throw new Error(`Primary button border radius is not 6px: ${componentStyles.primaryBtn.borderRadius}`);
   }
-  if (Math.round(parseFloat(componentStyles.input.borderRadius)) !== 10) {
-    throw new Error(`Standard input border radius is not 10px: ${componentStyles.input.borderRadius}`);
+  if (Math.round(parseFloat(componentStyles.input.borderRadius)) !== 6) {
+    throw new Error(`Standard input border radius is not 6px: ${componentStyles.input.borderRadius}`);
+  }
+
+  // 2b. Secondary Button & Input Interaction Assertions (Section 63 & 64)
+  const secBtnCoords = await ev(`(() => {
+    const btn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Secondary Action');
+    if (!btn) return null;
+    const r = btn.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  })()`);
+  if (secBtnCoords) {
+    await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: secBtnCoords.x, y: secBtnCoords.y });
+    await new Promise((r) => setTimeout(r, 200));
+
+    const secHover = await ev(`(() => {
+      const btn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Secondary Action');
+      if (!btn) return null;
+      const cs = window.getComputedStyle(btn);
+      return {
+        borderColor: cs.borderColor,
+        transform: cs.transform,
+        backgroundColor: cs.backgroundColor,
+      };
+    })()`);
+    if (secHover) {
+      if (secHover.borderColor.includes('195, 131, 34')) {
+        throw new Error(`Secondary button hover must NOT turn gold, got borderColor: ${secHover.borderColor}`);
+      }
+      if (secHover.transform !== 'none') {
+        throw new Error(`Secondary button hover transform must be none (no active scale), got: ${secHover.transform}`);
+      }
+      console.log(`  ✓ Secondary Button Hover: stable border (${secHover.borderColor}), transform=${secHover.transform}`);
+    }
+  }
+
+  // Input Hover & Focus Treatment (Section 64)
+  const inputCoords = await ev(`(() => {
+    const el = document.querySelector('input#demo-title');
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  })()`);
+  if (inputCoords) {
+    await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: inputCoords.x, y: inputCoords.y });
+    await new Promise((r) => setTimeout(r, 200));
+
+    // Focus input
+    await S('Input.dispatchMouseEvent', { type: 'mousePressed', x: inputCoords.x, y: inputCoords.y, button: 'left', clickCount: 1 });
+    await S('Input.dispatchMouseEvent', { type: 'mouseReleased', x: inputCoords.x, y: inputCoords.y, button: 'left', clickCount: 1 });
+    await new Promise((r) => setTimeout(r, 200));
+
+    const inputFocus = await ev(`(() => {
+      const el = document.querySelector('input#demo-title');
+      if (!el) return null;
+      const cs = window.getComputedStyle(el);
+      return {
+        boxShadow: cs.boxShadow,
+        outlineStyle: cs.outlineStyle,
+        isFocused: document.activeElement === el,
+      };
+    })()`);
+
+    if (inputFocus && inputFocus.isFocused) {
+      const hasFocusRing = (inputFocus.boxShadow && inputFocus.boxShadow !== 'none') || (inputFocus.outlineStyle && inputFocus.outlineStyle !== 'none');
+      if (!hasFocusRing) {
+        throw new Error(`Standard input must have visible focus treatment (boxShadow or outline), got boxShadow=${inputFocus.boxShadow}`);
+      }
+      console.log(`  ✓ Standard Input: 6px radius verified, visible focus ring confirmed.`);
+    }
   }
 
   // 3. Authenticated App Nav & Card Lift on /library?demo=true
@@ -531,25 +599,247 @@ async function verifyComputedStyles(client, baseUrl) {
   }
   await new Promise((r) => setTimeout(r, 400));
 
-  const appStyles = await ev(`(() => {
-    // Active sidebar nav
+  // 3a. Sidebar Descriptor & Geometry & Active Nav (Section 59, 60, 61)
+  const sidebarStyles = await ev(`(() => {
+    const descriptor = document.querySelector('[data-qa="sidebar-descriptor"]') || document.querySelector('.type-sidebar-descriptor');
+    const descCs = descriptor ? window.getComputedStyle(descriptor) : null;
+
     const activeNav = document.querySelector('aside nav a[href="/library"]') || document.querySelector('aside nav a.bg-brand-soft');
     const navCs = activeNav ? window.getComputedStyle(activeNav) : null;
+    const activeIcon = activeNav ? activeNav.querySelector('svg') : null;
+    const activeIconCs = activeIcon ? window.getComputedStyle(activeIcon) : null;
+    const iconRect = activeIcon ? activeIcon.getBoundingClientRect() : null;
 
     return {
+      descriptor: descCs ? {
+        fontSize: descCs.fontSize,
+        fontWeight: descCs.fontWeight,
+        textTransform: descCs.textTransform,
+      } : null,
       activeNav: navCs ? {
+        color: navCs.color,
         backgroundColor: navCs.backgroundColor,
         boxShadow: navCs.boxShadow,
+        paddingLeft: parseFloat(navCs.paddingLeft),
+        paddingTop: parseFloat(navCs.paddingTop),
+        borderRadius: parseFloat(navCs.borderRadius),
+        iconColor: activeIconCs ? activeIconCs.color : null,
+        iconWidth: iconRect ? Math.round(iconRect.width) : 0,
+        iconHeight: iconRect ? Math.round(iconRect.height) : 0,
       } : null,
     };
   })()`);
 
-  if (appStyles.activeNav) {
-    console.log(`  Active Nav: bg=${appStyles.activeNav.backgroundColor}, shadow=${appStyles.activeNav.boxShadow}`);
-    if (appStyles.activeNav.boxShadow !== 'none') {
-      throw new Error(`Active navigation must be planar (no shadow), got: ${appStyles.activeNav.boxShadow}`);
+  if (!sidebarStyles.descriptor) throw new Error('Sidebar descriptor element not found on /library');
+  if (Math.round(parseFloat(sidebarStyles.descriptor.fontSize)) !== 12) {
+    throw new Error(`Sidebar descriptor fontSize is ${sidebarStyles.descriptor.fontSize} (expected 12px)`);
+  }
+  if (parseInt(sidebarStyles.descriptor.fontWeight, 10) > 500) {
+    throw new Error(`Sidebar descriptor fontWeight is ${sidebarStyles.descriptor.fontWeight} (expected <= 500)`);
+  }
+  if (sidebarStyles.descriptor.textTransform !== 'none') {
+    throw new Error(`Sidebar descriptor textTransform is ${sidebarStyles.descriptor.textTransform} (expected 'none')`);
+  }
+  console.log(`  ✓ Sidebar Descriptor: 12px Inter normal-case verified.`);
+
+  if (!sidebarStyles.activeNav) throw new Error('Active sidebar nav item not found on /library');
+  if (!sidebarStyles.activeNav.color.includes('195, 131, 34')) {
+    throw new Error(`Active sidebar nav color mismatch: ${sidebarStyles.activeNav.color} (expected gold rgb(195, 131, 34))`);
+  }
+  if (sidebarStyles.activeNav.iconColor && !sidebarStyles.activeNav.iconColor.includes('195, 131, 34')) {
+    throw new Error(`Active sidebar nav icon color mismatch: ${sidebarStyles.activeNav.iconColor} (expected gold rgb(195, 131, 34))`);
+  }
+  const isBrandSoft = sidebarStyles.activeNav.backgroundColor.includes('242, 232, 217') || sidebarStyles.activeNav.backgroundColor.includes('241, 232, 218');
+  if (!isBrandSoft) {
+    throw new Error(`Active sidebar nav background mismatch: ${sidebarStyles.activeNav.backgroundColor} (expected bg-brand-soft rgb(242, 232, 217) or rgb(241, 232, 218))`);
+  }
+  if (sidebarStyles.activeNav.boxShadow !== 'none') {
+    throw new Error(`Active navigation must be planar (no shadow), got: ${sidebarStyles.activeNav.boxShadow}`);
+  }
+  if (Math.round(sidebarStyles.activeNav.paddingLeft) !== 16) {
+    throw new Error(`Sidebar nav paddingLeft is ${sidebarStyles.activeNav.paddingLeft}px (expected 16px / px-4)`);
+  }
+  if (Math.round(sidebarStyles.activeNav.paddingTop) !== 12) {
+    throw new Error(`Sidebar nav paddingTop is ${sidebarStyles.activeNav.paddingTop}px (expected 12px / py-3)`);
+  }
+  if (Math.round(sidebarStyles.activeNav.borderRadius) !== 12) {
+    throw new Error(`Sidebar nav borderRadius is ${sidebarStyles.activeNav.borderRadius}px (expected 12px / rounded-nav)`);
+  }
+  if (sidebarStyles.activeNav.iconWidth !== 20 || sidebarStyles.activeNav.iconHeight !== 20) {
+    throw new Error(`Sidebar nav icon size is ${sidebarStyles.activeNav.iconWidth}x${sidebarStyles.activeNav.iconHeight} (expected 20x20)`);
+  }
+  console.log(`  ✓ Sidebar Active Nav & Geometry: gold text/icon, bg-brand-soft, 12px radius, 16x12 padding, 20px icon verified.`);
+
+  // 3b. Sidebar Inactive Hover (Section 62)
+  const inactiveLinkCoords = await ev(`(() => {
+    const link = document.querySelector('aside nav a[href="/practice"]') || document.querySelector('aside nav a:not(.bg-brand-soft)');
+    if (!link) return null;
+    const r = link.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  })()`);
+  if (inactiveLinkCoords) {
+    await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: inactiveLinkCoords.x, y: inactiveLinkCoords.y });
+    await new Promise((r) => setTimeout(r, 200));
+
+    const inactiveHover = await ev(`(() => {
+      const link = document.querySelector('aside nav a[href="/practice"]') || document.querySelector('aside nav a:not(.bg-brand-soft)');
+      if (!link) return null;
+      const cs = window.getComputedStyle(link);
+      const icon = link.querySelector('svg');
+      const iconCs = icon ? window.getComputedStyle(icon) : null;
+      return {
+        backgroundColor: cs.backgroundColor,
+        borderColor: cs.borderColor,
+        iconTransform: iconCs ? iconCs.transform : 'none',
+      };
+    })()`);
+    if (inactiveHover) {
+      if (inactiveHover.backgroundColor.includes('195, 131, 34') || inactiveHover.backgroundColor.includes('242, 232, 217') || inactiveHover.backgroundColor.includes('241, 232, 218')) {
+        throw new Error(`Inactive sidebar hover must NOT have gold background, got ${inactiveHover.backgroundColor}`);
+      }
+      if (inactiveHover.iconTransform !== 'none') {
+        throw new Error(`Inactive sidebar hover icon must not scale, got transform: ${inactiveHover.iconTransform}`);
+      }
+      console.log(`  ✓ Sidebar Inactive Hover: no gold background, icon transform is none.`);
     }
   }
+
+  // 3c. ScoreCard Typography & Values (Section 66b)
+  const scoreCardTypography = await ev(`(() => {
+    const card = document.querySelector('[data-qa="score-card"]');
+    if (!card) return null;
+    const title = card.querySelector('[data-qa="score-card-title"]') || card.querySelector('h3');
+    const titleCs = title ? window.getComputedStyle(title) : null;
+    const composer = card.querySelector('[data-qa="score-card-composer"]') || card.querySelector('.type-card-metadata');
+    const composerCs = composer ? window.getComputedStyle(composer) : null;
+    const bottomLabel = card.querySelector('.type-card-value-label');
+    const bottomLabelCs = bottomLabel ? window.getComputedStyle(bottomLabel) : null;
+    const bottomValue = card.querySelector('.type-card-value');
+    const bottomValueCs = bottomValue ? window.getComputedStyle(bottomValue) : null;
+
+    return {
+      title: titleCs ? {
+        fontSize: titleCs.fontSize,
+        fontWeight: titleCs.fontWeight,
+        fontFamily: titleCs.fontFamily,
+      } : null,
+      composer: composerCs ? {
+        fontSize: composerCs.fontSize,
+        fontFamily: composerCs.fontFamily,
+      } : null,
+      bottomLabel: bottomLabelCs ? {
+        fontSize: bottomLabelCs.fontSize,
+        textTransform: bottomLabelCs.textTransform,
+      } : null,
+      bottomValue: bottomValueCs ? {
+        fontSize: bottomValueCs.fontSize,
+        fontWeight: bottomValueCs.fontWeight,
+        fontFamily: bottomValueCs.fontFamily,
+        color: bottomValueCs.color,
+      } : null,
+    };
+  })()`);
+
+  if (scoreCardTypography && scoreCardTypography.title) {
+    if (Math.round(parseFloat(scoreCardTypography.title.fontSize)) !== 18) {
+      throw new Error(`ScoreCard title fontSize is ${scoreCardTypography.title.fontSize} (expected 18px / type-card-title)`);
+    }
+    if (!scoreCardTypography.title.fontFamily.toLowerCase().includes('playfair')) {
+      throw new Error(`ScoreCard title fontFamily must be Playfair, got ${scoreCardTypography.title.fontFamily}`);
+    }
+    if (scoreCardTypography.bottomLabel) {
+      if (Math.round(parseFloat(scoreCardTypography.bottomLabel.fontSize)) !== 12) {
+        throw new Error(`ScoreCard bottom label fontSize is ${scoreCardTypography.bottomLabel.fontSize} (expected 12px)`);
+      }
+      if (scoreCardTypography.bottomLabel.textTransform !== 'none') {
+        throw new Error(`ScoreCard bottom label textTransform is ${scoreCardTypography.bottomLabel.textTransform} (expected 'none')`);
+      }
+    }
+    if (scoreCardTypography.bottomValue) {
+      if (Math.round(parseFloat(scoreCardTypography.bottomValue.fontSize)) !== 18) {
+        throw new Error(`ScoreCard bottom value fontSize is ${scoreCardTypography.bottomValue.fontSize} (expected 18px)`);
+      }
+      if (!scoreCardTypography.bottomValue.color.includes('195, 131, 34')) {
+        throw new Error(`ScoreCard bottom value color must be brand gold, got ${scoreCardTypography.bottomValue.color}`);
+      }
+    }
+    console.log(`  ✓ ScoreCard Typography: 18px Playfair title, 14px Inter composer, 12px normal-case bottom label, 18px Playfair gold value verified.`);
+  }
+
+  // 4. PracticeHub StatCard & Panel Headings (Section 65, 66)
+  await navigateAndWait(`${baseUrl}/practice?demo=true`);
+  for (let i = 0; i < 60; i++) {
+    const hasDashboard = await ev('Boolean(document.querySelector("[data-qa=\'practice-dashboard\']"))');
+    if (hasDashboard) break;
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  await new Promise((r) => setTimeout(r, 400));
+
+  const practiceStyles = await ev(`(() => {
+    const card = document.querySelector('[data-qa="practice-stat-card"]') || document.querySelector('[data-qa="practice-stat-cards"] > div');
+    const label = card ? (card.querySelector('[data-qa="practice-stat-label"]') || card.querySelector('.type-stat-label')) : null;
+    const labelCs = label ? window.getComputedStyle(label) : null;
+    const metric = card ? (card.querySelector('[data-qa="practice-stat-metric"]') || card.querySelector('.type-metric')) : null;
+    const metricCs = metric ? window.getComputedStyle(metric) : null;
+    const iconContainer = card ? (card.querySelector('[data-qa="practice-stat-icon"]') || card.querySelector('.rounded-nav')) : null;
+    const iconCs = iconContainer ? window.getComputedStyle(iconContainer) : null;
+
+    const heading = document.querySelector('[data-qa="practice-recent-heading"]') || document.querySelector('.type-panel-title');
+    const headingCs = heading ? window.getComputedStyle(heading) : null;
+
+    return {
+      label: labelCs ? {
+        fontSize: labelCs.fontSize,
+        textTransform: labelCs.textTransform,
+        fontFamily: labelCs.fontFamily,
+      } : null,
+      metric: metricCs ? {
+        fontSize: metricCs.fontSize,
+        fontWeight: metricCs.fontWeight,
+        fontFamily: metricCs.fontFamily,
+      } : null,
+      iconContainer: iconCs ? {
+        borderRadius: parseFloat(iconCs.borderRadius),
+        backgroundColor: iconCs.backgroundColor,
+      } : null,
+      heading: headingCs ? {
+        fontSize: headingCs.fontSize,
+        fontWeight: headingCs.fontWeight,
+        fontFamily: headingCs.fontFamily,
+      } : null,
+    };
+  })()`);
+
+  if (!practiceStyles.label || !practiceStyles.metric) {
+    throw new Error('StatCard elements not found on /practice');
+  }
+  if (Math.round(parseFloat(practiceStyles.label.fontSize)) !== 14) {
+    throw new Error(`StatCard label fontSize is ${practiceStyles.label.fontSize} (expected 14px / type-stat-label)`);
+  }
+  if (practiceStyles.label.textTransform !== 'uppercase') {
+    throw new Error(`StatCard label textTransform is ${practiceStyles.label.textTransform} (expected uppercase)`);
+  }
+  const metricSize = Math.round(parseFloat(practiceStyles.metric.fontSize));
+  if (metricSize !== 30 && metricSize !== 32) {
+    throw new Error(`StatCard metric fontSize is ${practiceStyles.metric.fontSize} (expected 30px or 32px / type-metric)`);
+  }
+  if (!practiceStyles.metric.fontFamily.toLowerCase().includes('playfair')) {
+    throw new Error(`StatCard metric fontFamily must be Playfair, got ${practiceStyles.metric.fontFamily}`);
+  }
+  if (practiceStyles.iconContainer) {
+    if (Math.round(practiceStyles.iconContainer.borderRadius) !== 12) {
+      throw new Error(`StatCard icon container radius is ${practiceStyles.iconContainer.borderRadius}px (expected 12px / rounded-nav)`);
+    }
+  }
+  if (practiceStyles.heading) {
+    if (Math.round(parseFloat(practiceStyles.heading.fontSize)) !== 18) {
+      throw new Error(`Panel heading fontSize is ${practiceStyles.heading.fontSize} (expected 18px / type-panel-title, not 24px)`);
+    }
+    if (!practiceStyles.heading.fontFamily.toLowerCase().includes('playfair')) {
+      throw new Error(`Panel heading fontFamily must be Playfair, got ${practiceStyles.heading.fontFamily}`);
+    }
+  }
+  console.log(`  ✓ Practice Dashboard: 14px uppercase label, 30-32px Playfair metric, 12px icon radius, 18px Playfair panel title verified.`);
 
   // Verify interactive card lift on hover
   const cardCoords = await ev(`(() => {
@@ -851,6 +1141,34 @@ async function verifyPageStructure(client, baseUrl) {
   }
   console.log(`  ✓ Mobile Navigation: 5 equal-width slots verified (delta=${mobileNavData.delta.toFixed(2)}px, widths: [${mobileNavData.widths.map(w => w.toFixed(1)).join(', ')}]).`);
 
+  // 4b. MobileNav Computed Style Invariants (Section 67)
+  const mobileNavComputed = await ev(`(() => {
+    const nav = document.querySelector('[data-qa="mobile-navigation"]');
+    if (!nav) return null;
+    const cs = window.getComputedStyle(nav);
+    const label = nav.querySelector('.type-mobile-nav') || nav.querySelector('span');
+    const labelCs = label ? window.getComputedStyle(label) : null;
+    return {
+      boxShadow: cs.boxShadow,
+      borderTopWidth: parseFloat(cs.borderTopWidth),
+      label: labelCs ? {
+        fontSize: labelCs.fontSize,
+        fontFamily: labelCs.fontFamily,
+      } : null,
+    };
+  })()`);
+  if (!mobileNavComputed) throw new Error('Mobile navigation not found for computed style check');
+  if (mobileNavComputed.boxShadow !== 'none') {
+    throw new Error(`Mobile navigation must not have overlay shadow, got: ${mobileNavComputed.boxShadow}`);
+  }
+  if (mobileNavComputed.borderTopWidth <= 0) {
+    throw new Error(`Mobile navigation must have a top border, got: ${mobileNavComputed.borderTopWidth}px`);
+  }
+  if (mobileNavComputed.label && Math.round(parseFloat(mobileNavComputed.label.fontSize)) !== 10) {
+    throw new Error(`Mobile navigation label fontSize is ${mobileNavComputed.label.fontSize} (expected 10px / type-mobile-nav)`);
+  }
+  console.log(`  ✓ Mobile Navigation: 10px label, no overlay shadow, borderTop verified.`);
+
   // 5. Mobile Header Feature Reachability (390px)
   const mobileHeaderData = await ev(`(() => {
     const searchTrigger = document.querySelector('[data-qa="mobile-search-trigger"]');
@@ -901,6 +1219,50 @@ async function verifyPageStructure(client, baseUrl) {
     await S('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
     await new Promise((r) => setTimeout(r, 200));
   }
+
+  // 6. Responsive Breakpoint md (768px)
+  await S('Emulation.setDeviceMetricsOverride', {
+    width: 768,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+    dontSetVisibleSize: false,
+  });
+  await navigateAndWait(`${baseUrl}/library?demo=true`);
+
+  const mdBreakpoint = await ev(`(() => {
+    const aside = document.querySelector('[data-qa="desktop-sidebar"]') || document.querySelector('aside');
+    const asideCs = aside ? window.getComputedStyle(aside) : null;
+    const asideRect = aside ? aside.getBoundingClientRect() : null;
+    const mobileNav = document.querySelector('[data-qa="mobile-navigation"]');
+    const mobileNavCs = mobileNav ? window.getComputedStyle(mobileNav) : null;
+    const mobileHeader = document.querySelector('header');
+    const mobileHeaderCs = mobileHeader ? window.getComputedStyle(mobileHeader) : null;
+    const scrollWidth = document.documentElement.scrollWidth;
+    const innerWidth = window.innerWidth;
+
+    return {
+      asideDisplay: asideCs ? asideCs.display : 'none',
+      asideWidth: asideRect ? Math.round(asideRect.width) : 0,
+      mobileNavDisplay: mobileNavCs ? mobileNavCs.display : 'none',
+      mobileHeaderDisplay: mobileHeaderCs ? mobileHeaderCs.display : 'none',
+      hasHorizontalOverflow: scrollWidth > innerWidth,
+    };
+  })()`);
+
+  if (mdBreakpoint.asideDisplay === 'none' || Math.abs(mdBreakpoint.asideWidth - 256) > 4) {
+    throw new Error(`Desktop sidebar must be displayed at 768px (md), got display=${mdBreakpoint.asideDisplay}, width=${mdBreakpoint.asideWidth}`);
+  }
+  if (mdBreakpoint.mobileNavDisplay !== 'none') {
+    throw new Error(`Mobile navigation must be hidden at 768px (md), got display=${mdBreakpoint.mobileNavDisplay}`);
+  }
+  if (mdBreakpoint.mobileHeaderDisplay !== 'none') {
+    throw new Error(`Mobile header must be hidden at 768px (md), got display=${mdBreakpoint.mobileHeaderDisplay}`);
+  }
+  if (mdBreakpoint.hasHorizontalOverflow) {
+    throw new Error(`Horizontal overflow at 768px breakpoint`);
+  }
+  console.log(`  ✓ 768px (md) Breakpoint verified: Desktop sidebar visible (256px), mobile header and nav hidden, zero overflow.`);
 
   // Reset viewport to desktop
   await S('Emulation.setDeviceMetricsOverride', {

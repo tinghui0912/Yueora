@@ -10,7 +10,10 @@ module.exports = {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)',
 				control: 'var(--radius-control)',
+				nav: 'var(--radius-nav)',
 				container: 'var(--radius-container)',
+				dialog: 'var(--radius-dialog)',
+				menu: 'var(--radius-menu)',
 				overlay: 'var(--radius-overlay)',
 			},
 			colors: {
@@ -125,7 +128,9 @@ module.exports = {
 				slow: 'var(--motion-slow)',
 			},
 			boxShadow: {
+				control: 'var(--shadow-control)',
 				raised: 'var(--shadow-raised)',
+				'card-hover': 'var(--shadow-card-hover)',
 				overlay: 'var(--shadow-overlay)',
 			},
 			maxWidth: {

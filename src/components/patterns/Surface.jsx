@@ -18,7 +18,7 @@ const surfaceVariants = cva(
         overlay: 'shadow-overlay',
       },
       border: {
-        true: 'border border-line-subtle',
+        true: 'border border-line-subtle/50',
         false: 'border-0',
       },
       padding: {
@@ -28,7 +28,11 @@ const surfaceVariants = cva(
         lg: 'p-6 sm:p-8',
       },
       interactive: {
-        true: 'hover:border-brand/40 hover:shadow-raised hover:-translate-y-1 cursor-pointer transition-all duration-300',
+        false: '',
+        card: 'hover:border-brand/40 hover:shadow-card-hover hover:-translate-y-1 cursor-pointer transition-all duration-300',
+        'static-card': 'hover:border-brand/30 hover:shadow-card-hover transition-all duration-300',
+        row: 'hover:bg-neutral-muted/50 transition-colors',
+        quiet: 'hover:bg-neutral-hover transition-colors',
       },
     },
     defaultVariants: {
@@ -47,7 +51,7 @@ const surfaceVariants = cva(
  *   elevation?: 'none' | 'raised' | 'overlay';
  *   border?: boolean;
  *   padding?: 'none' | 'sm' | 'md' | 'lg';
- *   interactive?: boolean;
+ *   interactive?: boolean | 'card' | 'static-card' | 'row' | 'quiet';
  *   asChild?: boolean;
  *   children?: React.ReactNode;
  * }} SurfaceProps
@@ -70,12 +74,13 @@ export const Surface = React.forwardRef(
     ref
   ) => {
     const Comp = asChild ? Slot : 'div';
+    const interactiveMode = interactive === true ? 'card' : (interactive || false);
 
     return (
       <Comp
         ref={ref}
         className={cn(
-          surfaceVariants({ tone, elevation, border, padding, interactive, className })
+          surfaceVariants({ tone, elevation, border, padding, interactive: interactiveMode, className })
         )}
         {...props}
       >

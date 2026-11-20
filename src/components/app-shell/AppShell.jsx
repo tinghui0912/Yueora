@@ -30,9 +30,9 @@ export default function AppShell() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-surface-canvas" data-qa="authenticated-shell">
-      {/* Mobile-only header with complete feature parity (lg:hidden) */}
+      {/* Mobile-only header with complete feature parity (md:hidden) */}
       <header
-        className="flex h-14 items-center justify-between border-b border-line-subtle bg-surface-panel px-4 lg:hidden"
+        className="flex h-14 items-center justify-between border-b border-line-subtle/50 bg-surface-panel px-4 md:hidden"
         data-qa="mobile-header"
       >
         <div className="flex items-center gap-2.5">
@@ -125,9 +125,9 @@ export default function AppShell() {
       </header>
 
       {/* Main layout: 256px (w-64) sidebar + directly adjacent main content */}
-      <div className="flex min-h-0 flex-1 lg:flex-row">
+      <div className="flex min-h-0 flex-1 md:flex-row">
         <aside
-          className="hidden w-64 shrink-0 border-r border-line-subtle bg-surface-panel lg:sticky lg:top-0 lg:h-dvh lg:block"
+          className="hidden w-64 shrink-0 border-r border-line-subtle/50 bg-surface-panel md:sticky md:top-0 md:h-dvh md:block"
           aria-label="Application sidebar"
           data-qa="desktop-sidebar"
         >
@@ -136,7 +136,7 @@ export default function AppShell() {
 
         <main
           id="main-content"
-          className="flex-1 min-w-0 overflow-y-auto pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0"
+          className="flex-1 min-w-0 overflow-y-auto pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0"
         >
           <Outlet />
         </main>

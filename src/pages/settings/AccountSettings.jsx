@@ -63,18 +63,18 @@ export default function AccountSettings() {
   };
 
   return (
-    <div className="divide-y divide-line-subtle">
+    <div className="divide-y divide-line-subtle/50">
       {/* Profile Banner (NumisCollection parity) */}
       <div className="flex items-center gap-4 pb-6">
         {account.avatar ? (
-          <img src={account.avatar} alt="Avatar" className="h-16 w-16 rounded-full object-cover border border-line-subtle" />
+          <img src={account.avatar} alt="Avatar" className="h-16 w-16 rounded-full object-cover border border-line-subtle/50" />
         ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-soft text-brand type-display font-semibold">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-soft text-brand type-panel-title font-semibold">
             {name.slice(0, 1).toUpperCase()}
           </div>
         )}
         <div className="min-w-0">
-          <h2 className="type-section-title text-ink-primary truncate">{name}</h2>
+          <h2 className="type-panel-title text-ink-primary truncate">{name}</h2>
           <p className="type-body-small text-ink-secondary truncate mt-0.5">{account.email}</p>
         </div>
       </div>

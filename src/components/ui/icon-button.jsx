@@ -9,13 +9,13 @@ const iconButtonVariants = cva(
     variants: {
       tone: {
         quiet:
-          'text-ink-secondary hover:text-ink-primary hover:bg-brand-soft/50 active:scale-[0.98]',
+          'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover',
         outline:
-          'border border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-brand-soft/60 hover:border-brand/40 shadow-raised active:scale-[0.98]',
+          'border border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover shadow-control',
         primary:
-          'bg-brand-fill text-brand-fill-foreground shadow-raised hover:bg-brand-fill-hover active:scale-[0.98]',
+          'bg-brand-fill text-brand-fill-foreground shadow-control hover:bg-brand-fill-hover',
         danger:
-          'text-danger hover:bg-danger/10 hover:text-danger active:scale-[0.98]',
+          'text-danger hover:bg-danger/10 hover:text-danger',
       },
       size: {
         xs: 'h-control-xs w-control-xs min-h-control-xs min-w-control-xs p-1 [&_svg]:icon-xs',
