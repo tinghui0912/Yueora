@@ -34,6 +34,7 @@ export default function PracticeProgress() {
         <Link to="/practice" className="type-body-small text-ink-secondary hover:text-ink-primary">← Practice</Link>
         <div className="mt-3">
           <PageHeader
+            eyebrow="Reflective Metrics"
             title="Progress & insights"
             description="Available with Plus · Track practice time and repertoire return patterns without pressure."
           />

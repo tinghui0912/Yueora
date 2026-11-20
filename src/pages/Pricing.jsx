@@ -47,16 +47,16 @@ export default function Pricing() {
     <PublicShell>
       <AppPage size="full" padding="none">
         {/* 1. Header Section */}
-        <section className="pt-24 md:pt-36 pb-12">
+        <section className="pt-20 md:pt-28 pb-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 text-center">
             <Reveal>
-              <p className="type-eyebrow text-ink-tertiary mb-4">
+              <p className="type-eyebrow text-ink-tertiary mb-3">
                 Durable &amp; Fair · Pricing
               </p>
               <h1 className="type-marketing-title text-balance text-ink-primary">
                 Simple, transparent pricing.
               </h1>
-              <p className="mx-auto mt-4 max-w-xl type-marketing-body text-ink-secondary">
+              <p className="mx-auto mt-3 max-w-xl type-marketing-body text-ink-secondary">
                 Start free. Upgrade when your repertoire grows. Cancel or change your plan whenever you like.
               </p>
 
@@ -88,7 +88,7 @@ export default function Pricing() {
         </section>
 
         {/* 2. 3-Column Plan Cards Section — UGC Services Parity (Free | Plus | Pro) */}
-        <section className="pb-24 md:pb-36">
+        <section className="pb-16 md:pb-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Free Plan (White Panel) */}
             <Reveal delay={0.05} y={32}>

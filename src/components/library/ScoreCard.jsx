@@ -20,7 +20,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
   return (
     <div
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-container border border-line-subtle bg-surface-panel transition-[border-color,box-shadow] duration-base hover:border-line-strong',
+        'group relative flex flex-col overflow-hidden rounded-container border border-line-subtle bg-surface-panel transition-[border-color,box-shadow] duration-base hover:border-line-strong hover:shadow-raised',
         selected && 'border-brand ring-2 ring-brand'
       )}
     >
@@ -57,7 +57,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
           <div className="flex items-start justify-between gap-2">
             <Link
               to={`/score/${score.id}`}
-              className="min-w-0 flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
+              className="min-w-0 flex-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 rounded-control"
             >
               <h3 className="truncate font-display text-base sm:text-lg font-medium leading-snug text-ink-primary transition-colors group-hover:text-brand">
                 {score.title}

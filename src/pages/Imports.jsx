@@ -51,6 +51,7 @@ export default function Imports() {
   return (
     <AppPage size="standard">
       <PageHeader
+        eyebrow="Score Processing"
         title="Imports"
         description="How are your recently added scores doing? Add new scores from the Add score button."
       />

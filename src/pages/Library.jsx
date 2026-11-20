@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import {
   LayoutGrid, List, Plus, SlidersHorizontal, ArrowUpDown, Play, Star,
   FolderInput, Trash2, Heart, X, Check, LogOut, BookmarkMinus, Settings,
-  Folder, Pencil, Sparkles,
+  Folder, Pencil, Sparkles, Search,
 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { getScoreQuota, getEffectiveScoreUsage } from '@/lib/commercialEntitlements';
@@ -224,19 +224,19 @@ export default function Library() {
           </button>
         </div>
 
-        {/* Hero: "Pick up where you left off" - Resume Playing Card */}
+        {/* Resume Playing Module — Compact & Integrated */}
         {!isTrash && !search && active === 'all' && continueScore && (
-          <div className="mx-4 mt-6 md:mx-8">
-            <div className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 transition-colors hover:border-line-strong sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4 min-w-0">
-                <div className="hidden h-14 w-20 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel/90 sm:block">
+          <div className="mx-4 mt-4 md:mx-8 mb-4">
+            <Surface tone="panel" interactive className="flex flex-col gap-3 p-3.5 sm:p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className="hidden h-12 w-16 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel sm:block">
                   <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
                 </div>
                 <div className="min-w-0">
-                  <span className="inline-flex items-center gap-1.5 type-caption text-brand">
-                    <Sparkles className="icon-xs" />
-                    <span>Pick up where you left off</span>
-                  </span>
+                  <div className="flex items-center gap-1.5 type-caption text-ink-tertiary">
+                    <Sparkles className="icon-xs text-brand" />
+                    <span>Resume Practice</span>
+                  </div>
                   <h2 className="truncate type-section-title text-ink-primary mt-0.5">
                     {continueScore.title}
                   </h2>
@@ -247,30 +247,33 @@ export default function Library() {
               </div>
 
               <div className="flex shrink-0 items-center gap-2">
-                <Button intent="primary" size="md" asChild>
+                <Button intent="primary" size="sm" asChild>
                   <Link to={`/score/${continueScore.id}/setup`}>
-                    <Play className="icon-sm fill-current" />
+                    <Play className="icon-xs fill-current" />
                     <span>Resume playing</span>
                   </Link>
                 </Button>
-                <Button intent="secondary" size="md" asChild>
+                <Button intent="secondary" size="sm" asChild>
                   <Link to={`/score/${continueScore.id}`}>
                     Score details
                   </Link>
                 </Button>
               </div>
-            </div>
+            </Surface>
           </div>
         )}
 
         {/* Repertoire Header & Toolbars */}
-        <div className="border-b border-line-subtle px-4 py-5 md:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="border-b border-line-subtle px-4 py-4 md:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-4">
             <div>
-              <h1 className="type-experience-title text-ink-primary">
+              <p className="type-caption text-ink-tertiary">
+                {isTrash ? 'Archive' : 'Personal Collection'}
+              </p>
+              <h1 className="type-page-title text-ink-primary tracking-tight mt-0.5">
                 {isTrash ? 'Trash' : activeFolderId ? folders.find((f) => f.id === activeFolderId)?.name : 'Repertoire'}
               </h1>
-              <p className="mt-0.5 type-body-small text-ink-secondary">
+              <p className="type-metadata text-ink-secondary mt-1">
                 {isTrash
                   ? `${filtered.length} in trash`
                   : `${liveCount} of ${scoreQuota.isUnlimited ? 'Unlimited' : `${scoreQuota.limit} scores`} in your personal collection`}
@@ -282,16 +285,29 @@ export default function Library() {
               </p>
             </div>
 
-            {/* Filter, sort, view toggles */}
-            <div className="flex items-center gap-2">
+            {isTrash && (
+              <div className="flex justify-end">
+                <Button intent="secondary" size="sm" onClick={emptyTrash}>
+                  <Trash2 className="icon-xs mr-1.5" /> Empty trash
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Unified Compact Toolbar Row */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="relative flex-1 min-w-[180px] max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 icon-xs text-ink-tertiary pointer-events-none" />
               <Input
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && setParam('search', searchInput.trim())}
-                placeholder="Filter by title, composer…"
-                className="w-44 md:w-56"
+                placeholder="Search title, composer…"
+                className="pl-8 h-control-md"
               />
+            </div>
 
+            <div className="flex items-center gap-2 ml-auto">
               {/* Filter dropdown */}
               <div className="relative">
                 <Button

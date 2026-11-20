@@ -19,9 +19,9 @@ export function SidebarNavItem({
       onClick={onClick}
       className={({ isActive }) =>
         cn(
-          'group relative flex items-center justify-between rounded-control px-3 py-2 type-body-small font-medium transition-[color,background-color,border-color,box-shadow,transform] duration-fast select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
+          'group relative flex items-center justify-between rounded-control px-3 py-2.5 type-body-small font-medium transition-[color,background-color,border-color,box-shadow,transform] duration-fast select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
           isActive
-            ? 'bg-neutral-muted font-semibold text-ink-primary'
+            ? 'bg-brand font-medium text-white shadow-none'
             : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary',
           className
         )
@@ -35,7 +35,7 @@ export function SidebarNavItem({
               <Icon
                 className={cn(
                   'icon-sm shrink-0 transition-[color,transform] duration-fast group-hover:scale-105',
-                  isActive ? 'text-brand' : 'text-ink-secondary group-hover:text-ink-primary'
+                  isActive ? 'text-white' : 'text-ink-secondary group-hover:text-ink-primary'
                 )}
                 aria-hidden="true"
               />

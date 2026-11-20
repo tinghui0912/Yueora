@@ -19,7 +19,7 @@ export default function About() {
     <PublicShell>
       <AppPage size="full" padding="none">
         {/* 1. Asymmetric Editorial Hero — UGC 12-Column (5 Media / 7 Copy) */}
-        <section className="py-24 md:py-36">
+        <section className="py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left 5 Columns: Framed Real Domain Score Preview */}
             <Reveal className="lg:col-span-5" y={36}>
@@ -109,7 +109,7 @@ export default function About() {
         </section>
 
         {/* 2. Etymology Section — The Sound & Meaning */}
-        <section className="py-24 md:py-36 border-t border-line-subtle/80 bg-surface-panel/30">
+        <section className="py-16 md:py-24 border-t border-line-subtle/80 bg-surface-panel/30">
           <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5">
               <Reveal>
@@ -150,7 +150,7 @@ export default function About() {
         </section>
 
         {/* 3. Four Core Principles — UGC Interests Parity Grid */}
-        <section className="py-24 md:py-36">
+        <section className="py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-6 md:px-10">
             <Reveal>
               <div className="mb-14 max-w-2xl">
@@ -226,7 +226,7 @@ export default function About() {
         </section>
 
         {/* 4. Companion, Not Coach & Sanctuary Guarantees */}
-        <section className="py-24 md:py-36 border-t border-line-subtle/80 bg-surface-panel/30">
+        <section className="py-16 md:py-24 border-t border-line-subtle/80 bg-surface-panel/30">
           <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
             <div className="lg:col-span-6">
               <Reveal>
@@ -281,7 +281,7 @@ export default function About() {
         </section>
 
         {/* 5. Final Inverse Conversion Block — UGC Parity */}
-        <section className="py-24 md:py-36">
+        <section className="py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-6 md:px-10">
             <Reveal y={36}>
               <div className="relative rounded-container bg-ink-primary text-surface-canvas p-10 md:p-16 lg:p-20 overflow-hidden">

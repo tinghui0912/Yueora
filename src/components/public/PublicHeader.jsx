@@ -63,7 +63,7 @@ export default function PublicHeader() {
         <Link
           to="/"
           aria-label="Yueora home"
-          className="inline-flex shrink-0 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full py-1"
+          className="inline-flex shrink-0 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-control py-1"
         >
           <Logo variant="full" size="md" />
         </Link>
@@ -75,19 +75,19 @@ export default function PublicHeader() {
               <>
                 <a
                   href="#lifecycle"
-                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-control"
                 >
                   The Lifecycle
                 </a>
                 <a
                   href="#practice"
-                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-control"
                 >
                   Practice
                 </a>
                 <a
                   href="#repertoire"
-                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-control"
                 >
                   Repertoire
                 </a>
@@ -96,19 +96,19 @@ export default function PublicHeader() {
               <>
                 <Link
                   to="/#lifecycle"
-                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-control"
                 >
                   The Lifecycle
                 </Link>
                 <Link
                   to="/#practice"
-                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-control"
                 >
                   Practice
                 </Link>
                 <Link
                   to="/#repertoire"
-                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+                  className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-control"
                 >
                   Repertoire
                 </Link>
@@ -117,14 +117,14 @@ export default function PublicHeader() {
 
             <Link
               to="/about"
-              className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+              className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-control"
             >
               About
             </Link>
 
             <Link
               to="/pricing"
-              className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-full"
+              className="text-sm tracking-wide text-ink-secondary transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-control"
             >
               Pricing
             </Link>
@@ -161,7 +161,7 @@ export default function PublicHeader() {
               onClick={() => setMobileOpen((o) => !o)}
               aria-expanded={mobileOpen}
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-              className="grid place-items-center w-10 h-10 shrink-0 rounded-full border border-line-subtle text-ink-secondary hover:text-ink-primary hover:border-line-strong transition-colors md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+              className="grid place-items-center w-10 h-10 shrink-0 rounded-control border border-line-subtle text-ink-secondary hover:text-ink-primary hover:border-line-strong transition-colors md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>

@@ -569,6 +569,41 @@ assertNegative(
   'bg-brand'
 );
 
+// 1.59 Button rounded-full appearance override rejected
+assertNegative(
+  'Button className with rounded-full appearance override',
+  `<Button className="rounded-full">Action</Button>`,
+  'rounded-full'
+);
+
+// 1.60 Button raw hex background override rejected
+assertNegative(
+  'Button className with raw physical hex background (#211F1D)',
+  `<Button className="bg-[#211F1D]">Action</Button>`,
+  'bg-[#211F1D]'
+);
+
+// 1.61 IconButton rounded-full appearance override rejected
+assertNegative(
+  'IconButton className with rounded-full appearance override',
+  `<IconButton icon={Plus} label="Add" className="rounded-full" />`,
+  'rounded-full'
+);
+
+// 1.62 Surface oversized radius override rejected
+assertNegative(
+  'Surface oversized radius override (rounded-3xl)',
+  `<Surface className="rounded-3xl" />`,
+  'rounded-3xl'
+);
+
+// 1.63 Surface generic shadow override rejected
+assertNegative(
+  'Surface generic shadow override (shadow-lg)',
+  `<Surface className="shadow-lg" />`,
+  'shadow-lg'
+);
+
 // -----------------------------------------------------------------------------
 // 2. POSITIVE FIXTURES (Must be accepted by Guardrails)
 // -----------------------------------------------------------------------------
@@ -788,6 +823,16 @@ assertPositive(
       <S0 className="grid grid-cols-2 gap-4" />
     );
   }`
+);
+
+assertPositive(
+  'Button with standard responsive width composition (w-full sm:w-auto)',
+  `<Button className="w-full sm:w-auto">Action</Button>`
+);
+
+assertPositive(
+  'Surface with standard padding and flex gap composition (p-4 flex flex-col gap-2)',
+  `<Surface className="p-4 flex flex-col gap-2" />`
 );
 
 // -----------------------------------------------------------------------------

@@ -28,7 +28,7 @@ const surfaceVariants = cva(
         lg: 'p-6 sm:p-8',
       },
       interactive: {
-        true: 'hover:border-line-strong cursor-pointer',
+        true: 'hover:border-line-strong hover:shadow-raised cursor-pointer',
       },
     },
     defaultVariants: {

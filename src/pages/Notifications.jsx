@@ -55,6 +55,7 @@ export default function Notifications() {
   return (
     <AppPage size="standard">
       <PageHeader
+        eyebrow="Inbox & Updates"
         title="Notifications"
         description={`${unreadCount} unread`}
         primaryAction={unreadCount > 0 ? <Button intent="quiet" size="sm" onClick={markAllRead}><CheckCheck className="mr-1.5" /> Mark all read</Button> : undefined}

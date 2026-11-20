@@ -14,7 +14,7 @@ const items = [
 export default function Settings() {
   return (
     <AppPage size="standard">
-      <PageHeader title="Settings" />
+      <PageHeader eyebrow="Preferences & Account" title="Settings" />
       <div className="mt-6 flex flex-col gap-6 md:flex-row">
         <nav className="shrink-0 md:w-48">
           <ul className="flex gap-1 overflow-x-auto pb-1 md:flex-col md:gap-0.5 md:overflow-visible">

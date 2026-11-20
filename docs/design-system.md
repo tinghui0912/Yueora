@@ -30,34 +30,34 @@ Page Composition (What information appears, order, business logic, state)
 
 Repeated product hierarchy roles use semantic typography roles. Do not override a semantic typography role with conflicting manual font sizes.
 
-- **Editorial & Display Typography:** Cormorant Garamond (`--font-display`, `--font-heading`) delivers literary elegance and acoustic authority.
+- **Editorial & Display Typography:** Fraunces (`--font-display`, `--font-heading`) delivers literary elegance, warmth, and acoustic authority with optical size variations.
 - **Functional Typography:** Inter (`--font-body`) delivers legibility across all controls, forms, metadata, and body reading text.
 
 | Semantic Class | Target Role | Baseline Size | Line Height | Tracking | Font Family |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `.type-hero-title` | Marketing page primary hero headline | `19vw` (mobile) / `13vw` (sm) / `clamp(9rem, 10.5vw, 9.5rem)` (desktop) | `0.88` | `-0.025em` | Cormorant Garamond (500) |
-| `.type-marketing-title` | Marketing chapter / section titles | `clamp(2.25rem, 5vw, 3.75rem)` | `1.02` | `-0.02em` | Cormorant Garamond (500) |
-| `.type-eyebrow` | Public and editorial overlines & chapter tags | `11px` (`0.6875rem`) | `1.4` | `0.34em` | Inter (500, uppercase) |
-| `.type-editorial-quote` | Philosophy, pull quotes & reflections | `clamp(1.25rem, 2vw, 1.625rem)` | `1.5` | Normal | Cormorant Garamond (400, italic) |
+| `.type-hero-title` | Marketing page primary hero headline | `clamp(3.25rem, 7vw, 5.5rem)` | `1.02` | `-0.02em` | Fraunces (500) |
+| `.type-marketing-title` | Marketing chapter / section titles | `clamp(2rem, 4.5vw, 3.25rem)` | `1.08` | `-0.02em` | Fraunces (500) |
+| `.type-eyebrow` | Public and editorial overlines & chapter tags | `11px` (`0.6875rem`) | `1.4` | `0.34em` | Inter (600, uppercase) |
+| `.type-editorial-quote` | Philosophy, pull quotes & reflections | `clamp(1.25rem, 2vw, 1.625rem)` | `1.5` | Normal | Fraunces (400, italic) |
 | `.type-marketing-body` | Marketing lead paragraphs & introductory copy | `18px` (`1.125rem`) | `1.65` | Normal | Inter (400) |
-| `.type-display` | Editorial display titles & brand headlines | `clamp(2rem, 4vw, 3.25rem)` | `1.1` | `-0.02em` | Cormorant Garamond (500) |
-| `.type-experience-title` | Core musical space titles (Repertoire, Practice Hub, Preserved Moments) | Mobile `32px` (`2rem`), Desktop `40px` (`2.5rem`) | `1.15` | `-0.015em` | Cormorant Garamond (500) |
-| `.type-page-title` | Application page headings | Mobile `30px` (`1.875rem`), Desktop `36px` (`2.25rem`) | `1.2` | `-0.015em` | Cormorant Garamond (500) |
-| `.type-section-title` | Major section headings | Mobile `22px` (`1.375rem`), Desktop `24px` (`1.5rem`) | `1.25–1.3` | `-0.01em` | Cormorant Garamond (500) |
+| `.type-display` | Editorial display titles & brand headlines | `clamp(2rem, 4vw, 3.25rem)` | `1.1` | `-0.02em` | Fraunces (500) |
+| `.type-experience-title` | Core musical space titles (Repertoire, Practice Hub, Preserved Moments) | Mobile `28px` (`1.75rem`), Desktop `34px` (`2.125rem`) | `1.2` | `-0.015em` | Fraunces (500) |
+| `.type-page-title` | Application page headings | Mobile `26px` (`1.625rem`), Desktop `30px` (`1.875rem`) | `1.2–1.25` | `-0.015em` | Fraunces (500) |
+| `.type-section-title` | Major section headings | Mobile `20px` (`1.25rem`), Desktop `22px` (`1.375rem`) | `1.3–1.35` | `-0.01em` | Fraunces (500) |
 | `.type-subsection` | Subsections & card titles | `16px` (`1rem`) | `1.4` | Normal | Inter (600) |
 | `.type-body` | Primary editorial reading text | `16px` (`1rem`) | `1.6` | Normal | Inter (400) |
 | `.type-body-small` | Secondary UI copy & descriptions | `14px` (`0.875rem`) | `1.55` | Normal | Inter (400) |
 | `.type-label` | Form labels & navigation items | `14px` (`0.875rem`) | `1.4` | Normal | Inter (500) |
 | `.type-caption` | Micro-labels, step badges & editorial eyebrows | `11px` (`0.6875rem`) | `1.4` | `0.2em` | Inter (600, uppercase) |
 | `.type-metadata` | Timestamps, counters & helper text | `13px` (`0.8125rem`) | `1.45` | Normal | Inter (400) |
-| `.type-metric` | Large reflective numbers & hours | Mobile `28px` (`1.75rem`), Desktop `32px` (`2rem`) | `1.0` | Tabular | Cormorant Garamond (500) |
+| `.type-metric` | Large reflective numbers & hours | Mobile `28px` (`1.75rem`), Desktop `32px` (`2rem`) | `1.0` | Tabular | Fraunces (500) |
 
 > [!NOTE] Caption vs. Metadata Boundary
 > `.type-caption` is strictly for short uppercase micro-labels, category tags, table column headers, status badges, and overlines/eyebrows (uppercase, `0.2em` tracking). It must **never** be used for full sentences or toggle descriptions. For helper text, toggle descriptions, timestamps, and secondary explanatory sentences, always use `.type-metadata` (sentence case, natural tracking).
 
 > [!IMPORTANT] Page Typography Ownership Contract
 > **Pages compose. The Design System decides appearance.**
-> - **Serif tells the story. Sans explains the product.** Cormorant Garamond is reserved for identity, titles, musical voice, and reflective editorial moments; Inter is for controls, reading copy, explanations, and metadata.
+> - **Serif tells the story. Sans explains the product.** Fraunces is reserved for identity, titles, musical voice, and reflective editorial moments; Inter is for controls, reading copy, explanations, and metadata.
 > - All pages under `src/pages/**` must strictly consume the 16 canonical semantic `type-*` roles.
 > - Raw font-size utilities (`text-xs..6xl`), raw `font-display`, raw `uppercase`, and raw tracking utilities are **banned** in page JSX and enforced by `npm run check:design-system`.
 > - Rare exceptions (e.g. ambient oversized watermarks, OTP pin tracking) require an explicit, non-trivial `{/* ds-allow: <specific reason> */}` comment. Generic reasons like "marketing" or "custom" are prohibited and rejected by CI.
@@ -65,11 +65,12 @@ Repeated product hierarchy roles use semantic typography roles. Do not override 
 
 ### 2.2 Color Vocabulary & Usage Contract (WCAG 2.2 AA)
 
-Yueora enforces **one canonical visual language**: a **Warm Editorial Music Workspace**.
-- **Near-black is identity:** The primary brand color (`--brand`) is near-black (`#121212` / `0 0% 7%`).
-- **Warm ivory canvas:** The global backdrop (`--surface-canvas`) is warm ivory (`#F8F6F1` / `40 33% 96%`).
+Yueora enforces **one canonical visual language**: a **Warm Editorial Music Workspace (v2)**.
+- **Warm charcoal is identity:** The primary brand color (`--brand`) is warm charcoal (`#211F1D` / `30 6% 12%`).
+- **Terracotta is accent:** The accent color (`--accent`, `--ring`) is terracotta (`#C06C47` / `18 44% 54%`).
+- **Warm ivory canvas:** The global backdrop (`--surface-canvas`) is warm ivory (`#FAF8F5` / `40 33% 98%`).
 - **White content panels:** Standard panels (`--surface-panel`) are clean white (`#FFFFFF` / `0 0% 100%`).
-- **Color is functional:** Color is reserved strictly for functional feedback (success green for practice following/correct notes, amber for resyncing warnings, terracotta red for alerts/errors, gold for favorites/sounding keys).
+- **Color is functional:** Color is reserved strictly for functional feedback (success green for practice following/correct notes, amber for resyncing warnings, terracotta red for alerts/errors, gold for favorites/sounding keys, terracotta accent for focus rings and cues).
 - **No royal blue:** The UGC royal blue accent (`#2B58BF`) is strictly prohibited.
 - **No forest green brand:** Legacy forest green is retired as a brand color.
 
@@ -79,37 +80,38 @@ Yueora enforces **one canonical visual language**: a **Warm Editorial Music Work
 > All physical HSL values are centrally defined and maintained in `src/index.css`. The Design System documentation defines token names, semantic roles, usage contracts, and boundaries.
 
 - **Ink (Text):**
-  - `text-ink-primary`: Near-black identity (`#121212`). Main titles, buttons, and high-emphasis reading copy (>10:1 contrast).
+  - `text-ink-primary`: Warm charcoal identity (`#211F1D`). Main titles, buttons, and high-emphasis reading copy (>10:1 contrast).
   - `text-ink-secondary`: Secondary descriptions, timestamps, and labels (>7:1 contrast).
   - `text-ink-tertiary`: Readable muted copy and metadata (>=4.5:1 contrast).
   - `text-ink-subtle`: Strictly non-textual dividers and subtle glyphs.
 - **General UI Surfaces (3 Canonical Surfaces):**
-  - `bg-surface-canvas`: Global backdrop canvas — warm ivory off-white (`#F8F6F1`), never pure gray and never green.
+  - `bg-surface-canvas`: Global backdrop canvas — warm ivory off-white (`#FAF8F5`), never pure gray and never green.
   - `bg-surface-panel`: Pure white functional container surface for primary nav sidebar, dialogs, cards, forms, inputs, resume modules, list panels, pricing cards, and musical notation containers. Flat by default (NO `shadow-xs`). Musical notation is domain content and uses this standard panel.
   - `bg-surface-raised`: Elevated overlay surface (menus, popovers, floating toolbars) with `shadow-overlay` or `shadow-raised`.
 - **Secondary Navigation Shell (Implementation Detail):**
   - `bg-surface-subrail`, `border-line-subrail`: Subtle, distinct secondary navigation rail surface and border for collection/folder exploration.
 - **Lines & Borders:**
-  - `border-line-subtle`: Quiet structural dividers and panel borders (`#E0DDD6`).
-  - `border-line-strong`: Stronger borders for unfocused controls, switches, checkboxes.
+  - `border-line-subtle`: Quiet structural dividers and panel borders (`#E3DFD8`).
+  - `border-line-strong`: Stronger borders for unfocused controls, switches, checkboxes (`#C7C2BA`).
   - `border-line-subrail`: Distinctive divider for secondary navigation rails.
 - **Brand & Active States:**
-  - `bg-brand`: Near-black identity (`#121212`) for primary CTA buttons, strong emphasis, and selection indicator.
-  - `bg-brand-hover`: Near-black hover tone (`#262626` / `0 0% 15%`).
-  - `bg-brand-soft`: Warm neutral selected background (`#ECE9E2` / `40 20% 91%`).
-  - `text-brand-soft-foreground`: Near-black text on selected background (`#121212`).
+  - `bg-brand`: Warm charcoal identity (`#211F1D`) for primary CTA buttons, strong emphasis, and selection indicator.
+  - `bg-brand-hover`: Warm charcoal hover tone (`#312D2A`).
+  - `bg-brand-soft`: Warm neutral selected background (`#ECE8E1`).
+  - `text-brand-soft-foreground`: Warm charcoal text on selected background (`#211F1D`).
 - **Neutral Quiet & Hover & Navigation Active:**
   - `bg-neutral-muted`: Warm ivory-neutral for **Navigation Active items** (`bg-neutral-muted font-semibold text-ink-primary` - NO shadow), passive badges, tab tracks, progress backgrounds.
   - `bg-neutral-hover`: Warm neutral hover state for all interactive items, navigation links, and dropdown items (warm ivory-gray, NEVER green).
 - **Navigation Active Contract:**
   - Inactive: `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`
-  - Active: `bg-neutral-muted font-semibold text-ink-primary` with subtle `text-brand` icon cue (NO shadow).
+  - Active: `bg-neutral-muted font-semibold text-ink-primary` with subtle `text-brand` or `text-accent` icon cue (NO shadow).
   - Uniform across `SidebarNavItem`, `LibrarySubRail`, `Settings`, and `Help`.
 - **Semantic Feedback:**
   - `text-success` / `bg-success`: Subdued musical confirmation green.
   - `text-warning` / `bg-warning`: Warm amber for pending or verification notices.
   - `text-danger` / `bg-danger`: Non-punitive alert terracotta red.
   - `text-info` / `bg-info`: Warm neutral informational notice.
+  - `text-accent`: Terracotta accent indicator for focus rings, checkmarks, active cues.
 
 #### Color Usage Matrix:
 
@@ -128,27 +130,28 @@ Yueora enforces **one canonical visual language**: a **Warm Editorial Music Work
 | **Neutral Badge** | `bg-neutral-muted` | — | — | `border-transparent` | `text-ink-secondary` |
 | **Selected Badge (Compact)**| `bg-brand-soft` | — | — | `border-transparent` | `text-brand-soft-foreground` |
 
-#### Primitive Physical Palette (15 Core Primitives):
+#### Primitive Physical Palette (16 Core Primitives):
 
 Yueora's visual vocabulary is rich in semantic roles, but strictly restrained in underlying physical colors. Pages and domain components **never** consume primitive tokens directly; they compose semantic tokens. Physical HSL definitions reside exclusively in `src/index.css`.
 
 | Primitive Color Token | Semantic Consumers | Design System Role |
 | :--- | :--- | :--- |
 | `--primitive-neutral-0` | `surface-panel`, `surface-raised`, `*-foreground` | Pure White: panels, clean cards, overlay popovers, button text |
-| `--primitive-neutral-25` | `surface-canvas` | Warm Ivory Canvas: global page backdrop (`#F8F6F1`) |
+| `--primitive-neutral-25` | `surface-canvas` | Warm Ivory Canvas: global page backdrop (`#FAF8F5`) |
 | `--primitive-neutral-50` | `surface-subrail` | Warm Neutral: secondary navigation rail, preserved takes |
-| `--primitive-neutral-75` | `neutral-hover`, `brand-soft`, `selection`, `info` | Neutral Hover / Selected Soft: perceptible interactive hover contrast (`#ECE9E2`) |
-| `--primitive-neutral-100` | `neutral-muted`, `line-subtle`, `subrail-border` | Neutral Muted: quiet borders, passive tracks, nav active background (`#E0DDD6`) |
-| `--primitive-neutral-200` | `line-strong` | Neutral Strong: control borders, checkboxes, switches |
+| `--primitive-neutral-75` | `neutral-hover`, `brand-soft`, `selection`, `info` | Neutral Hover / Selected Soft: perceptible interactive hover contrast (`#ECE8E1`) |
+| `--primitive-neutral-100` | `neutral-muted`, `line-subtle`, `subrail-border` | Neutral Muted: quiet borders, passive tracks, nav active background (`#E3DFD8`) |
+| `--primitive-neutral-200` | `line-strong` | Neutral Strong: control borders, checkboxes, switches (`#C7C2BA`) |
 | `--primitive-neutral-300` | `ink-subtle` | Neutral Subtle: quiet dividers, passive iconography |
 | `--primitive-ink-500` | `ink-tertiary` | Ink Tertiary: readable muted metadata (>=4.5:1 WCAG AA contrast) |
 | `--primitive-ink-700` | `ink-secondary`, `neutral-muted-foreground`, `practice-waiting` | Ink Secondary: secondary body copy, timestamps (>7:1 contrast) |
-| `--primitive-ink-800` | `brand-hover` | Ink Strong: primary CTA pressed/hover state (`#262626`) |
-| `--primitive-ink-900` | `brand`, `ink-primary`, `neutral-hover-foreground` | Near-Black Identity: primary CTA, titles, selection cues (`#121212`) |
+| `--primitive-ink-800` | `brand-hover` | Ink Strong: primary CTA pressed/hover state (`#312D2A`) |
+| `--primitive-ink-900` | `brand`, `ink-primary`, `neutral-hover-foreground` | Warm Charcoal Identity: primary CTA, titles, selection cues (`#211F1D`) |
 | `--primitive-gold-500` | `gold`, `practice-current` | Musical Accent: favorite stars, sounding key / notation accent |
 | `--primitive-success-500` | `success`, `practice-following`, `practice-correct` | Functional Success: positive feedback (>=4.5:1 WCAG AA contrast) |
 | `--primitive-warning-500` | `warning`, `practice-resyncing` | Functional Warning: pending device access, resyncing tempo |
 | `--primitive-danger-500` | `danger`, `practice-error` | Functional Alert: terracotta destructive action (>=4.5:1 contrast) |
+| `--primitive-terracotta-500` | `accent`, `ring` | Terracotta Accent: focus rings, check cues, badges (`#C06C47`) |
 
 #### Practice Domain Palette Mapping:
 
@@ -202,16 +205,16 @@ One visual decision has one owner. All interactive controls, inputs, and icon el
 | `lg` | `40px` (`2.5rem`) | `--control-height-lg` | `.h-control-lg` / `.min-h-control-lg` | `.w-control-lg` / `.min-w-control-lg` | `20px` (`1.25rem`) | `.icon-lg` |
 | `xl` | `44px` (`2.75rem`) | `--control-height-xl` | `.h-control-xl` / `.min-h-control-xl` | `.w-control-xl` / `.min-w-control-xl` | `24px` (`1.5rem`) | `.icon-xl` |
 
-### 2.6 Softer Geometry & Flat UI Contract
+### 2.6 Refined Geometry & Flat UI Contract
 
 - **Radius Tokens:**
-  - Control radius: `--radius-control: 0.75rem` (`12px`) for inputs, selects, dropdown menus.
-  - Container radius: `--radius-container: 1.5rem` (`24px`) for panels, cards, dialogs.
-  - Overlay radius: `--radius-overlay: 1rem` (`16px`) for popovers, menus.
-  - Button geometry: pill buttons (`rounded-full`), circular icon buttons (`rounded-full`).
+  - Control radius: `--radius-control: 0.625rem` (`10px`) for buttons, icon buttons, inputs, selects, dropdown menus, nav items.
+  - Container radius: `--radius-container: 0.75rem` (`12px`) for panels, cards, modules.
+  - Overlay radius: `--radius-overlay: 0.75rem` (`12px`) for popovers, menus, dialogs.
+  - Button geometry: standard controls (`rounded-control`, 10px geometry).
   - Badge geometry: pill badges (`rounded-full`).
   - **Zero Arbitrary & Generic Radii:** Arbitrary radius utilities (`rounded-[...]`) and generic Tailwind radius utilities (`rounded`, `rounded-sm..3xl`, and directional variants) are banned across all application pages in `src/pages/**`. Pages must strictly use semantic radii (`rounded-control`, `rounded-container`, `rounded-overlay`, and justified `rounded-full` for badges/pills/dots).
-- **Flat Controls & Flat Content Panels:** Ordinary controls and standard content panels are flat by default (no `shadow-xs` on buttons, inputs, checkboxes, or static panels). Repetitive panel patterns (`rounded-container border border-line-subtle bg-surface-panel`) should compose `<Surface padding="...">`.
+- **Flat Controls & Flat Content Panels:** Ordinary controls and standard content panels are flat by default (no `shadow-xs` on secondary buttons, inputs, checkboxes, or static panels). Repetitive panel patterns (`rounded-container border border-line-subtle bg-surface-panel`) should compose `<Surface padding="...">`.
 - **Media-Driven Elevation:** Shadows are strictly reserved for elevated overlays (`shadow-raised` / `shadow-overlay` on menus, popovers, modal dialogs) and floating media artwork. Arbitrary shadows (`shadow-[...]`) and generic Tailwind shadows (`shadow-sm`, `shadow-md`, etc.) are banned in page code.
 
 ---
@@ -237,17 +240,17 @@ Pages compose using `<AppPage size="...">` rather than arbitrary `max-w-*` strin
 Yueora enforces a contracted, single-owner Button API. **Pages compose; Button completely owns appearance.**
 
 #### Canonical Yueora Button API
-- **Geometry:** Pill buttons (`rounded-full`). Planar (no `shadow-xs`).
+- **Geometry:** Standard controls (`rounded-control`, 10px geometry).
 - **Single Prop Contract:** Button exposes a single semantic prop: `intent`. The legacy `variant` prop and legacy aliases (`default`, `outline`, `ghost`, `destructive`) are permanently retired and banned in CI.
 - **Intents:**
-  - `primary`: Near-black (`#121212`) identity CTA with white text.
+  - `primary`: Warm charcoal (`#211F1D`) identity CTA with white text.
   - `secondary`: Planar white panel (`bg-surface-panel`) with subtle line (`border-line-subtle`).
   - `quiet`: Subtle action with neutral hover (`hover:bg-neutral-hover`).
   - `danger`: Terracotta alert action for destructive confirmation (`bg-danger text-white`).
   - `subtle`: Neutral muted action (`bg-neutral-muted`).
   - `link`: Inline text action with underline hover.
-  - `inverse`: High-contrast ivory pill action (`bg-surface-canvas text-ink-primary`) for dark editorial surfaces.
-  - `inverse-secondary`: High-contrast transparent outlined pill (`border border-surface-canvas/30 text-surface-canvas`) for dark surfaces.
+  - `inverse`: High-contrast ivory action (`bg-surface-canvas text-ink-primary`) for dark editorial surfaces.
+  - `inverse-secondary`: High-contrast transparent outlined action (`border border-surface-canvas/30 text-surface-canvas`) for dark surfaces.
 - **Sizes (5 Canonical Tiers):** `xs` (`28px`), `sm` (`32px`), `md` (`36px`, default), `lg` (`40px`), `xl` (`44px`). Legacy `hero` (`52px`) and `default` sizes are retired; button sizes map 1:1 with the canonical control tokens `--control-height-xs..xl`.
 - **Icon-Only Actions:** Dedicated primitive `<IconButton>` is used for all icon-only triggers.
 - **Appearance Ownership:** Pages compose buttons via `intent` and `size`. Pages MUST NOT override button colors, borders, shadows, or radii in `className`.

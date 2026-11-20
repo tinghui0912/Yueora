@@ -32,6 +32,7 @@ export default function PracticeHistory() {
       <Link to="/practice" className="type-body-small text-ink-secondary hover:text-ink-primary">← Practice</Link>
       <div className="mt-3">
         <PageHeader
+          eyebrow="Activity Archive"
           title="Practice history"
           description="The practice you've done, kept as a simple record."
         />
