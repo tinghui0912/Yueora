@@ -5,25 +5,25 @@
 @layer base {
   :root {
     /* ==========================================================================
-       1. PRIMITIVE PHYSICAL PALETTE (15 Core Primitives)
+       1. PRIMITIVE PHYSICAL PALETTE (16 Core Primitives)
        Restrained physical foundation. Pages compose semantic tokens;
        semantic tokens reference these primitives.
        Direct consumption of primitive-* in application code is strictly forbidden.
        ========================================================================== */
-    /* Neutral / Warm Ivory */
+    /* Neutral / Warm Ivory (EstateFlow-inspired warm productivity canvas) */
     --primitive-neutral-0: 0 0% 100%;       /* Pure White: panels, cards, overlays */
-    --primitive-neutral-25: 40 33% 96%;     /* Warm Ivory Canvas: global page backdrop (#F8F6F1) */
-    --primitive-neutral-50: 40 24% 94%;     /* Warm Neutral: subrail, passive tracks */
-    --primitive-neutral-75: 40 20% 91%;     /* Neutral Hover / Selected Soft (#ECE9E2) */
-    --primitive-neutral-100: 40 14% 86%;    /* Neutral Muted: muted tracks, subtle lines (#E0DDD6) */
-    --primitive-neutral-200: 40 12% 76%;    /* Neutral Strong: control borders, strong lines */
-    --primitive-neutral-300: 0 0% 60%;      /* Neutral Subtle: ink subtle, quiet dividers */
+    --primitive-neutral-25: 40 33% 98%;     /* Warm Ivory Canvas: global page backdrop (#FAF8F5) */
+    --primitive-neutral-50: 40 23% 94%;     /* Warm Secondary / Sand: subrail, passive tracks (#F3EFEA) */
+    --primitive-neutral-75: 40 20% 92%;     /* Neutral Hover / Selected Soft (#ECE8E1) */
+    --primitive-neutral-100: 40 14% 88%;    /* Warm Border: subtle lines, muted tracks (#E3DFD8) */
+    --primitive-neutral-200: 40 12% 76%;    /* Neutral Strong: control borders, strong lines (#C7C2BA) */
+    --primitive-neutral-300: 30 5% 55%;     /* Neutral Subtle / Stone: quiet dividers (#908B87) */
 
     /* Ink (Dark contrast hierarchy) */
-    --primitive-ink-500: 0 0% 44%;          /* Ink Tertiary: readable muted metadata (>=4.5:1 on white and canvas) */
-    --primitive-ink-700: 0 0% 33%;          /* Ink Secondary: readable secondary copy (>7:1 on white and canvas) */
-    --primitive-ink-800: 0 0% 15%;          /* Ink Strong / Brand Hover: interactive CTA hover */
-    --primitive-ink-900: 0 0% 7%;           /* Ink Primary / Near-Black Identity (#121212) */
+    --primitive-ink-500: 30 5% 42%;          /* Ink Tertiary / Muted Text (>=4.5:1 on white and canvas) (#6F6A66) */
+    --primitive-ink-700: 30 5% 28%;          /* Ink Secondary: readable secondary copy (>7:1 on white and canvas) (#4B4643) */
+    --primitive-ink-800: 30 6% 18%;          /* Ink Strong / Brand Hover: interactive CTA hover (#312D2A) */
+    --primitive-ink-900: 30 6% 12%;          /* Ink Primary / Warm Charcoal (#211F1D) */
 
     /* Musical Accent */
     --primitive-gold-500: 44 67% 46%;       /* Gold: favorites, special musical detail */
@@ -32,6 +32,9 @@
     --primitive-success-500: 148 30% 38%;   /* Success confirmation & practice following (>=4.5:1 on white) */
     --primitive-warning-500: 38 58% 45%;    /* Warning notice & practice resyncing */
     --primitive-danger-500: 0 65% 45%;      /* Terracotta alert (>=4.5:1 on white) */
+
+    /* Terracotta Accent (Two-layer brand identity) */
+    --primitive-terracotta-500: 18 44% 54%; /* Terracotta Accent (#C06C47) */
 
     /* ==========================================================================
        2. SEMANTIC TOKENS (Product Meaning)
@@ -54,11 +57,16 @@
     --line-subtle: var(--primitive-neutral-100);
     --line-strong: var(--primitive-neutral-200);
 
-    /* ---- Brand (Near-black identity, warm-neutral soft) ---- */
+    /* ---- Brand (Warm Charcoal primary identity) ---- */
     --brand: var(--primitive-ink-900);
     --brand-hover: var(--primitive-ink-800);
     --brand-soft: var(--primitive-neutral-75);
     --brand-soft-foreground: var(--primitive-ink-900);
+
+    /* ---- Accent (Terracotta accent identity) ---- */
+    --accent: var(--primitive-terracotta-500);
+    --accent-foreground: var(--primitive-neutral-25);
+    --ring: var(--primitive-terracotta-500);
 
     /* ---- Neutral quiet & hover (Warm ivory-gray, NOT green) ---- */
     --neutral-muted: var(--primitive-neutral-100);
@@ -112,24 +120,21 @@
     --secondary-foreground: var(--primitive-ink-900);
     --muted: var(--primitive-neutral-100);
     --muted-foreground: var(--primitive-ink-700);
-    --accent: var(--primitive-neutral-50);
-    --accent-foreground: var(--primitive-ink-900);
     --destructive: var(--primitive-danger-500);
     --destructive-foreground: var(--primitive-neutral-0);
     --border: var(--primitive-neutral-100);
     --input: var(--primitive-neutral-100);
-    --ring: var(--primitive-ink-900);
 
     --radius: 0.75rem;
-    --font-heading: "Cormorant Garamond", ui-serif, Georgia, serif;
+    --font-heading: "Fraunces", ui-serif, Georgia, serif;
     --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
-    --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+    --font-display: "Fraunces", ui-serif, Georgia, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
     /* ---- Radius semantic ---- */
-    --radius-control: 0.75rem;
-    --radius-container: 1.5rem;
-    --radius-overlay: 1rem;
+    --radius-control: 0.625rem; /* 10px */
+    --radius-container: 0.75rem; /* 12px */
+    --radius-overlay: 0.75rem; /* 12px */
 
     /* ---- Motion ---- */
     --motion-fast: 150ms;
@@ -138,8 +143,8 @@
     --motion-easing: cubic-bezier(0.22, 1, 0.36, 1);
 
     /* ---- Elevation ---- */
-    --shadow-raised: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.03);
-    --shadow-overlay: 0 10px 38px -10px rgb(0 0 0 / 0.16), 0 8px 20px -12px rgb(0 0 0 / 0.10);
+    --shadow-raised: 0 1px 3px 0 rgb(33 31 29 / 0.05), 0 1px 2px -1px rgb(33 31 29 / 0.03);
+    --shadow-overlay: 0 10px 38px -10px rgb(33 31 29 / 0.16), 0 8px 20px -12px rgb(33 31 29 / 0.10);
 
     /* ---- Control Heights ---- */
     --control-height-xs: 1.75rem; /* 28px */
@@ -182,25 +187,15 @@
   .type-hero-title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 19vw;
-    line-height: 0.88;
-    letter-spacing: -0.025em;
-  }
-  @media (min-width: 640px) {
-    .type-hero-title {
-      font-size: 13vw;
-    }
-  }
-  @media (min-width: 1024px) {
-    .type-hero-title {
-      font-size: clamp(9rem, 10.5vw, 9.5rem);
-    }
+    font-size: clamp(3.25rem, 7vw, 5.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
   }
   .type-marketing-title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(2.25rem, 5vw, 3.75rem);
-    line-height: 1.02;
+    font-size: clamp(2rem, 4.5vw, 3.25rem);
+    line-height: 1.08;
     letter-spacing: -0.02em;
   }
   .type-eyebrow {
@@ -233,39 +228,39 @@
   .type-experience-title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 2rem; /* 32px mobile */
-    line-height: 1.15;
+    font-size: 1.75rem; /* 28px mobile */
+    line-height: 1.2;
     letter-spacing: -0.015em;
   }
   @media (min-width: 768px) {
     .type-experience-title {
-      font-size: 2.5rem; /* 40px desktop */
+      font-size: 2.125rem; /* 34px desktop */
     }
   }
   .type-page-title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 1.875rem;
-    line-height: 1.2;
+    font-size: 1.625rem;
+    line-height: 1.25;
     letter-spacing: -0.015em;
   }
   @media (min-width: 768px) {
     .type-page-title {
-      font-size: 2.25rem;
-      line-height: 1.15;
+      font-size: 1.875rem;
+      line-height: 1.2;
     }
   }
   .type-section-title {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 1.375rem;
-    line-height: 1.3;
+    font-size: 1.25rem;
+    line-height: 1.35;
     letter-spacing: -0.01em;
   }
   @media (min-width: 768px) {
     .type-section-title {
-      font-size: 1.5rem;
-      line-height: 1.25;
+      font-size: 1.375rem;
+      line-height: 1.3;
     }
   }
   .type-subsection {

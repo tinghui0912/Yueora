@@ -53,7 +53,7 @@ Before creating or styling any UI element:
    - Flow & Layout: `<PageHeader>`, `<SectionHeader>`, `<Stepper>`, `<ChoiceCard>`, `<RepertoireGrid>`
 2. **Use semantic typography roles instead of raw font sizes (Page Typography Ownership Contract):**
    - **Pages compose. The Design System decides appearance.**
-   - **Serif tells the story. Sans explains the product.** Cormorant Garamond is reserved for identity, titles, musical voice, and reflective moments; Inter is for controls, reading copy, explanations, and metadata.
+   - **Serif tells the story. Sans explains the product.** Fraunces is reserved for identity, titles, musical voice, and reflective moments; Inter is for controls, reading copy, explanations, and metadata.
    - Public & marketing: `.type-hero-title`, `.type-marketing-title`, `.type-eyebrow`, `.type-editorial-quote`, `.type-marketing-body`
    - Titles: `.type-display`, `.type-experience-title`, `.type-page-title`, `.type-section-title`, `.type-subsection`
    - Body & content: `.type-body`, `.type-body-small`, `.type-label`
@@ -78,9 +78,9 @@ Before creating or styling any UI element:
      - **Drag Targets:** Dragging state is not selection; use `border-brand bg-surface-canvas text-brand`, never `bg-brand-soft`.
      - **Control Toggles:** Loop/toggle buttons use `border-brand bg-neutral-muted text-ink-primary` with `text-brand` icon, not `bg-brand-soft`.
    - Hover Contract: General interactive hover across all controls, buttons, dropdowns, list items, and links is strictly `bg-neutral-hover text-ink-primary`.
-   - Primary CTA: `bg-brand` (near-black `#121212` identity), `text-white`, `hover:bg-brand-hover`
+   - Primary CTA: `bg-brand` (warm charcoal near-black `#211F1D` identity), `text-white`, `hover:bg-brand-hover`
    - Neutral hovers & muted items: `bg-neutral-muted`, `hover:bg-neutral-hover` (warm ivory-gray, NEVER chromatic)
-   - **Primitive Physical Palette:** 15 core primitives in `src/index.css`. Pages and domain components MUST ONLY consume semantic tokens (`bg-surface-*`, `text-ink-*`, `text-brand`, etc.), NEVER primitive tokens directly (`bg-primitive-*` is banned in product code).
+   - **Primitive Physical Palette:** 16 core primitives in `src/index.css` (including `--primitive-terracotta-500`). Pages and domain components MUST ONLY consume semantic tokens (`bg-surface-*`, `text-ink-*`, `text-brand`, etc.), NEVER primitive tokens directly (`bg-primitive-*` is banned in product code).
    - **Legacy tokens are permanently retired from product code:** NEVER use `bg-accent`, `bg-muted`, `text-muted-foreground`, `bg-primary`, `text-primary`, `bg-card`, `bg-background`, `text-foreground`, `border-border`, `border-input`, `ring-ring` in pages or domain components.
    - Never use arbitrary `bg-brand/10` or raw hex colors (`#...`) in application JSX.
 4. **Appearance vs Composition Boundary:**

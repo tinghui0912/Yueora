@@ -89,6 +89,7 @@ const CANONICAL_PRIMITIVE_TOKENS = [
   '--primitive-success-500',
   '--primitive-warning-500',
   '--primitive-danger-500',
+  '--primitive-terracotta-500',
 ];
 
 const SEMANTIC_TOKENS_MAPPING_PRIMITIVES = [
@@ -102,6 +103,7 @@ const SEMANTIC_TOKENS_MAPPING_PRIMITIVES = [
   { token: '--neutral-hover', expectedPrimitive: '--primitive-neutral-75' },
   { token: '--warning-foreground', expectedPrimitive: '--primitive-ink-900' },
   { token: '--practice-current-foreground', expectedPrimitive: '--primitive-ink-900' },
+  { token: '--accent', expectedPrimitive: '--primitive-terracotta-500' },
 ];
 
 // WCAG AA Contrast Verification (Dynamic Resolution from src/index.css)

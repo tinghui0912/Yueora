@@ -72,7 +72,7 @@ export default function PracticeHub() {
                   <p className="type-metadata text-ink-secondary mt-0.5">
                     {continueScore.composer} · played {continueScore.lastPlayed}
                   </p>
-                  <p className="mt-1 type-metadata font-medium text-brand">
+                  <p className="mt-1 type-metadata font-medium text-accent">
                     Continue from bar {continueScore.lastMeasure}
                   </p>
                 </div>
