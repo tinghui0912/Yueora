@@ -125,14 +125,6 @@ export default function Landing() {
     <PublicShell>
       {/* 1. HERO — UGC 12-Column Editorial Grammar */}
       <section id="top" className="relative min-h-screen flex items-center overflow-hidden">
-        {/* ambient oversized background typography */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          {/* ds-allow: ambient oversized background typography */}
-          <span className="font-display italic text-[26vw] leading-none text-ink-primary/[0.035] select-none whitespace-nowrap">
-            music
-          </span>
-        </div>
-
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center pt-28 pb-24 lg:py-0">
           {/* Left 7 Columns — Identity & Editorial Statement */}
           <div className="lg:col-span-7 order-2 lg:order-1">
@@ -205,13 +197,13 @@ export default function Landing() {
               className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2 type-metadata text-ink-tertiary"
             >
               <span className="flex items-center gap-1.5">
-                <Check className="h-3.5 w-3.5 text-ink-primary" /> Start with 5 scores free
+                <Check className="h-3.5 w-3.5 text-brand" /> Start with 5 scores free
               </span>
               <span className="flex items-center gap-1.5">
-                <Check className="h-3.5 w-3.5 text-ink-primary" /> PDF · Images · MusicXML
+                <Check className="h-3.5 w-3.5 text-brand" /> PDF · Images · MusicXML
               </span>
               <span className="flex items-center gap-1.5">
-                <Check className="h-3.5 w-3.5 text-ink-primary" /> 100% Private by default
+                <Check className="h-3.5 w-3.5 text-brand" /> 100% Private by default
               </span>
             </motion.div>
           </div>
@@ -273,25 +265,25 @@ export default function Landing() {
           <Reveal delay={0.05}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-line-subtle/80 rounded-container overflow-hidden border border-line-subtle/80">
               <div className="bg-surface-canvas px-6 py-8 text-center">
-                <div className="type-display text-ink-primary">0</div>
+                <div className="type-display text-brand">0</div>
                 <div className="mt-2 type-eyebrow text-ink-secondary">
                   Streak pressure
                 </div>
               </div>
               <div className="bg-surface-canvas px-6 py-8 text-center">
-                <div className="type-display text-ink-primary">Any</div>
+                <div className="type-display text-brand">Any</div>
                 <div className="mt-2 type-eyebrow text-ink-secondary">
                   Score format accepted
                 </div>
               </div>
               <div className="bg-surface-canvas px-6 py-8 text-center">
-                <div className="type-display text-ink-primary">Mic</div>
+                <div className="type-display text-brand">Mic</div>
                 <div className="mt-2 type-eyebrow text-ink-secondary">
                   Acoustic phrase listening
                 </div>
               </div>
               <div className="bg-surface-canvas px-6 py-8 text-center">
-                <div className="type-display text-ink-primary">100%</div>
+                <div className="type-display text-brand">100%</div>
                 <div className="mt-2 type-eyebrow text-ink-secondary">
                   Private by default
                 </div>
@@ -655,19 +647,19 @@ export default function Landing() {
 
                   <ul className="mt-8 space-y-3.5 border-t border-line-subtle pt-6 type-body-small text-ink-secondary">
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> {plans.free.scores} in your library
+                      <Check className="h-4 w-4 text-brand shrink-0" /> {plans.free.scores} in your library
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> {plans.free.imports}
+                      <Check className="h-4 w-4 text-brand shrink-0" /> {plans.free.imports}
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> {plans.free.storage} storage
+                      <Check className="h-4 w-4 text-brand shrink-0" /> {plans.free.storage} storage
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> {plans.free.sharing} sharing
+                      <Check className="h-4 w-4 text-brand shrink-0" /> {plans.free.sharing} sharing
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> Acoustic phrase following
+                      <Check className="h-4 w-4 text-brand shrink-0" /> Acoustic phrase following
                     </li>
                   </ul>
                 </div>
@@ -688,7 +680,7 @@ export default function Landing() {
                     <span className="type-eyebrow text-surface-canvas/60">
                       Regular Musician
                     </span>
-                    <span className="rounded-full bg-surface-canvas/15 px-3 py-1 type-caption text-surface-canvas">
+                    <span className="rounded-full bg-brand text-brand-foreground px-3 py-1 type-caption">
                       Most Popular
                     </span>
                   </div>
@@ -705,19 +697,19 @@ export default function Landing() {
 
                   <ul className="mt-8 space-y-3.5 border-t border-surface-canvas/20 pt-6 type-body-small text-surface-canvas/85">
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> <strong>{plans.plus.scores}</strong> in your library
+                      <Check className="h-4 w-4 text-brand shrink-0" /> <strong>{plans.plus.scores}</strong> in your library
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> <strong>{plans.plus.imports}</strong>
+                      <Check className="h-4 w-4 text-brand shrink-0" /> <strong>{plans.plus.imports}</strong>
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> <strong>{plans.plus.storage}</strong> storage
+                      <Check className="h-4 w-4 text-brand shrink-0" /> <strong>{plans.plus.storage}</strong> storage
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> {plans.plus.sharing} sharing
+                      <Check className="h-4 w-4 text-brand shrink-0" /> {plans.plus.sharing} sharing
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-surface-canvas shrink-0" /> Practice insights &amp; journal
+                      <Check className="h-4 w-4 text-brand shrink-0" /> Practice insights &amp; journal
                     </li>
                   </ul>
                 </div>
@@ -755,19 +747,19 @@ export default function Landing() {
 
                   <ul className="mt-8 space-y-3.5 border-t border-line-subtle pt-6 type-body-small text-ink-secondary">
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> <strong>{plans.pro.scores}</strong> in your library
+                      <Check className="h-4 w-4 text-brand shrink-0" /> <strong>{plans.pro.scores}</strong> in your library
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> <strong>{plans.pro.imports}</strong>
+                      <Check className="h-4 w-4 text-brand shrink-0" /> <strong>{plans.pro.imports}</strong>
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> <strong>{plans.pro.storage}</strong> storage
+                      <Check className="h-4 w-4 text-brand shrink-0" /> <strong>{plans.pro.storage}</strong> storage
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> {plans.pro.sharing} sharing
+                      <Check className="h-4 w-4 text-brand shrink-0" /> {plans.pro.sharing} sharing
                     </li>
                     <li className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-ink-primary shrink-0" /> <strong>Full recording downloads</strong>
+                      <Check className="h-4 w-4 text-brand shrink-0" /> <strong>Full recording downloads</strong>
                     </li>
                   </ul>
                 </div>
@@ -819,14 +811,6 @@ export default function Landing() {
       <section className="py-24 md:py-36">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <div className="rounded-container bg-ink-primary text-surface-canvas overflow-hidden relative">
-            {/* ambient oversized word */}
-            <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              {/* ds-allow: ambient oversized background wordmark */}
-              <span className="font-display italic text-[22vw] leading-none text-surface-canvas/[0.04] select-none whitespace-nowrap">
-                play
-              </span>
-            </div>
-
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 p-8 md:p-14 lg:p-20 items-center">
               {/* Left 7 Columns — Pitch */}
               <div className="lg:col-span-7">

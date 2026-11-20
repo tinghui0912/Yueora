@@ -94,14 +94,17 @@ Yueora enforces **one canonical visual language**: a **Warm Musical Archive / Cl
   - `border-line-strong`: Stronger borders for unfocused controls, switches, checkboxes (`#C6C1B9`).
   - `border-line-subrail`: Distinctive divider for secondary navigation rails.
 - **Brand & Active States:**
-  - `bg-brand`: Antique Bronze Gold (`#C38322`) for primary CTA buttons, strong emphasis, and selection indicator.
+  - `bg-brand-fill`: Deep Antique Bronze (`#98661B` / `36 70% 35%`) for primary CTA buttons.
+  - `bg-brand-fill-hover`: Deeper Bronze hover tone (`#895814` / `36 72% 31%`).
+  - `text-brand-fill-foreground`: Warm white text on primary CTA (`#FDFDFC`, 4.86:1 WCAG AA contrast).
+  - `bg-brand`: Antique Bronze Gold (`#C38322`) for brand accent, focus rings, and selection indicators.
   - `bg-brand-hover`: Brighter gold hover tone (`#D39029` / `36 72% 49%`).
   - `bg-brand-soft`: Tinted warm gold soft background (`#F2E8D9` / `36 45% 90%`).
   - `text-brand-soft-foreground`: Dark readable ink on gold soft (`#221F1C`).
-  - `text-brand-foreground`: Dark readable ink on gold primary CTA (`#221F1C`, >= 4.5:1 contrast).
+  - `text-brand-foreground`: Dark readable ink on gold accents (`#221F1C`, >= 4.5:1 contrast).
 - **Neutral Quiet & Hover & Navigation Active:**
   - `bg-neutral-muted`: Warm neutral for passive badges, tab tracks, progress backgrounds.
-  - `bg-neutral-hover`: Warm neutral hover state for all interactive items, navigation links, and dropdown items.
+  - `bg-neutral-hover`: Warm neutral hover state for general interactive items, navigation links, and dropdown items.
 - **Navigation Active Contract:**
   - Inactive: `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`
   - Active: `bg-brand-soft font-semibold text-ink-primary` with subtle `text-brand` icon cue (NO shadow).
@@ -116,16 +119,16 @@ Yueora enforces **one canonical visual language**: a **Warm Musical Archive / Cl
 
 | UI Context | Default Surface | Hover Surface | Active / Selected | Border | Text |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Primary Button** | `bg-brand` | `bg-brand-hover` | `bg-brand-hover` | `border-transparent` | `text-brand-foreground` |
-| **Secondary Button** | `bg-surface-panel` | `bg-neutral-hover` | `bg-neutral-muted` | `border-line-subtle` | `text-ink-primary` |
-| **Quiet Button** | `transparent` | `bg-neutral-hover` | `bg-neutral-muted` | `border-transparent` | `text-ink-secondary` |
+| **Primary Button** | `bg-brand-fill` | `bg-brand-fill-hover` | `bg-brand-fill-hover` | `border-transparent` | `text-brand-fill-foreground` |
+| **Secondary Button** | `bg-surface-panel` | `hover:bg-brand-soft/60` | `bg-neutral-muted` | `hover:border-brand/40` | `text-ink-primary` |
+| **Quiet Button** | `transparent` | `hover:bg-brand-soft/50` | `bg-neutral-muted` | `border-transparent` | `hover:text-ink-primary` |
 | **Danger Button** | `bg-danger` | `bg-danger/90` | `bg-danger` | `border-transparent` | `text-white` |
 | **Dropdown Item** | `transparent` | `bg-neutral-hover` | `bg-neutral-muted` | `none` | `text-ink-primary` |
 | **Tab Trigger** | `transparent` | `bg-neutral-hover` | `bg-surface-panel` | `none` | `text-ink-primary` |
 | **Filter Pill (Compact)** | `transparent` | `bg-neutral-hover` | `bg-brand-soft` | `border-line-subtle` | `text-brand-soft-foreground` |
 | **ChoiceCard (Large)** | `bg-surface-panel` | `bg-neutral-hover` | `bg-neutral-hover` | `border-brand` | `text-ink-primary` |
-| **Standard Card / Score Container** | `bg-surface-panel` | `bg-surface-panel` | `border-brand` | `border-line-subtle` | `text-ink-primary` |
-| **Form Input** | `bg-surface-panel` | `bg-surface-panel` | `ring-brand/20 border-brand` | `border-line-subtle` | `text-ink-primary` |
+| **Standard Card / Score Container** | `bg-surface-panel` | `hover:-translate-y-1` | `border-brand` | `hover:border-brand/40` | `text-ink-primary` |
+| **Form Input** | `bg-surface-panel` (36px) | `border-line-strong` | `ring-brand/20 border-brand` | `border-line-subtle` | `text-ink-primary` |
 | **Neutral Badge** | `bg-neutral-muted` | — | — | `border-transparent` | `text-ink-secondary` |
 | **Selected Badge (Compact)**| `bg-brand-soft` | — | — | `border-transparent` | `text-brand-soft-foreground` |
 
@@ -147,8 +150,10 @@ Yueora's visual vocabulary is rich in semantic roles, but strictly restrained in
 | `--primitive-ink-800` | `brand-hover` | Ink Strong / Dark Hover (`#2E2A27`) |
 | `--primitive-ink-900` | `brand-foreground`, `ink-primary`, `neutral-hover-foreground` | Dark Warm Near-Black: titles, reading copy, button text (`#221F1C`) |
 | `--primitive-gold-100` | `brand-soft` | Tinted Warm Gold Soft: compact selection, active nav (`#F2E8D9`) |
-| `--primitive-gold-500` | `brand`, `gold`, `practice-current` | Antique Bronze Gold: primary CTA, favorites, sounding key (`#C38322`) |
-| `--primitive-gold-600` | `brand-hover` | Brighter Antique Gold: primary CTA hover (`#D39029`) |
+| `--primitive-gold-500` | `brand`, `gold`, `practice-current` | Antique Bronze Gold: brand accent, favorites, sounding key (`#C38322`) |
+| `--primitive-gold-600` | `brand-hover` | Brighter Antique Gold: brand accent hover (`#D39029`) |
+| `--primitive-gold-700` | `brand-fill` | Deep Antique Bronze: primary CTA fill (`#98661B`, 4.86:1 contrast) |
+| `--primitive-gold-800` | `brand-fill-hover` | Deeper Antique Bronze: primary CTA hover (`#895814`) |
 | `--primitive-success-500` | `success`, `practice-following`, `practice-correct` | Functional Success: positive feedback (>=4.5:1 WCAG AA contrast) |
 | `--primitive-warning-500` | `warning`, `practice-resyncing` | Functional Warning: pending device access, resyncing tempo |
 | `--primitive-danger-500` | `danger`, `practice-error` | Functional Alert: terracotta destructive action (>=4.5:1 contrast) |

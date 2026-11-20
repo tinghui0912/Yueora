@@ -58,8 +58,10 @@ export default function PracticeHub() {
             Pick up where you left off
           </p>
           <div className="mt-3">
-            <div
-              className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 transition-colors hover:border-line-strong sm:flex-row sm:items-center sm:justify-between"
+            <Surface
+              interactive
+              padding="none"
+              className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex items-center gap-4 min-w-0">
                 <div className="h-16 w-24 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel/95">
@@ -83,7 +85,7 @@ export default function PracticeHub() {
                   <span>Continue playing</span>
                 </Link>
               </Button>
-            </div>
+            </Surface>
           </div>
         </section>
       )}
@@ -97,7 +99,11 @@ export default function PracticeHub() {
           <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {recentlyLoved.map((r) => (
               <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="block">
-                <div className="flex items-center gap-3.5 rounded-container border border-line-subtle bg-surface-panel p-3.5 transition-colors hover:border-line-strong">
+                <Surface
+                  interactive
+                  padding="none"
+                  className="flex items-center gap-3.5 p-3.5"
+                >
                   <div className="h-14 w-20 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
                     <ScorePreview id={r.scoreId} className="h-full w-full object-cover" />
                   </div>
@@ -106,7 +112,7 @@ export default function PracticeHub() {
                     <p className="truncate type-metadata text-ink-secondary mt-0.5">{r.composer}</p>
                     <span className="inline-block mt-1 type-metadata font-medium text-brand">Revisit piece →</span>
                   </div>
-                </div>
+                </Surface>
               </Link>
             ))}
           </div>
@@ -122,14 +128,18 @@ export default function PracticeHub() {
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
             {havenPlayed.map((r) => (
               <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="block">
-                <div className="flex items-center justify-between rounded-container border border-line-subtle bg-surface-panel p-4 transition-colors hover:border-line-strong">
+                <Surface
+                  interactive
+                  padding="none"
+                  className="flex items-center justify-between p-4"
+                >
                   <div className="min-w-0">
                     <p className="type-subsection text-ink-primary">{r.title}</p>
                     <p className="type-metadata text-ink-secondary mt-0.5">{r.composer} · last played {r.lastPlayed}</p>
                     <p className="mt-1 type-body-small text-brand font-medium">Feel like revisiting this one?</p>
                   </div>
                   <ChevronRight className="icon-sm text-ink-tertiary" />
-                </div>
+                </Surface>
               </Link>
             ))}
           </div>
@@ -144,9 +154,11 @@ export default function PracticeHub() {
           </p>
           <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {activeScores.slice(0, 3).map((s) => (
-              <div
+              <Surface
                 key={s.id}
-                className="flex flex-col justify-between rounded-container border border-line-subtle bg-surface-panel p-4 transition-colors hover:border-line-strong"
+                interactive
+                padding="none"
+                className="flex flex-col justify-between p-4"
               >
                 <div className="flex items-center gap-3.5 min-w-0">
                   <div className="h-14 w-20 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
@@ -166,7 +178,7 @@ export default function PracticeHub() {
                     </Link>
                   </Button>
                 </div>
-              </div>
+              </Surface>
             ))}
           </div>
         </section>
@@ -175,7 +187,7 @@ export default function PracticeHub() {
       {/* 0-Score Empty State */}
       {activeScores.length === 0 && (
         <section className="mt-8">
-          <div className="flex flex-col items-center gap-3 rounded-container border border-line-subtle bg-surface-panel p-12 text-center">
+          <Surface padding="none" className="flex flex-col items-center gap-3 p-12 text-center">
             <PracticeGlyph className="h-8 w-8 text-brand" />
             <h2 className="type-section-title text-ink-primary">Welcome to Practice</h2>
             <p className="max-w-sm type-body-small text-ink-secondary">
@@ -186,7 +198,7 @@ export default function PracticeHub() {
                 Add your first score
               </Link>
             </Button>
-          </div>
+          </Surface>
         </section>
       )}
 

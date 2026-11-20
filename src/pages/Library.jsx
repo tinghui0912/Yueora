@@ -186,7 +186,7 @@ export default function Library() {
               onClick={() => { setParam('view', item.key); clearSelect(); }}
               className={`whitespace-nowrap rounded-control px-3 py-1.5 type-body-small transition-colors ${
                 active === item.key
-                  ? 'bg-neutral-muted font-semibold text-ink-primary'
+                  ? 'bg-brand-soft font-semibold text-brand-soft-foreground'
                   : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
               }`}
             >
@@ -199,7 +199,7 @@ export default function Library() {
               onClick={() => { setParam('view', `folder:${f.id}`); clearSelect(); }}
               className={`whitespace-nowrap rounded-control px-3 py-1.5 type-body-small transition-colors ${
                 active === `folder:${f.id}`
-                  ? 'bg-neutral-muted font-semibold text-ink-primary'
+                  ? 'bg-brand-soft font-semibold text-brand-soft-foreground'
                   : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
               }`}
             >
@@ -216,7 +216,7 @@ export default function Library() {
             onClick={() => { setParam('view', 'trash'); clearSelect(); }}
             className={`flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 type-body-small transition-colors ${
               active === 'trash'
-                ? 'bg-neutral-muted font-semibold text-ink-primary'
+                ? 'bg-brand-soft font-semibold text-brand-soft-foreground'
                 : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
             }`}
           >
@@ -227,7 +227,7 @@ export default function Library() {
         {/* Hero: "Pick up where you left off" - Resume Playing Card */}
         {!isTrash && !search && active === 'all' && continueScore && (
           <div className="mx-4 mt-6 md:mx-8">
-            <div className="flex flex-col gap-4 rounded-container border border-line-subtle bg-surface-panel p-5 transition-colors hover:border-line-strong sm:flex-row sm:items-center sm:justify-between">
+            <Surface interactive padding="none" className="p-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4 min-w-0">
                 <div className="hidden h-14 w-20 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel/90 sm:block">
                   <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
@@ -259,7 +259,7 @@ export default function Library() {
                   </Link>
                 </Button>
               </div>
-            </div>
+            </Surface>
           </div>
         )}
 

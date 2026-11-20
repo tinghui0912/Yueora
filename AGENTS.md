@@ -78,9 +78,12 @@ Before creating or styling any UI element:
      - **Drag Targets:** Dragging state is not selection; use `border-brand bg-surface-canvas text-brand`, never `bg-brand-soft`.
      - **Control Toggles:** Loop/toggle buttons use `border-brand bg-neutral-muted text-ink-primary` with `text-brand` icon, not `bg-brand-soft`.
    - Hover Contract: General interactive hover across all controls, buttons, dropdowns, list items, and links is strictly `bg-neutral-hover text-ink-primary`.
-   - Primary CTA: `bg-brand` (Antique Bronze Gold `#C38322`), `text-brand-foreground` (`#221F1C`, >= 4.5:1 WCAG AA), `shadow-raised`, `hover:bg-brand-hover`
+   - Primary CTA: `bg-brand-fill` (Deep Antique Bronze `#98661B`, `36 70% 35%`), `text-brand-fill-foreground` (Warm White `#FDFDFC`, 4.86:1 WCAG AA), `shadow-raised`, `hover:bg-brand-fill-hover active:scale-[0.98]`
+   - Brand Accent: `text-brand` (Antique Bronze Gold `#C38322`), focus rings `focus-visible:ring-brand`, checkmarks, and active indicator cues.
+   - Standard Form Controls: Default height is compact 36px (`h-control-md`, 10px `rounded-control`) for application-first density.
+   - Interactive Surfaces & Tactile Lift: `<Surface interactive>` and `ScoreCard` provide soft warm elevation and subtle tactile lift (`hover:-translate-y-1 hover:border-brand/40 hover:shadow-raised transition-all duration-300`).
    - Neutral hovers & muted items: `bg-neutral-muted`, `hover:bg-neutral-hover` (warm ivory-gray, NEVER chromatic)
-   - **Primitive Physical Palette:** 17 core primitives in `src/index.css`. Pages and domain components MUST ONLY consume semantic tokens (`bg-surface-*`, `text-ink-*`, `text-brand`, etc.), NEVER primitive tokens directly (`bg-primitive-*` is banned in product code).
+   - **Primitive Physical Palette:** 19 core primitives in `src/index.css`. Pages and domain components MUST ONLY consume semantic tokens (`bg-surface-*`, `text-ink-*`, `text-brand`, `bg-brand-fill`, etc.), NEVER primitive tokens directly (`bg-primitive-*` is banned in product code).
    - **Legacy tokens are permanently retired from product code:** NEVER use `bg-accent`, `bg-muted`, `text-muted-foreground`, `bg-primary`, `text-primary`, `bg-card`, `bg-background`, `text-foreground`, `border-border`, `border-input`, `ring-ring` in pages or domain components.
    - Never use arbitrary `bg-brand/10` or raw hex colors (`#...`) in application JSX.
 4. **Appearance vs Composition Boundary:**
