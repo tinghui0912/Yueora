@@ -9,7 +9,12 @@ let failedTests = 0;
 function assertNegative(name, code, expectedMatch, filePath = 'test.jsx') {
   totalTests++;
   const issues = scanPageAppearanceContent(code, filePath);
-  const found = issues.some(i => !expectedMatch || i.matched.includes(expectedMatch) || i.message.includes(expectedMatch));
+  const found = issues.some(
+    (i) =>
+      !expectedMatch ||
+      (i.matched && i.matched.includes(expectedMatch)) ||
+      (i.message && i.message.includes(expectedMatch))
+  );
 
   if (issues.length > 0 && found) {
     console.log(`  ✓ [FAIL as expected] ${name}`);
@@ -167,6 +172,144 @@ assertNegative(
   'rounded-3xl'
 );
 
+// 1.18 Unknown appearance utility (backdrop-blur-xl)
+assertNegative(
+  'Button className with unknown appearance utility (backdrop-blur-xl)',
+  `<Button className="backdrop-blur-xl">Action</Button>`,
+  'backdrop-blur-xl'
+);
+
+// 1.19 Drop shadow on Button
+assertNegative(
+  'Button className with drop-shadow-xl',
+  `<Button className="drop-shadow-xl">Action</Button>`,
+  'drop-shadow-xl'
+);
+
+// 1.20 Animation utility on Button
+assertNegative(
+  'Button className with animate-pulse',
+  `<Button className="animate-pulse">Action</Button>`,
+  'animate-pulse'
+);
+
+// 1.21 Arbitrary selector on Button: [&>svg]:text-danger
+assertNegative(
+  'Button className with arbitrary selector [&>svg]:text-danger',
+  `<Button className="[&>svg]:text-danger">Action</Button>`,
+  '[&>svg]:text-danger'
+);
+
+// 1.22 Arbitrary selector on Button: [&_svg]:fill-danger
+assertNegative(
+  'Button className with arbitrary selector [&_svg]:fill-danger',
+  `<Button className="[&_svg]:fill-danger">Action</Button>`,
+  '[&_svg]:fill-danger'
+);
+
+// 1.23 clsx object syntax with appearance override
+assertNegative(
+  'Button className with clsx object syntax ({ "bg-danger": active })',
+  `<Button className={clsx({ "bg-danger": active })}>Action</Button>`,
+  'bg-danger'
+);
+
+// 1.24 cn object syntax with appearance override
+assertNegative(
+  'Button className with cn object syntax ({ "text-danger": active, "w-full": full })',
+  `<Button className={cn({ "text-danger": active, "w-full": full })}>Action</Button>`,
+  'text-danger'
+);
+
+// 1.25 clsx array syntax with appearance override
+assertNegative(
+  'Button className with clsx array syntax (["w-full", active && "bg-danger"])',
+  `<Button className={clsx(["w-full", active && "bg-danger"])}>Action</Button>`,
+  'bg-danger'
+);
+
+// 1.26 TypeScript 'as' type cast with appearance override
+assertNegative(
+  'Button className with TypeScript "as" cast ("bg-danger" as string)',
+  `<Button className={"bg-danger" as string}>Action</Button>`,
+  'bg-danger',
+  'src/pages/Test.tsx'
+);
+
+// 1.27 Alias import evasion rejected (Button as B)
+assertNegative(
+  'Alias import evasion rejected (Button as B with bg-danger)',
+  `import { Button as B } from "@/components/ui/button";
+  export default function Page() {
+    return <B className="bg-danger">Action</B>;
+  }`,
+  'bg-danger'
+);
+
+// 1.28 Protected primitive spread attribute rejected
+assertNegative(
+  'Protected primitive spread attribute rejected (Button {...props})',
+  `const props = { className: "bg-danger" };
+  <Button {...props}>Action</Button>`,
+  '{...props}'
+);
+
+// 1.29 DialogContent dynamic unanalyzable className rejected
+assertNegative(
+  'DialogContent dynamic unanalyzable className rejected',
+  `<DialogContent className={dialogClasses} />`,
+  'dialogClasses'
+);
+
+// 1.30 DropdownMenuContent dynamic unanalyzable className rejected
+assertNegative(
+  'DropdownMenuContent dynamic unanalyzable className rejected',
+  `<DropdownMenuContent className={menuClasses} />`,
+  'menuClasses'
+);
+
+// 1.31 PopoverContent appearance override rejected
+assertNegative(
+  'PopoverContent appearance override rejected (bg-brand shadow-overlay)',
+  `<PopoverContent className="bg-brand shadow-overlay" />`,
+  'bg-brand'
+);
+
+// 1.32 PopoverContent dynamic unanalyzable className rejected
+assertNegative(
+  'PopoverContent dynamic unanalyzable className rejected',
+  `<PopoverContent className={popoverClasses} />`,
+  'popoverClasses'
+);
+
+// 1.33 Surface appearance override rejected (bg-brand border-brand)
+assertNegative(
+  'Surface appearance override rejected (bg-brand border-brand)',
+  `<Surface tone="raised" className="bg-brand border-brand" />`,
+  'bg-brand'
+);
+
+// 1.34 Surface generic radius override rejected (rounded-xl)
+assertNegative(
+  'Surface generic radius override rejected (rounded-xl)',
+  `<Surface className="rounded-xl" />`,
+  'rounded-xl'
+);
+
+// 1.35 Surface dynamic unanalyzable className rejected
+assertNegative(
+  'Surface dynamic unanalyzable className rejected',
+  `<Surface className={surfaceClasses} />`,
+  'surfaceClasses'
+);
+
+// 1.36 Surface spread attribute rejected
+assertNegative(
+  'Surface spread attribute rejected (Surface {...surfaceProps})',
+  `const surfaceProps = { padding: "md" };
+  <Surface {...surfaceProps} />`,
+  '{...surfaceProps}'
+);
 
 // -----------------------------------------------------------------------------
 // 2. POSITIVE FIXTURES (Must be accepted by Guardrails)
@@ -189,6 +332,30 @@ assertPositive(
 );
 
 assertPositive(
+  'Button with responsive margin and width (mt-4 w-full sm:w-auto)',
+  `<Button className="mt-4 w-full sm:w-auto">Action</Button>`
+);
+
+assertPositive(
+  'Button with clsx object composition (w-full and mt-4)',
+  `<Button className={clsx({ "w-full": full, "mt-4": spaced })}>Action</Button>`
+);
+
+assertPositive(
+  'Button with TypeScript "as" cast with composition ("w-full" as string)',
+  `<Button className={"w-full" as string}>Action</Button>`,
+  'src/pages/Test.tsx'
+);
+
+assertPositive(
+  'Alias import with valid composition (Button as B with w-full)',
+  `import { Button as B } from "@/components/ui/button";
+  export default function Page() {
+    return <B className="w-full">Action</B>;
+  }`
+);
+
+assertPositive(
   'DialogContent with standard sizing (max-w-sm)',
   `<DialogContent className="max-w-sm" />`
 );
@@ -199,8 +366,21 @@ assertPositive(
 );
 
 assertPositive(
+  'Alias import DialogContent with standard sizing (DialogContent as ModalBody)',
+  `import { DialogContent as ModalBody } from "@/components/ui/dialog";
+  export default function Page() {
+    return <ModalBody className="max-w-sm" />;
+  }`
+);
+
+assertPositive(
   'DropdownMenuContent with standard width (w-52)',
   `<DropdownMenuContent className="w-52" />`
+);
+
+assertPositive(
+  'PopoverContent with allowed width constraint (w-72)',
+  `<PopoverContent className="w-72" />`
 );
 
 assertPositive(
@@ -218,6 +398,15 @@ assertPositive(
   `<Surface tone="raised" elevation="overlay" padding="sm" className="absolute right-0 z-20 mt-1 w-56" />`
 );
 
+assertPositive(
+  'Surface with grid and gap composition',
+  `<Surface tone="panel" padding="md" className="grid grid-cols-2 gap-4" />`
+);
+
+assertPositive(
+  'Surface with interactive hover motion',
+  `<Surface padding="lg" interactive className="group hover:-translate-y-1 transition-all duration-300" />`
+);
 
 // -----------------------------------------------------------------------------
 // SUMMARY

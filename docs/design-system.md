@@ -383,18 +383,23 @@ import { Upload } from 'lucide-react';
 
 1. **Button & IconButton Ownership:**
    - `<Button>` and `<IconButton>` completely own visual styling (background, border, radius, height, padding, gap, typography, hover, active, focus states).
-   - Pages MUST NOT pass appearance overrides (`bg-*`, `text-*`, `border-*`, `shadow-*`, `ring-*`, `font-*`, `h-*`, `px-*`, `py-*`, `gap-*`, `items-*`, `justify-*`, `scale-*`, `rounded-*`) via `className`.
-   - Pages may ONLY pass external composition layout utilities (`w-*`, `max-w-*`, `min-w-*`, `flex-1`, `shrink-0`, `self-*`, `m-*`).
-   - Dynamic or unanalyzable `className` expressions on Button or IconButton are prohibited in page files.
+   - Enforced via a strict **Composition Allowlist**: page consumers may ONLY pass external composition layout utilities (`w-*`, `min-w-*`, `max-w-*`, `flex-1`, `shrink-0`, `self-*`, `m-*`) with responsive modifiers only (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`).
+   - Arbitrary selector variants (`[&>svg]:`, `[&_svg]:`, `[&>*]:`) and non-composition utilities (e.g. `bg-*`, `text-*`, `border-*`, `shadow-*`, `ring-*`, `font-*`, `opacity-*`, `backdrop-*`, `animate-*`) are banned.
+   - Dynamic or unanalyzable `className` expressions and JSX spread attributes (`{...props}`) on Button or IconButton are prohibited and fail closed.
 
 2. **Overlay Primitive Ownership (`DialogContent`, `DropdownMenuContent`, `PopoverContent`):**
-   - Overlay primitives already define their canonical background (`bg-surface-panel` / `bg-surface-raised`), borders (`border-line-subtle`), radius (`rounded-container` / `rounded-overlay`), and elevation (`shadow-overlay`).
-   - Pages MUST NOT duplicate or override visual styles on overlay primitives.
-   - Pages may only pass dimension / layout constraints (e.g. `DialogContent className="max-w-sm"`, `DropdownMenuContent className="w-52"`).
+   - Overlay primitives define their canonical background (`bg-surface-panel` / `bg-surface-raised`), borders (`border-line-subtle`), radius (`rounded-container` / `rounded-overlay`), and elevation (`shadow-overlay`).
+   - Enforced via an **Overlay Composition Allowlist**: page consumers may only pass sizing and overflow constraints (`w-*`, `min-w-*`, `max-w-*`, `h-*`, `min-h-*`, `max-h-*`, `overflow-*`).
+   - Dynamic unanalyzable className and JSX spread attributes on overlay primitives fail closed.
 
-3. **Elevation Ownership (`shadow-overlay`, `shadow-raised`):**
+3. **Surface Primitive Ownership (`<Surface>`):**
+   - `<Surface>` owns surface tones (`panel`, `canvas`, `raised`), container border (`border-line-subtle`), radius (`rounded-container`), and elevations (`none`, `raised`, `overlay`).
+   - Page consumers MUST NOT pass background, border, radius, shadow, or ring utilities in `className`.
+   - Consumer `className` on `<Surface>` is restricted to layout, grid, flex, position, and spacing composition.
+
+4. **Elevation Ownership (`shadow-overlay`, `shadow-raised`):**
    - Direct usage of `shadow-overlay` or `shadow-raised` on arbitrary `<div>` or layout elements in `src/pages/**` is banned.
-   - Elevation belongs to canonical overlay primitives or `<Surface elevation="overlay|raised">`.
+   - Elevation belongs exclusively to canonical overlay primitives or `<Surface elevation="overlay|raised">`.
 
 ---
 
@@ -406,7 +411,7 @@ To verify Design System compliance:
 # Automated Design System linter & token integrity validator (AST appearance guard)
 npm run check:design-system
 
-# Guardrail AST regression test suite (17 negative + 9 positive fixtures)
+# Guardrail AST regression test suite (36 negative + 17 positive fixtures; verified in CI)
 npm run test:design-system-guardrails
 
 # Codebase ESLint verification

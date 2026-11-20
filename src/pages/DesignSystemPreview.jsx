@@ -139,7 +139,7 @@ export default function DesignSystemPreview() {
                 <span className="type-caption text-ink-primary">Panel</span>
                 <p className="type-metadata text-ink-tertiary">surface-panel</p>
               </div>
-              <Surface tone="raised" elevation="overlay" padding="none" className="rounded-control p-3 text-center">
+              <Surface tone="raised" elevation="overlay" padding="none" className="p-3 text-center">
                 <span className="type-caption text-ink-primary">Raised</span>
                 <p className="type-metadata text-ink-tertiary">Overlay / Menu</p>
               </Surface>

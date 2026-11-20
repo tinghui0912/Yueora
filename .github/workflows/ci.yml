@@ -27,6 +27,9 @@ jobs:
       - name: Design System Integrity Check
         run: npm run check:design-system
 
+      - name: Design System Guardrail Regression Tests
+        run: npm run test:design-system-guardrails
+
       - name: Commercial Flow & Pricing Verification
         run: npm run verify:commercial
 
