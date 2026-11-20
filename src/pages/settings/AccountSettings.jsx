@@ -64,23 +64,31 @@ export default function AccountSettings() {
 
   return (
     <div className="divide-y divide-line-subtle">
-      <SettingsSection title="Profile" desc="Your name and email as shown across Yueora.">
+      {/* Profile Banner (NumisCollection parity) */}
+      <div className="flex items-center gap-4 pb-6">
+        {account.avatar ? (
+          <img src={account.avatar} alt="Avatar" className="h-16 w-16 rounded-full object-cover border border-line-subtle" />
+        ) : (
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-soft text-brand type-display font-semibold">
+            {name.slice(0, 1).toUpperCase()}
+          </div>
+        )}
+        <div className="min-w-0">
+          <h2 className="type-section-title text-ink-primary truncate">{name}</h2>
+          <p className="type-body-small text-ink-secondary truncate mt-0.5">{account.email}</p>
+        </div>
+      </div>
+
+      <SettingsSection title="Profile details" desc="Your name and email as shown across Yueora.">
         <div className="max-w-md space-y-5">
           {/* Avatar row */}
           <div className="flex items-center gap-3">
-            {account.avatar ? (
-              <img src={account.avatar} alt="Avatar" className="h-12 w-12 rounded-full object-cover border border-line-subtle" />
-            ) : (
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand text-brand-foreground font-medium">
-                {name.slice(0, 1).toUpperCase()}
-              </div>
-            )}
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onAvatarChange} />
             <Button intent="secondary" size="sm" onClick={() => fileRef.current?.click()}>
               <Camera className="mr-1.5 icon-xs" /> Change avatar
             </Button>
             {account.avatar && (
-              <Button intent="quiet" size="sm" onClick={() => setAvatar(null)}>Remove</Button>
+              <Button intent="quiet" size="sm" onClick={() => setAvatar(null)}>Remove avatar</Button>
             )}
           </div>
 

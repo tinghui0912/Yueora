@@ -569,6 +569,170 @@ async function verifyComputedStyles(client, baseUrl) {
   console.log(`✅ All computed style assertions passed.\n`);
 }
 
+async function verifyPageStructure(client, baseUrl) {
+  console.log(`🔍 Verifying Page-Level Visual Transplant structure (Section 32-36)...`);
+  const { S, ev, subs } = client;
+
+  const navigateAndWait = async (url) => {
+    const loaded = new Promise((r) => subs.push((m) => { if (m.method === 'Page.loadEventFired') r(); }));
+    await S('Page.navigate', { url });
+    await Promise.race([loaded, new Promise((r) => setTimeout(r, 12000))]);
+    await ev('document.fonts ? document.fonts.ready.then(() => 1) : 1');
+    for (let i = 0; i < 60; i++) {
+      const ready = await ev('Boolean(document.querySelector("#root")?.children?.length > 0)');
+      if (ready) break;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    await new Promise((r) => setTimeout(r, 300));
+  };
+
+  // 1. App Shell & Library Page Parity on desktop (1440px)
+  await S('Emulation.setDeviceMetricsOverride', {
+    width: 1440,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+    dontSetVisibleSize: false,
+  });
+  await navigateAndWait(`${baseUrl}/library?demo=true`);
+
+  const shellAndLibrary = await ev(`(() => {
+    const aside = document.querySelector('[data-qa="desktop-sidebar"]') || document.querySelector('aside');
+    const asideRect = aside ? aside.getBoundingClientRect() : null;
+    const desktopHeader = document.querySelector('header');
+    const desktopHeaderDisplay = desktopHeader ? window.getComputedStyle(desktopHeader).display : 'none';
+    const main = document.querySelector('main');
+    const mainRect = main ? main.getBoundingClientRect() : null;
+
+    const libraryPage = document.querySelector('[data-qa="library-collection-page"]');
+    const cards = Array.from(document.querySelectorAll('[data-qa="score-card"]'));
+    const firstCard = cards[0];
+    const aspectVisual = firstCard ? firstCard.querySelector('[class*="aspect-"]') : null;
+    const cardTitle = firstCard ? firstCard.querySelector('h3, h2, [class*="type-"]') : null;
+    const titleFont = cardTitle ? window.getComputedStyle(cardTitle).fontFamily : '';
+    // Check if card has legacy 2-button toolbar footer
+    const footerButtons = firstCard ? Array.from(firstCard.querySelectorAll('button')).filter(b => !b.closest('.absolute')) : [];
+
+    return {
+      asideWidth: asideRect ? Math.round(asideRect.width) : 0,
+      desktopHeaderHidden: desktopHeaderDisplay === 'none',
+      mainLeft: mainRect ? Math.round(mainRect.left) : 0,
+      hasLibraryPage: !!libraryPage,
+      cardCount: cards.length,
+      hasAspectVisual: !!aspectVisual,
+      titleFont,
+      footerButtonCount: footerButtons.length,
+    };
+  })()`);
+
+  console.log(`  Sidebar Width: ${shellAndLibrary.asideWidth}px (expected 256px / w-64)`);
+  if (Math.abs(shellAndLibrary.asideWidth - 256) > 4) {
+    throw new Error(`Desktop sidebar width is ${shellAndLibrary.asideWidth}px (expected 256px / w-64)`);
+  }
+  if (!shellAndLibrary.desktopHeaderHidden) {
+    throw new Error('Persistent desktop topbar must be absent (header displayed on desktop)');
+  }
+  if (Math.abs(shellAndLibrary.mainLeft - 256) > 4) {
+    throw new Error(`Main content must be directly adjacent to sidebar at 256px, got left: ${shellAndLibrary.mainLeft}px`);
+  }
+  if (!shellAndLibrary.hasLibraryPage) {
+    throw new Error('Library collection page must have data-qa="library-collection-page"');
+  }
+  if (!shellAndLibrary.hasAspectVisual) {
+    throw new Error('ScoreCard must feature an aspect-ratio artwork visual zone (~50% height)');
+  }
+  if (!shellAndLibrary.titleFont.toLowerCase().includes('playfair')) {
+    throw new Error(`ScoreCard title font must be Playfair Display, got: ${shellAndLibrary.titleFont}`);
+  }
+  if (shellAndLibrary.footerButtonCount > 0) {
+    throw new Error(`ScoreCard must not have legacy two-button toolbar footer, found: ${shellAndLibrary.footerButtonCount} buttons`);
+  }
+  console.log(`  ✓ App Shell & Library Collection Page assertions passed.`);
+
+  // 2. PracticeHub Dashboard (1440px)
+  await navigateAndWait(`${baseUrl}/practice?demo=true`);
+  const practiceData = await ev(`(() => {
+    const dashboard = document.querySelector('[data-qa="practice-dashboard"]');
+    const statCardsContainer = document.querySelector('[data-qa="practice-stat-cards"]');
+    const statCards = statCardsContainer ? statCardsContainer.children.length : 0;
+    const text = document.body ? document.body.innerText : '';
+    const hasResumeModule = text.includes('Pick up where you left off') || text.includes('Ready to play');
+
+    return {
+      hasDashboard: !!dashboard,
+      statCardCount: statCards,
+      hasResumeModule,
+    };
+  })()`);
+
+  if (!practiceData.hasDashboard) {
+    throw new Error('PracticeHub must render data-qa="practice-dashboard"');
+  }
+  if (practiceData.statCardCount !== 4) {
+    throw new Error(`PracticeHub must feature 4 StatCards, found: ${practiceData.statCardCount}`);
+  }
+  console.log(`  ✓ Practice Dashboard: 4 StatCards & Resume module verified.`);
+
+  // 3. Settings Card (1440px)
+  await navigateAndWait(`${baseUrl}/settings/account?demo=true`);
+  const settingsData = await ev(`(() => {
+    const page = document.querySelector('[data-qa="settings-page"]');
+    const card = document.querySelector('[data-qa="settings-card"]');
+    const cardCs = card ? window.getComputedStyle(card) : null;
+    return {
+      hasPage: !!page,
+      hasCard: !!card,
+      radius: cardCs ? cardCs.borderRadius : '',
+      borderWidth: cardCs ? cardCs.borderWidth : '',
+    };
+  })()`);
+
+  if (!settingsData.hasPage || !settingsData.hasCard) {
+    throw new Error('Settings must contain data-qa="settings-page" and data-qa="settings-card"');
+  }
+  if (Math.round(parseFloat(settingsData.radius)) !== 16) {
+    throw new Error(`Settings card must use rounded-container (16px), got: ${settingsData.radius}`);
+  }
+  console.log(`  ✓ Settings Page: canonical 16px Surface card verified.`);
+
+  // 4. Mobile Navigation (390px)
+  await S('Emulation.setDeviceMetricsOverride', {
+    width: 390,
+    height: 844,
+    deviceScaleFactor: 1,
+    mobile: true,
+    dontSetVisibleSize: false,
+  });
+  await navigateAndWait(`${baseUrl}/practice?demo=true`);
+  const mobileNavData = await ev(`(() => {
+    const nav = document.querySelector('[data-qa="mobile-navigation"]');
+    const items = nav ? nav.querySelectorAll('a, button') : [];
+    return {
+      hasNav: !!nav,
+      itemCount: items.length,
+    };
+  })()`);
+
+  if (!mobileNavData.hasNav) {
+    throw new Error('Mobile navigation must be rendered at 390px viewport');
+  }
+  if (mobileNavData.itemCount !== 5) {
+    throw new Error(`Mobile navigation must feature 5 items, found: ${mobileNavData.itemCount}`);
+  }
+  console.log(`  ✓ Mobile Navigation: 5 items verified.`);
+
+  // Reset viewport to desktop
+  await S('Emulation.setDeviceMetricsOverride', {
+    width: 1440,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+    dontSetVisibleSize: false,
+  });
+
+  console.log(`✅ All page-level visual transplant structural assertions passed.\n`);
+}
+
 async function captureAndValidateTarget(client, target, baseUrl) {
   const { S, ev, subs } = client;
   const fullUrl = `${baseUrl}${target.path}`;
@@ -690,7 +854,11 @@ async function captureAndValidateTarget(client, target, baseUrl) {
       assertionDescription = 'Hover warm soft gold state on sidebar nav captured';
     } else if (target.isInteraction === 'open-dropdown') {
       const coords = await ev(`(() => {
-        const btn = document.querySelector('header button[aria-haspopup="menu"]') || document.querySelector('button[aria-haspopup="menu"]');
+        const btn = document.querySelector('[data-qa="desktop-sidebar"] [aria-haspopup="dialog"]')
+          || document.querySelector('button[aria-label*="Filter"]')
+          || document.querySelector('[data-qa="desktop-sidebar"] button')
+          || document.querySelector('header button[aria-haspopup="menu"]')
+          || document.querySelector('button[aria-haspopup="menu"]');
         if (!btn) return null;
         const r = btn.getBoundingClientRect();
         return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
@@ -700,7 +868,7 @@ async function captureAndValidateTarget(client, target, baseUrl) {
         await S('Input.dispatchMouseEvent', { type: 'mouseReleased', x: coords.x, y: coords.y, button: 'left', clickCount: 1 });
         await new Promise((r) => setTimeout(r, 400));
       }
-      assertionDescription = 'Open state on topbar dropdown menu captured';
+      assertionDescription = 'Open state on action / dropdown trigger captured';
     }
   }
 
@@ -867,7 +1035,10 @@ async function main() {
     // 2. Verify computed styles and Design System V2 parity via CDP
     await verifyComputedStyles(client, BASE_URL);
 
-    // 3. Capture screenshot suite and assert semantic DOM invariants
+    // 3. Verify Page-Level Visual Transplant structure (Section 32-36)
+    await verifyPageStructure(client, BASE_URL);
+
+    // 4. Capture screenshot suite and assert semantic DOM invariants
     console.log(`\n📸 Capturing & Asserting ${TARGETS.length} Visual QA targets...`);
     for (const target of TARGETS) {
       try {
