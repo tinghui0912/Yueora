@@ -26,6 +26,28 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SearchTrigger from '@/components/app-shell/SearchTrigger';
 
@@ -36,6 +58,7 @@ export default function DesignSystemPreview() {
   const [hasError, setHasError] = useState(false);
   const [checkboxChecked, setCheckboxChecked] = useState(true);
   const [radioValue, setRadioValue] = useState('acoustic');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [switchChecked, setSwitchChecked] = useState(true);
   const [filterActive, setFilterActive] = useState('all');
 
@@ -432,7 +455,7 @@ export default function DesignSystemPreview() {
             <div className="space-y-3">
               <span className="type-caption text-ink-secondary/70">Tooltip (WCAG AA gold badge)</span>
               <div>
-                <TooltipProvider>
+                <TooltipProvider delayDuration={0}>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button intent="quiet" size="sm" data-qa="design-system-tooltip-trigger">
@@ -476,6 +499,75 @@ export default function DesignSystemPreview() {
               <Badge variant="warning">Warning</Badge>
               <Badge variant="destructive">Destructive</Badge>
             </div>
+          </div>
+
+          {/* Overlays: Dialog & DropdownMenu Specimen */}
+          <div className="border-t border-line-subtle pt-6 grid gap-6 sm:grid-cols-2">
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Dialog Specimen (12px radius, shadow-lg, full border)</span>
+              <div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button intent="secondary" size="sm" data-qa="design-system-dialog-trigger">
+                      Open Dialog Specimen
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent data-qa="design-system-dialog">
+                    <DialogHeader>
+                      <DialogTitle>Dialog Specimen</DialogTitle>
+                      <DialogDescription>
+                        Aligned to shadow-lg, 12px radius, and full border line.
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Dropdown Menu Specimen (8px item radius, brand-soft hover)</span>
+              <div>
+                <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      intent="secondary"
+                      size="sm"
+                      data-qa="design-system-dropdown-trigger"
+                      onClick={() => setDropdownOpen((prev) => !prev)}
+                    >
+                      Open Menu Specimen
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent data-qa="design-system-dropdown-content">
+                    <DropdownMenuItem data-qa="design-system-dropdown-item">Menu Item Specimen</DropdownMenuItem>
+                    <DropdownMenuItem>Second Option</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          </div>
+
+          {/* Toast Specimens (Default & Destructive) */}
+          <div className="border-t border-line-subtle pt-6 space-y-3">
+            <span className="type-caption text-ink-secondary/70">Toast Specimens (Default &amp; Destructive)</span>
+            <ToastProvider>
+              <Toast variant="default" data-qa="design-system-toast">
+                <div className="grid gap-1">
+                  <ToastTitle>Take Preserved</ToastTitle>
+                  <ToastDescription>Audio recording saved to your archive.</ToastDescription>
+                </div>
+                <ToastClose />
+              </Toast>
+
+              <Toast variant="destructive" data-qa="design-system-toast-destructive">
+                <div className="grid gap-1">
+                  <ToastTitle>Sync Failed</ToastTitle>
+                  <ToastDescription>Could not sync audio take to cloud.</ToastDescription>
+                </div>
+                <ToastClose />
+              </Toast>
+              <ToastViewport className="relative top-auto left-auto right-auto bottom-auto max-h-none p-0 md:max-w-none grid gap-4 sm:grid-cols-2" />
+            </ToastProvider>
           </div>
         </Surface>
       </section>

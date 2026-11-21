@@ -28,7 +28,7 @@ const toastVariants = cva(
       variant: {
         default: "border-line-subtle bg-surface-panel text-ink-primary",
         destructive:
-          "destructive group border-danger/30 bg-surface-panel text-danger",
+          "destructive group border-danger bg-danger text-danger-foreground",
       },
     },
     defaultVariants: {
@@ -58,7 +58,7 @@ const ToastAction = React.forwardRef(({ className, ...props }, ref) => (
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-control border border-line-subtle bg-transparent px-3 type-body-small font-medium transition-colors hover:bg-neutral-hover focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-ink-primary group-[.destructive]:border-danger/30 group-[.destructive]:hover:bg-danger/10 group-[.destructive]:text-danger group-[.destructive]:focus:ring-danger",
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-control border border-line-subtle bg-transparent px-3 type-body-small font-medium transition-colors hover:bg-neutral-hover focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-ink-primary group-[.destructive]:border-danger-foreground/40 group-[.destructive]:hover:bg-danger-foreground/10 group-[.destructive]:text-danger-foreground group-[.destructive]:focus:ring-danger-foreground",
       className
     )}
     {...props}
@@ -73,7 +73,7 @@ const ToastClose = React.forwardRef(({ className, ...props }, ref) => (
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-sm p-1 text-ink-secondary opacity-70 transition-opacity hover:opacity-100 hover:text-ink-primary focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-brand group-[.destructive]:text-danger/70 group-[.destructive]:hover:text-danger",
+      "absolute right-2 top-2 rounded-sm p-1 text-ink-secondary opacity-0 transition-opacity hover:opacity-100 hover:text-ink-primary focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-brand group-hover:opacity-100 group-[.destructive]:text-danger-foreground/70 group-[.destructive]:hover:text-danger-foreground",
       className
     )}
     toast-close=""

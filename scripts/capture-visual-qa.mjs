@@ -1085,12 +1085,16 @@ async function verifyComputedStyles(client, baseUrl) {
     await new Promise((r) => setTimeout(r, 200));
   }
 
-  const primitives = await ev(`(() => {
+  // 6a. Checkbox & Radio & Switch Assertions
+  const formPrimitives = await ev(`(() => {
     const cb = document.querySelector('[data-qa="design-system-checkbox"]');
+    const cbUnchecked = document.querySelector('[data-qa="design-system-checkbox-unchecked"]');
     const cbIcon = cb ? cb.querySelector('svg') : null;
     const radio = document.querySelector('[data-qa="design-system-radio"] button');
+    const radioUnchecked = document.querySelector('#ds-radio-digital');
     const radioIcon = radio ? radio.querySelector('svg') : null;
     const sw = document.querySelector('[data-qa="design-system-switch"]');
+    const swUnchecked = document.querySelector('[data-qa="design-system-switch-unchecked"]');
     const swThumb = sw ? sw.querySelector('span') : null;
     const badge = document.querySelector('[data-qa="design-system-badge"]');
     const filterTabs = document.querySelector('[data-qa="design-system-filter-tabs"]');
@@ -1098,10 +1102,13 @@ async function verifyComputedStyles(client, baseUrl) {
 
     const getCs = (el) => el ? window.getComputedStyle(el) : null;
     const cbCs = getCs(cb);
+    const cbUncheckedCs = getCs(cbUnchecked);
     const cbIconCs = getCs(cbIcon);
     const radioCs = getCs(radio);
+    const radioUncheckedCs = getCs(radioUnchecked);
     const radioIconCs = getCs(radioIcon);
     const swCs = getCs(sw);
+    const swUncheckedCs = getCs(swUnchecked);
     const swThumbCs = getCs(swThumb);
     const badgeCs = getCs(badge);
     const filterTabsRole = filterTabs ? filterTabs.getAttribute('role') : null;
@@ -1114,6 +1121,8 @@ async function verifyComputedStyles(client, baseUrl) {
         height: Math.round(parseFloat(cbCs.height)),
         borderRadius: Math.round(parseFloat(cbCs.borderRadius)),
         backgroundColor: cbCs.backgroundColor,
+        uncheckedBg: cbUncheckedCs ? cbUncheckedCs.backgroundColor : null,
+        borderColor: cbCs.borderColor,
         iconWidth: cbIcon ? Math.round(cbIcon.getBoundingClientRect().width) : 0,
         iconHeight: cbIcon ? Math.round(cbIcon.getBoundingClientRect().height) : 0,
         iconClass: cbIcon ? (cbIcon.getAttribute('class') || '') : '',
@@ -1121,21 +1130,28 @@ async function verifyComputedStyles(client, baseUrl) {
       radio: radioCs ? {
         width: Math.round(parseFloat(radioCs.width)),
         height: Math.round(parseFloat(radioCs.height)),
+        uncheckedBg: radioUncheckedCs ? radioUncheckedCs.backgroundColor : null,
+        borderColor: radioCs.borderColor,
         iconWidth: radioIcon ? Math.round(radioIcon.getBoundingClientRect().width) : 0,
         iconHeight: radioIcon ? Math.round(radioIcon.getBoundingClientRect().height) : 0,
       } : null,
       switchControl: swCs ? {
         width: Math.round(parseFloat(swCs.width)),
         height: Math.round(parseFloat(swCs.height)),
+        checkedBg: swCs.backgroundColor,
+        uncheckedBg: swUncheckedCs ? swUncheckedCs.backgroundColor : null,
         boxShadow: swCs.boxShadow,
         thumbWidth: swThumbCs ? Math.round(parseFloat(swThumbCs.width)) : 0,
         thumbHeight: swThumbCs ? Math.round(parseFloat(swThumbCs.height)) : 0,
         thumbShadow: swThumbCs ? swThumbCs.boxShadow : null,
       } : null,
       badge: badgeCs ? {
+        fontSize: Math.round(parseFloat(badgeCs.fontSize)),
+        borderRadius: Math.round(parseFloat(badgeCs.borderRadius)),
         backgroundColor: badgeCs.backgroundColor,
         color: badgeCs.color,
-        borderRadius: Math.round(parseFloat(badgeCs.borderRadius)),
+        boxShadow: badgeCs.boxShadow,
+        textTransform: badgeCs.textTransform,
       } : null,
       filterSemantics: {
         containerRole: filterTabsRole,
@@ -1145,49 +1161,327 @@ async function verifyComputedStyles(client, baseUrl) {
     };
   })()`);
 
-  if (!primitives.checkbox) throw new Error('Checkbox specimen not found in /design-system');
-  if (primitives.checkbox.width !== 16 || primitives.checkbox.height !== 16) {
-    throw new Error(`Checkbox size is ${primitives.checkbox.width}x${primitives.checkbox.height} (expected 16x16)`);
+  if (!formPrimitives.checkbox) throw new Error('Checkbox specimen not found in /design-system');
+  if (formPrimitives.checkbox.width !== 16 || formPrimitives.checkbox.height !== 16) {
+    throw new Error(`Checkbox size is ${formPrimitives.checkbox.width}x${formPrimitives.checkbox.height} (expected 16x16)`);
   }
-  if (primitives.checkbox.borderRadius !== 8) {
-    throw new Error(`Checkbox radius is ${primitives.checkbox.borderRadius}px (expected 8px / rounded-sm via --radius: 0.75rem)`);
+  if (formPrimitives.checkbox.borderRadius !== 8) {
+    throw new Error(`Checkbox radius is ${formPrimitives.checkbox.borderRadius}px (expected 8px / rounded-sm via --radius: 0.75rem)`);
   }
-  if (!primitives.checkbox.iconClass.includes('h-4') || !primitives.checkbox.iconClass.includes('w-4')) {
-    throw new Error(`Checkbox indicator must have h-4 w-4 class, got: '${primitives.checkbox.iconClass}'`);
+  if (formPrimitives.checkbox.uncheckedBg && !formPrimitives.checkbox.uncheckedBg.includes('rgba(0, 0, 0, 0)')) {
+    throw new Error(`Checkbox unchecked background must be transparent, got '${formPrimitives.checkbox.uncheckedBg}'`);
   }
-  if (primitives.checkbox.iconWidth < 14 || primitives.checkbox.iconHeight !== 16) {
-    throw new Error(`Checkbox indicator size is ${primitives.checkbox.iconWidth}x${primitives.checkbox.iconHeight} (expected 14-16px / h-4 w-4)`);
+  if (!formPrimitives.checkbox.iconClass.includes('h-4') || !formPrimitives.checkbox.iconClass.includes('w-4')) {
+    throw new Error(`Checkbox indicator must have h-4 w-4 class, got: '${formPrimitives.checkbox.iconClass}'`);
   }
-  console.log(`  ✓ Checkbox Primitive: 16x16, 8px radius (rounded-sm), h-4 w-4 indicator verified.`);
+  if (formPrimitives.checkbox.iconWidth < 14 || formPrimitives.checkbox.iconHeight !== 16) {
+    throw new Error(`Checkbox indicator size is ${formPrimitives.checkbox.iconWidth}x${formPrimitives.checkbox.iconHeight} (expected 14-16px / h-4 w-4)`);
+  }
+  console.log(`  ✓ Checkbox Primitive: 16x16, 8px radius (rounded-sm), transparent unchecked, 16px indicator verified.`);
 
-  if (!primitives.radio) throw new Error('RadioGroup specimen not found in /design-system');
-  if (primitives.radio.width !== 16 || primitives.radio.height !== 16) {
-    throw new Error(`Radio size is ${primitives.radio.width}x${primitives.radio.height} (expected 16x16)`);
+  // Focus Checkbox and assert 1px focus ring
+  const cbFocusedRing = await ev(`(() => {
+    const cb = document.querySelector('[data-qa="design-system-checkbox"]');
+    if (!cb) return null;
+    cb.focus();
+    const cs = window.getComputedStyle(cb);
+    return {
+      boxShadow: cs.boxShadow,
+      hasRing: cs.boxShadow.includes('rgb(195, 131, 34)') || cs.boxShadow.includes('195, 131, 34'),
+    };
+  })()`);
+  if (!cbFocusedRing || !cbFocusedRing.hasRing) {
+    throw new Error(`Checkbox focus ring not visible when focused: boxShadow=${cbFocusedRing?.boxShadow}`);
   }
-  if (primitives.radio.iconWidth !== 14 || primitives.radio.iconHeight !== 14) {
-    throw new Error(`Radio indicator circle size is ${primitives.radio.iconWidth}x${primitives.radio.iconHeight} (expected 14x14 / h-3.5 w-3.5)`);
-  }
-  console.log(`  ✓ Radio Primitive: 16x16, 14x14 indicator verified.`);
+  console.log(`  ✓ Checkbox Focus: 1px brand focus ring verified via live element focus.`);
 
-  if (!primitives.switchControl) throw new Error('Switch specimen not found in /design-system');
-  if (primitives.switchControl.width !== 36 || primitives.switchControl.height !== 20) {
-    throw new Error(`Switch size is ${primitives.switchControl.width}x${primitives.switchControl.height} (expected 36x20 / h-5 w-9)`);
+  if (!formPrimitives.radio) throw new Error('RadioGroup specimen not found in /design-system');
+  if (formPrimitives.radio.width !== 16 || formPrimitives.radio.height !== 16) {
+    throw new Error(`Radio size is ${formPrimitives.radio.width}x${formPrimitives.radio.height} (expected 16x16)`);
   }
-  if (primitives.switchControl.thumbWidth !== 16 || primitives.switchControl.thumbHeight !== 16) {
-    throw new Error(`Switch thumb size is ${primitives.switchControl.thumbWidth}x${primitives.switchControl.thumbHeight} (expected 16x16)`);
+  if (formPrimitives.radio.uncheckedBg && !formPrimitives.radio.uncheckedBg.includes('rgba(0, 0, 0, 0)')) {
+    throw new Error(`Radio unchecked background must be transparent, got '${formPrimitives.radio.uncheckedBg}'`);
   }
-  console.log(`  ✓ Switch Primitive: 36x20 track, 16x16 thumb verified.`);
+  if (formPrimitives.radio.iconWidth !== 14 || formPrimitives.radio.iconHeight !== 14) {
+    throw new Error(`Radio indicator circle size is ${formPrimitives.radio.iconWidth}x${formPrimitives.radio.iconHeight} (expected 14x14 / h-3.5 w-3.5)`);
+  }
+  console.log(`  ✓ Radio Primitive: 16x16, transparent unchecked, 14x14 indicator verified.`);
 
-  if (primitives.filterSemantics.containerRole !== 'group') {
-    throw new Error(`FilterTabs container role must be 'group', got '${primitives.filterSemantics.containerRole}'`);
+  // Focus Radio and assert 1px focus ring
+  const radioFocusedRing = await ev(`(() => {
+    const radio = document.querySelector('[data-qa="design-system-radio"] button');
+    if (!radio) return null;
+    radio.focus();
+    const cs = window.getComputedStyle(radio);
+    return {
+      boxShadow: cs.boxShadow,
+      hasRing: cs.boxShadow.includes('rgb(195, 131, 34)') || cs.boxShadow.includes('195, 131, 34'),
+    };
+  })()`);
+  if (!radioFocusedRing || !radioFocusedRing.hasRing) {
+    throw new Error(`Radio focus ring not visible when focused: boxShadow=${radioFocusedRing?.boxShadow}`);
   }
-  if (primitives.filterSemantics.buttonRole === 'tab') {
+  console.log(`  ✓ Radio Focus: 1px brand focus ring verified via live element focus.`);
+
+  if (!formPrimitives.switchControl) throw new Error('Switch specimen not found in /design-system');
+  if (formPrimitives.switchControl.width !== 36 || formPrimitives.switchControl.height !== 20) {
+    throw new Error(`Switch size is ${formPrimitives.switchControl.width}x${formPrimitives.switchControl.height} (expected 36x20 / h-5 w-9)`);
+  }
+  if (formPrimitives.switchControl.thumbWidth !== 16 || formPrimitives.switchControl.thumbHeight !== 16) {
+    throw new Error(`Switch thumb size is ${formPrimitives.switchControl.thumbWidth}x${formPrimitives.switchControl.thumbHeight} (expected 16x16)`);
+  }
+  const isUncheckedInput = formPrimitives.switchControl.uncheckedBg.includes('229, 225, 220') || formPrimitives.switchControl.uncheckedBg.includes('229,225,220');
+  if (!isUncheckedInput) {
+    throw new Error(`Switch unchecked background is ${formPrimitives.switchControl.uncheckedBg} (expected rgb(229, 225, 220) / bg-input)`);
+  }
+  const isCheckedBrand = formPrimitives.switchControl.checkedBg.includes('195, 131, 34') || formPrimitives.switchControl.checkedBg.includes('195,131,34');
+  if (!isCheckedBrand) {
+    throw new Error(`Switch checked background is ${formPrimitives.switchControl.checkedBg} (expected brand rgb(195, 131, 34))`);
+  }
+  if (!formPrimitives.switchControl.boxShadow || formPrimitives.switchControl.boxShadow === 'none') {
+    throw new Error(`Switch track must have shadow-sm`);
+  }
+  if (!formPrimitives.switchControl.thumbShadow || formPrimitives.switchControl.thumbShadow === 'none') {
+    throw new Error(`Switch thumb must have shadow-lg`);
+  }
+  console.log(`  ✓ Switch Primitive: 36x20 track, 16x16 thumb, bg-input unchecked, shadow-sm track, shadow-lg thumb verified.`);
+
+  if (formPrimitives.filterSemantics.containerRole !== 'group') {
+    throw new Error(`FilterTabs container role must be 'group', got '${formPrimitives.filterSemantics.containerRole}'`);
+  }
+  if (formPrimitives.filterSemantics.buttonRole === 'tab') {
     throw new Error(`FilterTab button must NOT have role='tab'`);
   }
-  if (primitives.filterSemantics.buttonPressed === null) {
+  if (formPrimitives.filterSemantics.buttonPressed === null) {
     throw new Error(`FilterTab button must have aria-pressed attribute`);
   }
   console.log(`  ✓ FilterTabs Semantics: role="group" and aria-pressed toggle verified.`);
+
+  // 6b. Badge Assertions
+  if (!formPrimitives.badge) throw new Error('Badge specimen not found');
+  if (formPrimitives.badge.fontSize !== 12) {
+    throw new Error(`Badge font size is ${formPrimitives.badge.fontSize}px (expected 12px / text-xs)`);
+  }
+  if (formPrimitives.badge.borderRadius !== 10) {
+    throw new Error(`Badge radius is ${formPrimitives.badge.borderRadius}px (expected 10px / rounded-md)`);
+  }
+  if (!formPrimitives.badge.backgroundColor.includes('195, 131, 34')) {
+    throw new Error(`Default Badge background is ${formPrimitives.badge.backgroundColor} (expected brand gold)`);
+  }
+  if (!formPrimitives.badge.color.includes('34, 31, 28')) {
+    throw new Error(`Default Badge foreground is ${formPrimitives.badge.color} (expected dark ink)`);
+  }
+  if (!formPrimitives.badge.boxShadow || formPrimitives.badge.boxShadow === 'none') {
+    throw new Error(`Default Badge must have shadow (matching Numis default badge)`);
+  }
+  console.log(`  ✓ Badge Primitive: 12px text, 10px radius, shadow, brand background, dark ink foreground verified.`);
+
+  // 6c. Popover Assertions
+  await ev(`document.querySelector('[data-qa="design-system-popover-trigger"]')?.click()`);
+  await new Promise((r) => setTimeout(r, 300));
+  const popoverStyles = await ev(`(() => {
+    const pop = document.querySelector('[data-qa="design-system-popover"]');
+    if (!pop) return null;
+    const cs = window.getComputedStyle(pop);
+    return {
+      borderRadius: Math.round(parseFloat(cs.borderRadius)),
+      boxShadow: cs.boxShadow,
+      borderWidth: parseFloat(cs.borderWidth),
+    };
+  })()`);
+  if (!popoverStyles) throw new Error('PopoverContent did not mount on trigger click');
+  if (popoverStyles.borderRadius !== 10) {
+    throw new Error(`Popover radius is ${popoverStyles.borderRadius}px (expected 10px / rounded-md)`);
+  }
+  if (!popoverStyles.boxShadow.includes('rgba(0, 0, 0, 0.1)') && !popoverStyles.boxShadow.includes('0 4px 6px')) {
+    throw new Error(`Popover boxShadow does not match shadow-md: ${popoverStyles.boxShadow}`);
+  }
+  if (popoverStyles.borderWidth <= 0) {
+    throw new Error(`Popover borderWidth must be > 0`);
+  }
+  // Close popover
+  await S('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+  await S('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+  await new Promise((r) => setTimeout(r, 200));
+  console.log(`  ✓ Popover Primitive: 10px radius, shadow-md, full border verified.`);
+
+  // 6d. Dialog Assertions
+  await ev(`document.querySelector('[data-qa="design-system-dialog-trigger"]')?.click()`);
+  await new Promise((r) => setTimeout(r, 350));
+  const dialogStyles = await ev(`(() => {
+    const diag = document.querySelector('[data-qa="design-system-dialog"]');
+    if (!diag) return null;
+    const cs = window.getComputedStyle(diag);
+    return {
+      borderRadius: Math.round(parseFloat(cs.borderRadius)),
+      boxShadow: cs.boxShadow,
+      borderColor: cs.borderColor,
+      transitionDuration: cs.transitionDuration,
+    };
+  })()`);
+  if (!dialogStyles) throw new Error('DialogContent did not mount on trigger click');
+  if (dialogStyles.borderRadius !== 12) {
+    throw new Error(`Dialog radius is ${dialogStyles.borderRadius}px (expected 12px / sm:rounded-dialog)`);
+  }
+  if (!dialogStyles.boxShadow.includes('0 10px 15px') && !dialogStyles.boxShadow.includes('rgba(0, 0, 0, 0.1)')) {
+    throw new Error(`Dialog boxShadow does not match shadow-lg: ${dialogStyles.boxShadow}`);
+  }
+  const isLineSubtleFull = dialogStyles.borderColor.includes('229, 225, 220') || dialogStyles.borderColor.includes('229,225,220');
+  if (!isLineSubtleFull) {
+    throw new Error(`Dialog borderColor is ${dialogStyles.borderColor} (expected full border-line-subtle rgb(229, 225, 220), not /50)`);
+  }
+  if (dialogStyles.transitionDuration !== '0.2s') {
+    throw new Error(`Dialog transitionDuration is ${dialogStyles.transitionDuration} (expected 0.2s / duration-200)`);
+  }
+  // Close dialog
+  await ev(`document.querySelector('[data-qa="design-system-dialog"] button[type="button"]')?.click()`);
+  await S('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+  await S('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+  for (let i = 0; i < 20; i++) {
+    const isClosed = await ev('!document.querySelector(\'[data-qa="design-system-dialog"]\')');
+    if (isClosed) break;
+    await new Promise((r) => setTimeout(r, 50));
+  }
+  console.log(`  ✓ Dialog Primitive: 12px radius, shadow-lg, full border-line-subtle, 200ms duration verified.`);
+
+  // 6e. Toast Assertions
+  const toastStyles = await ev(`(() => {
+    const defaultToast = document.querySelector('[data-qa="design-system-toast"]');
+    const destToast = document.querySelector('[data-qa="design-system-toast-destructive"]');
+    const defClose = defaultToast ? defaultToast.querySelector('button[toast-close], button') : null;
+    const desc = defaultToast ? defaultToast.querySelector('div.type-body-small') || defaultToast.querySelectorAll('p')[1] : null;
+
+    const getCs = (el) => el ? window.getComputedStyle(el) : null;
+    const defCs = getCs(defaultToast);
+    const destCs = getCs(destToast);
+    const closeCs = getCs(defClose);
+    const descCs = getCs(desc);
+
+    return {
+      defaultToast: defCs ? {
+        borderRadius: Math.round(parseFloat(defCs.borderRadius)),
+        boxShadow: defCs.boxShadow,
+        closeOpacity: closeCs ? parseFloat(closeCs.opacity) : null,
+        descFontSize: descCs ? Math.round(parseFloat(descCs.fontSize)) : null,
+        descTextTransform: descCs ? descCs.textTransform : null,
+      } : null,
+      destructiveToast: destCs ? {
+        backgroundColor: destCs.backgroundColor,
+        color: destCs.color,
+      } : null,
+    };
+  })()`);
+  if (!toastStyles.defaultToast) throw new Error('Default Toast specimen not found');
+  if (toastStyles.defaultToast.borderRadius !== 10) {
+    throw new Error(`Toast radius is ${toastStyles.defaultToast.borderRadius}px (expected 10px / rounded-md)`);
+  }
+  if (!toastStyles.defaultToast.boxShadow.includes('0 10px 15px') && !toastStyles.defaultToast.boxShadow.includes('rgba(0, 0, 0, 0.1)')) {
+    throw new Error(`Toast boxShadow does not match shadow-lg: ${toastStyles.defaultToast.boxShadow}`);
+  }
+  if (toastStyles.defaultToast.descFontSize !== 14) {
+    throw new Error(`Toast description fontSize is ${toastStyles.defaultToast.descFontSize}px (expected 14px / type-body-small)`);
+  }
+  if (toastStyles.defaultToast.descTextTransform !== 'none') {
+    throw new Error(`Toast description textTransform is ${toastStyles.defaultToast.descTextTransform} (expected none)`);
+  }
+  if (toastStyles.defaultToast.closeOpacity !== 0) {
+    throw new Error(`Toast close button default opacity is ${toastStyles.defaultToast.closeOpacity} (expected 0, visible on hover/focus)`);
+  }
+  if (!toastStyles.destructiveToast) throw new Error('Destructive Toast specimen not found');
+  if (!toastStyles.destructiveToast.backgroundColor.includes('189, 40, 40')) {
+    throw new Error(`Destructive Toast background is ${toastStyles.destructiveToast.backgroundColor} (expected danger rgb(189, 40, 40))`);
+  }
+  if (!toastStyles.destructiveToast.color.includes('253, 253, 252') && !toastStyles.destructiveToast.color.includes('255, 255, 255')) {
+    throw new Error(`Destructive Toast text color is ${toastStyles.destructiveToast.color} (expected white/danger-foreground)`);
+  }
+  console.log(`  ✓ Toast Primitive: 10px radius, shadow-lg, 14px normal description, close default opacity 0, danger destructive surface verified.`);
+
+  // 6f. Dropdown Menu Item Assertions
+  await ev(`document.querySelector('[data-qa="design-system-dropdown-trigger"]')?.click()`);
+  for (let i = 0; i < 20; i++) {
+    const hasItem = await ev('Boolean(document.querySelector(\'[data-qa="design-system-dropdown-item"]\'))');
+    if (hasItem) break;
+    await new Promise((r) => setTimeout(r, 50));
+  }
+  const dropdownItemStyles = await ev(`(() => {
+    const item = document.querySelector('[data-qa="design-system-dropdown-item"]');
+    if (!item) return null;
+    const cs = window.getComputedStyle(item);
+    return {
+      borderRadius: Math.round(parseFloat(cs.borderRadius)),
+    };
+  })()`);
+  if (!dropdownItemStyles) throw new Error('DropdownMenu item did not mount on trigger click');
+  if (dropdownItemStyles.borderRadius !== 8) {
+    throw new Error(`DropdownMenu item radius is ${dropdownItemStyles.borderRadius}px (expected 8px / rounded-sm via --radius: 0.75rem)`);
+  }
+  // Focus item
+  await ev(`document.querySelector('[data-qa="design-system-dropdown-item"]')?.focus()`);
+  await new Promise((r) => setTimeout(r, 200));
+  const itemHoverBg = await ev(`(() => {
+    const item = document.querySelector('[data-qa="design-system-dropdown-item"]');
+    if (!item) return null;
+    return window.getComputedStyle(item).backgroundColor;
+  })()`);
+  const isSoftGoldHover = itemHoverBg.includes('241, 232') || itemHoverBg.includes('242, 232');
+  if (!isSoftGoldHover) {
+    throw new Error(`DropdownMenu item focus background is ${itemHoverBg} (expected brand-soft)`);
+  }
+  // Close menu
+  await S('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+  await S('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+  await new Promise((r) => setTimeout(r, 200));
+  console.log(`  ✓ Dropdown Menu Item: 8px radius (rounded-sm), brand-soft focus background verified.`);
+
+  // 6g. Tooltip Assertions
+  const tooltipCoords = await ev(`(() => {
+    const btn = document.querySelector('[data-qa="design-system-tooltip-trigger"]');
+    if (!btn) return null;
+    btn.scrollIntoView({ block: 'center', inline: 'center' });
+    btn.focus();
+    btn.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+    btn.dispatchEvent(new PointerEvent('pointerenter', { bubbles: true }));
+    const r = btn.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  })()`);
+  if (tooltipCoords) {
+    await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: tooltipCoords.x, y: tooltipCoords.y });
+  }
+  for (let i = 0; i < 20; i++) {
+    const ready = await ev('Boolean(document.querySelector(\'[data-qa="design-system-tooltip"]\'))');
+    if (ready) break;
+    await new Promise((r) => setTimeout(r, 100));
+  }
+  const tooltipStyles = await ev(`(() => {
+    const tip = document.querySelector('[data-qa="design-system-tooltip"]');
+    if (!tip) return null;
+    const cs = window.getComputedStyle(tip);
+    return {
+      borderRadius: Math.round(parseFloat(cs.borderRadius)),
+      fontSize: Math.round(parseFloat(cs.fontSize)),
+      textTransform: cs.textTransform,
+      backgroundColor: cs.backgroundColor,
+      color: cs.color,
+      boxShadow: cs.boxShadow,
+    };
+  })()`);
+  if (!tooltipStyles) throw new Error('Tooltip did not mount on trigger hover/focus');
+  if (tooltipStyles.fontSize !== 12) {
+    throw new Error(`Tooltip fontSize is ${tooltipStyles.fontSize}px (expected 12px / text-xs)`);
+  }
+  if (tooltipStyles.borderRadius !== 10) {
+    throw new Error(`Tooltip radius is ${tooltipStyles.borderRadius}px (expected 10px / rounded-md)`);
+  }
+  if (tooltipStyles.boxShadow !== 'none') {
+    throw new Error(`Tooltip boxShadow is ${tooltipStyles.boxShadow} (expected none, shadow must be removed)`);
+  }
+  if (!tooltipStyles.backgroundColor.includes('195, 131, 34')) {
+    throw new Error(`Tooltip background is ${tooltipStyles.backgroundColor} (expected brand gold)`);
+  }
+  if (!tooltipStyles.color.includes('34, 31, 28')) {
+    throw new Error(`Tooltip color is ${tooltipStyles.color} (expected dark ink)`);
+  }
+  console.log(`  ✓ Tooltip Primitive: 12px text, 10px radius, no shadow, brand gold background, dark ink foreground verified.`);
 
   // 7. Responsive AppPage Gutters verification (700px viewport)
   await S('Emulation.setDeviceMetricsOverride', {
