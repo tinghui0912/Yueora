@@ -10,7 +10,7 @@ const sizeMap = {
 };
 
 const paddingMap = {
-  normal: 'px-6 sm:px-8 md:px-10 py-6 md:py-10',
+  normal: 'px-6 md:px-10 py-6 md:py-10',
   compact: 'px-6 py-6 md:px-8',
   none: 'p-0',
 };

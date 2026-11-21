@@ -1077,6 +1077,185 @@ async function verifyComputedStyles(client, baseUrl) {
     console.log(`  ✓ FilterTabs Consistency: 10px radius, bg-brand-soft active state verified across Library and Notifications.`);
   }
 
+  // 6. Primitive Pixel-Parity Specimen Assertions (/design-system?demo=true)
+  await navigateAndWait(`${baseUrl}/design-system?demo=true`);
+  for (let i = 0; i < 60; i++) {
+    const hasSpecimen = await ev('Boolean(document.querySelector("[data-qa=\'primitive-parity-section\']"))');
+    if (hasSpecimen) break;
+    await new Promise((r) => setTimeout(r, 200));
+  }
+
+  const primitives = await ev(`(() => {
+    const cb = document.querySelector('[data-qa="design-system-checkbox"]');
+    const cbIcon = cb ? cb.querySelector('svg') : null;
+    const radio = document.querySelector('[data-qa="design-system-radio"] button');
+    const radioIcon = radio ? radio.querySelector('svg') : null;
+    const sw = document.querySelector('[data-qa="design-system-switch"]');
+    const swThumb = sw ? sw.querySelector('span') : null;
+    const badge = document.querySelector('[data-qa="design-system-badge"]');
+    const filterTabs = document.querySelector('[data-qa="design-system-filter-tabs"]');
+    const filterBtn = filterTabs ? filterTabs.querySelector('button') : null;
+
+    const getCs = (el) => el ? window.getComputedStyle(el) : null;
+    const cbCs = getCs(cb);
+    const cbIconCs = getCs(cbIcon);
+    const radioCs = getCs(radio);
+    const radioIconCs = getCs(radioIcon);
+    const swCs = getCs(sw);
+    const swThumbCs = getCs(swThumb);
+    const badgeCs = getCs(badge);
+    const filterTabsRole = filterTabs ? filterTabs.getAttribute('role') : null;
+    const filterBtnPressed = filterBtn ? filterBtn.getAttribute('aria-pressed') : null;
+    const filterBtnRole = filterBtn ? filterBtn.getAttribute('role') : null;
+
+    return {
+      checkbox: cbCs ? {
+        width: Math.round(parseFloat(cbCs.width)),
+        height: Math.round(parseFloat(cbCs.height)),
+        borderRadius: Math.round(parseFloat(cbCs.borderRadius)),
+        backgroundColor: cbCs.backgroundColor,
+        iconWidth: cbIcon ? Math.round(cbIcon.getBoundingClientRect().width) : 0,
+        iconHeight: cbIcon ? Math.round(cbIcon.getBoundingClientRect().height) : 0,
+        iconClass: cbIcon ? (cbIcon.getAttribute('class') || '') : '',
+      } : null,
+      radio: radioCs ? {
+        width: Math.round(parseFloat(radioCs.width)),
+        height: Math.round(parseFloat(radioCs.height)),
+        iconWidth: radioIcon ? Math.round(radioIcon.getBoundingClientRect().width) : 0,
+        iconHeight: radioIcon ? Math.round(radioIcon.getBoundingClientRect().height) : 0,
+      } : null,
+      switchControl: swCs ? {
+        width: Math.round(parseFloat(swCs.width)),
+        height: Math.round(parseFloat(swCs.height)),
+        boxShadow: swCs.boxShadow,
+        thumbWidth: swThumbCs ? Math.round(parseFloat(swThumbCs.width)) : 0,
+        thumbHeight: swThumbCs ? Math.round(parseFloat(swThumbCs.height)) : 0,
+        thumbShadow: swThumbCs ? swThumbCs.boxShadow : null,
+      } : null,
+      badge: badgeCs ? {
+        backgroundColor: badgeCs.backgroundColor,
+        color: badgeCs.color,
+        borderRadius: Math.round(parseFloat(badgeCs.borderRadius)),
+      } : null,
+      filterSemantics: {
+        containerRole: filterTabsRole,
+        buttonPressed: filterBtnPressed,
+        buttonRole: filterBtnRole,
+      },
+    };
+  })()`);
+
+  if (!primitives.checkbox) throw new Error('Checkbox specimen not found in /design-system');
+  if (primitives.checkbox.width !== 16 || primitives.checkbox.height !== 16) {
+    throw new Error(`Checkbox size is ${primitives.checkbox.width}x${primitives.checkbox.height} (expected 16x16)`);
+  }
+  if (primitives.checkbox.borderRadius !== 8) {
+    throw new Error(`Checkbox radius is ${primitives.checkbox.borderRadius}px (expected 8px / rounded-sm via --radius: 0.75rem)`);
+  }
+  if (!primitives.checkbox.iconClass.includes('h-4') || !primitives.checkbox.iconClass.includes('w-4')) {
+    throw new Error(`Checkbox indicator must have h-4 w-4 class, got: '${primitives.checkbox.iconClass}'`);
+  }
+  if (primitives.checkbox.iconWidth < 14 || primitives.checkbox.iconHeight !== 16) {
+    throw new Error(`Checkbox indicator size is ${primitives.checkbox.iconWidth}x${primitives.checkbox.iconHeight} (expected 14-16px / h-4 w-4)`);
+  }
+  console.log(`  ✓ Checkbox Primitive: 16x16, 8px radius (rounded-sm), h-4 w-4 indicator verified.`);
+
+  if (!primitives.radio) throw new Error('RadioGroup specimen not found in /design-system');
+  if (primitives.radio.width !== 16 || primitives.radio.height !== 16) {
+    throw new Error(`Radio size is ${primitives.radio.width}x${primitives.radio.height} (expected 16x16)`);
+  }
+  if (primitives.radio.iconWidth !== 14 || primitives.radio.iconHeight !== 14) {
+    throw new Error(`Radio indicator circle size is ${primitives.radio.iconWidth}x${primitives.radio.iconHeight} (expected 14x14 / h-3.5 w-3.5)`);
+  }
+  console.log(`  ✓ Radio Primitive: 16x16, 14x14 indicator verified.`);
+
+  if (!primitives.switchControl) throw new Error('Switch specimen not found in /design-system');
+  if (primitives.switchControl.width !== 36 || primitives.switchControl.height !== 20) {
+    throw new Error(`Switch size is ${primitives.switchControl.width}x${primitives.switchControl.height} (expected 36x20 / h-5 w-9)`);
+  }
+  if (primitives.switchControl.thumbWidth !== 16 || primitives.switchControl.thumbHeight !== 16) {
+    throw new Error(`Switch thumb size is ${primitives.switchControl.thumbWidth}x${primitives.switchControl.thumbHeight} (expected 16x16)`);
+  }
+  console.log(`  ✓ Switch Primitive: 36x20 track, 16x16 thumb verified.`);
+
+  if (primitives.filterSemantics.containerRole !== 'group') {
+    throw new Error(`FilterTabs container role must be 'group', got '${primitives.filterSemantics.containerRole}'`);
+  }
+  if (primitives.filterSemantics.buttonRole === 'tab') {
+    throw new Error(`FilterTab button must NOT have role='tab'`);
+  }
+  if (primitives.filterSemantics.buttonPressed === null) {
+    throw new Error(`FilterTab button must have aria-pressed attribute`);
+  }
+  console.log(`  ✓ FilterTabs Semantics: role="group" and aria-pressed toggle verified.`);
+
+  // 7. Responsive AppPage Gutters verification (700px viewport)
+  await S('Emulation.setDeviceMetricsOverride', {
+    width: 700,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+    dontSetVisibleSize: false,
+  });
+  await new Promise((r) => setTimeout(r, 200));
+
+  const gutter700 = await ev(`(() => {
+    const page = document.querySelector('main > div');
+    if (!page) return null;
+    const cs = window.getComputedStyle(page);
+    return {
+      paddingLeft: parseFloat(cs.paddingLeft),
+      paddingRight: parseFloat(cs.paddingRight),
+    };
+  })()`);
+
+  if (gutter700) {
+    if (Math.round(gutter700.paddingLeft) !== 24 || Math.round(gutter700.paddingRight) !== 24) {
+      throw new Error(`AppPage gutter at 700px is ${gutter700.paddingLeft}px (expected 24px / px-6 matching NumisCollection, sm:px-8 must be removed)`);
+    }
+    console.log(`  ✓ Responsive AppPage Gutter: 24px at 700px viewport (matching NumisCollection p-6 md:p-10).`);
+  }
+
+  // Restore 1440px desktop
+  await S('Emulation.setDeviceMetricsOverride', {
+    width: 1440,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+    dontSetVisibleSize: false,
+  });
+
+  // 8. Performances Page Semantics & Divider Check
+  await navigateAndWait(`${baseUrl}/performances?demo=true`);
+  for (let i = 0; i < 60; i++) {
+    const ready = await ev('Boolean(document.querySelector("h1"))');
+    if (ready) break;
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  const perfSemantics = await ev(`(() => {
+    const viewTabs = document.querySelector('[aria-label="Performances view"]');
+    const filterTabs = document.querySelector('[aria-label="Filter media type"]');
+    const tabsContainer = viewTabs ? viewTabs.closest('.flex') : null;
+    const tabsRowBorder = tabsContainer ? window.getComputedStyle(tabsContainer).borderBottomWidth : '0px';
+
+    return {
+      viewTabsRole: viewTabs ? viewTabs.getAttribute('role') : null,
+      filterTabsRole: filterTabs ? filterTabs.getAttribute('role') : null,
+      hasBottomBorder: parseFloat(tabsRowBorder) > 0,
+    };
+  })()`);
+
+  if (!perfSemantics.viewTabsRole || perfSemantics.viewTabsRole !== 'tablist') {
+    throw new Error(`Performances view switch must have role='tablist'`);
+  }
+  if (!perfSemantics.filterTabsRole || perfSemantics.filterTabsRole !== 'group') {
+    throw new Error(`Performances media filter must have role='group' (FilterTabs), got '${perfSemantics.filterTabsRole}'`);
+  }
+  if (perfSemantics.hasBottomBorder) {
+    throw new Error(`Performances controls container must NOT have persistent border-b divider`);
+  }
+  console.log(`  ✓ Performances Page Semantics: Tabs view switch, FilterTabs media filter, no persistent border-b divider verified.`);
+
   console.log(`✅ All computed style assertions passed.\n`);
 }
 
@@ -1937,8 +2116,12 @@ async function main() {
     process.exit(1);
   }
 
-  const actualCount = fs.readdirSync(OUT_DIR).filter((f) => f.endsWith('.png')).length;
-  console.log(`\n✅ Automated screenshot capture complete. All ${actualCount} targets captured and asserted successfully in .taste-skill/shots/`);
+  const allPngs = fs.readdirSync(OUT_DIR).filter((f) => f.endsWith('.png'));
+  const fullPageCount = allPngs.filter((f) => f.includes('-full')).length;
+  console.log(`\n✅ Automated screenshot capture complete:`);
+  console.log(`   - ${TARGETS.length} viewport QA targets validated.`);
+  console.log(`   - ${fullPageCount} full-page companion captures generated.`);
+  console.log(`   - ${allPngs.length} PNG files total in .taste-skill/shots/\n`);
   process.exit(0);
 }
 

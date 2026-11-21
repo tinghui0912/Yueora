@@ -131,7 +131,7 @@
     --input: var(--primitive-neutral-200);
     --ring: var(--primitive-gold-500);
 
-    --radius: 0.625rem;
+    --radius: 0.75rem; /* 12px baseline matching NumisCollection */
     --font-heading: "Playfair Display", ui-serif, Georgia, serif;
     --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
     --font-display: "Playfair Display", ui-serif, Georgia, serif;

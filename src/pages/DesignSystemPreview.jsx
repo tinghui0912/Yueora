@@ -14,12 +14,18 @@ import { Stepper } from '@/components/patterns/Stepper';
 import { ChoiceCard } from '@/components/patterns/ChoiceCard';
 import { Surface } from '@/components/patterns/Surface';
 import BackLink from '@/components/patterns/BackLink';
+import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Switch } from '@/components/ui/switch';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SearchTrigger from '@/components/app-shell/SearchTrigger';
 
@@ -28,6 +34,10 @@ export default function DesignSystemPreview() {
   const [selectedChoice, setSelectedChoice] = useState('pdf');
   const [inputValue, setInputValue] = useState('Debussy — Clair de Lune');
   const [hasError, setHasError] = useState(false);
+  const [checkboxChecked, setCheckboxChecked] = useState(true);
+  const [radioValue, setRadioValue] = useState('acoustic');
+  const [switchChecked, setSwitchChecked] = useState(true);
+  const [filterActive, setFilterActive] = useState('all');
 
   return (
     <AppPage size="standard" className="space-y-12">
@@ -317,6 +327,155 @@ export default function DesignSystemPreview() {
                 <option>Recital Preparation</option>
               </NativeSelect>
             </Field>
+          </div>
+        </Surface>
+      </section>
+
+      {/* 3b. Form & Selection Primitives (Pixel-Parity Specimen) */}
+      <section className="space-y-4" data-qa="primitive-parity-section">
+        <SectionHeader
+          title="Selection & Overlay Primitives"
+          description="Checkbox, Radio, Switch, Popover, Tooltip, Badges, and FilterTabs aligned with NumisCollection 12px baseline."
+        />
+        <Surface tone="panel" padding="md" className="space-y-6">
+          {/* Checkbox & Radio & Switch */}
+          <div className="grid gap-6 sm:grid-cols-3">
+            {/* Checkbox specimen */}
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Checkbox</span>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={checkboxChecked}
+                    onCheckedChange={(checked) => setCheckboxChecked(checked === true)}
+                    data-qa="design-system-checkbox"
+                  />
+                  <span className="type-body-small text-ink-primary">Keep preserved take</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={false}
+                    data-qa="design-system-checkbox-unchecked"
+                  />
+                  <span className="type-body-small text-ink-secondary">Unchecked state</span>
+                </label>
+              </div>
+            </div>
+
+            {/* RadioGroup specimen */}
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Radio Group</span>
+              <RadioGroup
+                value={radioValue}
+                onValueChange={setRadioValue}
+                data-qa="design-system-radio"
+              >
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <RadioGroupItem value="acoustic" id="ds-radio-acoustic" />
+                  <span className="type-body-small text-ink-primary">Acoustic Piano</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <RadioGroupItem value="digital" id="ds-radio-digital" />
+                  <span className="type-body-small text-ink-secondary">Digital / MIDI</span>
+                </label>
+              </RadioGroup>
+            </div>
+
+            {/* Switch specimen */}
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Switch Toggle</span>
+              <div className="space-y-2">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Switch
+                    checked={switchChecked}
+                    onCheckedChange={setSwitchChecked}
+                    data-qa="design-system-switch"
+                  />
+                  <span className="type-body-small text-ink-primary">Acoustic listening</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Switch
+                    checked={false}
+                    data-qa="design-system-switch-unchecked"
+                  />
+                  <span className="type-body-small text-ink-secondary">Muted</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Popover & Tooltip & FilterTabs */}
+          <div className="border-t border-line-subtle pt-6 grid gap-6 sm:grid-cols-3">
+            {/* Popover specimen */}
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Popover (shadow-md, rounded-md)</span>
+              <div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button intent="secondary" size="sm" data-qa="design-system-popover-trigger">
+                      Open Popover
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent data-qa="design-system-popover">
+                    <div className="space-y-2">
+                      <p className="type-body-small font-semibold text-ink-primary">Popover Specimen</p>
+                      <p className="type-caption text-ink-secondary">
+                        Aligned to shadow-md and 10px radius (rounded-md).
+                      </p>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+
+            {/* Tooltip specimen */}
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Tooltip (WCAG AA gold badge)</span>
+              <div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button intent="quiet" size="sm" data-qa="design-system-tooltip-trigger">
+                        Hover for Tooltip
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent data-qa="design-system-tooltip">
+                      Preserved Take Details
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </div>
+
+            {/* FilterTabs specimen */}
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">FilterTabs (role=group, aria-pressed)</span>
+              <FilterTabs aria-label="Specimen filter" data-qa="design-system-filter-tabs">
+                <FilterTab active={filterActive === 'all'} onClick={() => setFilterActive('all')}>
+                  All
+                </FilterTab>
+                <FilterTab active={filterActive === 'takes'} onClick={() => setFilterActive('takes')}>
+                  Takes
+                </FilterTab>
+                <FilterTab active={filterActive === 'notes'} onClick={() => setFilterActive('notes')}>
+                  Notes
+                </FilterTab>
+              </FilterTabs>
+            </div>
+          </div>
+
+          {/* Badges specimen */}
+          <div className="border-t border-line-subtle pt-6 space-y-3">
+            <span className="type-caption text-ink-secondary/70">Badges (AA Contrast &amp; Semantic Statuses)</span>
+            <div className="flex flex-wrap items-center gap-2" data-qa="design-system-badge-group">
+              <Badge variant="default" data-qa="design-system-badge">Default Brand (AA)</Badge>
+              <Badge variant="brand">Brand Soft</Badge>
+              <Badge variant="secondary">Secondary</Badge>
+              <Badge variant="outline">Outline</Badge>
+              <Badge variant="success">Success</Badge>
+              <Badge variant="warning">Warning</Badge>
+              <Badge variant="destructive">Destructive</Badge>
+            </div>
           </div>
         </Surface>
       </section>

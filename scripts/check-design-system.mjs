@@ -383,6 +383,16 @@ function verifyFoundations(issues = []) {
     }
   });
 
+  // Verify canonical radius baseline (12px / 0.75rem matching NumisCollection)
+  if (!css.includes('--radius: 0.75rem;')) {
+    issues.push({
+      file: 'src/index.css',
+      line: 1,
+      matched: '--radius',
+      message: '--radius must be 0.75rem (12px baseline matching NumisCollection).',
+    });
+  }
+
   // Verify canonical radius control token (10px / 0.625rem aligned with NumisCollection calc(12px - 2px))
   if (!css.includes('--radius-control: 0.625rem;')) {
     issues.push({
@@ -1366,6 +1376,20 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
         matched: 'shadow-card-hover in Surface.jsx',
         message: 'Surface must not reference retired shadow-card-hover token.',
       });
+    }
+
+    // Verify non-actionable Practice StatCards have no interactive prop
+    const practiceHubPath = path.resolve('src/pages/PracticeHub.jsx');
+    if (fs.existsSync(practiceHubPath)) {
+      const phCode = fs.readFileSync(practiceHubPath, 'utf8');
+      if (phCode.includes('interactive className="flex items-start justify-between" data-qa="practice-stat-card"')) {
+        issues.push({
+          file: 'src/pages/PracticeHub.jsx',
+          line: 1,
+          matched: 'interactive on non-actionable practice stat card',
+          message: 'Non-actionable PracticeHub StatCards must not use interactive prop.',
+        });
+      }
     }
   }
 

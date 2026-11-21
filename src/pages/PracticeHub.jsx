@@ -57,7 +57,7 @@ export default function PracticeHub() {
 
       {/* 4-column StatCards row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-qa="practice-stat-cards">
-        <Surface tone="panel" padding="md" interactive className="flex items-start justify-between" data-qa="practice-stat-card">
+        <Surface tone="panel" padding="md" className="flex items-start justify-between" data-qa="practice-stat-card">
           <div>
             <p className="type-stat-label text-ink-tertiary" data-qa="practice-stat-label">Minutes Played</p>
             <p className="type-metric text-ink-primary mt-1.5" data-qa="practice-stat-metric">{thisWeekMinutes} <span className="type-card-metadata text-ink-secondary font-normal">min</span></p>
@@ -68,7 +68,7 @@ export default function PracticeHub() {
           </div>
         </Surface>
 
-        <Surface tone="panel" padding="md" interactive className="flex items-start justify-between" data-qa="practice-stat-card">
+        <Surface tone="panel" padding="md" className="flex items-start justify-between" data-qa="practice-stat-card">
           <div>
             <p className="type-stat-label text-ink-tertiary" data-qa="practice-stat-label">Calm Sessions</p>
             <p className="type-metric text-ink-primary mt-1.5" data-qa="practice-stat-metric">{thisWeekSessions}</p>
@@ -79,7 +79,7 @@ export default function PracticeHub() {
           </div>
         </Surface>
 
-        <Surface tone="panel" padding="md" interactive className="flex items-start justify-between" data-qa="practice-stat-card">
+        <Surface tone="panel" padding="md" className="flex items-start justify-between" data-qa="practice-stat-card">
           <div>
             <p className="type-stat-label text-ink-tertiary" data-qa="practice-stat-label">Active Pieces</p>
             <p className="type-metric text-ink-primary mt-1.5" data-qa="practice-stat-metric">{thisWeekPieces}</p>
@@ -90,7 +90,7 @@ export default function PracticeHub() {
           </div>
         </Surface>
 
-        <Surface tone="panel" padding="md" interactive className="flex items-start justify-between" data-qa="practice-stat-card">
+        <Surface tone="panel" padding="md" className="flex items-start justify-between" data-qa="practice-stat-card">
           <div>
             <p className="type-stat-label text-ink-tertiary" data-qa="practice-stat-label">Days Active</p>
             <p className="type-metric text-ink-primary mt-1.5" data-qa="practice-stat-metric">{thisWeekMarks.filter(Boolean).length} <span className="type-card-metadata text-ink-secondary font-normal">/ 7</span></p>

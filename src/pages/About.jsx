@@ -163,7 +163,7 @@ export default function About() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <Reveal delay={0.05} y={28}>
-                <Surface padding="lg" interactive className="h-full flex flex-col justify-between">
+                <Surface padding="lg" className="h-full flex flex-col justify-between">
                   <div>
                     <div className="w-10 h-10 rounded-control bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
                       <Music2 className="w-5 h-5" />
@@ -178,7 +178,7 @@ export default function About() {
               </Reveal>
 
               <Reveal delay={0.1} y={28}>
-                <Surface padding="lg" interactive className="h-full flex flex-col justify-between">
+                <Surface padding="lg" className="h-full flex flex-col justify-between">
                   <div>
                     <div className="w-10 h-10 rounded-control bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
                       <Heart className="w-5 h-5" />
@@ -193,7 +193,7 @@ export default function About() {
               </Reveal>
 
               <Reveal delay={0.15} y={28}>
-                <Surface padding="lg" interactive className="h-full flex flex-col justify-between">
+                <Surface padding="lg" className="h-full flex flex-col justify-between">
                   <div>
                     <div className="w-10 h-10 rounded-control bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
                       <Eye className="w-5 h-5" />
@@ -208,7 +208,7 @@ export default function About() {
               </Reveal>
 
               <Reveal delay={0.2} y={28}>
-                <Surface padding="lg" interactive className="h-full flex flex-col justify-between">
+                <Surface padding="lg" className="h-full flex flex-col justify-between">
                   <div>
                     <div className="w-10 h-10 rounded-control bg-neutral-muted flex items-center justify-center text-ink-primary mb-6">
                       <TrendingUp className="w-5 h-5" />

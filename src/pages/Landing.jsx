@@ -463,21 +463,21 @@ export default function Landing() {
 
             <Reveal delay={0.15}>
               <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Surface padding="md" interactive>
+                <Surface padding="md">
                   <h3 className="type-subsection text-ink-primary">Paced Following</h3>
                   <p className="mt-2 type-body-small text-ink-secondary">
                     Respects expressive rubato, slowing down and accelerating naturally with you.
                   </p>
                 </Surface>
 
-                <Surface padding="md" interactive>
+                <Surface padding="md">
                   <h3 className="type-subsection text-ink-primary">Phrase Looping</h3>
                   <p className="mt-2 type-body-small text-ink-secondary">
                     Select measures 14 to 22 with one tap to work through tricky transitions calmly.
                   </p>
                 </Surface>
 
-                <Surface padding="md" interactive className="sm:col-span-2">
+                <Surface padding="md" className="sm:col-span-2">
                   <h3 className="type-subsection text-ink-primary">Zero Accuracy Scoring</h3>
                   <p className="mt-2 type-body-small text-ink-secondary">
                     No percentage grades, no stars, no shaming—just a quiet, supportive companion at the keys.

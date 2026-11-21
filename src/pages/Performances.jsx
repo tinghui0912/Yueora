@@ -7,6 +7,7 @@ import { dayLabel } from '@/lib/practiceUtils';
 import PerformanceRow from '@/components/performances/PerformanceRow';
 import StateMessage from '@/components/patterns/StateMessage';
 import AppPage from '@/components/patterns/AppPage';
+import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -147,13 +148,13 @@ export default function Performances() {
   };
 
   return (
-    <AppPage size="standard" className="py-8">
+    <AppPage size="standard">
       {/* Page Title */}
       <div>
         <h1 className="type-workspace-title text-ink-primary">
           Preserved Moments
         </h1>
-        <p className="mt-1 type-page-subtitle text-ink-secondary">
+        <p className="mt-1 type-page-subtitle text-ink-tertiary">
           The musical takes you chose to keep.
         </p>
       </div>
@@ -174,7 +175,7 @@ export default function Performances() {
       )}
 
       {/* Tabs */}
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-b border-line-subtle pb-3">
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
         <Tabs value={tab} onValueChange={setTab}>
           <TabsList aria-label="Performances view">
             {TABS.map((t) => (
@@ -187,15 +188,17 @@ export default function Performances() {
 
         {source.length > 0 && (
           <div className="flex flex-wrap items-center gap-2">
-            <Tabs value={kind} onValueChange={setKind}>
-              <TabsList aria-label="Filter media type">
-                {FILTERS.map((f) => (
-                  <TabsTrigger key={f.value} value={f.value}>
-                    {f.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
+            <FilterTabs aria-label="Filter media type">
+              {FILTERS.map((f) => (
+                <FilterTab
+                  key={f.value}
+                  active={kind === f.value}
+                  onClick={() => setKind(f.value)}
+                >
+                  {f.label}
+                </FilterTab>
+              ))}
+            </FilterTabs>
 
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-tertiary" />
