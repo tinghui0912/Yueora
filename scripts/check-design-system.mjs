@@ -1378,7 +1378,20 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
       });
     }
 
-    // Verify non-actionable Practice StatCards have no interactive prop
+    // Verify non-actionable Practice StatCards have no interactive prop on Surface
+    const practiceStatCardPath = path.resolve('src/components/practice/PracticeStatCard.jsx');
+    if (fs.existsSync(practiceStatCardPath)) {
+      const pscCode = fs.readFileSync(practiceStatCardPath, 'utf8');
+      if (/<Surface[^>]*\binteractive\b/.test(pscCode)) {
+        issues.push({
+          file: 'src/components/practice/PracticeStatCard.jsx',
+          line: 1,
+          matched: 'interactive on Surface in PracticeStatCard',
+          message: 'PracticeStatCard must not pass interactive to Surface. Non-actionable metric cards must own their hover grammar directly.',
+        });
+      }
+    }
+
     const practiceHubPath = path.resolve('src/pages/PracticeHub.jsx');
     if (fs.existsSync(practiceHubPath)) {
       const phCode = fs.readFileSync(practiceHubPath, 'utf8');

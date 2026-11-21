@@ -17,7 +17,8 @@ const SegmentedControlContext = createContext(null);
 /**
  * SegmentedControl
  * Compact, tactile view/mode switch matching NumisCollection application visual grammar.
- * ~44px height container, 12px overlay radius, 10px control radius item, shadow-raised active card surface.
+ * ~44px height container, 12px overlay radius, 12px overlay item radius, standard shadow active card surface.
+ * Implements pressed button group semantics (role="group" + aria-pressed).
  * @param {SegmentedControlProps} props
  */
 export function SegmentedControl({
@@ -31,7 +32,7 @@ export function SegmentedControl({
   return (
     <SegmentedControlContext.Provider value={{ value, onValueChange }}>
       <div
-        role="tablist"
+        role="group"
         aria-label={ariaLabel}
         className={cn(
           'inline-flex items-center gap-1 rounded-overlay bg-neutral-muted/50 p-1 w-fit select-none',
@@ -80,16 +81,15 @@ export function SegmentedControlItem({
   return (
     <button
       type="button"
-      role="tab"
-      aria-selected={isSelected}
+      aria-pressed={isSelected}
       disabled={disabled}
       onClick={handleClick}
       data-state={isSelected ? 'active' : 'inactive'}
       data-qa="segmented-control-item"
       className={cn(
-        'inline-flex items-center justify-center whitespace-nowrap rounded-control px-4 py-2 type-label font-medium transition-all duration-200 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand disabled:pointer-events-none disabled:opacity-50',
+        'inline-flex items-center justify-center whitespace-nowrap rounded-overlay px-4 py-2 type-label font-medium transition-all duration-200 cursor-pointer select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand disabled:pointer-events-none disabled:opacity-50',
         isSelected
-          ? 'bg-surface-panel text-ink-primary shadow-raised'
+          ? 'bg-surface-panel text-ink-primary shadow'
           : 'text-ink-tertiary hover:text-ink-primary',
         className
       )}

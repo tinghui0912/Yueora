@@ -1575,6 +1575,32 @@ async function verifyComputedStyles(client, baseUrl) {
   }
   console.log(`  ✓ Tooltip Primitive: 12px text, 400 font-weight, 10px radius, no shadow, brand gold background, dark ink foreground verified.`);
 
+  // 6b. EmptyState with Action Spacing Invariants (/design-system?demo=true)
+  const emptyStateWithAction = await ev(`(() => {
+    const section = document.querySelector('[data-qa="design-system-patterns-section"]');
+    if (!section) return null;
+    const es = section.querySelector('[data-qa="empty-state"]');
+    if (!es) return null;
+    const desc = es.querySelector('[data-qa="empty-state-description"]');
+    const descCs = desc ? window.getComputedStyle(desc) : null;
+    const action = es.querySelector('[data-qa="empty-state-action"]');
+    const actionCs = action ? window.getComputedStyle(action) : null;
+    return {
+      descMarginBottom: descCs ? Math.round(parseFloat(descCs.marginBottom)) : null,
+      actionMarginTop: actionCs ? Math.round(parseFloat(actionCs.marginTop)) : null,
+    };
+  })()`);
+
+  if (emptyStateWithAction) {
+    if (emptyStateWithAction.descMarginBottom !== 24) {
+      throw new Error(`EmptyState with action description marginBottom is ${emptyStateWithAction.descMarginBottom}px (expected 24px / mb-6 matching Numis)`);
+    }
+    if (emptyStateWithAction.actionMarginTop !== 0) {
+      throw new Error(`EmptyState action wrapper marginTop is ${emptyStateWithAction.actionMarginTop}px (expected 0px, mt-2 must be removed)`);
+    }
+    console.log(`  ✓ EmptyState Spacing (with action): description mb-6 (24px), action wrapper mt-0 (0px extra gap) verified.`);
+  }
+
   // 7. Responsive AppPage Gutters verification (700px viewport)
   await S('Emulation.setDeviceMetricsOverride', {
     width: 700,
@@ -1631,8 +1657,8 @@ async function verifyComputedStyles(client, baseUrl) {
     };
   })()`);
 
-  if (!perfSemantics.viewTabsRole || perfSemantics.viewTabsRole !== 'tablist') {
-    throw new Error(`Performances view switch must have role='tablist'`);
+  if (!perfSemantics.viewTabsRole || perfSemantics.viewTabsRole !== 'group') {
+    throw new Error(`Performances view switch must have role='group' (SegmentedControl), got '${perfSemantics.viewTabsRole}'`);
   }
   if (!perfSemantics.filterTabsRole || perfSemantics.filterTabsRole !== 'group') {
     throw new Error(`Performances media filter must have role='group' (FilterTabs), got '${perfSemantics.filterTabsRole}'`);
@@ -1640,16 +1666,17 @@ async function verifyComputedStyles(client, baseUrl) {
   if (perfSemantics.hasBottomBorder) {
     throw new Error(`Performances controls container must NOT have persistent border-b divider`);
   }
-  console.log(`  ✓ Performances Page Semantics: Tabs view switch, FilterTabs media filter, no persistent border-b divider verified.`);
+  console.log(`  ✓ Performances Page Semantics: Group view switch (SegmentedControl), FilterTabs media filter, no persistent border-b divider verified.`);
 
   // 9. SegmentedControl & EmptyState Computed Styles (Numis Parity)
   const segmentedStyles = await ev(`(() => {
     const sc = document.querySelector('[data-qa="segmented-control"]');
     if (!sc) return null;
     const scCs = window.getComputedStyle(sc);
-    const activeItem = sc.querySelector('[data-qa="segmented-control-item"][data-state="active"]');
+    const items = Array.from(sc.querySelectorAll('[data-qa="segmented-control-item"]'));
+    const activeItem = items.find(i => i.getAttribute('data-state') === 'active');
     const activeCs = activeItem ? window.getComputedStyle(activeItem) : null;
-    const inactiveItem = sc.querySelector('[data-qa="segmented-control-item"][data-state="inactive"]');
+    const inactiveItem = items.find(i => i.getAttribute('data-state') === 'inactive');
     const inactiveCs = inactiveItem ? window.getComputedStyle(inactiveItem) : null;
     const scRect = sc.getBoundingClientRect();
 
@@ -1659,6 +1686,8 @@ async function verifyComputedStyles(client, baseUrl) {
       outerPaddingLeft: Math.round(parseFloat(scCs.paddingLeft)),
       outerGap: Math.round(parseFloat(scCs.gap)),
       height: Math.round(scRect.height),
+      itemRoles: items.map(i => i.getAttribute('role')),
+      itemTags: items.map(i => i.tagName),
       active: activeCs ? {
         borderRadius: Math.round(parseFloat(activeCs.borderRadius)),
         paddingTop: Math.round(parseFloat(activeCs.paddingTop)),
@@ -1670,10 +1699,14 @@ async function verifyComputedStyles(client, baseUrl) {
         backgroundColor: activeCs.backgroundColor,
         color: activeCs.color,
         boxShadow: activeCs.boxShadow,
+        ariaPressed: activeItem.getAttribute('aria-pressed'),
+        hasAriaSelected: activeItem.hasAttribute('aria-selected'),
       } : null,
       inactive: inactiveCs ? {
         backgroundColor: inactiveCs.backgroundColor,
         color: inactiveCs.color,
+        ariaPressed: inactiveItem.getAttribute('aria-pressed'),
+        hasAriaSelected: inactiveItem.hasAttribute('aria-selected'),
       } : null,
     };
   })()`);
@@ -1688,12 +1721,34 @@ async function verifyComputedStyles(client, baseUrl) {
   if (segmentedStyles.outerGap !== 4) {
     throw new Error(`SegmentedControl gap is ${segmentedStyles.outerGap}px (expected 4px / gap-1)`);
   }
-  if (segmentedStyles.height < 38 || segmentedStyles.height > 48) {
-    throw new Error(`SegmentedControl height is ${segmentedStyles.height}px (expected ~44px, between 38px and 48px)`);
+  if (segmentedStyles.height < 42 || segmentedStyles.height > 46) {
+    throw new Error(`SegmentedControl height is ${segmentedStyles.height}px (expected ~44px, between 42px and 46px)`);
   }
   if (!segmentedStyles.active) throw new Error('Active SegmentedControl item not found');
-  if (segmentedStyles.active.borderRadius !== 10) {
-    throw new Error(`SegmentedControl active item radius is ${segmentedStyles.active.borderRadius}px (expected 10px / rounded-control)`);
+  for (const tag of segmentedStyles.itemTags) {
+    if (tag !== 'BUTTON') {
+      throw new Error(`SegmentedControl items must be native <button> tags, found: ${tag}`);
+    }
+  }
+  for (const role of segmentedStyles.itemRoles) {
+    if (role === 'tab') {
+      throw new Error(`SegmentedControl items must NOT have role="tab", found role="${role}"`);
+    }
+  }
+  if (segmentedStyles.active.ariaPressed !== 'true') {
+    throw new Error(`SegmentedControl active item must have aria-pressed="true", got: ${segmentedStyles.active.ariaPressed}`);
+  }
+  if (segmentedStyles.active.hasAriaSelected) {
+    throw new Error(`SegmentedControl active item must NOT have aria-selected`);
+  }
+  if (segmentedStyles.inactive.ariaPressed !== 'false') {
+    throw new Error(`SegmentedControl inactive item must have aria-pressed="false", got: ${segmentedStyles.inactive.ariaPressed}`);
+  }
+  if (segmentedStyles.inactive.hasAriaSelected) {
+    throw new Error(`SegmentedControl inactive item must NOT have aria-selected`);
+  }
+  if (segmentedStyles.active.borderRadius !== 12) {
+    throw new Error(`SegmentedControl active item radius is ${segmentedStyles.active.borderRadius}px (expected 12px / rounded-overlay, 10px rounded-control is rejected)`);
   }
   if (segmentedStyles.active.paddingLeft !== 16 || segmentedStyles.active.paddingRight !== 16) {
     throw new Error(`SegmentedControl active item horizontal padding is ${segmentedStyles.active.paddingLeft}px (expected 16px / px-4)`);
@@ -1711,17 +1766,52 @@ async function verifyComputedStyles(client, baseUrl) {
     throw new Error(`SegmentedControl active item background is ${segmentedStyles.active.backgroundColor} (expected surface-panel warm white)`);
   }
   if (!segmentedStyles.active.boxShadow || segmentedStyles.active.boxShadow === 'none') {
-    throw new Error(`SegmentedControl active item must feature shadow-raised`);
+    throw new Error(`SegmentedControl active item must feature standard Tailwind shadow`);
   }
-  console.log(`  ✓ SegmentedControl: ~44px height (${segmentedStyles.height}px), 12px container radius, 10px item radius, 16px/8px item padding, 14px/500 label, shadow-raised active card verified.`);
+  if (segmentedStyles.active.boxShadow.includes('rgba(0, 0, 0, 0.06)')) {
+    throw new Error(`SegmentedControl active item must use standard shadow, NOT shadow-raised (found shadow-raised 0.06 alpha)`);
+  }
+  console.log(`  ✓ SegmentedControl: ~44px height (${segmentedStyles.height}px), 12px container radius, 12px item radius, role="group", aria-pressed, 16px/8px item padding, 14px/500 label, standard shadow active card verified.`);
 
-  // Click 'Shared with me' tab to verify empty state display on /performances
+  // Capture close crop of SegmentedControl for human review
+  const scCropRect = await ev(`(() => {
+    const el = document.querySelector('[data-qa="segmented-control"]');
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return { x: Math.max(0, r.left - 16), y: Math.max(0, r.top - 16), width: r.width + 32, height: r.height + 32 };
+  })()`);
+  if (scCropRect) {
+    const { data: scData } = await S('Page.captureScreenshot', {
+      format: 'png',
+      clip: { x: scCropRect.x, y: scCropRect.y, width: scCropRect.width, height: scCropRect.height, scale: 1 },
+    });
+    fs.writeFileSync(path.join(OUT_DIR, 'crop-segmented-control.png'), Buffer.from(scData, 'base64'));
+  }
+
+  // Click 'Shared with me' tab to verify selection state change and empty state display on /performances
   await ev(`(() => {
     const items = Array.from(document.querySelectorAll('[data-qa="segmented-control-item"]'));
     const sharedItem = items.find(i => i.textContent.includes('Shared'));
     if (sharedItem) sharedItem.click();
   })()`);
   await new Promise((r) => setTimeout(r, 400));
+
+  // Verify pressed state updated after click
+  const updatedPressed = await ev(`(() => {
+    const items = Array.from(document.querySelectorAll('[data-qa="segmented-control-item"]'));
+    const shared = items.find(i => i.textContent.includes('Shared'));
+    const mine = items.find(i => i.textContent.includes('My preserved'));
+    return {
+      sharedPressed: shared ? shared.getAttribute('aria-pressed') : null,
+      minePressed: mine ? mine.getAttribute('aria-pressed') : null,
+    };
+  })()`);
+  if (updatedPressed.sharedPressed !== 'true') {
+    throw new Error(`After clicking Shared item, aria-pressed must be 'true', got '${updatedPressed.sharedPressed}'`);
+  }
+  if (updatedPressed.minePressed !== 'false') {
+    throw new Error(`After clicking Shared item, My Preserved item aria-pressed must be 'false', got '${updatedPressed.minePressed}'`);
+  }
 
   const emptyStateStyles = await ev(`(() => {
     const es = document.querySelector('[data-qa="empty-state"]');
@@ -1757,6 +1847,7 @@ async function verifyComputedStyles(client, baseUrl) {
       } : null,
       desc: descCs ? {
         fontSize: Math.round(parseFloat(descCs.fontSize)),
+        marginBottom: Math.round(parseFloat(descCs.marginBottom)),
       } : null,
     };
   })()`);
@@ -1789,10 +1880,30 @@ async function verifyComputedStyles(client, baseUrl) {
         throw new Error(`EmptyState title fontFamily must include Playfair, got: ${emptyStateStyles.title.fontFamily}`);
       }
     }
-    if (emptyStateStyles.desc && emptyStateStyles.desc.fontSize !== 16) {
-      throw new Error(`EmptyState description fontSize is ${emptyStateStyles.desc.fontSize}px (expected 16px / type-body)`);
+    if (emptyStateStyles.desc) {
+      if (emptyStateStyles.desc.fontSize !== 16) {
+        throw new Error(`EmptyState description fontSize is ${emptyStateStyles.desc.fontSize}px (expected 16px / type-body)`);
+      }
+      if (emptyStateStyles.desc.marginBottom !== 0) {
+        throw new Error(`EmptyState description marginBottom without action is ${emptyStateStyles.desc.marginBottom}px (expected 0px, no trailing margin)`);
+      }
     }
-    console.log(`  ✓ EmptyState: py-20 (80px), 96px soft brand circle, 48px icon, 20px Playfair title, 16px description verified.`);
+    console.log(`  ✓ EmptyState: py-20 (80px), 96px soft brand circle, 48px icon, 20px Playfair title, 16px description (0px trailing margin without action) verified.`);
+
+    // Capture crop of Performances EmptyState
+    const esCropRect = await ev(`(() => {
+      const el = document.querySelector('[data-qa="empty-state"]');
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      return { x: Math.max(0, r.left - 20), y: Math.max(0, r.top - 20), width: r.width + 40, height: r.height + 40 };
+    })()`);
+    if (esCropRect) {
+      const { data: esData } = await S('Page.captureScreenshot', {
+        format: 'png',
+        clip: { x: esCropRect.x, y: esCropRect.y, width: esCropRect.width, height: esCropRect.height, scale: 1 },
+      });
+      fs.writeFileSync(path.join(OUT_DIR, 'crop-performances-empty-state.png'), Buffer.from(esData, 'base64'));
+    }
   }
 
   // Restore 'My preserved takes' tab
@@ -2038,6 +2149,24 @@ async function verifyPageStructure(client, baseUrl) {
   if (statCardRest.transform !== 'none') {
     throw new Error(`PracticeStatCard must have no transform at rest, got: ${statCardRest.transform}`);
   }
+  if (!statCardRest.borderColor) {
+    throw new Error('PracticeStatCard must have a defined border color at rest');
+  }
+
+  // Capture rest crop of PracticeStatCard for human review
+  const statCardCropRect = await ev(`(() => {
+    const el = document.querySelector('[data-qa="practice-stat-card"]');
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return { x: Math.max(0, r.left - 10), y: Math.max(0, r.top - 10), width: r.width + 20, height: r.height + 20 };
+  })()`);
+  if (statCardCropRect) {
+    const { data: scRestData } = await S('Page.captureScreenshot', {
+      format: 'png',
+      clip: { x: statCardCropRect.x, y: statCardCropRect.y, width: statCardCropRect.width, height: statCardCropRect.height, scale: 1 },
+    });
+    fs.writeFileSync(path.join(OUT_DIR, 'crop-practice-stat-card-rest.png'), Buffer.from(scRestData, 'base64'));
+  }
 
   // Hover over StatCard
   await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: statCardRest.center.x, y: statCardRest.center.y });
@@ -2061,10 +2190,22 @@ async function verifyPageStructure(client, baseUrl) {
   if (statCardHover.transform !== 'none') {
     throw new Error(`PracticeStatCard hover must have zero geometric transform (Numis parity), got: ${statCardHover.transform}`);
   }
-  if (!statCardHover.boxShadow || statCardHover.boxShadow === 'none') {
-    throw new Error(`PracticeStatCard hover must feature soft elevation (hover:shadow-lg hover:shadow-brand/5)`);
+  if (!statCardHover.boxShadow || statCardHover.boxShadow === 'none' || statCardHover.boxShadow === statCardRest.boxShadow) {
+    throw new Error(`PracticeStatCard hover must feature soft elevation changing from rest (hover:shadow-lg hover:shadow-brand/5)`);
   }
-  console.log(`  ✓ PracticeStatCard Hover: cursor-default, zero transform, soft warm elevation verified.`);
+  if (!statCardHover.borderColor || statCardHover.borderColor === statCardRest.borderColor) {
+    throw new Error(`PracticeStatCard hover must feature border feedback changing toward brand/30 (rest='${statCardRest.borderColor}', hover='${statCardHover.borderColor}')`);
+  }
+  console.log(`  ✓ PracticeStatCard Hover: cursor-default, zero transform, border changing toward brand/30, soft warm elevation verified.`);
+
+  // Capture hover crop of PracticeStatCard for human review
+  if (statCardCropRect) {
+    const { data: scHoverData } = await S('Page.captureScreenshot', {
+      format: 'png',
+      clip: { x: statCardCropRect.x, y: statCardCropRect.y, width: statCardCropRect.width, height: statCardCropRect.height, scale: 1 },
+    });
+    fs.writeFileSync(path.join(OUT_DIR, 'crop-practice-stat-card-hover.png'), Buffer.from(scHoverData, 'base64'));
+  }
 
   // Move mouse away to reset hover
   await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 0, y: 0 });
@@ -2159,6 +2300,136 @@ async function verifyPageStructure(client, baseUrl) {
     throw new Error(`Quick links href mismatch: [${practiceIa.linkHrefs.join(', ')}] (expected /practice/history and /practice/progress)`);
   }
   console.log(`  ✓ Practice Information Architecture: Weekly Rhythm is rhythm-only (0 internal buttons), dedicated 2-column quick links verified.`);
+
+  // 2e. PracticeQuickLink Computed Visual & Hover Parity (Numis Dashboard Parity)
+  // Scroll quick links into view so coordinates and crop are cleanly inside viewport
+  await ev(`(() => {
+    const el = document.querySelector('[data-qa="practice-quick-links"]');
+    if (el) el.scrollIntoView({ behavior: 'instant', block: 'center' });
+  })()`);
+  await new Promise((r) => setTimeout(r, 200));
+
+  const quickLinkVisual = await ev(`(() => {
+    const ql = document.querySelector('[data-qa="practice-quick-link"]');
+    if (!ql) return null;
+    const cs = window.getComputedStyle(ql);
+    const rect = ql.getBoundingClientRect();
+    const icon = ql.querySelector('[data-qa="practice-quick-link-icon"]');
+    const iconCs = icon ? window.getComputedStyle(icon) : null;
+    const iconRect = icon ? icon.getBoundingClientRect() : null;
+    const title = ql.querySelector('[data-qa="practice-quick-link-title"]');
+    const titleCs = title ? window.getComputedStyle(title) : null;
+    const desc = ql.querySelector('[data-qa="practice-quick-link-description"]');
+    const descCs = desc ? window.getComputedStyle(desc) : null;
+    const arrow = ql.querySelector('[data-qa="practice-quick-link-arrow"]');
+    const arrowCs = arrow ? window.getComputedStyle(arrow) : null;
+    const arrowRect = arrow ? arrow.getBoundingClientRect() : null;
+
+    // Check that icon has NO background container / surround box
+    const iconParent = icon ? icon.parentElement : null;
+    const iconParentHasSurround = iconParent && (
+      iconParent.classList.contains('rounded-control') ||
+      iconParent.classList.contains('rounded-full') ||
+      iconParent.classList.contains('bg-brand-soft')
+    );
+
+    return {
+      radius: Math.round(parseFloat(cs.borderRadius)),
+      paddingTop: Math.round(parseFloat(cs.paddingTop)),
+      paddingBottom: Math.round(parseFloat(cs.paddingBottom)),
+      paddingLeft: Math.round(parseFloat(cs.paddingLeft)),
+      paddingRight: Math.round(parseFloat(cs.paddingRight)),
+      borderColor: cs.borderColor,
+      backgroundImage: cs.backgroundImage,
+      center: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
+      icon: iconRect ? {
+        width: Math.round(iconRect.width),
+        height: Math.round(iconRect.height),
+        hasSurround: !!iconParentHasSurround,
+      } : null,
+      title: titleCs ? {
+        fontSize: Math.round(parseFloat(titleCs.fontSize)),
+        fontWeight: parseInt(titleCs.fontWeight, 10),
+      } : null,
+      desc: descCs ? {
+        fontSize: Math.round(parseFloat(descCs.fontSize)),
+      } : null,
+      arrow: arrowRect ? {
+        width: Math.round(arrowRect.width),
+        height: Math.round(arrowRect.height),
+        transform: arrowCs.transform,
+      } : null,
+    };
+  })()`);
+
+  if (!quickLinkVisual) throw new Error('PracticeQuickLink not found on /practice');
+  if (quickLinkVisual.radius !== 16) {
+    throw new Error(`PracticeQuickLink radius is ${quickLinkVisual.radius}px (expected 16px / rounded-container)`);
+  }
+  if (quickLinkVisual.paddingTop !== 24 || quickLinkVisual.paddingLeft !== 24) {
+    throw new Error(`PracticeQuickLink padding is ${quickLinkVisual.paddingTop}px (expected 24px / p-6)`);
+  }
+  if (!quickLinkVisual.icon) throw new Error('PracticeQuickLink icon not found');
+  if (quickLinkVisual.icon.hasSurround) {
+    throw new Error('PracticeQuickLink must have direct icon without background surround box');
+  }
+  if (quickLinkVisual.icon.width !== 32 || quickLinkVisual.icon.height !== 32) {
+    throw new Error(`PracticeQuickLink icon size is ${quickLinkVisual.icon.width}x${quickLinkVisual.icon.height}px (expected 32x32px / h-8 w-8)`);
+  }
+  if (!quickLinkVisual.title || quickLinkVisual.title.fontSize !== 16) {
+    throw new Error(`PracticeQuickLink title fontSize is ${quickLinkVisual.title?.fontSize}px (expected 16px)`);
+  }
+  if (!quickLinkVisual.desc || quickLinkVisual.desc.fontSize !== 14) {
+    throw new Error(`PracticeQuickLink description fontSize is ${quickLinkVisual.desc?.fontSize}px (expected 14px)`);
+  }
+  if (!quickLinkVisual.arrow || quickLinkVisual.arrow.width !== 20 || quickLinkVisual.arrow.height !== 20) {
+    throw new Error(`PracticeQuickLink arrow size is ${quickLinkVisual.arrow?.width}x${quickLinkVisual.arrow?.height}px (expected 20x20px / h-5 w-5)`);
+  }
+
+  // Capture crop of Practice Quick Links for human review
+  const qlCropRect = await ev(`(() => {
+    const el = document.querySelector('[data-qa="practice-quick-links"]');
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    return { x: Math.max(0, r.left - 10), y: Math.max(0, r.top - 10), width: r.width + 20, height: r.height + 20 };
+  })()`);
+  if (qlCropRect) {
+    const { data: qlData } = await S('Page.captureScreenshot', {
+      format: 'png',
+      clip: { x: qlCropRect.x, y: qlCropRect.y, width: qlCropRect.width, height: qlCropRect.height, scale: 1 },
+    });
+    fs.writeFileSync(path.join(OUT_DIR, 'crop-practice-quick-links.png'), Buffer.from(qlData, 'base64'));
+  }
+
+  // Hover over QuickLink
+  await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: quickLinkVisual.center.x, y: quickLinkVisual.center.y });
+  await new Promise((r) => setTimeout(r, 350));
+
+  const quickLinkHover = await ev(`(() => {
+    const ql = document.querySelector('[data-qa="practice-quick-link"]');
+    if (!ql) return null;
+    const cs = window.getComputedStyle(ql);
+    const arrow = ql.querySelector('[data-qa="practice-quick-link-arrow"]');
+    const arrowCs = arrow ? window.getComputedStyle(arrow) : null;
+    return {
+      borderColor: cs.borderColor,
+      arrowTransform: arrowCs ? arrowCs.transform : null,
+    };
+  })()`);
+
+  if (!quickLinkHover) throw new Error('QuickLink hover element not found');
+  if (quickLinkHover.borderColor === quickLinkVisual.borderColor) {
+    throw new Error(`QuickLink hover must strengthen border (hover:border-brand/30), rest='${quickLinkVisual.borderColor}', hover='${quickLinkHover.borderColor}'`);
+  }
+  if (!quickLinkHover.arrowTransform || quickLinkHover.arrowTransform === 'none' || quickLinkHover.arrowTransform === quickLinkVisual.arrow.transform) {
+    throw new Error(`QuickLink arrow must translate rightward on hover, got transform: '${quickLinkHover.arrowTransform}'`);
+  }
+  console.log(`  ✓ PracticeQuickLink: 16px radius, 24px padding, 32px direct icon, 16px title, 14px description, 20px arrow, hover border & arrow translation verified.`);
+
+  // Reset mouse position & scroll back to top
+  await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 0, y: 0 });
+  await ev('window.scrollTo(0, 0)');
+  await new Promise((r) => setTimeout(r, 100));
 
   // 3. Settings Card (1440px)
   await navigateAndWait(`${baseUrl}/settings/account?demo=true`);

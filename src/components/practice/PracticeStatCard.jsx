@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
  * Metric display card matching NumisCollection StatCard visual grammar and hover feedback.
  * Features soft warm elevation on hover (hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5),
  * cursor-default (non-link), and zero geometric transform.
+ * Non-actionable metric card that owns its reference hover grammar directly rather than using Surface interactive.
  * @param {PracticeStatCardProps} props
  */
 export default function PracticeStatCard({
@@ -38,8 +39,10 @@ export default function PracticeStatCard({
     <Surface
       tone="panel"
       padding="md"
-      interactive
-      className={cn('flex items-start justify-between cursor-default select-none', className)}
+      className={cn(
+        'flex items-start justify-between cursor-default select-none hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300',
+        className
+      )}
       data-qa={dataQa}
       {...props}
     >

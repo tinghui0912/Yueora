@@ -48,12 +48,15 @@ export default function EmptyState({
         </h3>
       )}
       {description && (
-        <p className="mb-6 max-w-md type-body text-ink-tertiary" data-qa="empty-state-description">
+        <p
+          className={cn('max-w-md type-body text-ink-tertiary', action ? 'mb-6' : '')}
+          data-qa="empty-state-description"
+        >
           {description}
         </p>
       )}
       {action && (
-        <div className="mt-2" data-qa="empty-state-action">
+        <div data-qa="empty-state-action">
           {action}
         </div>
       )}
