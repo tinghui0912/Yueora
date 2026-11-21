@@ -20,6 +20,7 @@ import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SearchTrigger from '@/components/app-shell/SearchTrigger';
 
 export default function DesignSystemPreview() {
@@ -255,6 +256,17 @@ export default function DesignSystemPreview() {
               <IconButton icon={Plus} size="md" tone="outline" label="Add MD" />
               <IconButton icon={Sparkles} size="lg" tone="primary" label="Sparkles LG" />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <span className="type-caption text-ink-secondary/70">Segmented Control (Tabs)</span>
+            <Tabs defaultValue="all">
+              <TabsList data-qa="design-system-tabs-list">
+                <TabsTrigger value="all" data-qa="design-system-tabs-trigger">All items</TabsTrigger>
+                <TabsTrigger value="active">Active</TabsTrigger>
+                <TabsTrigger value="archived">Archived</TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
 
           <div className="space-y-2">

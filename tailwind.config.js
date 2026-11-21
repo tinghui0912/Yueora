@@ -132,7 +132,6 @@ module.exports = {
 			boxShadow: {
 				control: 'var(--shadow-control)',
 				raised: 'var(--shadow-raised)',
-				'card-hover': 'var(--shadow-card-hover)',
 				overlay: 'var(--shadow-overlay)',
 			},
 			maxWidth: {

@@ -21,7 +21,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
       data-qa="score-card"
       data-score-id={score.id}
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-container border border-line-subtle/50 bg-surface-panel transition-all duration-300 hover:border-brand/40 hover:shadow-card-hover hover:-translate-y-1 select-none',
+        'group relative flex flex-col overflow-hidden rounded-container border border-line-subtle/50 bg-surface-panel transition-all duration-300 hover:border-brand/40 hover:shadow-xl hover:shadow-brand/5 hover:-translate-y-1 select-none',
         selected && 'border-brand ring-2 ring-brand'
       )}
     >
@@ -29,7 +29,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
       <Link
         to={`/score/${score.id}`}
         data-qa="score-card-link"
-        className="absolute inset-0 z-0 rounded-container focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+        className="absolute inset-0 z-0 rounded-container focus:outline-none focus:ring-1 focus:ring-brand focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
         aria-label={`Open score: ${score.title} by ${score.composer}`}
       />
 
@@ -40,7 +40,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
       >
         <ScorePreview
           id={score.id}
-          className="h-full w-full object-cover transition-transform duration-slow group-hover:scale-[1.03]"
+          className="h-full w-full object-cover"
         />
 
         {/* Top Overlay Badges */}

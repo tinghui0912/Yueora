@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const surfaceVariants = cva(
-  'rounded-container transition-[box-shadow,transform,background-color,border-color] duration-base',
+  'rounded-container',
   {
     variants: {
       tone: {
@@ -29,10 +29,7 @@ const surfaceVariants = cva(
       },
       interactive: {
         false: '',
-        card: 'hover:border-brand/40 hover:shadow-card-hover hover:-translate-y-1 cursor-pointer transition-all duration-300',
-        'static-card': 'hover:border-brand/30 hover:shadow-card-hover transition-all duration-300',
-        row: 'hover:bg-neutral-muted/50 transition-colors',
-        quiet: 'hover:bg-neutral-hover transition-colors',
+        true: 'hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300',
       },
     },
     defaultVariants: {
@@ -51,7 +48,7 @@ const surfaceVariants = cva(
  *   elevation?: 'none' | 'raised' | 'overlay';
  *   border?: boolean;
  *   padding?: 'none' | 'sm' | 'md' | 'lg';
- *   interactive?: boolean | 'card' | 'static-card' | 'row' | 'quiet';
+ *   interactive?: boolean;
  *   asChild?: boolean;
  *   children?: React.ReactNode;
  * }} SurfaceProps
@@ -74,13 +71,13 @@ export const Surface = React.forwardRef(
     ref
   ) => {
     const Comp = asChild ? Slot : 'div';
-    const interactiveMode = interactive === true ? 'card' : (interactive || false);
+    const isInteractive = Boolean(interactive);
 
     return (
       <Comp
         ref={ref}
         className={cn(
-          surfaceVariants({ tone, elevation, border, padding, interactive: interactiveMode, className })
+          surfaceVariants({ tone, elevation, border, padding, interactive: isInteractive, className })
         )}
         {...props}
       >

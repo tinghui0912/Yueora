@@ -365,6 +365,7 @@ function verifyFoundations(issues = []) {
     '--surface-paper-edge',
     '--shadow-paper',
     '--shadow-paper-hover',
+    '--shadow-card-hover',
     '--primitive-forest-50',
     '--primitive-forest-100',
     '--primitive-forest-700',
@@ -381,6 +382,16 @@ function verifyFoundations(issues = []) {
       });
     }
   });
+
+  // Verify canonical radius control token (10px / 0.625rem aligned with NumisCollection calc(12px - 2px))
+  if (!css.includes('--radius-control: 0.625rem;')) {
+    issues.push({
+      file: 'src/index.css',
+      line: 1,
+      matched: '--radius-control',
+      message: '--radius-control must be 0.625rem (10px, matching NumisCollection calc(12px - 2px)).',
+    });
+  }
 
   // Verify primitive consumption
   const primitiveChecks = [
@@ -1209,6 +1220,42 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   }
 
+  // 15c. Surface Interactive Model Simplification Guard
+  // Scan across src/pages and src/components for any non-boolean interactive props on Surface
+  function scanSurfaceInteractiveVariants(dir) {
+    if (!fs.existsSync(dir)) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanSurfaceInteractiveVariants(full);
+      } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
+        const rel = path.normalize(path.relative(process.cwd(), full));
+        const code = fs.readFileSync(full, 'utf8');
+        const lines = code.split('\n');
+        lines.forEach((line, idx) => {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+          const match = line.match(/\binteractive=(?:["']([^"']+)["']|\{["']([^"']+)["']\})/);
+          if (match) {
+            const val = match[1] || match[2];
+            if (val !== 'true' && val !== 'false') {
+              issues.push({
+                file: rel,
+                line: idx + 1,
+                matched: `interactive="${val}"`,
+                message: `${rel}:${idx + 1} <Surface> interactive prop must be a simple boolean. Custom card variant "${val}" is prohibited.`,
+              });
+            }
+          }
+        });
+      }
+    }
+  }
+  for (const dir of SCAN_DIRECTORIES) {
+    scanSurfaceInteractiveVariants(dir);
+  }
+
   // 16. Neutral Active Shadow Guard (Rule 25)
   // Recursive scan across src/pages and src/components: bg-neutral-muted must NEVER pair with shadow-xs or shadow-sm
   function scanNeutralActiveShadow(dir) {
@@ -1292,7 +1339,7 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     scanStandardPanelShadows(dir);
   }
 
-  // 16. Surface component API governance (only panel, canvas, raised)
+  // 16. Surface component API governance (only panel, canvas, raised, and boolean interactive)
   const surfacePath = path.resolve('src/components/patterns/Surface.jsx');
   if (fs.existsSync(surfacePath)) {
     const code = fs.readFileSync(surfacePath, 'utf8');
@@ -1302,6 +1349,22 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
         line: 1,
         matched: 'paper in Surface.jsx CVA',
         message: 'Surface component only supports canonical tones (panel, canvas, raised). Paper tokens are retired.',
+      });
+    }
+    if (code.includes("'static-card'") || code.includes("'card'") || code.includes("'row'") || code.includes("'quiet'")) {
+      issues.push({
+        file: 'src/components/patterns/Surface.jsx',
+        line: 1,
+        matched: 'variant proliferation in Surface.jsx',
+        message: 'Surface interactive variants must be simplified to boolean true/false. Custom card/row/quiet variants are prohibited.',
+      });
+    }
+    if (code.includes('shadow-card-hover')) {
+      issues.push({
+        file: 'src/components/patterns/Surface.jsx',
+        line: 1,
+        matched: 'shadow-card-hover in Surface.jsx',
+        message: 'Surface must not reference retired shadow-card-hover token.',
       });
     }
   }

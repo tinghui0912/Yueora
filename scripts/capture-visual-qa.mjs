@@ -514,12 +514,12 @@ async function verifyComputedStyles(client, baseUrl) {
   if (Math.round(parseFloat(componentStyles.input.height)) !== 36) {
     throw new Error(`Standard input height is not 36px: ${componentStyles.input.height}`);
   }
-  // Assert border radius is 6px (rounded-control)
-  if (Math.round(parseFloat(componentStyles.primaryBtn.borderRadius)) !== 6) {
-    throw new Error(`Primary button border radius is not 6px: ${componentStyles.primaryBtn.borderRadius}`);
+  // Assert border radius is 10px (rounded-control)
+  if (Math.round(parseFloat(componentStyles.primaryBtn.borderRadius)) !== 10) {
+    throw new Error(`Primary button border radius is not 10px: ${componentStyles.primaryBtn.borderRadius}`);
   }
-  if (Math.round(parseFloat(componentStyles.input.borderRadius)) !== 6) {
-    throw new Error(`Standard input border radius is not 6px: ${componentStyles.input.borderRadius}`);
+  if (Math.round(parseFloat(componentStyles.input.borderRadius)) !== 10) {
+    throw new Error(`Standard input border radius is not 10px: ${componentStyles.input.borderRadius}`);
   }
 
   // 2b. Secondary Button & Input Interaction Assertions (Section 63 & 64)
@@ -603,8 +603,36 @@ async function verifyComputedStyles(client, baseUrl) {
       if (!hasFocusRing) {
         throw new Error(`Standard input must have visible focus treatment (boxShadow or outline), got boxShadow=${inputFocus.boxShadow}`);
       }
-      console.log(`  ✓ Standard Input: 6px radius verified, visible focus ring confirmed.`);
+      console.log(`  ✓ Standard Input: 10px radius verified, visible 1px focus ring confirmed.`);
     }
+  }
+
+  // 2c. Segmented Control Geometry & State Verification
+  const tabsData = await ev(`(() => {
+    const list = document.querySelector('[data-qa="design-system-tabs-list"]');
+    const trigger = document.querySelector('[data-qa="design-system-tabs-trigger"]');
+    if (!list || !trigger) return null;
+    const lcs = window.getComputedStyle(list);
+    const tcs = window.getComputedStyle(trigger);
+    return {
+      listRadius: parseFloat(lcs.borderRadius),
+      triggerRadius: parseFloat(tcs.borderRadius),
+      triggerShadow: tcs.boxShadow,
+      triggerBg: tcs.backgroundColor,
+    };
+  })()`);
+  if (tabsData) {
+    if (Math.round(tabsData.listRadius) !== 12) {
+      throw new Error(`Segmented control list radius must be 12px (rounded-nav), got: ${tabsData.listRadius}px`);
+    }
+    if (Math.round(tabsData.triggerRadius) !== 10) {
+      throw new Error(`Segmented control trigger radius must be 10px (rounded-control), got: ${tabsData.triggerRadius}px`);
+    }
+    const hasShadow = tabsData.triggerShadow && tabsData.triggerShadow !== 'none';
+    if (!hasShadow) {
+      throw new Error(`Segmented control active trigger must have subtle shadow (shadow-sm), got: ${tabsData.triggerShadow}`);
+    }
+    console.log(`  ✓ Segmented Control: 12px outer list radius, 10px trigger radius, active card surface with shadow-sm verified.`);
   }
 
   // 3. Authenticated App Nav & Card Lift on /library?demo=true
@@ -1038,15 +1066,15 @@ async function verifyComputedStyles(client, baseUrl) {
   })()`);
 
   if (libFilterTab && notifFilterTab) {
-    if (Math.round(libFilterTab.borderRadius) !== 6 || Math.round(notifFilterTab.borderRadius) !== 6) {
-      throw new Error(`FilterTab radius mismatch: Library=${libFilterTab.borderRadius}px, Notifications=${notifFilterTab.borderRadius}px (expected 6px / rounded-control)`);
+    if (Math.round(libFilterTab.borderRadius) !== 10 || Math.round(notifFilterTab.borderRadius) !== 10) {
+      throw new Error(`FilterTab radius mismatch: Library=${libFilterTab.borderRadius}px, Notifications=${notifFilterTab.borderRadius}px (expected 10px / rounded-control)`);
     }
     const libSoft = libFilterTab.backgroundColor.includes('242, 232') || libFilterTab.backgroundColor.includes('241, 232');
     const notifSoft = notifFilterTab.backgroundColor.includes('242, 232') || notifFilterTab.backgroundColor.includes('241, 232');
     if (!libSoft || !notifSoft) {
       throw new Error(`Active FilterTab must use bg-brand-soft: Library=${libFilterTab.backgroundColor}, Notifications=${notifFilterTab.backgroundColor}`);
     }
-    console.log(`  ✓ FilterTabs Consistency: 6px radius, bg-brand-soft active state verified across Library and Notifications.`);
+    console.log(`  ✓ FilterTabs Consistency: 10px radius, bg-brand-soft active state verified across Library and Notifications.`);
   }
 
   console.log(`✅ All computed style assertions passed.\n`);
@@ -1160,6 +1188,16 @@ async function verifyPageStructure(client, baseUrl) {
   if (visualRatio < 0.40 || visualRatio > 0.65) {
     throw new Error(`ScoreCard visual artwork ratio ${(visualRatio * 100).toFixed(1)}% is outside expected range (40% - 65%)`);
   }
+
+  // 1b-ii. ScoreCard image zoom removal check (no hover zoom on artwork preview)
+  const scoreCardZoomClass = await ev(`(() => {
+    const visual = document.querySelector('[data-qa="score-card-visual"] img, [data-qa="score-card-visual"] svg, [data-qa="score-card-visual"] [class*="object-cover"]');
+    return visual ? (visual.getAttribute('class') || '') : '';
+  })()`);
+  if (scoreCardZoomClass.includes('scale') || scoreCardZoomClass.includes('hover:scale') || scoreCardZoomClass.includes('group-hover:scale')) {
+    throw new Error(`ScoreCard visual preview must NOT zoom on hover (found scale class: ${scoreCardZoomClass})`);
+  }
+  console.log(`  ✓ ScoreCard Artwork: geometrically stable preview verified (no hover zoom).`);
 
   // 1c. ScoreCard keyboard focus treatment & exact Enter navigation test via CDP
   const cardData = await ev(`(() => {
