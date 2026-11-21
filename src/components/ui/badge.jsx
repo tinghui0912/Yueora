@@ -9,7 +9,7 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-brand text-brand-foreground shadow hover:bg-brand-hover",
+          "border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80", /* ds-allow: badge hover softened opacity matching Numis reference softened hover */
         secondary:
           "border-transparent bg-neutral-muted text-ink-primary hover:bg-neutral-hover",
         destructive:

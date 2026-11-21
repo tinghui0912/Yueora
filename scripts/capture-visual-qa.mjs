@@ -1144,6 +1144,7 @@ async function verifyComputedStyles(client, baseUrl) {
         thumbWidth: swThumbCs ? Math.round(parseFloat(swThumbCs.width)) : 0,
         thumbHeight: swThumbCs ? Math.round(parseFloat(swThumbCs.height)) : 0,
         thumbShadow: swThumbCs ? swThumbCs.boxShadow : null,
+        thumbBg: swThumbCs ? swThumbCs.backgroundColor : null,
       } : null,
       badge: badgeCs ? {
         fontSize: Math.round(parseFloat(badgeCs.fontSize)),
@@ -1181,17 +1182,30 @@ async function verifyComputedStyles(client, baseUrl) {
 
   // Focus Checkbox and assert 1px focus ring
   const cbFocusedRing = await ev(`(() => {
-    const cb = document.querySelector('[data-qa="design-system-checkbox"]');
-    if (!cb) return null;
-    cb.focus();
-    const cs = window.getComputedStyle(cb);
-    return {
-      boxShadow: cs.boxShadow,
-      hasRing: cs.boxShadow.includes('rgb(195, 131, 34)') || cs.boxShadow.includes('195, 131, 34'),
-    };
+    try {
+      const cb = document.querySelector('[data-qa="design-system-checkbox"]');
+      if (!cb) return { error: 'not_found' };
+      cb.focus();
+      const cs = window.getComputedStyle(cb);
+      const bs = cs.boxShadow || '';
+      const match = bs.match(/rgb\\(195,\\s*131,\\s*34\\)[^,]*/);
+      const lengths = match ? match[0].match(/-?\\d+(?:\\.\\d+)?px/g) : null;
+      return {
+        boxShadow: bs,
+        hasBrandRing: Boolean(match),
+        matchedLayer: match ? match[0] : null,
+        lengths: lengths,
+        spread: lengths && lengths.length >= 4 ? lengths[3] : (lengths && lengths.length >= 1 ? lengths[lengths.length - 1] : null),
+      };
+    } catch (err) {
+      return { error: err.message };
+    }
   })()`);
-  if (!cbFocusedRing || !cbFocusedRing.hasRing) {
-    throw new Error(`Checkbox focus ring not visible when focused: boxShadow=${cbFocusedRing?.boxShadow}`);
+  if (!cbFocusedRing || cbFocusedRing.error || !cbFocusedRing.hasBrandRing) {
+    throw new Error(`Checkbox focus ring not visible when focused: error=${cbFocusedRing?.error}, boxShadow=${cbFocusedRing?.boxShadow}`);
+  }
+  if (cbFocusedRing.spread !== '1px') {
+    throw new Error(`Checkbox focus ring thickness is ${cbFocusedRing.spread} (expected 1px, matchedLayer: "${cbFocusedRing.matchedLayer}", lengths: ${JSON.stringify(cbFocusedRing.lengths)}, raw boxShadow: "${cbFocusedRing.boxShadow}")`);
   }
   console.log(`  ✓ Checkbox Focus: 1px brand focus ring verified via live element focus.`);
 
@@ -1209,17 +1223,30 @@ async function verifyComputedStyles(client, baseUrl) {
 
   // Focus Radio and assert 1px focus ring
   const radioFocusedRing = await ev(`(() => {
-    const radio = document.querySelector('[data-qa="design-system-radio"] button');
-    if (!radio) return null;
-    radio.focus();
-    const cs = window.getComputedStyle(radio);
-    return {
-      boxShadow: cs.boxShadow,
-      hasRing: cs.boxShadow.includes('rgb(195, 131, 34)') || cs.boxShadow.includes('195, 131, 34'),
-    };
+    try {
+      const radio = document.querySelector('[data-qa="design-system-radio"] button');
+      if (!radio) return { error: 'not_found' };
+      radio.focus();
+      const cs = window.getComputedStyle(radio);
+      const bs = cs.boxShadow || '';
+      const match = bs.match(/rgb\\(195,\\s*131,\\s*34\\)[^,]*/);
+      const lengths = match ? match[0].match(/-?\\d+(?:\\.\\d+)?px/g) : null;
+      return {
+        boxShadow: bs,
+        hasBrandRing: Boolean(match),
+        matchedLayer: match ? match[0] : null,
+        lengths: lengths,
+        spread: lengths && lengths.length >= 4 ? lengths[3] : (lengths && lengths.length >= 1 ? lengths[lengths.length - 1] : null),
+      };
+    } catch (err) {
+      return { error: err.message };
+    }
   })()`);
-  if (!radioFocusedRing || !radioFocusedRing.hasRing) {
-    throw new Error(`Radio focus ring not visible when focused: boxShadow=${radioFocusedRing?.boxShadow}`);
+  if (!radioFocusedRing || radioFocusedRing.error || !radioFocusedRing.hasBrandRing) {
+    throw new Error(`Radio focus ring not visible when focused: error=${radioFocusedRing?.error}, boxShadow=${radioFocusedRing?.boxShadow}`);
+  }
+  if (radioFocusedRing.spread !== '1px') {
+    throw new Error(`Radio focus ring thickness is ${radioFocusedRing.spread} (expected 1px, must prove 1px ring spread)`);
   }
   console.log(`  ✓ Radio Focus: 1px brand focus ring verified via live element focus.`);
 
@@ -1244,7 +1271,14 @@ async function verifyComputedStyles(client, baseUrl) {
   if (!formPrimitives.switchControl.thumbShadow || formPrimitives.switchControl.thumbShadow === 'none') {
     throw new Error(`Switch thumb must have shadow-lg`);
   }
-  console.log(`  ✓ Switch Primitive: 36x20 track, 16x16 thumb, bg-input unchecked, shadow-sm track, shadow-lg thumb verified.`);
+  const isThumbWarmCanvas = formPrimitives.switchControl.thumbBg && (
+    formPrimitives.switchControl.thumbBg.includes('249, 248, 246') ||
+    formPrimitives.switchControl.thumbBg.includes('247, 245, 240')
+  );
+  if (!isThumbWarmCanvas) {
+    throw new Error(`Switch thumb background is ${formPrimitives.switchControl.thumbBg} (expected warm canvas background, e.g. rgb(249, 248, 246) / bg-surface-canvas, not white)`);
+  }
+  console.log(`  ✓ Switch Primitive: 36x20 track, 16x16 thumb, bg-input unchecked, warm canvas thumb background, shadow-sm track, shadow-lg thumb verified.`);
 
   if (formPrimitives.filterSemantics.containerRole !== 'group') {
     throw new Error(`FilterTabs container role must be 'group', got '${formPrimitives.filterSemantics.containerRole}'`);
@@ -1274,7 +1308,36 @@ async function verifyComputedStyles(client, baseUrl) {
   if (!formPrimitives.badge.boxShadow || formPrimitives.badge.boxShadow === 'none') {
     throw new Error(`Default Badge must have shadow (matching Numis default badge)`);
   }
-  console.log(`  ✓ Badge Primitive: 12px text, 10px radius, shadow, brand background, dark ink foreground verified.`);
+
+  // Real Badge hover assertion via CDP pointer dispatch
+  const badgeCoords = await ev(`(() => {
+    const b = document.querySelector('[data-qa="design-system-badge"]');
+    if (!b) return null;
+    b.scrollIntoView({ block: 'center', inline: 'center' });
+    const r = b.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  })()`);
+  if (badgeCoords) {
+    await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: badgeCoords.x, y: badgeCoords.y });
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  const badgeHoverBg = await ev(`(() => {
+    const b = document.querySelector('[data-qa="design-system-badge"]');
+    return b ? window.getComputedStyle(b).backgroundColor : null;
+  })()`);
+  if (badgeHoverBg) {
+    if (badgeHoverBg.includes('211, 144, 41')) {
+      throw new Error(`Badge hover background is ${badgeHoverBg} (detected stale hover:bg-brand-hover, must use softened hover:bg-brand/80)`);
+    }
+    const isSoftenedGoldHover = badgeHoverBg.includes('rgba(195, 131, 34, 0.8)') || badgeHoverBg.includes('0.8');
+    if (!isSoftenedGoldHover) {
+      throw new Error(`Badge hover background is ${badgeHoverBg} (expected softened gold rgba(195, 131, 34, 0.8) matching Numis hover:bg-primary/80)`);
+    }
+  }
+  // Move pointer away
+  await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 0, y: 0 });
+  await new Promise((r) => setTimeout(r, 100));
+  console.log(`  ✓ Badge Primitive: 12px text, 10px radius, shadow, brand background, dark ink foreground, reference softened hover verified.`);
 
   // 6c. Popover Assertions
   await ev(`document.querySelector('[data-qa="design-system-popover-trigger"]')?.click()`);
@@ -1351,11 +1414,16 @@ async function verifyComputedStyles(client, baseUrl) {
     const defClose = defaultToast ? defaultToast.querySelector('button[toast-close], button') : null;
     const desc = defaultToast ? defaultToast.querySelector('div.type-body-small') || defaultToast.querySelectorAll('p')[1] : null;
 
+    const destTitle = destToast ? destToast.querySelector('div.font-semibold') : null;
+    const destDesc = destToast ? destToast.querySelector('div.opacity-90') : null;
+
     const getCs = (el) => el ? window.getComputedStyle(el) : null;
     const defCs = getCs(defaultToast);
     const destCs = getCs(destToast);
     const closeCs = getCs(defClose);
     const descCs = getCs(desc);
+    const destTitleCs = getCs(destTitle);
+    const destDescCs = getCs(destDesc);
 
     return {
       defaultToast: defCs ? {
@@ -1368,6 +1436,8 @@ async function verifyComputedStyles(client, baseUrl) {
       destructiveToast: destCs ? {
         backgroundColor: destCs.backgroundColor,
         color: destCs.color,
+        titleColor: destTitleCs ? destTitleCs.color : null,
+        descColor: destDescCs ? destDescCs.color : null,
       } : null,
     };
   })()`);
@@ -1394,7 +1464,23 @@ async function verifyComputedStyles(client, baseUrl) {
   if (!toastStyles.destructiveToast.color.includes('253, 253, 252') && !toastStyles.destructiveToast.color.includes('255, 255, 255')) {
     throw new Error(`Destructive Toast text color is ${toastStyles.destructiveToast.color} (expected white/danger-foreground)`);
   }
-  console.log(`  ✓ Toast Primitive: 10px radius, shadow-lg, 14px normal description, close default opacity 0, danger destructive surface verified.`);
+  if (!toastStyles.destructiveToast.titleColor) {
+    throw new Error('Destructive Toast title element not found for computed color check');
+  }
+  if (!toastStyles.destructiveToast.titleColor.includes('253, 253, 252') && !toastStyles.destructiveToast.titleColor.includes('255, 255, 255')) {
+    throw new Error(`Destructive Toast title color is ${toastStyles.destructiveToast.titleColor} (expected light danger-foreground, child must inherit root color)`);
+  }
+  if (!toastStyles.destructiveToast.descColor) {
+    throw new Error('Destructive Toast description element not found for computed color check');
+  }
+  const isDestDescWhite = toastStyles.destructiveToast.descColor.includes('253, 253, 252') ||
+    toastStyles.destructiveToast.descColor.includes('255, 255, 255') ||
+    toastStyles.destructiveToast.descColor.includes('rgba(253, 253, 252') ||
+    toastStyles.destructiveToast.descColor.includes('rgba(255, 255, 255');
+  if (!isDestDescWhite) {
+    throw new Error(`Destructive Toast description color is ${toastStyles.destructiveToast.descColor} (expected light danger-foreground, child must inherit root color)`);
+  }
+  console.log(`  ✓ Toast Primitive: 10px radius, shadow-lg, 14px normal description, close default opacity 0, danger destructive surface with child foreground inheritance verified.`);
 
   // 6f. Dropdown Menu Item Assertions
   await ev(`document.querySelector('[data-qa="design-system-dropdown-trigger"]')?.click()`);
@@ -1459,6 +1545,7 @@ async function verifyComputedStyles(client, baseUrl) {
     return {
       borderRadius: Math.round(parseFloat(cs.borderRadius)),
       fontSize: Math.round(parseFloat(cs.fontSize)),
+      fontWeight: cs.fontWeight,
       textTransform: cs.textTransform,
       backgroundColor: cs.backgroundColor,
       color: cs.color,
@@ -1468,6 +1555,10 @@ async function verifyComputedStyles(client, baseUrl) {
   if (!tooltipStyles) throw new Error('Tooltip did not mount on trigger hover/focus');
   if (tooltipStyles.fontSize !== 12) {
     throw new Error(`Tooltip fontSize is ${tooltipStyles.fontSize}px (expected 12px / text-xs)`);
+  }
+  const isFontWeight400 = tooltipStyles.fontWeight === '400' || tooltipStyles.fontWeight === 400 || tooltipStyles.fontWeight === 'normal';
+  if (!isFontWeight400) {
+    throw new Error(`Tooltip fontWeight is ${tooltipStyles.fontWeight} (expected 400 / normal, font-medium must be removed)`);
   }
   if (tooltipStyles.borderRadius !== 10) {
     throw new Error(`Tooltip radius is ${tooltipStyles.borderRadius}px (expected 10px / rounded-md)`);
@@ -1481,7 +1572,7 @@ async function verifyComputedStyles(client, baseUrl) {
   if (!tooltipStyles.color.includes('34, 31, 28')) {
     throw new Error(`Tooltip color is ${tooltipStyles.color} (expected dark ink)`);
   }
-  console.log(`  ✓ Tooltip Primitive: 12px text, 10px radius, no shadow, brand gold background, dark ink foreground verified.`);
+  console.log(`  ✓ Tooltip Primitive: 12px text, 400 font-weight, 10px radius, no shadow, brand gold background, dark ink foreground verified.`);
 
   // 7. Responsive AppPage Gutters verification (700px viewport)
   await S('Emulation.setDeviceMetricsOverride', {
