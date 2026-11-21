@@ -16,6 +16,7 @@ import { IconButton } from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/select';
 import Surface from '@/components/patterns/Surface';
+import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -161,10 +162,10 @@ export default function Library() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="type-page-title text-ink-primary">
+          <h1 className="type-workspace-title text-ink-primary">
             {isTrash ? 'Trash' : activeFolderId ? (folders.find((f) => f.id === activeFolderId)?.name || 'Folder') : 'Repertoire'}
           </h1>
-          <p className="mt-1 type-page-subtitle text-ink-secondary">
+          <p className="mt-1 type-page-subtitle text-ink-tertiary">
             {isTrash
               ? `${filtered.length} in trash`
               : `${liveCount} ${liveCount === 1 ? 'piece' : 'pieces'} in your personal collection`}
@@ -194,32 +195,24 @@ export default function Library() {
       {/* Unified Collection Toolbar */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         {/* Category pills */}
-        <div className="flex flex-wrap items-center gap-1.5">
+        <FilterTabs>
           {librarySections.map((item) => (
-            <button
+            <FilterTab
               key={item.key}
+              active={active === item.key}
               onClick={() => { setParam('view', item.key); clearSelect(); }}
-              className={`whitespace-nowrap rounded-control px-3.5 py-1.5 type-body-small transition-colors ${
-                active === item.key
-                  ? 'bg-brand-soft font-semibold text-brand-soft-foreground'
-                  : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
-              }`}
             >
               {item.label}
-            </button>
+            </FilterTab>
           ))}
-          <button
+          <FilterTab
+            active={active === 'trash'}
             onClick={() => { setParam('view', 'trash'); clearSelect(); }}
-            className={`flex items-center gap-1.5 whitespace-nowrap rounded-control px-3.5 py-1.5 type-body-small transition-colors ${
-              active === 'trash'
-                ? 'bg-brand-soft font-semibold text-brand-soft-foreground'
-                : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
-            }`}
+            icon={Trash2}
           >
-            <Trash2 className="icon-xs" />
-            <span>Trash</span>
-          </button>
-        </div>
+            Trash
+          </FilterTab>
+        </FilterTabs>
 
         {/* Secondary controls: Search, Folder select, Filter, Sort, View switch */}
         <div className="flex flex-wrap items-center gap-2.5">

@@ -26,6 +26,7 @@
     --primitive-ink-900: 30 10% 12%;         /* Ink Primary: warm near-black (#221F1C) */
 
     /* Brand / Antique Bronze Gold */
+    --primitive-gold-50: 36 50% 94%;         /* Lightest Tinted Warm Gold (#FAF4EB) */
     --primitive-gold-100: 36 45% 90%;        /* Tinted Warm Gold Soft (#F2E8D9) */
     --primitive-gold-500: 36 70% 45%;        /* Antique Bronze / Gold Brand (#C38322) */
     --primitive-gold-600: 36 72% 49%;        /* Brighter Antique Gold Hover (#D39029) */
@@ -67,6 +68,8 @@
     --brand-soft: var(--primitive-gold-100);
     --brand-soft-foreground: var(--primitive-ink-900);
     --brand-foreground: var(--primitive-ink-900);
+    --nav-active-bg: var(--primitive-gold-50);
+    --control-hover-accent: var(--primitive-gold-100);
 
     /* ---- Neutral quiet & hover (Warm ivory-gray, NOT green) ---- */
     --neutral-muted: var(--primitive-neutral-100);
@@ -342,6 +345,13 @@
     .type-dashboard-title {
       font-size: 2.25rem; /* 36px desktop */
     }
+  }
+  .type-workspace-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.875rem; /* 30px */
+    line-height: 1.2;
+    letter-spacing: -0.015em;
   }
   .type-page-subtitle {
     font-family: var(--font-body);

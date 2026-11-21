@@ -9,9 +9,9 @@ const iconButtonVariants = cva(
     variants: {
       tone: {
         quiet:
-          'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover',
+          'text-ink-secondary hover:text-ink-primary hover:bg-brand-soft',
         outline:
-          'border border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover shadow-control',
+          'border border-line-subtle bg-transparent text-ink-secondary hover:text-ink-primary hover:bg-brand-soft shadow-control',
         primary:
           'bg-brand-fill text-brand-fill-foreground shadow-control hover:bg-brand-fill-hover',
         danger:

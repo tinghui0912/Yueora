@@ -24,6 +24,7 @@ export const SEMANTIC_ROLES = [
   'type-metric',
   'type-sidebar-descriptor',
   'type-dashboard-title',
+  'type-workspace-title',
   'type-page-subtitle',
   'type-stat-label',
   'type-panel-title',

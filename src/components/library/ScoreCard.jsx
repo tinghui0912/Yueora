@@ -46,7 +46,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
         {/* Top Overlay Badges */}
         <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 z-10 pointer-events-auto">
           {sharedText && (
-            <span className="rounded-control bg-surface-panel/90 backdrop-blur-xs px-2 py-0.5 type-caption text-ink-secondary border border-line-subtle/60">
+            <span className="rounded-control bg-surface-panel/90 backdrop-blur-xs px-2 py-0.5 type-metadata text-ink-secondary border border-line-subtle/60">
               {sharedText}
             </span>
           )}

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import SearchTrigger from './SearchTrigger';
 import SearchPalette from './SearchPalette';
+import { CountBadge } from '@/components/patterns/CountBadge';
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ export default function Sidebar() {
           aria-label="Yueora Practice"
           className="inline-flex focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
         >
-          <Logo variant="full" size="md" />
+          <Logo variant="full" size="sidebar" />
         </NavLink>
         <p data-qa="sidebar-descriptor" className="mt-1 type-sidebar-descriptor text-ink-tertiary">
           Musical sanctuary
@@ -97,9 +98,7 @@ export default function Sidebar() {
           label="Recognition"
           badge={
             activeImports > 0 ? (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-soft px-1.5 type-caption text-brand-soft-foreground">
-                {activeImports}
-              </span>
+              <CountBadge tone="informational">{activeImports}</CountBadge>
             ) : null
           }
         />
@@ -109,9 +108,7 @@ export default function Sidebar() {
           label="Notifications"
           badge={
             unreadNotifications > 0 ? (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand text-brand-foreground px-1.5 type-caption font-semibold">
-                {unreadNotifications}
-              </span>
+              <CountBadge tone="attention">{unreadNotifications}</CountBadge>
             ) : null
           }
         />

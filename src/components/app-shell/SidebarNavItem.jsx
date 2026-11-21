@@ -21,8 +21,8 @@ export function SidebarNavItem({
         cn(
           'group relative flex items-center justify-between rounded-nav px-4 py-3 type-body-small font-medium transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
           isActive
-            ? 'bg-brand-soft font-medium text-brand'
-            : 'text-ink-secondary hover:text-ink-primary',
+            ? 'bg-nav-active font-medium text-brand'
+            : 'text-ink-tertiary hover:text-ink-primary',
           className
         )
       }
@@ -35,7 +35,7 @@ export function SidebarNavItem({
               <Icon
                 className={cn(
                   'h-5 w-5 shrink-0 transition-colors',
-                  isActive ? 'text-brand' : 'text-ink-secondary group-hover:text-ink-primary'
+                  isActive ? 'text-brand' : 'text-ink-tertiary group-hover:text-ink-primary'
                 )}
                 aria-hidden="true"
               />

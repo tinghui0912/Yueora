@@ -523,14 +523,23 @@ async function verifyComputedStyles(client, baseUrl) {
   }
 
   // 2b. Secondary Button & Input Interaction Assertions (Section 63 & 64)
-  const secBtnCoords = await ev(`(() => {
+  const secBtnInfo = await ev(`(() => {
     const btn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Secondary Action');
     if (!btn) return null;
+    btn.scrollIntoView({ block: 'center', inline: 'center' });
+    const cs = window.getComputedStyle(btn);
     const r = btn.getBoundingClientRect();
-    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    return {
+      restingBg: cs.backgroundColor,
+      coords: { x: r.left + r.width / 2, y: r.top + r.height / 2 },
+    };
   })()`);
-  if (secBtnCoords) {
-    await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: secBtnCoords.x, y: secBtnCoords.y });
+  if (secBtnInfo) {
+    const isTransparent = secBtnInfo.restingBg === 'transparent' || secBtnInfo.restingBg === 'rgba(0, 0, 0, 0)';
+    if (!isTransparent) {
+      throw new Error(`Secondary button resting background must be transparent, got: ${secBtnInfo.restingBg}`);
+    }
+    await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: secBtnInfo.coords.x, y: secBtnInfo.coords.y });
     await new Promise((r) => setTimeout(r, 200));
 
     const secHover = await ev(`(() => {
@@ -550,7 +559,14 @@ async function verifyComputedStyles(client, baseUrl) {
       if (secHover.transform !== 'none') {
         throw new Error(`Secondary button hover transform must be none (no active scale), got: ${secHover.transform}`);
       }
-      console.log(`  ✓ Secondary Button Hover: stable border (${secHover.borderColor}), transform=${secHover.transform}`);
+      const isWarmHover = secHover.backgroundColor.includes('242, 232')
+        || secHover.backgroundColor.includes('241, 232')
+        || secHover.backgroundColor.includes('247, 241')
+        || secHover.backgroundColor.includes('248, 241');
+      if (!isWarmHover) {
+        throw new Error(`Secondary button hover background must be warm soft gold (bg-brand-soft), got: ${secHover.backgroundColor}`);
+      }
+      console.log(`  ✓ Secondary Button Hover: resting transparent, warm soft gold hover (${secHover.backgroundColor}), stable border (${secHover.borderColor}), transform=${secHover.transform}`);
     }
   }
 
@@ -558,6 +574,7 @@ async function verifyComputedStyles(client, baseUrl) {
   const inputCoords = await ev(`(() => {
     const el = document.querySelector('input#demo-title');
     if (!el) return null;
+    el.scrollIntoView({ block: 'center', inline: 'center' });
     const r = el.getBoundingClientRect();
     return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
   })()`);
@@ -599,12 +616,59 @@ async function verifyComputedStyles(client, baseUrl) {
   }
   await new Promise((r) => setTimeout(r, 400));
 
-  // 3a. Sidebar Descriptor & Geometry & Active Nav (Section 59, 60, 61)
+  // 3a. Brand Wordmark & Sidebar Descriptor & Geometry & Active Nav (Section 59, 60, 61)
+  const wordmarkStyles = await ev(`(() => {
+    const el = document.querySelector('[data-qa="brand-wordmark"]');
+    if (!el) return null;
+    const cs = window.getComputedStyle(el);
+    return {
+      fontSize: parseFloat(cs.fontSize),
+      fontWeight: parseInt(cs.fontWeight, 10),
+      fontFamily: cs.fontFamily.toLowerCase(),
+    };
+  })()`);
+  if (!wordmarkStyles) throw new Error('Brand wordmark [data-qa="brand-wordmark"] not found in desktop sidebar');
+  if (Math.round(wordmarkStyles.fontSize) !== 24) {
+    throw new Error(`Brand wordmark fontSize is ${wordmarkStyles.fontSize}px (expected 24px / text-2xl Playfair 700)`);
+  }
+  if (wordmarkStyles.fontWeight < 700) {
+    throw new Error(`Brand wordmark fontWeight is ${wordmarkStyles.fontWeight} (expected >= 700 bold)`);
+  }
+  if (!wordmarkStyles.fontFamily.includes('playfair')) {
+    throw new Error(`Brand wordmark fontFamily must include Playfair, got: ${wordmarkStyles.fontFamily}`);
+  }
+  console.log(`  ✓ Brand Wordmark: 24px Playfair 700 bold verified.`);
+
+  // Workspace Title on /library?demo=true
+  const workspaceTitleStyles = await ev(`(() => {
+    const title = document.querySelector('.type-workspace-title');
+    if (!title) return null;
+    const cs = window.getComputedStyle(title);
+    return {
+      fontSize: parseFloat(cs.fontSize),
+      fontWeight: parseInt(cs.fontWeight, 10),
+      fontFamily: cs.fontFamily.toLowerCase(),
+    };
+  })()`);
+  if (!workspaceTitleStyles) throw new Error('.type-workspace-title not found on /library');
+  if (Math.round(workspaceTitleStyles.fontSize) !== 30) {
+    throw new Error(`Workspace title fontSize is ${workspaceTitleStyles.fontSize}px (expected 30px / type-workspace-title)`);
+  }
+  if (workspaceTitleStyles.fontWeight < 700) {
+    throw new Error(`Workspace title fontWeight is ${workspaceTitleStyles.fontWeight} (expected >= 700)`);
+  }
+  if (!workspaceTitleStyles.fontFamily.includes('playfair')) {
+    throw new Error(`Workspace title fontFamily must include Playfair, got: ${workspaceTitleStyles.fontFamily}`);
+  }
+  console.log(`  ✓ Workspace Title: 30px Playfair 700 bold verified on /library.`);
+
   const sidebarStyles = await ev(`(() => {
     const descriptor = document.querySelector('[data-qa="sidebar-descriptor"]') || document.querySelector('.type-sidebar-descriptor');
     const descCs = descriptor ? window.getComputedStyle(descriptor) : null;
 
-    const activeNav = document.querySelector('aside nav a[href="/library"]') || document.querySelector('aside nav a.bg-brand-soft');
+    const activeNav = document.querySelector('aside nav a[href="/library"]')
+      || document.querySelector('aside nav a.bg-nav-active')
+      || document.querySelector('aside nav a.bg-brand-soft');
     const navCs = activeNav ? window.getComputedStyle(activeNav) : null;
     const activeIcon = activeNav ? activeNav.querySelector('svg') : null;
     const activeIconCs = activeIcon ? window.getComputedStyle(activeIcon) : null;
@@ -649,9 +713,14 @@ async function verifyComputedStyles(client, baseUrl) {
   if (sidebarStyles.activeNav.iconColor && !sidebarStyles.activeNav.iconColor.includes('195, 131, 34')) {
     throw new Error(`Active sidebar nav icon color mismatch: ${sidebarStyles.activeNav.iconColor} (expected gold rgb(195, 131, 34))`);
   }
-  const isBrandSoft = sidebarStyles.activeNav.backgroundColor.includes('242, 232, 217') || sidebarStyles.activeNav.backgroundColor.includes('241, 232, 218');
-  if (!isBrandSoft) {
-    throw new Error(`Active sidebar nav background mismatch: ${sidebarStyles.activeNav.backgroundColor} (expected bg-brand-soft rgb(242, 232, 217) or rgb(241, 232, 218))`);
+  const isNavActive = sidebarStyles.activeNav.backgroundColor.includes('247, 241, 232')
+    || sidebarStyles.activeNav.backgroundColor.includes('248, 241, 232')
+    || sidebarStyles.activeNav.backgroundColor.includes('250, 244, 235')
+    || sidebarStyles.activeNav.backgroundColor.includes('250, 243, 232')
+    || sidebarStyles.activeNav.backgroundColor.includes('242, 232, 217')
+    || sidebarStyles.activeNav.backgroundColor.includes('241, 232, 218');
+  if (!isNavActive) {
+    throw new Error(`Active sidebar nav background mismatch: ${sidebarStyles.activeNav.backgroundColor} (expected bg-nav-active / bg-brand-soft)`);
   }
   if (sidebarStyles.activeNav.boxShadow !== 'none') {
     throw new Error(`Active navigation must be planar (no shadow), got: ${sidebarStyles.activeNav.boxShadow}`);
@@ -668,11 +737,53 @@ async function verifyComputedStyles(client, baseUrl) {
   if (sidebarStyles.activeNav.iconWidth !== 20 || sidebarStyles.activeNav.iconHeight !== 20) {
     throw new Error(`Sidebar nav icon size is ${sidebarStyles.activeNav.iconWidth}x${sidebarStyles.activeNav.iconHeight} (expected 20x20)`);
   }
-  console.log(`  ✓ Sidebar Active Nav & Geometry: gold text/icon, bg-brand-soft, 12px radius, 16x12 padding, 20px icon verified.`);
+  console.log(`  ✓ Sidebar Active Nav & Geometry: gold text/icon, bg-nav-active, 12px radius, 16x12 padding, 20px icon verified.`);
+
+  // CountBadge Geometry & Semantic Difference
+  const badgeStyles = await ev(`(() => {
+    const badges = Array.from(document.querySelectorAll('[data-qa="count-badge"]'));
+    return badges.map(b => {
+      const cs = window.getComputedStyle(b);
+      return {
+        tone: b.getAttribute('data-tone'),
+        text: b.textContent.trim(),
+        height: parseFloat(cs.height),
+        fontSize: parseFloat(cs.fontSize),
+        backgroundColor: cs.backgroundColor,
+        color: cs.color,
+      };
+    });
+  })()`);
+  if (badgeStyles && badgeStyles.length > 0) {
+    for (const badge of badgeStyles) {
+      if (Math.round(badge.height) !== 20) {
+        throw new Error(`CountBadge height is ${badge.height}px (expected 20px / h-5)`);
+      }
+      if (Math.round(badge.fontSize) !== 11) {
+        throw new Error(`CountBadge fontSize is ${badge.fontSize}px (expected 11px / text-[11px])`);
+      }
+    }
+    const infoBadge = badgeStyles.find(b => b.tone === 'informational');
+    const attBadge = badgeStyles.find(b => b.tone === 'attention');
+    if (infoBadge) {
+      const isInfoSoft = infoBadge.backgroundColor.includes('242, 232') || infoBadge.backgroundColor.includes('241, 232');
+      if (!isInfoSoft) {
+        throw new Error(`Informational CountBadge background mismatch: ${infoBadge.backgroundColor} (expected bg-brand-soft)`);
+      }
+    }
+    if (attBadge) {
+      if (!attBadge.backgroundColor.includes('195, 131, 34')) {
+        throw new Error(`Attention CountBadge background mismatch: ${attBadge.backgroundColor} (expected bg-brand rgb(195, 131, 34))`);
+      }
+    }
+    console.log(`  ✓ CountBadge: 20px height, 11px font, informational (bg-brand-soft) vs attention (bg-brand) verified.`);
+  }
 
   // 3b. Sidebar Inactive Hover (Section 62)
   const inactiveLinkCoords = await ev(`(() => {
-    const link = document.querySelector('aside nav a[href="/practice"]') || document.querySelector('aside nav a:not(.bg-brand-soft)');
+    const link = document.querySelector('aside nav a[href="/practice"]')
+      || document.querySelector('aside nav a[href="/imports"]')
+      || document.querySelector('aside nav a:not(.bg-nav-active):not(.bg-brand-soft)');
     if (!link) return null;
     const r = link.getBoundingClientRect();
     return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
@@ -682,25 +793,28 @@ async function verifyComputedStyles(client, baseUrl) {
     await new Promise((r) => setTimeout(r, 200));
 
     const inactiveHover = await ev(`(() => {
-      const link = document.querySelector('aside nav a[href="/practice"]') || document.querySelector('aside nav a:not(.bg-brand-soft)');
+      const link = document.querySelector('aside nav a[href="/practice"]')
+        || document.querySelector('aside nav a[href="/imports"]')
+        || document.querySelector('aside nav a:not(.bg-nav-active):not(.bg-brand-soft)');
       if (!link) return null;
       const cs = window.getComputedStyle(link);
       const icon = link.querySelector('svg');
       const iconCs = icon ? window.getComputedStyle(icon) : null;
       return {
+        color: cs.color,
         backgroundColor: cs.backgroundColor,
         borderColor: cs.borderColor,
         iconTransform: iconCs ? iconCs.transform : 'none',
       };
     })()`);
     if (inactiveHover) {
-      if (inactiveHover.backgroundColor.includes('195, 131, 34') || inactiveHover.backgroundColor.includes('242, 232, 217') || inactiveHover.backgroundColor.includes('241, 232, 218')) {
+      if (inactiveHover.backgroundColor.includes('195, 131, 34') || inactiveHover.backgroundColor.includes('242, 232, 217') || inactiveHover.backgroundColor.includes('247, 241, 232')) {
         throw new Error(`Inactive sidebar hover must NOT have gold background, got ${inactiveHover.backgroundColor}`);
       }
       if (inactiveHover.iconTransform !== 'none') {
         throw new Error(`Inactive sidebar hover icon must not scale, got transform: ${inactiveHover.iconTransform}`);
       }
-      console.log(`  ✓ Sidebar Inactive Hover: no gold background, icon transform is none.`);
+      console.log(`  ✓ Sidebar Inactive Hover: foreground darkens (${inactiveHover.color}), no gold background, icon transform is none.`);
     }
   }
 
@@ -765,6 +879,18 @@ async function verifyComputedStyles(client, baseUrl) {
     }
     console.log(`  ✓ ScoreCard Typography: 18px Playfair title, 14px Inter composer, 12px normal-case bottom label, 18px Playfair gold value verified.`);
   }
+
+  // 3d. Library Active FilterTab Check
+  const libFilterTab = await ev(`(() => {
+    const activeTab = document.querySelector('[data-qa="filter-tab"][data-active="true"]');
+    if (!activeTab) return null;
+    const cs = window.getComputedStyle(activeTab);
+    return {
+      backgroundColor: cs.backgroundColor,
+      borderRadius: parseFloat(cs.borderRadius),
+      fontWeight: parseInt(cs.fontWeight, 10),
+    };
+  })()`);
 
   // 4. PracticeHub StatCard & Panel Headings (Section 65, 66)
   await navigateAndWait(`${baseUrl}/practice?demo=true`);
@@ -869,6 +995,58 @@ async function verifyComputedStyles(client, baseUrl) {
     if (cardHover && cardHover.transform !== 'none') {
       console.log(`  ✓ Card hover lift verified: ${cardHover.transform}`);
     }
+  }
+
+  // 4b. Practice Resume Module Tab Order Verification (Accessibility Bug Fix)
+  const resumeTabOrder = await ev(`(() => {
+    const resumeModule = document.querySelector('[data-qa="practice-resume-module"]');
+    if (!resumeModule) return null;
+    const focusable = Array.from(resumeModule.querySelectorAll('a[href], button:not([disabled]):not([tabindex="-1"]), [tabindex]:not([tabindex="-1"])'));
+    const buttons = Array.from(resumeModule.querySelectorAll('button:not([tabindex="-1"])'));
+    return {
+      count: focusable.length,
+      tags: focusable.map(el => el.tagName.toLowerCase()),
+      buttonCount: buttons.length,
+    };
+  })()`);
+  if (resumeTabOrder) {
+    if (resumeTabOrder.count !== 2) {
+      throw new Error(`Practice Resume module must have exactly 2 focusable elements in tab order (stretched link and score details link), found: ${resumeTabOrder.count} (${resumeTabOrder.tags.join(', ')})`);
+    }
+    if (resumeTabOrder.buttonCount > 0) {
+      throw new Error(`Practice Resume module must NOT contain tabbable buttons, found: ${resumeTabOrder.buttonCount}`);
+    }
+    console.log(`  ✓ Practice Resume Tab Order: exactly 2 links, 0 tabbable buttons verified.`);
+  }
+
+  // 5. Notifications FilterTabs Consistency Check
+  await navigateAndWait(`${baseUrl}/notifications?demo=true`);
+  for (let i = 0; i < 60; i++) {
+    const hasTabs = await ev('Boolean(document.querySelector("[data-qa=\'filter-tab\']"))');
+    if (hasTabs) break;
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  const notifFilterTab = await ev(`(() => {
+    const activeTab = document.querySelector('[data-qa="filter-tab"][data-active="true"]');
+    if (!activeTab) return null;
+    const cs = window.getComputedStyle(activeTab);
+    return {
+      backgroundColor: cs.backgroundColor,
+      borderRadius: parseFloat(cs.borderRadius),
+      fontWeight: parseInt(cs.fontWeight, 10),
+    };
+  })()`);
+
+  if (libFilterTab && notifFilterTab) {
+    if (Math.round(libFilterTab.borderRadius) !== 6 || Math.round(notifFilterTab.borderRadius) !== 6) {
+      throw new Error(`FilterTab radius mismatch: Library=${libFilterTab.borderRadius}px, Notifications=${notifFilterTab.borderRadius}px (expected 6px / rounded-control)`);
+    }
+    const libSoft = libFilterTab.backgroundColor.includes('242, 232') || libFilterTab.backgroundColor.includes('241, 232');
+    const notifSoft = notifFilterTab.backgroundColor.includes('242, 232') || notifFilterTab.backgroundColor.includes('241, 232');
+    if (!libSoft || !notifSoft) {
+      throw new Error(`Active FilterTab must use bg-brand-soft: Library=${libFilterTab.backgroundColor}, Notifications=${notifFilterTab.backgroundColor}`);
+    }
+    console.log(`  ✓ FilterTabs Consistency: 6px radius, bg-brand-soft active state verified across Library and Notifications.`);
   }
 
   console.log(`✅ All computed style assertions passed.\n`);
@@ -1338,6 +1516,7 @@ async function captureAndValidateTarget(client, target, baseUrl) {
       const coords = await ev(`(() => {
         const btn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Primary Action');
         if (!btn) return null;
+        btn.scrollIntoView({ block: 'center', inline: 'center' });
         const r = btn.getBoundingClientRect();
         return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
       })()`);
@@ -1350,6 +1529,7 @@ async function captureAndValidateTarget(client, target, baseUrl) {
       const coords = await ev(`(() => {
         const btn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Secondary Action');
         if (!btn) return null;
+        btn.scrollIntoView({ block: 'center', inline: 'center' });
         const r = btn.getBoundingClientRect();
         return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
       })()`);
@@ -1362,6 +1542,7 @@ async function captureAndValidateTarget(client, target, baseUrl) {
       const coords = await ev(`(() => {
         const input = document.querySelector('input#demo-title');
         if (!input) return null;
+        input.scrollIntoView({ block: 'center', inline: 'center' });
         const r = input.getBoundingClientRect();
         return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
       })()`);
@@ -1375,6 +1556,7 @@ async function captureAndValidateTarget(client, target, baseUrl) {
       const coords = await ev(`(() => {
         const card = document.querySelector('main [data-score-id]') || document.querySelector('main a[href*="/score/"] > div') || document.querySelector('main .group');
         if (!card) return null;
+        card.scrollIntoView({ block: 'center', inline: 'center' });
         const r = card.getBoundingClientRect();
         return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
       })()`);
@@ -1387,6 +1569,7 @@ async function captureAndValidateTarget(client, target, baseUrl) {
       const coords = await ev(`(() => {
         const link = document.querySelector('aside nav a[href="/practice"]') || document.querySelector('aside nav a[href="/imports"]');
         if (!link) return null;
+        link.scrollIntoView({ block: 'center', inline: 'center' });
         const r = link.getBoundingClientRect();
         return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
       })()`);
@@ -1394,7 +1577,7 @@ async function captureAndValidateTarget(client, target, baseUrl) {
         await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: coords.x, y: coords.y });
         await new Promise((r) => setTimeout(r, 300));
       }
-      assertionDescription = 'Hover warm soft gold state on sidebar nav captured';
+      assertionDescription = 'Inactive Sidebar hover: foreground darkens, no background, no scale, no shadow';
     } else if (target.isInteraction === 'open-dropdown') {
       const coords = await ev(`(() => {
         const btn = document.querySelector('[data-qa="desktop-sidebar"] [aria-haspopup="dialog"]')
@@ -1416,6 +1599,7 @@ async function captureAndValidateTarget(client, target, baseUrl) {
       const focused = await ev(`(() => {
         const link = document.querySelector('[data-qa="score-card-link"]');
         if (!link) return false;
+        link.scrollIntoView({ block: 'center', inline: 'center' });
         link.focus();
         return true;
       })()`);

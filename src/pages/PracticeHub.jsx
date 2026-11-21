@@ -37,7 +37,7 @@ export default function PracticeHub() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="type-dashboard-title text-ink-primary">Practice Dashboard</h1>
-          <p className="mt-1 type-page-subtitle text-ink-secondary">
+          <p className="mt-1 type-page-subtitle text-ink-tertiary">
             A calm space to play, reflect, and maintain your repertoire
           </p>
         </div>
@@ -139,10 +139,12 @@ export default function PracticeHub() {
             </div>
 
             <div className="relative z-10 flex shrink-0 items-center gap-2">
-              <div className="pointer-events-none">
-                <Button intent="primary" size="md">
-                  <Play className="icon-sm fill-current" />
-                  <span>Resume playing</span>
+              <div className="pointer-events-none" aria-hidden="true">
+                <Button intent="primary" size="md" asChild tabIndex={-1}>
+                  <span className="select-none">
+                    <Play className="icon-sm fill-current" />
+                    <span>Resume playing</span>
+                  </span>
                 </Button>
               </div>
               <div className="pointer-events-auto">

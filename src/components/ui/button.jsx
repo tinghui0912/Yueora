@@ -12,9 +12,9 @@ const buttonVariants = cva(
         primary:
           "bg-brand-fill text-brand-fill-foreground shadow-control hover:bg-brand-fill-hover",
         secondary:
-          "border border-line-subtle bg-surface-panel text-ink-primary shadow-control hover:bg-neutral-hover hover:text-ink-primary",
+          "border border-line-subtle bg-transparent text-ink-primary shadow-control hover:bg-brand-soft hover:text-ink-primary",
         quiet:
-          "text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover",
+          "text-ink-secondary hover:text-ink-primary hover:bg-brand-soft",
         danger:
           "bg-danger text-white shadow-control hover:bg-danger/90",
         subtle:
@@ -24,7 +24,7 @@ const buttonVariants = cva(
         inverse:
           "bg-ink-primary text-surface-panel shadow-control hover:bg-ink-secondary",
         "inverse-secondary":
-          "border border-line-strong text-ink-primary bg-transparent hover:bg-neutral-hover",
+          "border border-line-strong text-ink-primary bg-transparent hover:bg-brand-soft",
       },
       size: {
         xs: "h-control-xs min-h-control-xs px-2.5 type-caption rounded-control gap-1.5 [&_svg]:icon-xs",

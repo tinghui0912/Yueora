@@ -15,8 +15,8 @@ export default function Settings() {
   return (
     <AppPage size="standard" className="space-y-6" data-qa="settings-page">
       <div>
-        <h1 className="type-page-title text-ink-primary">Settings</h1>
-        <p className="mt-1 type-page-subtitle text-ink-secondary">
+        <h1 className="type-workspace-title text-ink-primary">Settings</h1>
+        <p className="mt-1 type-page-subtitle text-ink-tertiary">
           Manage your personal profile, credentials, musical preferences, and workspace plan.
         </p>
       </div>
@@ -31,8 +31,8 @@ export default function Settings() {
                   className={({ isActive }) =>
                     `block whitespace-nowrap rounded-control px-3.5 py-2 type-body-small transition-colors ${
                       isActive
-                        ? 'bg-brand-soft font-medium text-brand'
-                        : 'text-ink-secondary hover:text-ink-primary'
+                        ? 'bg-nav-active font-medium text-brand'
+                        : 'text-ink-tertiary hover:text-ink-primary'
                     }`
                   }
                 >

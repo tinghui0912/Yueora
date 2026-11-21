@@ -25,6 +25,7 @@ const REQUIRED_TYPOGRAPHY = [
   'type-metric',
   'type-sidebar-descriptor',
   'type-dashboard-title',
+  'type-workspace-title',
   'type-page-subtitle',
   'type-stat-label',
   'type-panel-title',
@@ -96,6 +97,7 @@ const CANONICAL_PRIMITIVE_TOKENS = [
   '--primitive-ink-700',
   '--primitive-ink-800',
   '--primitive-ink-900',
+  '--primitive-gold-50',
   '--primitive-gold-100',
   '--primitive-gold-500',
   '--primitive-gold-600',
@@ -114,6 +116,8 @@ const SEMANTIC_TOKENS_MAPPING_PRIMITIVES = [
   { token: '--brand-fill-hover', expectedPrimitive: '--primitive-gold-800' },
   { token: '--brand-fill-foreground', expectedPrimitive: '--primitive-neutral-0' },
   { token: '--brand-soft', expectedPrimitive: '--primitive-gold-100' },
+  { token: '--nav-active-bg', expectedPrimitive: '--primitive-gold-50' },
+  { token: '--control-hover-accent', expectedPrimitive: '--primitive-gold-100' },
   { token: '--brand-foreground', expectedPrimitive: '--primitive-ink-900' },
   { token: '--brand-soft-foreground', expectedPrimitive: '--primitive-ink-900' },
   { token: '--ink-primary', expectedPrimitive: '--primitive-ink-900' },
@@ -881,16 +885,16 @@ verifyBrandSoftVsWashIntegrity(totalViolations);
 
 // Phase 7: Semantic Navigation, Selection & Surface Contract Verification
 function verifyNavigationAndSurfaceContracts(issues = []) {
-  // 1. SidebarNavItem: assert bg-brand-soft active and NO shadow
+  // 1. SidebarNavItem: assert bg-nav-active or bg-brand-soft active and NO shadow
   const sidebarNavItemPath = path.resolve('src/components/app-shell/SidebarNavItem.jsx');
   if (fs.existsSync(sidebarNavItemPath)) {
     const code = fs.readFileSync(sidebarNavItemPath, 'utf8');
-    if (!code.includes('bg-brand-soft')) {
+    if (!code.includes('bg-brand-soft') && !code.includes('bg-nav-active')) {
       issues.push({
         file: 'src/components/app-shell/SidebarNavItem.jsx',
         line: 1,
-        matched: 'missing bg-brand-soft in SidebarNavItem',
-        message: 'SidebarNavItem must use warm gold active navigation (bg-brand-soft font-semibold text-ink-primary).',
+        matched: 'missing bg-brand-soft or bg-nav-active in SidebarNavItem',
+        message: 'SidebarNavItem must use warm gold active navigation (bg-nav-active or bg-brand-soft).',
       });
     }
     if (code.includes('shadow-xs') || code.includes('shadow-sm') || code.includes('shadow-raised')) {
@@ -903,16 +907,16 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   }
 
-  // 2. LibrarySubRail: assert bg-brand-soft active and NO shadow
+  // 2. LibrarySubRail: assert bg-brand-soft or bg-nav-active active and NO shadow
   const librarySubRailPath = path.resolve('src/components/library/LibrarySubRail.jsx');
   if (fs.existsSync(librarySubRailPath)) {
     const code = fs.readFileSync(librarySubRailPath, 'utf8');
-    if (!code.includes('bg-brand-soft')) {
+    if (!code.includes('bg-brand-soft') && !code.includes('bg-nav-active')) {
       issues.push({
         file: 'src/components/library/LibrarySubRail.jsx',
         line: 1,
-        matched: 'missing bg-brand-soft in LibrarySubRail',
-        message: 'LibrarySubRail navigation items must use warm gold active styling (bg-brand-soft font-semibold text-ink-primary).',
+        matched: 'missing bg-brand-soft or bg-nav-active in LibrarySubRail',
+        message: 'LibrarySubRail navigation items must use warm gold active styling (bg-nav-active or bg-brand-soft).',
       });
     }
     if (code.includes('shadow-xs') || code.includes('shadow-sm')) {
@@ -925,16 +929,16 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   }
 
-  // 3. Settings.jsx: assert bg-brand-soft active and NO shadow on navigation tabs
+  // 3. Settings.jsx: assert bg-brand-soft or bg-nav-active active and NO shadow on navigation tabs
   const settingsPath = path.resolve('src/pages/Settings.jsx');
   if (fs.existsSync(settingsPath)) {
     const code = fs.readFileSync(settingsPath, 'utf8');
-    if (!code.includes('bg-brand-soft')) {
+    if (!code.includes('bg-brand-soft') && !code.includes('bg-nav-active')) {
       issues.push({
         file: 'src/pages/Settings.jsx',
         line: 1,
-        matched: 'missing bg-brand-soft in Settings navigation',
-        message: 'Settings navigation tabs must use warm gold active styling (bg-brand-soft font-semibold text-ink-primary).',
+        matched: 'missing bg-brand-soft or bg-nav-active in Settings navigation',
+        message: 'Settings navigation tabs must use warm gold active styling (bg-nav-active or bg-brand-soft).',
       });
     }
     if (code.includes('shadow-xs') || code.includes('shadow-sm')) {

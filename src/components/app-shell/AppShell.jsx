@@ -39,7 +39,7 @@ export default function AppShell() {
           <NavLink to="/practice" aria-label="Yueora home">
             <Logo variant="mark" size="sm" />
           </NavLink>
-          <span className="type-caption font-serif italic text-ink-secondary">
+          <span className="type-sidebar-descriptor text-ink-tertiary">
             Yueora Sanctuary
           </span>
         </div>
@@ -80,7 +80,7 @@ export default function AppShell() {
                 aria-label="Account menu"
               >
                 <Avatar className="h-7 w-7">
-                  <AvatarFallback className="bg-brand type-caption font-semibold text-brand-foreground">
+                  <AvatarFallback className="bg-brand type-body-small font-semibold text-brand-foreground">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -89,7 +89,7 @@ export default function AppShell() {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel className="font-normal">
                 <p className="type-body-small font-semibold text-ink-primary truncate">{displayName}</p>
-                <p className="type-caption text-ink-secondary truncate">{account?.email || user?.email}</p>
+                <p className="type-metadata text-ink-secondary truncate">{account?.email || user?.email}</p>
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-line-subtle" />
               <DropdownMenuItem asChild>

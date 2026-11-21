@@ -31,14 +31,15 @@ export function LogoMark({ className = 'h-7 w-7', strokeWidth = 2.6 }) {
 }
 
 const SIZES = {
-  sm: { mark: 'h-5 w-5', word: 'text-base', gap: 'gap-1.5' },
-  md: { mark: 'h-7 w-7', word: 'text-xl', gap: 'gap-2' },
-  lg: { mark: 'h-9 w-9', word: 'text-2xl', gap: 'gap-2.5' },
+  sm: { mark: 'h-5 w-5', word: 'text-base font-medium', gap: 'gap-1.5' },
+  md: { mark: 'h-6 w-6', word: 'text-xl font-semibold', gap: 'gap-2' },
+  sidebar: { mark: 'h-7 w-7', word: 'text-2xl font-bold', gap: 'gap-2.5' },
+  lg: { mark: 'h-9 w-9', word: 'text-2xl font-bold', gap: 'gap-2.5' },
 };
 
 /**
  * variant: 'full' (mark + wordmark), 'compact' (smaller mark + wordmark), or
- * 'mark' (the symbol alone). size: sm | md | lg. tone: default | inverse —
+ * 'mark' (the symbol alone). size: sm | md | sidebar | lg. tone: default | inverse —
  * inverse is for dark backgrounds.
  */
 export default function Logo({ variant = 'full', size = 'md', tone = 'default', className = '', label = undefined }) {
@@ -62,7 +63,8 @@ export default function Logo({ variant = 'full', size = 'md', tone = 'default', 
     >
       <LogoMark className={compact ? 'h-[1.15em] w-[1.15em]' : s.mark} strokeWidth={compact ? 3 : 2.6} />
       <span
-        className={`font-display font-medium leading-none tracking-tight ${wordColor} ${compact ? 'text-[0.95em]' : s.word}`}
+        data-qa="brand-wordmark"
+        className={`font-display leading-none tracking-tight ${wordColor} ${compact ? 'text-[0.95em]' : s.word}`}
       >
         Yueora
       </span>

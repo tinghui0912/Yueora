@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import AppPage from '@/components/patterns/AppPage';
 import PageHeader from '@/components/patterns/PageHeader';
 import StateMessage from '@/components/patterns/StateMessage';
+import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
 
 const categoryIcon = {
   practice: Music,
@@ -60,21 +61,17 @@ export default function Notifications() {
         primaryAction={unreadCount > 0 ? <Button intent="quiet" size="sm" onClick={markAllRead}><CheckCheck className="mr-1.5" /> Mark all read</Button> : undefined}
       />
 
-      <div className="mt-5 flex flex-wrap gap-1">
+      <FilterTabs className="mt-5">
         {filters.map((t) => (
-          <button
+          <FilterTab
             key={t.key}
+            active={filter === t.key}
             onClick={() => setFilter(t.key)}
-            className={`rounded-control px-3 py-1.5 type-body-small transition-colors ${
-              filter === t.key
-                ? 'bg-neutral-muted font-semibold text-ink-primary'
-                : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
-            }`}
           >
             {t.label}
-          </button>
+          </FilterTab>
         ))}
-      </div>
+      </FilterTabs>
 
       {filtered.length === 0 ? (
         <StateMessage
@@ -96,7 +93,7 @@ export default function Notifications() {
 function Group({ label, items, onOpen, navigate }) {
   return (
     <div>
-      <h2 className="mb-2 type-caption text-ink-tertiary">{label}</h2>
+      <h2 className="mb-2 type-body-small font-medium text-ink-tertiary">{label}</h2>
       <ul className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
         {items.map((n) => {
           const Icon = categoryIcon[n.category] || Sparkles;

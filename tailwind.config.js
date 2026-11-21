@@ -83,6 +83,8 @@ module.exports = {
 					'soft-foreground': 'hsl(var(--brand-soft-foreground))',
 					foreground: 'hsl(var(--brand-foreground))',
 				},
+				'nav-active': 'hsl(var(--nav-active-bg))',
+				'control-hover-accent': 'hsl(var(--control-hover-accent))',
 				/* ---- Neutral quiet & hover ---- */
 				neutral: {
 					muted: 'hsl(var(--neutral-muted))',
