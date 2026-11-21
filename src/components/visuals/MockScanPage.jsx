@@ -35,19 +35,19 @@ export default function MockScanPage({ seed = 'scan-1', className = '', showHigh
 
   return (
     <svg viewBox="0 0 240 320" className={className} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-      {/* Paper background — slightly warm */}
-      <rect width="240" height="320" fill="#F8F5EE" />
-      {/* Subtle scan noise */}
-      <rect width="240" height="320" fill="#000" opacity="0.015" />
+      {/* Paper background — canonical surface-panel */}
+      <rect width="240" height="320" fill="hsl(var(--surface-panel))" />
+      {/* Subtle scan texture overlay */}
+      <rect width="240" height="320" fill="hsl(var(--ink-primary))" opacity="0.015" />
 
       {/* Page margin line */}
-      <line x1="20" y1="20" x2="220" y2="20" stroke="#D4CFC0" strokeWidth="0.5" opacity="0.5" />
+      <line x1="20" y1="20" x2="220" y2="20" stroke="hsl(var(--line-subtle))" strokeWidth="0.5" opacity="0.6" />
 
       {/* Title placeholder */}
-      <text x="120" y="34" textAnchor="middle" fill="#3A3528" fontSize="7" fontFamily="Georgia, serif" opacity="0.55">
+      <text x="120" y="34" textAnchor="middle" fill="hsl(var(--ink-secondary))" fontSize="7" fontFamily="Georgia, serif" opacity="0.6">
         {s % 2 === 0 ? 'Nocturne' : 'Prelude'}
       </text>
-      <text x="120" y="44" textAnchor="middle" fill="#3A3528" fontSize="5" fontFamily="Georgia, serif" opacity="0.4">
+      <text x="120" y="44" textAnchor="middle" fill="hsl(var(--ink-secondary))" fontSize="5" fontFamily="Georgia, serif" opacity="0.45">
         {s % 3 === 0 ? 'F. Chopin' : s % 3 === 1 ? 'J. S. Bach' : 'L. v. Beethoven'}
       </text>
 
@@ -59,37 +59,37 @@ export default function MockScanPage({ seed = 'scan-1', className = '', showHigh
           <g key={si}>
             {/* Staff lines */}
             {staffLines.map((dy) => (
-              <line key={dy} x1="20" y1={yBase + dy} x2="220" y2={yBase + dy} stroke="#5A5440" strokeWidth="0.5" opacity="0.7" />
+              <line key={dy} x1="20" y1={yBase + dy} x2="220" y2={yBase + dy} stroke="hsl(var(--line-subtle))" strokeWidth="0.5" opacity="0.7" />
             ))}
             {/* Barlines */}
-            <line x1="20" y1={yBase} x2="20" y2={yBase + 24} stroke="#3A3528" strokeWidth="0.8" />
-            <line x1="120" y1={yBase} x2="120" y2={yBase + 24} stroke="#3A3528" strokeWidth="0.5" opacity="0.6" />
-            <line x1="220" y1={yBase} x2="220" y2={yBase + 24} stroke="#3A3528" strokeWidth="0.8" />
+            <line x1="20" y1={yBase} x2="20" y2={yBase + 24} stroke="hsl(var(--ink-secondary))" strokeWidth="0.8" />
+            <line x1="120" y1={yBase} x2="120" y2={yBase + 24} stroke="hsl(var(--ink-secondary))" strokeWidth="0.5" opacity="0.6" />
+            <line x1="220" y1={yBase} x2="220" y2={yBase + 24} stroke="hsl(var(--ink-secondary))" strokeWidth="0.8" />
 
             {/* Highlight rectangle for active issue */}
             {isHighlighted && (
-              <rect x="118" y={yBase - 2} width="20" height="28" fill="#E8A030" opacity="0.2" rx="1" />
+              <rect x="118" y={yBase - 2} width="20" height="28" fill="hsl(var(--brand))" opacity="0.2" rx="1" />
             )}
 
             {/* Notes */}
             {systemNotes[si].map((n, i) => (
-              <g key={i} fill="#2A2518" opacity="0.75">
+              <g key={i} fill="hsl(var(--ink-primary))" opacity="0.75">
                 <ellipse cx={n.x} cy={yBase + n.y + 8} rx="3.2" ry="2.2" transform={`rotate(-15 ${n.x} ${yBase + n.y + 8})`} />
-                <line x1={n.x + 3} y1={yBase + n.y + 8} x2={n.x + 3} y2={n.up ? yBase + n.y - 14 : yBase + n.y + 30} stroke="#2A2518" strokeWidth="0.8" />
-                {n.dur === 2 && <line x1={n.x + 3} y1={n.up ? yBase + n.y - 14 : yBase + n.y + 30} x2={n.x + 9} y2={n.up ? yBase + n.y - 14 : yBase + n.y + 30} stroke="#2A2518" strokeWidth="1.5" />}
+                <line x1={n.x + 3} y1={yBase + n.y + 8} x2={n.x + 3} y2={n.up ? yBase + n.y - 14 : yBase + n.y + 30} stroke="hsl(var(--ink-primary))" strokeWidth="0.8" />
+                {n.dur === 2 && <line x1={n.x + 3} y1={n.up ? yBase + n.y - 14 : yBase + n.y + 30} x2={n.x + 9} y2={n.up ? yBase + n.y - 14 : yBase + n.y + 30} stroke="hsl(var(--ink-primary))" strokeWidth="1.5" />}
               </g>
             ))}
 
             {/* Pencil marking on one system */}
             {si === 1 && s % 2 === 0 && (
-              <circle cx="140" cy={yBase + 12} r="6" fill="none" stroke="#B8541A" strokeWidth="0.6" opacity="0.35" />
+              <circle cx="140" cy={yBase + 12} r="6" fill="none" stroke="hsl(var(--brand))" strokeWidth="0.6" opacity="0.4" />
             )}
           </g>
         );
       })}
 
       {/* Page number */}
-      <text x="120" y="308" textAnchor="middle" fill="#5A5440" fontSize="4" opacity="0.4">— 1 —</text>
+      <text x="120" y="308" textAnchor="middle" fill="hsl(var(--ink-tertiary))" fontSize="4" opacity="0.5">— 1 —</text>
 
       {/* Subtle rotation effect via transform on outer group could be added, but keep clean */}
     </svg>

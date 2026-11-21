@@ -6,6 +6,8 @@ import { generateNotes } from '@/lib/mockData';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import MockScanPage from '@/components/visuals/MockScanPage';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import BackLink from '@/components/patterns/BackLink';
 import Surface from '@/components/patterns/Surface';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
@@ -60,8 +62,22 @@ export default function RecognitionReview() {
         <div className="flex items-center gap-3">
           {active && (
             <div className="hidden items-center gap-1 sm:flex">
-              <button onClick={goPrev} disabled={issues.findIndex((i) => i.id === active.id) === 0} className="rounded-control p-1 text-ink-secondary hover:bg-neutral-hover disabled:opacity-30" aria-label="Previous issue"><ChevronUp className="icon-sm" /></button>
-              <button onClick={goNext} disabled={issues.findIndex((i) => i.id === active.id) === issues.length - 1} className="rounded-control p-1 text-ink-secondary hover:bg-neutral-hover disabled:opacity-30" aria-label="Next issue"><ChevronDown className="icon-sm" /></button>
+              <IconButton
+                icon={ChevronUp}
+                label="Previous issue"
+                tone="quiet"
+                size="xs"
+                onClick={goPrev}
+                disabled={issues.findIndex((i) => i.id === active.id) === 0}
+              />
+              <IconButton
+                icon={ChevronDown}
+                label="Next issue"
+                tone="quiet"
+                size="xs"
+                onClick={goNext}
+                disabled={issues.findIndex((i) => i.id === active.id) === issues.length - 1}
+              />
             </div>
           )}
           <span className="type-body-small text-ink-secondary">Recognition review</span>
@@ -69,9 +85,17 @@ export default function RecognitionReview() {
       </div>
 
       {/* Mobile view toggle */}
-      <div className="flex border-b border-line-subtle md:hidden bg-surface-panel">
-        <button onClick={() => setMobileView('original')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 type-body-small font-medium ${mobileView === 'original' ? 'border-b-2 border-brand text-brand' : 'text-ink-secondary'}`}><ScanLine className="icon-sm" /> Original</button>
-        <button onClick={() => setMobileView('recognized')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 type-body-small font-medium ${mobileView === 'recognized' ? 'border-b-2 border-brand text-brand' : 'text-ink-secondary'}`}><Pencil className="icon-sm" /> Recognized</button>
+      <div className="border-b border-line-subtle md:hidden bg-surface-panel p-1">
+        <Tabs value={mobileView} onValueChange={setMobileView} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="original" className="flex items-center gap-1.5">
+              <ScanLine className="icon-xs" /> Original
+            </TabsTrigger>
+            <TabsTrigger value="recognized" className="flex items-center gap-1.5">
+              <Pencil className="icon-xs" /> Recognized
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       <div className="flex min-h-0 flex-1">

@@ -77,9 +77,9 @@ Repeated product hierarchy roles use semantic typography roles. Do not override 
 > **Visual parity takes precedence over accessibility-driven recoloring.**  
 > If the visual reference itself exhibits a particular contrast characteristic (e.g. primary button text), it is documented and preserved rather than adjusted.
 
-- **Antique Bronze Gold is canonical primary & brand accent:** The primary brand color (`--brand`) is antique bronze gold (`#C38322` / `36 70% 45%`) paired with warm white foreground (`--brand-foreground`, `#FDFDFC` / `40 20% 98%`).
+- **Antique Bronze Gold is canonical primary & brand accent:** The primary brand color (`--brand`) is antique bronze gold (`#C38322` / `36 70% 45%`) paired with warm white foreground (`--brand-foreground`, `hsl(40 20% 98%)` / `rgb(251, 250, 249)`).
 - **Warm paper canvas:** The global backdrop (`--surface-canvas`) is warm archive paper (`#F9F8F6` / `40 20% 97%`).
-- **Warm white content panels:** Standard panels (`--surface-panel`) are warm white (`#FDFDFC` / `40 25% 99%`).
+- **Warm white content panels:** Standard panels (`--surface-panel`) are warm white (`hsl(40 25% 99%)`).
 - **Color is functional:** Color is reserved strictly for functional feedback (success for practice following/correct notes, warning for resyncing warnings, destructive for alerts/errors, gold for favorites/sounding keys).
 - **No royal blue:** The UGC royal blue accent (`#2B58BF`) is strictly prohibited.
 - **No forest green brand:** Legacy forest green is retired as a brand color.
@@ -104,9 +104,9 @@ Repeated product hierarchy roles use semantic typography roles. Do not override 
   - `border-line-subrail`: Distinctive divider for secondary navigation rails.
 - **Brand & Active States:**
   - `bg-brand`: Antique Bronze Gold (`#C38322` / `36 70% 45%`) for primary CTA buttons, brand accent, focus rings, and active cues.
-  - `text-brand-foreground`: Warm white text on primary CTA buttons (`#FDFDFC` / `40 20% 98%`).
+  - `text-brand-foreground`: Warm white text on primary CTA buttons (`hsl(40 20% 98%)` / `rgb(251, 250, 249)`).
   - `bg-brand-soft`: Tinted warm gold soft background (`#F2E8D9` / `36 50% 90%`) for compact selection.
-  - `text-brand-soft-foreground`: Dark readable ink on gold soft (`#221F1C`).
+  - `text-brand-soft-foreground`: Mapped to `--numis-accent-foreground` (`30 10% 15%`).
   - `bg-nav-active`: Opacity-based active navigation background (`hsl(var(--numis-primary) / 0.1)`).
 - **Neutral Quiet & Hover:**
   - `bg-neutral-muted`: Warm neutral for passive badges, tab tracks, progress backgrounds.
@@ -175,13 +175,13 @@ Practice runtime conveys musical feedback without looking like a rainbow arcade 
 | `practice-waiting` | `--numis-sidebar-foreground` | Paused / waiting for musician input |
 | `practice-resyncing` | `--numis-primary` | Tempo drift / resyncing cursor cue |
 | `practice-current` | `--numis-primary` | Active sounding note / piano key illumination |
-| `practice-error` | `--primitive-danger-500` | Pitch or rhythm correction prompt |
+| `practice-error` | `--numis-destructive` | Pitch or rhythm correction prompt |
 
 ### 2.3 Unified Product Grammar & 3 General UI Surfaces
 
 Authenticated application layout converges on 3 canonical surfaces with zero notation exceptions:
 
-1. **App Canvas (`bg-surface-canvas`):** Warm ivory backdrop for all application views (`#F8F6F1`).
+1. **App Canvas (`bg-surface-canvas`):** Warm archive paper backdrop for all application views (`hsl(40 20% 97%)` ≈ `#F9F8F6`).
 2. **Standard Content Panel (`bg-surface-panel`):** Universal clean white container with `border border-line-subtle` and `rounded-container` (flat by default, no shadow). All application cards, list containers, resume modules, stats, pricing cards, forms, and musical notation containers use this universal container.
 3. **Floating Raised Overlays (`bg-surface-raised`):** Elevated overlay surface with `shadow-overlay` or `shadow-raised` (popovers, menus, modal dialogs, search trigger).
 
@@ -254,10 +254,10 @@ Yueora enforces a contracted, single-owner Button API. **Pages compose; Button c
 - **Geometry:** Compact controls (`rounded-control: 10px`) with quiet `shadow-raised`.
 - **Single Prop Contract:** Button exposes a single semantic prop: `intent`. The legacy `variant` prop and legacy aliases (`default`, `outline`, `ghost`, `destructive`) are permanently retired and banned in CI.
 - **Intents:**
-  - `primary`: Antique Bronze Gold (`#C38322`) identity CTA with dark readable ink (`text-brand-foreground`, >=4.5:1 contrast) and `shadow-raised`.
+  - `primary`: Antique Bronze Gold (`#C38322`) identity CTA with warm white text (`text-brand-foreground`: `hsl(40 20% 98%)` / `rgb(251, 250, 249)`), shadow, and `hover:bg-brand/90`.
   - `secondary`: Warm white panel (`bg-surface-panel`) with subtle line (`border-line-subtle`) and `shadow-raised`.
   - `quiet`: Subtle action with neutral hover (`hover:bg-neutral-hover`).
-  - `danger`: Terracotta alert action for destructive confirmation (`bg-danger text-white shadow-raised`).
+  - `danger`: Destructive action aligned with Numis reference (`bg-danger text-danger-foreground shadow-control hover:bg-danger/90`).
   - `subtle`: Neutral muted action (`bg-neutral-muted`).
   - `link`: Inline text action with underline hover.
   - `inverse`: High-contrast dark ink action (`bg-ink-primary text-surface-panel shadow-raised`) for dark surfaces.

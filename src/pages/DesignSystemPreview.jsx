@@ -222,7 +222,7 @@ export default function DesignSystemPreview() {
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
                 <p className="type-caption text-ink-primary">Nav Active</p>
-                <div className="mt-2 flex items-center justify-center gap-1.5 rounded-control bg-brand-soft px-3 py-1.5 type-body-small font-semibold text-ink-primary">
+                <div className="mt-2 flex items-center justify-center gap-1.5 rounded-control bg-nav-active px-3 py-1.5 type-body-small font-medium text-brand">
                   <span className="h-1.5 w-1.5 rounded-full bg-brand" />
                   Nav Active
                 </div>

@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { scanFile } from './lib/typography-scanner.mjs';
 import { scanPageAppearanceContent } from './lib/appearance-guard.mjs';
+import { scanColorProvenanceContent } from './lib/color-provenance-guard.mjs';
 
 // 1. Verify CSS Foundations & Token Integrity
 const INDEX_CSS_PATH = path.resolve('src/index.css');
@@ -125,7 +126,7 @@ export const NUMIS_REFERENCE_MANIFEST = {
   },
 };
 
-const SEMANTIC_TOKENS_MAPPING_REFERENCE = [
+export const SEMANTIC_TOKENS_MAPPING_REFERENCE = [
   { token: '--surface-canvas', expectedReference: '--numis-background' },
   { token: '--surface-panel', expectedReference: '--numis-card' },
   { token: '--surface-raised', expectedReference: '--numis-card' },
@@ -141,15 +142,33 @@ const SEMANTIC_TOKENS_MAPPING_REFERENCE = [
   { token: '--brand-foreground', expectedReference: '--numis-primary-foreground' },
   { token: '--brand-soft', expectedReference: '--numis-accent' },
   { token: '--brand-soft-foreground', expectedReference: '--numis-accent-foreground' },
+  { token: '--control-hover-accent', expectedReference: '--numis-accent' },
   { token: '--neutral-muted', expectedReference: '--numis-muted' },
   { token: '--neutral-muted-foreground', expectedReference: '--numis-muted-foreground' },
   { token: '--neutral-hover', expectedReference: '--numis-sidebar-accent' },
   { token: '--neutral-hover-foreground', expectedReference: '--numis-foreground' },
+  { token: '--success', expectedReference: '--numis-chart-2' },
+  { token: '--success-foreground', expectedReference: '--numis-primary-foreground' },
+  { token: '--warning', expectedReference: '--numis-primary' },
+  { token: '--warning-foreground', expectedReference: '--numis-primary-foreground' },
   { token: '--danger', expectedReference: '--numis-destructive' },
   { token: '--danger-foreground', expectedReference: '--numis-destructive-foreground' },
+  { token: '--info', expectedReference: '--numis-sidebar-accent' },
+  { token: '--info-foreground', expectedReference: '--numis-foreground' },
+  { token: '--selection', expectedReference: '--numis-accent' },
   { token: '--practice-following', expectedReference: '--numis-chart-2' },
+  { token: '--practice-following-foreground', expectedReference: '--numis-primary-foreground' },
+  { token: '--practice-waiting', expectedReference: '--numis-sidebar-foreground' },
+  { token: '--practice-waiting-foreground', expectedReference: '--numis-primary-foreground' },
+  { token: '--practice-resyncing', expectedReference: '--numis-primary' },
+  { token: '--practice-resyncing-foreground', expectedReference: '--numis-primary-foreground' },
   { token: '--practice-current', expectedReference: '--numis-primary' },
+  { token: '--practice-current-foreground', expectedReference: '--numis-primary-foreground' },
+  { token: '--practice-correct', expectedReference: '--numis-chart-2' },
+  { token: '--practice-correct-foreground', expectedReference: '--numis-primary-foreground' },
   { token: '--practice-error', expectedReference: '--numis-destructive' },
+  { token: '--practice-error-foreground', expectedReference: '--numis-destructive-foreground' },
+  { token: '--gold', expectedReference: '--numis-primary' },
 ];
 
 // WCAG AA Contrast Verification (Dynamic Resolution from src/index.css)
@@ -1697,10 +1716,36 @@ function verifyVisualFreedomContraction(issues = []) {
 }
 verifyVisualFreedomContraction(totalViolations);
 
+let totalColorProvenanceFilesCount = 0;
+function verifyCodebaseColorProvenance(issues = []) {
+  const SRC_DIR = path.resolve('src');
+  function scan(dir) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scan(full);
+      } else if (entry.isFile() && /\.(jsx?|tsx?|css|html)$/.test(entry.name)) {
+        totalColorProvenanceFilesCount++;
+        const code = fs.readFileSync(full, 'utf8');
+        const rel = path.relative(process.cwd(), full);
+        const fileIssues = scanColorProvenanceContent(code, rel);
+        issues.push(...fileIssues);
+      }
+    }
+  }
+  if (fs.existsSync(SRC_DIR)) {
+    scan(SRC_DIR);
+  }
+  return issues;
+}
+verifyCodebaseColorProvenance(totalViolations);
+
 if (totalViolations.length === 0) {
   console.log('✅ Design System integrity checks passed.');
   console.log(`   - Verified ${REQUIRED_TYPOGRAPHY.length} semantic typography roles in src/index.css`);
   console.log(`   - Verified ${Object.keys(NUMIS_REFERENCE_MANIFEST.referenceTokens).length} frozen Numis reference tokens & ${SEMANTIC_TOKENS_MAPPING_REFERENCE.length} semantic alias mappings in src/index.css`);
+  console.log(`   - Verified full codebase color provenance & Numis reference allowlist across ${totalColorProvenanceFilesCount} files in src/ (zero unknown physical colors)`);
   console.log(`   - Verified ${REQUIRED_SURFACE_AND_BRAND_TOKENS.length} canonical surface/brand tokens in src/index.css`);
   console.log(`   - Verified ${CANONICAL_CONTROL_TOKENS.length} canonical control tokens & ${REQUIRED_CONTROL_UTILITIES.length} utilities`);
   console.log(`   - Verified ${CANONICAL_ICON_TOKENS.length} canonical icon tokens & ${REQUIRED_ICON_UTILITIES.length} utilities`);

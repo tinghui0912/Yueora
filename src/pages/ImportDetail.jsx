@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileMusic, RefreshCw, AlertTriangle, CheckCircle2, Pencil, ArrowRight, Trash2 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 import AppPage from '@/components/patterns/AppPage';
 import { Surface } from '@/components/patterns/Surface';
 import {
@@ -84,7 +85,9 @@ export default function ImportDetail() {
               <AlertTriangle className="h-5 w-5 text-danger" />
               <p className="type-body-small text-ink-primary">{imp.failure}</p>
             </div>
-            <button onClick={handleRetry} className="mt-4 flex items-center gap-2 rounded-control border border-line-subtle px-3 py-2 type-body-small font-medium text-ink-primary hover:bg-neutral-hover transition-colors"><RefreshCw className="h-4 w-4" /> Try again</button>
+            <Button intent="secondary" size="sm" onClick={handleRetry} className="mt-4">
+              <RefreshCw className="icon-xs" /> Try again
+            </Button>
           </div>
         )}
         {imp.status === 'completed' && (
@@ -103,7 +106,7 @@ export default function ImportDetail() {
             <div key={i} className="flex items-center gap-3 rounded-container border border-line-subtle bg-surface-panel p-3">
               <FileThumbnail seed={importId + '-page-' + (i + 1)} className="h-14 w-12" />
               <span className="flex-1 type-body-small text-ink-primary">Page {i + 1}.pdf</span>
-              <button onClick={() => setReplaceOpen(true)} className="rounded-control p-1.5 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors" aria-label="Replace"><RefreshCw className="h-4 w-4" /></button>
+              <IconButton icon={RefreshCw} label="Replace" tone="quiet" size="sm" onClick={() => setReplaceOpen(true)} />
             </div>
           ))}
         </div>

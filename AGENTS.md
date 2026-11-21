@@ -68,17 +68,17 @@ Before creating or styling any UI element:
      - Standard Content Panel: `bg-surface-panel` (warm white, `border-line-subtle`, `rounded-container`). Flat by default; avoid automatic `shadow-xs` on static containers. All cards, list containers, sections, resume modules, pricing tiers, stats, and musical notation/score containers use standard panel. Musical notation is domain content, not a separate Design System surface.
      - Elevated Overlays / Menus: `bg-surface-raised` with `shadow-overlay` (or `shadow-raised`)
      - Secondary Navigation Shell (Implementation Detail): `bg-surface-subrail`, `border-line-subrail` for collection/folder subrails.
-     - Brand Color Contract: Antique Bronze Gold is identity accent, paired with dark readable ink.
+     - Brand Color Contract: Antique Bronze Gold (`--brand`: `36 70% 45%`) is primary identity tone. Primary CTA uses warm white text (`--brand-foreground`: `40 20% 98%`); brand accent icons and cues are `text-brand`.
    - Lines: `border-line-subtle`, `border-line-strong`, `border-line-subrail`
-   - Navigation Active Contract: Warm gold active: `bg-brand-soft font-semibold text-ink-primary` with subtle `text-brand` icon cue (NO shadow). Inactive is `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`.
+   - Navigation Active Contract: Canonical active is `bg-nav-active font-medium text-brand` with `text-brand` icon (NO shadow). Inactive is `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`.
    - Selection Contract (Large vs Compact):
      - **Compact Selection:** `bg-brand-soft text-brand-soft-foreground` (strictly for small chips, filter badges, compact tags, ChoiceCard badges where small surface area keeps it subordinate).
      - **Large Selection:** Wide rows, large selectable options, and full-width list items are **banned** from `bg-brand-soft`. Must use neutral selected surface (`bg-neutral-hover` or `bg-surface-panel`) paired with a brand indicator (`border-brand`, radio dot, or `text-brand` checkmark).
      - **Maximum 2 Brand Signals per selection state:** Never stack dark background + dark border + dark text + icon. Selection should be understood, not painted.
      - **Drag Targets:** Dragging state is not selection; use `border-brand bg-surface-canvas text-brand`, never `bg-brand-soft`.
      - **Control Toggles:** Loop/toggle buttons use `border-brand bg-neutral-muted text-ink-primary` with `text-brand` icon, not `bg-brand-soft`.
-   - Hover Contract: General interactive hover across all controls, buttons, dropdowns, list items, and links is strictly `bg-neutral-hover text-ink-primary`.
-   - Primary CTA: `bg-brand` (Antique Bronze Gold `#C38322`, `36 70% 45%`), `text-brand-foreground` (Warm White `#FDFDFC`), `shadow`, `hover:bg-brand/90 active:scale-[0.98]`
+   - Interaction & Hover Contract: Primitive owns its Numis-derived interaction recipe (e.g. Button primary uses `hover:bg-brand/90`, secondary uses `hover:bg-brand-soft`, quiet uses `hover:bg-brand-soft`). General neutral item hover across menus, dropdowns, list items, and links is strictly `bg-neutral-hover text-ink-primary`. Pages may NOT invent hover treatments.
+   - Primary CTA: `bg-brand` (Antique Bronze Gold `#C38322`, `36 70% 45%`), `text-brand-foreground` (Warm White `hsl(40 20% 98%)` / `rgb(251, 250, 249)`), `shadow`, `hover:bg-brand/90 active:scale-[0.98]`
    - Brand Accent: `text-brand` (Antique Bronze Gold `#C38322`), focus rings `focus-visible:ring-brand`, checkmarks, and active indicator cues.
    - Standard Form Controls: Default height is compact 36px (`h-control-md`, 10px `rounded-control`) for application-first density.
    - Interactive Surfaces & Tactile Lift: `<Surface interactive>` and `ScoreCard` provide soft warm elevation and subtle tactile lift (`hover:-translate-y-1 hover:border-brand/40 hover:shadow-raised transition-all duration-300`).

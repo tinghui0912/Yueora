@@ -1,4 +1,5 @@
 import { scanPageAppearanceContent } from './lib/appearance-guard.mjs';
+import { scanColorProvenanceContent } from './lib/color-provenance-guard.mjs';
 
 console.log('🧪 Running Design System Guardrail Regression Tests...\n');
 
@@ -31,6 +32,42 @@ function assertNegative(name, code, expectedMatch, filePath = 'test.jsx') {
 function assertPositive(name, code, filePath = 'test.jsx') {
   totalTests++;
   const issues = scanPageAppearanceContent(code, filePath);
+
+  if (issues.length === 0) {
+    console.log(`  ✓ [PASS as expected] ${name}`);
+    passedTests++;
+  } else {
+    console.error(`  ❌ [UNEXPECTED FAIL] ${name}`);
+    console.error(`     Code: ${code.trim()}`);
+    console.error(`     Actual issues: ${JSON.stringify(issues)}`);
+    failedTests++;
+  }
+}
+
+function assertColorNegative(name, code, expectedMatch, filePath = 'src/test.jsx') {
+  totalTests++;
+  const issues = scanColorProvenanceContent(code, filePath);
+  const found = issues.some(
+    (i) =>
+      !expectedMatch ||
+      (i.matched && i.matched.includes(expectedMatch)) ||
+      (i.message && i.message.includes(expectedMatch))
+  );
+
+  if (issues.length > 0 && found) {
+    console.log(`  ✓ [FAIL as expected] ${name}`);
+    passedTests++;
+  } else {
+    console.error(`  ❌ [UNEXPECTED PASS] ${name}`);
+    console.error(`     Expected to fail with match: ${expectedMatch}`);
+    console.error(`     Actual issues: ${JSON.stringify(issues)}`);
+    failedTests++;
+  }
+}
+
+function assertColorPositive(name, code, filePath = 'src/test.jsx') {
+  totalTests++;
+  const issues = scanColorProvenanceContent(code, filePath);
 
   if (issues.length === 0) {
     console.log(`  ✓ [PASS as expected] ${name}`);
@@ -825,6 +862,154 @@ assertPositive(
       <S0 className="grid grid-cols-2 gap-4" />
     );
   }`
+);
+
+// -----------------------------------------------------------------------------
+// 3. COLOR PROVENANCE FIXTURES (Negative & Positive)
+// -----------------------------------------------------------------------------
+console.log('\n--- Color Provenance & Reference Allowlist Fixtures ---');
+
+// 3.1 Negative: new unknown hex in JSX
+assertColorNegative(
+  'new unknown hex in JSX fails CI',
+  `export default function Comp() {
+    return <div className="bg-[#1a2b3c]" />;
+  }`,
+  '#1a2b3c',
+  'src/components/TestComp.jsx'
+);
+
+// 3.2 Negative: new unknown hex in .js
+assertColorNegative(
+  'new unknown hex in .js fails CI',
+  `export const ACCENT_COLOR = '#4d5e6f';`,
+  '#4d5e6f',
+  'src/lib/constants.js'
+);
+
+// 3.3 Negative: SVG fill="#unknown"
+assertColorNegative(
+  'SVG fill="#unknown" fails CI',
+  `export default function Icon() {
+    return <svg><path fill="#fedcba" /></svg>;
+  }`,
+  '#fedcba',
+  'src/components/CustomIcon.jsx'
+);
+
+// 3.4 Negative: SVG stroke="#unknown"
+assertColorNegative(
+  'SVG stroke="#unknown" fails CI',
+  `export default function Icon() {
+    return <svg><line stroke="#012345" /></svg>;
+  }`,
+  '#012345',
+  'src/components/CustomIcon.jsx'
+);
+
+// 3.5 Negative: canvas fillStyle = '#unknown'
+assertColorNegative(
+  'canvas fillStyle = \'#unknown\' fails CI',
+  `function render(ctx) {
+    ctx.fillStyle = '#654321';
+    ctx.fillRect(0, 0, 100, 100);
+  }`,
+  '#654321',
+  'src/lib/canvasDrawer.js'
+);
+
+// 3.6 Negative: canvas strokeStyle = '#unknown'
+assertColorNegative(
+  'canvas strokeStyle = \'#unknown\' fails CI',
+  `function render(ctx) {
+    ctx.strokeStyle = '#abcdef';
+    ctx.stroke();
+  }`,
+  '#abcdef',
+  'src/lib/canvasDrawer.js'
+);
+
+// 3.7 Negative: CSS raw unknown hex
+assertColorNegative(
+  'CSS raw unknown hex fails CI',
+  `.custom-header {
+    color: #334455;
+  }`,
+  '#334455',
+  'src/styles/custom.css'
+);
+
+// 3.8 Negative: CSS unknown rgb/hsl
+assertColorNegative(
+  'CSS unknown rgb/hsl fails CI',
+  `.custom-header {
+    background: rgb(111, 222, 133);
+  }`,
+  'rgb(111, 222, 133)',
+  'src/styles/custom.css'
+);
+
+// 3.9 Negative: unknown chromatic opacity recipe
+assertColorNegative(
+  'unknown chromatic opacity recipe fails CI',
+  `export default function Page() {
+    return <div className="bg-brand/17 text-brand/63 border-brand/41" />;
+  }`,
+  'bg-brand/17',
+  'src/pages/TestOpacity.jsx'
+);
+
+// 3.10 Negative: retired Yueora color
+assertColorNegative(
+  'retired Yueora color (#98661B) fails CI in color provenance',
+  `export default function Page() {
+    return <div className="bg-[#98661B]" />;
+  }`,
+  '#98661B',
+  'src/pages/TestOldColor.jsx'
+);
+
+// 3.11 Positive: Numis-approved reference value passes
+assertColorPositive(
+  'Numis-approved reference palette value passes in non-page component',
+  `export const DEFAULT_COLOR = '#b87a28';`,
+  'src/components/collection/CollectionCard.jsx'
+);
+
+// 3.12 Positive: GoogleIcon explicit external-brand exception passes
+assertColorPositive(
+  'GoogleIcon explicit external-brand exception passes',
+  `export default function GoogleIcon() {
+    return (
+      <svg viewBox="0 0 24 24">
+        <path d="..." fill="#4285F4" />
+        <path d="..." fill="#34A853" />
+        <path d="..." fill="#FBBC05" />
+        <path d="..." fill="#EA4335" />
+      </svg>
+    );
+  }`,
+  'src/components/GoogleIcon.jsx'
+);
+
+// 3.13 Positive: Numis-proven framework helper color passes where justified
+assertColorPositive(
+  'Numis-proven framework helper color in chart.jsx passes',
+  `const chartStyles = "[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-dot[stroke='#fff']]:stroke-transparent";`,
+  'src/components/ui/chart.jsx'
+);
+
+// 3.14 Positive: semantic token usage passes
+assertColorPositive(
+  'semantic token usage passes without violations',
+  `export default function Card() {
+    return (
+      <div className="bg-surface-panel text-ink-primary border border-line-subtle">
+        <svg><rect fill="hsl(var(--surface-panel))" stroke="hsl(var(--line-subtle))" /></svg>
+      </div>
+    );
+  }`,
+  'src/components/Card.jsx'
 );
 
 // -----------------------------------------------------------------------------

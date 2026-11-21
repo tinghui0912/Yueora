@@ -747,15 +747,9 @@ async function verifyComputedStyles(client, baseUrl) {
     throw new Error(`Active sidebar nav icon color mismatch: ${sidebarStyles.activeNav.iconColor} (expected gold rgb(195, 131, 34))`);
   }
   const isNavActive = sidebarStyles.activeNav.backgroundColor.includes('195, 131, 34, 0.1')
-    || sidebarStyles.activeNav.backgroundColor.includes('rgba(195, 131, 34, 0.1)')
-    || sidebarStyles.activeNav.backgroundColor.includes('247, 241, 232')
-    || sidebarStyles.activeNav.backgroundColor.includes('248, 241, 232')
-    || sidebarStyles.activeNav.backgroundColor.includes('250, 244, 235')
-    || sidebarStyles.activeNav.backgroundColor.includes('250, 243, 232')
-    || sidebarStyles.activeNav.backgroundColor.includes('242, 232, 217')
-    || sidebarStyles.activeNav.backgroundColor.includes('241, 232, 218');
+    || sidebarStyles.activeNav.backgroundColor.includes('rgba(195, 131, 34, 0.1)');
   if (!isNavActive) {
-    throw new Error(`Active sidebar nav background mismatch: ${sidebarStyles.activeNav.backgroundColor} (expected Numis reference primary/10 rgba(195, 131, 34, 0.1) or bg-brand-soft)`);
+    throw new Error(`Active sidebar nav background mismatch: ${sidebarStyles.activeNav.backgroundColor} (expected canonical Numis reference primary/10 rgba(195, 131, 34, 0.1))`);
   }
   if (sidebarStyles.activeNav.boxShadow !== 'none') {
     throw new Error(`Active navigation must be planar (no shadow), got: ${sidebarStyles.activeNav.boxShadow}`);
@@ -1465,7 +1459,7 @@ async function verifyComputedStyles(client, baseUrl) {
     throw new Error(`Toast close button default opacity is ${toastStyles.defaultToast.closeOpacity} (expected 0, visible on hover/focus)`);
   }
   if (!toastStyles.destructiveToast) throw new Error('Destructive Toast specimen not found');
-  if (!toastStyles.destructiveToast.backgroundColor.includes('220, 40, 40') && !toastStyles.destructiveToast.backgroundColor.includes('189, 40, 40')) {
+  if (!toastStyles.destructiveToast.backgroundColor.includes('220, 40, 40')) {
     throw new Error(`Destructive Toast background is ${toastStyles.destructiveToast.backgroundColor} (expected danger rgb(220, 40, 40))`);
   }
   if (!toastStyles.destructiveToast.color.includes('250, 250, 250') && !toastStyles.destructiveToast.color.includes('253, 253, 252') && !toastStyles.destructiveToast.color.includes('255, 255, 255')) {

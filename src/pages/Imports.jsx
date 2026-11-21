@@ -6,6 +6,7 @@ import AppPage from '@/components/patterns/AppPage';
 import PageHeader from '@/components/patterns/PageHeader';
 import StateMessage from '@/components/patterns/StateMessage';
 import StatusIndicator from '@/components/patterns/StatusIndicator';
+import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
 import { Button } from '@/components/ui/button';
 
 const tabs = [
@@ -55,17 +56,17 @@ export default function Imports() {
         description="How are your recently added scores doing? Add new scores from the Add score button."
       />
 
-      <div className="mt-5 flex flex-wrap gap-1 border-b border-line-subtle">
+      <FilterTabs className="mt-5" aria-label="Import status filters">
         {tabs.map((t) => (
-          <button
+          <FilterTab
             key={t.key}
+            active={tab === t.key}
             onClick={() => setTab(t.key)}
-            className={`border-b-2 px-3 py-2 type-body-small transition-colors ${tab === t.key ? 'border-brand text-brand font-semibold' : 'border-transparent text-ink-secondary hover:text-ink-primary'}`}
           >
             {t.label}
-          </button>
+          </FilterTab>
         ))}
-      </div>
+      </FilterTabs>
 
       {list.length === 0 ? (
         <div className="mt-4">

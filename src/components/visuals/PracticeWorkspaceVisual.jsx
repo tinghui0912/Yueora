@@ -38,7 +38,7 @@ export default function PracticeWorkspaceVisual() {
 
         {/* Tactile phrasing highlight overlay - soft gold, non-intrusive */}
         <div 
-          className="absolute left-[42%] top-[18%] h-[64%] w-[26%] rounded border border-practice-current/40 bg-practice-current/15 transition-all"
+          className="absolute left-[42%] top-[18%] h-[64%] w-[26%] rounded border border-practice-current/40 bg-practice-current/10 transition-all"
         >
           <div className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-surface-panel px-2 py-0.5 text-xs font-medium text-ink-secondary shadow-sm border border-line-subtle">
             Bar 14 · Andante très expressif

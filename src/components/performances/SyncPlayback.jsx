@@ -6,6 +6,7 @@ import { usePrototypeStore } from '@/stores/prototypeStore';
 import { fmtClock, measureWindowStart } from '@/lib/practiceUtils';
 import { measureAtTime, hasTimeline } from '@/lib/syncTimeline';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 
 /**
  * One playback timeline for the recording and the score.
@@ -160,42 +161,38 @@ export default function SyncPlayback({
       {/* Shared controls — one clock for both */}
       <div className="mt-4 rounded-container border border-line-subtle bg-surface-panel px-3 py-2.5">
         <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
+          <IconButton
+            icon={RotateCcw}
+            label="Restart from the beginning"
+            tone="outline"
+            size="sm"
             onClick={restart}
             disabled={unavailable}
-            className="rounded-control border border-line-subtle p-2 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary disabled:opacity-40"
-            aria-label="Restart from the beginning"
-          >
-            <RotateCcw className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
+          />
+          <IconButton
+            icon={SkipBack}
+            label="Back 10 seconds"
+            tone="outline"
+            size="sm"
             onClick={() => seek(time - 10)}
             disabled={unavailable}
-            className="rounded-control border border-line-subtle p-2 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary disabled:opacity-40"
-            aria-label="Back 10 seconds"
-          >
-            <SkipBack className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
+          />
+          <IconButton
+            icon={playing ? Pause : Play}
+            label={playing ? 'Pause' : 'Play'}
+            tone="primary"
+            size="md"
             onClick={() => (playing ? pause() : play())}
             disabled={unavailable}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-brand text-brand-foreground shadow hover:bg-brand/90 disabled:opacity-40"
-            aria-label={playing ? 'Pause' : 'Play'}
-          >
-            {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-          </button>
-          <button
-            type="button"
+          />
+          <IconButton
+            icon={SkipForward}
+            label="Forward 10 seconds"
+            tone="outline"
+            size="sm"
             onClick={() => seek(time + 10)}
             disabled={unavailable}
-            className="rounded-control border border-line-subtle p-2 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary disabled:opacity-40"
-            aria-label="Forward 10 seconds"
-          >
-            <SkipForward className="h-4 w-4" />
-          </button>
+          />
 
           <div className="relative mx-1 min-w-[140px] flex-1">
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-muted" aria-hidden="true">
