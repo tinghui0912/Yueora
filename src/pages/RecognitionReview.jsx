@@ -129,7 +129,7 @@ export default function RecognitionReview() {
             <Surface padding="lg" className="mx-auto max-w-3xl">
               <ScoreCanvas notes={notes} selectedIds={new Set()} onSelect={() => {}} zoom={1} activeIssueMeasure={active?.measure} />
               {active && (
-                <div className="mt-3 rounded-control border border-amber-200 bg-amber-500/10 px-3 py-2 text-amber-700">
+                <div className="mt-3 rounded-control border border-line-subtle bg-neutral-muted/50 px-3 py-2 text-ink-primary">
                   <p className="type-body-small font-medium">Measure {active.measure}: {active.type}</p>
                   <p className="type-metadata text-ink-secondary">{active.detail}</p>
                 </div>

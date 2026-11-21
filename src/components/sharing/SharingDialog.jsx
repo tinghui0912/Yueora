@@ -257,7 +257,7 @@ export default function SharingDialog({ score, open, onOpenChange }) {
                 </Select>
               </div>
               {sharing.link.access === 'Can edit' && (
-                <div className="flex items-center gap-2 border-t border-amber-200 bg-amber-500/10 px-3 py-2 text-amber-700">
+                <div className="flex items-center gap-2 border-t border-line-subtle bg-neutral-muted/30 px-3 py-2 text-ink-secondary">
                   <span className="type-caption">Anyone with this link can edit.</span>
                 </div>
               )}

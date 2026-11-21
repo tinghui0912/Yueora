@@ -15,11 +15,11 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-danger text-danger-foreground shadow hover:bg-danger/80",
         outline: "border-line-subtle text-ink-primary",
-        /* Semantic status variants — mapped strictly to Numis ItemCard condition recipes */
+        /* Semantic status variants — aligned to Numis primitive & neutral roles */
         brand: "border-transparent bg-brand-soft text-brand-soft-foreground",
-        success: "border-emerald-200 bg-emerald-500/10 text-emerald-700",
-        warning: "border-amber-200 bg-amber-500/10 text-amber-700",
-        danger: "border-red-200 bg-red-500/10 text-red-700",
+        success: "border-transparent bg-brand-soft text-brand-soft-foreground",
+        warning: "border-line-subtle bg-neutral-muted text-ink-secondary",
+        danger: "border-transparent bg-danger text-danger-foreground shadow hover:bg-danger/80",
         neutral: "border-transparent bg-neutral-muted text-ink-secondary",
       },
     },

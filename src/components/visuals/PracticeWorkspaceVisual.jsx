@@ -22,7 +22,7 @@ export default function PracticeWorkspaceVisual() {
         </div>
 
         {/* Calm following state pill */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-500/10 px-3 py-1 text-emerald-700">
+        <div className="inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand-soft px-3 py-1 text-brand-soft-foreground">
           <span className="type-metadata font-medium">
             Following your phrasing · mm. 14–22
           </span>

@@ -1,5 +1,10 @@
+import fs from 'node:fs';
 import { scanPageAppearanceContent } from './lib/appearance-guard.mjs';
 import { scanColorProvenanceContent } from './lib/color-provenance-guard.mjs';
+import {
+  YUEORA_SEMANTIC_COLOR_ALIASES,
+  YUEORA_COMPATIBILITY_COLOR_ALIASES,
+} from './lib/numis-visual-provenance-manifest.mjs';
 
 console.log('🧪 Running Design System Guardrail Regression Tests...\n');
 
@@ -1093,12 +1098,13 @@ assertColorNegative(
   'src/components/library/CustomCard.jsx'
 );
 
-// 3.24 Positive: Numis actual named Tailwind status recipe accepted in approved owner
-assertColorPositive(
-  'Numis actual named Tailwind status recipe accepted',
+// 3.24 Negative: Numis ItemCard emerald condition recipe rejected in StatusIndicator
+assertColorNegative(
+  'Numis ItemCard emerald condition recipe rejected in StatusIndicator',
   `export default function StatusIndicator() {
     return <span className="border-emerald-200 bg-emerald-500/10 text-emerald-700">Active</span>;
   }`,
+  'border-emerald-200',
   'src/components/patterns/StatusIndicator.jsx'
 );
 
@@ -1345,20 +1351,23 @@ assertColorNegative(
   'src/lib/theme.js'
 );
 
-// 4.21 Positive: exact Numis status recipes accepted
-assertColorPositive(
-  'exact Numis positive status recipe accepted',
+// 4.21 Negative: Coin condition recipes cannot be used as generic status in badge (Blocker A)
+assertColorNegative(
+  'emerald ItemCard condition recipe rejected in badge',
   `<span className="border-emerald-200 bg-emerald-500/10 text-emerald-700">FDC</span>`,
+  'border-emerald-200',
   'src/components/ui/badge.jsx'
 );
-assertColorPositive(
-  'exact Numis warning status recipe accepted',
+assertColorNegative(
+  'amber ItemCard condition recipe rejected in badge',
   `<span className="border-amber-200 bg-amber-500/10 text-amber-700">TTB</span>`,
+  'border-amber-200',
   'src/components/ui/badge.jsx'
 );
-assertColorPositive(
-  'exact Numis danger status recipe accepted',
+assertColorNegative(
+  'red ItemCard condition recipe as generic destructive badge rejected',
   `<span className="border-red-200 bg-red-500/10 text-red-700">B</span>`,
+  'border-red-200',
   'src/components/ui/badge.jsx'
 );
 
@@ -1476,16 +1485,47 @@ assertColorNegative(
   'src/pages/PracticeHub.jsx'
 );
 
-// 5.2 Status Guard Positive Regressions (Section 31)
+// 5.2 Status Guard Regressions (Section 31 / 41 / 43)
 assertColorPositive(
-  'exact 3-class condition recipe in approved owner accepted',
-  `<span className="border-emerald-200 bg-emerald-500/10 text-emerald-700">Approved</span>`,
-  'src/components/ui/badge.jsx'
+  'exact Numis warning callout recipe in approved owner accepted',
+  `<div className="text-amber-600 bg-amber-50">Quota warning</div>`,
+  'src/components/collection/BulkEstimateButton.jsx'
+);
+assertColorPositive(
+  'exact Numis destructive toast close recipe in approved owner accepted',
+  `<button className="text-red-300 hover:text-red-50 focus:ring-red-400 focus:ring-offset-red-600">Close</button>`,
+  'src/components/ui/toast.jsx'
 );
 assertColorPositive(
   'single text-emerald-600 in approved owner accepted',
   `<span className="text-emerald-600 font-semibold">+12%</span>`,
   'src/pages/UserProfile.jsx'
+);
+
+// Section 41: Semantic-Role Negative Fixtures (wrong semantic owner fails closed)
+assertColorNegative(
+  'emerald ItemCard condition recipe inside PracticeWorkspaceVisual rejected',
+  `<div className="border-emerald-200 bg-emerald-500/10 text-emerald-700">Following</div>`,
+  'border-emerald-200',
+  'src/components/visuals/PracticeWorkspaceVisual.jsx'
+);
+assertColorNegative(
+  'amber ItemCard condition recipe inside InviteAcceptance rejected',
+  `<div className="border-amber-200 bg-amber-500/10 text-amber-700">Warning</div>`,
+  'border-amber-200',
+  'src/pages/InviteAcceptance.jsx'
+);
+assertColorNegative(
+  'amber ItemCard condition recipe inside RecognitionReview rejected',
+  `<div className="border-amber-200 bg-amber-500/10 text-amber-700">Notice</div>`,
+  'border-amber-200',
+  'src/pages/RecognitionReview.jsx'
+);
+assertColorNegative(
+  'approved warning callout recipe in unapproved owner rejected',
+  `<div className="text-amber-600 bg-amber-50">Callout</div>`,
+  'text-amber-600 + bg-amber-50',
+  'src/pages/Landing.jsx'
 );
 
 // 5.3 Opacity Guard Negative Regressions (Section 32)
@@ -1626,6 +1666,172 @@ assertColorPositive(
   }`,
   'src/index.css'
 );
+
+// 5.6 Sections 43-46 Provenance Hardening & Parity Suite
+
+// Section 43: Status recipe with unauthorized owner fails closed
+totalTests++;
+try {
+  const unauthIssues = scanColorProvenanceContent(
+    `<div className="text-amber-600 bg-amber-50">Test</div>`,
+    'src/components/UnapprovedComponent.jsx'
+  );
+  if (unauthIssues.length > 0 && unauthIssues.some((i) => i.message && (i.message.includes('not approved') || i.message.includes('not authorized')))) {
+    passedTests++;
+    console.log(`  ✓ [PASS as expected] recipe with unapproved owner fails closed`);
+  } else {
+    failedTests++;
+    console.error(`  ❌ [UNEXPECTED FAIL] recipe in unauthorized owner was not rejected`);
+  }
+} catch (err) {
+  failedTests++;
+  console.error(`  ❌ [ERROR] owner fail-closed test threw error:`, err);
+}
+
+// Section 44: Alias Mapping negative tests in index.css
+assertColorNegative(
+  '--nav-active-bg: var(--numis-chart-4) rejected in index.css',
+  `:root {
+    --nav-active-bg: var(--numis-chart-4);
+  }`,
+  '--nav-active-bg',
+  'src/index.css'
+);
+assertColorNegative(
+  '--primary: var(--numis-chart-4) rejected in index.css',
+  `:root {
+    --primary: var(--numis-chart-4);
+  }`,
+  '--primary',
+  'src/index.css'
+);
+assertColorNegative(
+  '--accent: var(--numis-primary) rejected in index.css',
+  `:root {
+    --accent: var(--numis-primary);
+  }`,
+  '--accent',
+  'src/index.css'
+);
+assertColorNegative(
+  '--new-role: var(--brand) rejected in index.css',
+  `:root {
+    --new-role: var(--brand);
+  }`,
+  '--new-role',
+  'src/index.css'
+);
+assertColorNegative(
+  '--new-panel-role: var(--surface-panel) rejected in index.css',
+  `:root {
+    --new-panel-role: var(--surface-panel);
+  }`,
+  '--new-panel-role',
+  'src/index.css'
+);
+assertColorNegative(
+  '--new-danger-soft: var(--danger) rejected in index.css',
+  `:root {
+    --new-danger-soft: var(--danger);
+  }`,
+  '--new-danger-soft',
+  'src/index.css'
+);
+
+// Section 44: Positive - all 33 semantic aliases exact mapping verified in src/index.css
+totalTests++;
+try {
+  const css = fs.readFileSync('src/index.css', 'utf8');
+  let allSemanticExact = true;
+  for (const [prop, expectedVal] of Object.entries(YUEORA_SEMANTIC_COLOR_ALIASES)) {
+    const regex = new RegExp(`${prop}:\\s*([^;]+);`);
+    const match = css.match(regex);
+    if (!match || match[1].trim() !== expectedVal.trim()) {
+      allSemanticExact = false;
+      break;
+    }
+  }
+  if (allSemanticExact) {
+    passedTests++;
+    console.log(`  ✓ [PASS as expected] all 33 Yueora semantic aliases exact mapping verified in src/index.css`);
+  } else {
+    failedTests++;
+    console.error(`  ❌ [UNEXPECTED FAIL] some semantic color alias mappings did not match exact expected values`);
+  }
+} catch (err) {
+  failedTests++;
+  console.error(`  ❌ [ERROR] semantic alias mapping verification threw error:`, err);
+}
+
+// Section 44: Positive - all 19 compatibility aliases exact mapping verified in src/index.css
+totalTests++;
+try {
+  const css = fs.readFileSync('src/index.css', 'utf8');
+  let allCompatExact = true;
+  for (const [prop, expectedVal] of Object.entries(YUEORA_COMPATIBILITY_COLOR_ALIASES)) {
+    const regex = new RegExp(`${prop}:\\s*([^;]+);`);
+    const match = css.match(regex);
+    if (!match || match[1].trim() !== expectedVal.trim()) {
+      allCompatExact = false;
+      break;
+    }
+  }
+  if (allCompatExact) {
+    passedTests++;
+    console.log(`  ✓ [PASS as expected] all 19 Yueora compatibility aliases exact mapping verified in src/index.css`);
+  } else {
+    failedTests++;
+    console.error(`  ❌ [UNEXPECTED FAIL] some compatibility color alias mappings did not match exact expected values`);
+  }
+} catch (err) {
+  failedTests++;
+  console.error(`  ❌ [ERROR] compatibility alias mapping verification threw error:`, err);
+}
+
+// Section 45: Opacity prefix scanner tests including 'via'
+assertColorNegative(
+  'via-brand/37 rejected',
+  `<div className="via-brand/37">Gradient</div>`,
+  'via-brand/37',
+  'src/components/Gradient.jsx'
+);
+assertColorNegative(
+  'via-brand/70 rejected',
+  `<div className="via-brand/70">Gradient</div>`,
+  'via-brand/70',
+  'src/components/Gradient.jsx'
+);
+assertColorNegative(
+  'via-surface-panel/37 rejected',
+  `<div className="via-surface-panel/37">Gradient</div>`,
+  'via-surface-panel/37',
+  'src/components/Gradient.jsx'
+);
+
+// Section 46: Button Direct Parity source-level & computed contract assertions
+totalTests++;
+try {
+  const buttonCode = fs.readFileSync('src/components/ui/button.jsx', 'utf8');
+  const baseHasNoDurationBase = !buttonCode.includes('duration-base');
+  const baseHasTransitionColors = buttonCode.includes('transition-colors');
+  // Check md = Numis default (36px height, text-sm, font-medium, gap-2)
+  const mdHasHControlMd = /md:\s*"[^"]*h-control-md[^"]*text-sm[^"]*font-medium[^"]*gap-2/.test(buttonCode);
+  // Check sm = Numis sm (32px height, text-xs, font-medium, gap-2)
+  const smHasHControlSm = /sm:\s*"[^"]*h-control-sm[^"]*text-xs[^"]*font-medium[^"]*gap-2/.test(buttonCode);
+  // Check lg = Numis lg (40px height, text-sm, font-medium, gap-2)
+  const lgHasHControlLg = /lg:\s*"[^"]*h-control-lg[^"]*text-sm[^"]*font-medium[^"]*gap-2/.test(buttonCode);
+
+  if (baseHasNoDurationBase && baseHasTransitionColors && mdHasHControlMd && smHasHControlSm && lgHasHControlLg) {
+    passedTests++;
+    console.log(`  ✓ [PASS as expected] Button canonical sizes (md, sm, lg) and transition timing physically match Numis`);
+  } else {
+    failedTests++;
+    console.error(`  ❌ [UNEXPECTED FAIL] Button parity check failed: baseNoDuration=${baseHasNoDurationBase}, transitionColors=${baseHasTransitionColors}, md=${mdHasHControlMd}, sm=${smHasHControlSm}, lg=${lgHasHControlLg}`);
+  }
+} catch (err) {
+  failedTests++;
+  console.error(`  ❌ [ERROR] Button parity verification threw error:`, err);
+}
 
 // -----------------------------------------------------------------------------
 // SUMMARY

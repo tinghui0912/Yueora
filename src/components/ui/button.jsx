@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-control transition-colors duration-base focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-control transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       intent: {
@@ -23,11 +23,11 @@ const buttonVariants = cva(
           "text-brand underline-offset-4 hover:underline",
       },
       size: {
-        xs: "h-control-xs min-h-control-xs px-2.5 type-caption rounded-control gap-1.5 [&_svg]:icon-xs",
-        sm: "h-control-sm min-h-control-sm px-3 type-body-small font-medium rounded-control gap-1.5 [&_svg]:icon-sm",
-        md: "h-control-md min-h-control-md px-4 type-body-small font-medium rounded-control gap-2 [&_svg]:icon-sm",
-        lg: "h-control-lg min-h-control-lg px-8 type-body-small font-semibold rounded-control gap-2.5 [&_svg]:icon-md",
-        xl: "h-control-xl min-h-control-xl px-8 type-body-small font-semibold rounded-control gap-2.5 [&_svg]:icon-md",
+        xs: "h-control-xs min-h-control-xs px-2.5 text-xs font-medium rounded-control gap-1.5 [&_svg]:icon-xs",
+        sm: "h-control-sm min-h-control-sm px-3 text-xs font-medium rounded-control gap-2 [&_svg]:icon-sm",
+        md: "h-control-md min-h-control-md px-4 text-sm font-medium rounded-control gap-2 [&_svg]:icon-sm",
+        lg: "h-control-lg min-h-control-lg px-8 text-sm font-medium rounded-control gap-2 [&_svg]:icon-md",
+        xl: "h-control-xl min-h-control-xl px-8 text-sm font-medium rounded-control gap-2.5 [&_svg]:icon-md",
       },
     },
     defaultVariants: {

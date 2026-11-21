@@ -86,86 +86,26 @@ const REQUIRED_SURFACE_AND_BRAND_TOKENS = [
   '--surface-subrail-border',
 ];
 
+import {
+  NUMIS_ROOT_TOKENS,
+  YUEORA_SEMANTIC_COLOR_ALIASES,
+  YUEORA_COMPATIBILITY_COLOR_ALIASES,
+  ELEVATION_SHADOW_TOKENS,
+} from './lib/numis-visual-provenance-manifest.mjs';
+
 // Fixed Numis Reference Manifest
 export const NUMIS_REFERENCE_MANIFEST = {
   repository: 'tinghui0912/NumisCollection',
   commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
-  referenceTokens: {
-    '--numis-background': '40 20% 97%',
-    '--numis-foreground': '30 10% 12%',
-    '--numis-card': '40 25% 99%',
-    '--numis-card-foreground': '30 10% 12%',
-    '--numis-popover': '40 25% 99%',
-    '--numis-popover-foreground': '30 10% 12%',
-    '--numis-primary': '36 70% 45%',
-    '--numis-primary-foreground': '40 20% 98%',
-    '--numis-secondary': '35 15% 93%',
-    '--numis-secondary-foreground': '30 10% 20%',
-    '--numis-muted': '35 12% 93%',
-    '--numis-muted-foreground': '30 5% 46%',
-    '--numis-accent': '36 50% 90%',
-    '--numis-accent-foreground': '30 10% 15%',
-    '--numis-destructive': '0 72% 51%',
-    '--numis-destructive-foreground': '0 0% 98%',
-    '--numis-border': '35 15% 88%',
-    '--numis-input': '35 15% 88%',
-    '--numis-ring': '36 70% 45%',
-    '--numis-sidebar-background': '35 20% 96%',
-    '--numis-sidebar-foreground': '30 10% 20%',
-    '--numis-sidebar-primary': '36 70% 45%',
-    '--numis-sidebar-primary-foreground': '40 20% 98%',
-    '--numis-sidebar-accent': '35 20% 92%',
-    '--numis-sidebar-accent-foreground': '30 10% 15%',
-    '--numis-sidebar-border': '35 15% 88%',
-    '--numis-sidebar-ring': '36 70% 45%',
-    '--numis-chart-1': '36 70% 45%',
-    '--numis-chart-2': '160 45% 40%',
-    '--numis-chart-3': '210 40% 45%',
-    '--numis-chart-4': '280 40% 50%',
-    '--numis-chart-5': '0 55% 50%',
-  },
+  referenceTokens: NUMIS_ROOT_TOKENS,
 };
 
-export const ELEVATION_REFERENCE_MANIFEST = {
-  '--shadow-control': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-  '--shadow-raised': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-  '--shadow-overlay': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-};
+export const ELEVATION_REFERENCE_MANIFEST = ELEVATION_SHADOW_TOKENS;
 
-export const SEMANTIC_TOKENS_MAPPING_REFERENCE = [
-  { token: '--surface-canvas', expectedReference: '--numis-background' },
-  { token: '--surface-panel', expectedReference: '--numis-card' },
-  { token: '--surface-raised', expectedReference: '--numis-card' },
-  { token: '--surface-subrail', expectedReference: '--numis-sidebar-background' },
-  { token: '--surface-subrail-border', expectedReference: '--numis-sidebar-border' },
-  { token: '--ink-primary', expectedReference: '--numis-foreground' },
-  { token: '--ink-secondary', expectedReference: '--numis-sidebar-foreground' },
-  { token: '--ink-tertiary', expectedReference: '--numis-muted-foreground' },
-  { token: '--ink-subtle', expectedReference: '--numis-border' },
-  { token: '--line-subtle', expectedReference: '--numis-border' },
-  { token: '--line-strong', expectedReference: '--numis-border' },
-  { token: '--brand', expectedReference: '--numis-primary' },
-  { token: '--brand-foreground', expectedReference: '--numis-primary-foreground' },
-  { token: '--brand-soft', expectedReference: '--numis-accent' },
-  { token: '--brand-soft-foreground', expectedReference: '--numis-accent-foreground' },
-  { token: '--control-hover-accent', expectedReference: '--numis-accent' },
-  { token: '--neutral-muted', expectedReference: '--numis-muted' },
-  { token: '--neutral-muted-foreground', expectedReference: '--numis-muted-foreground' },
-  { token: '--neutral-hover', expectedReference: '--numis-sidebar-accent' },
-  { token: '--neutral-hover-foreground', expectedReference: '--numis-foreground' },
-  { token: '--danger', expectedReference: '--numis-destructive' },
-  { token: '--danger-foreground', expectedReference: '--numis-destructive-foreground' },
-  { token: '--info', expectedReference: '--numis-sidebar-accent' },
-  { token: '--info-foreground', expectedReference: '--numis-foreground' },
-  { token: '--selection', expectedReference: '--numis-accent' },
-  { token: '--practice-waiting', expectedReference: '--numis-sidebar-foreground' },
-  { token: '--practice-waiting-foreground', expectedReference: '--numis-primary-foreground' },
-  { token: '--practice-current', expectedReference: '--numis-primary' },
-  { token: '--practice-current-foreground', expectedReference: '--numis-primary-foreground' },
-  { token: '--practice-error', expectedReference: '--numis-destructive' },
-  { token: '--practice-error-foreground', expectedReference: '--numis-destructive-foreground' },
-  { token: '--gold', expectedReference: '--numis-primary' },
-];
+export const SEMANTIC_TOKENS_MAPPING_REFERENCE = Object.entries(YUEORA_SEMANTIC_COLOR_ALIASES).map(([token, expectedVal]) => ({
+  token,
+  expectedReference: expectedVal,
+}));
 
 // WCAG AA Contrast Verification (Dynamic Resolution from src/index.css)
 function hslToRgb(h, s, l) {
@@ -387,17 +327,44 @@ function verifyFoundations(issues = []) {
   });
 
   // Verify semantic tokens map to frozen Numis reference tokens or recipes
-  SEMANTIC_TOKENS_MAPPING_REFERENCE.forEach(({ token, expectedReference }) => {
-    const isVar = expectedReference.startsWith('--');
-    const regex = isVar
-      ? new RegExp(`${token}:\\s*var\\(${expectedReference}\\)`)
-      : new RegExp(`${token}:\\s*${expectedReference.replace(/\s+/g, '\\s+')}`);
-    if (!regex.test(css)) {
+  // Verify semantic tokens map to frozen Numis reference tokens
+  Object.entries(YUEORA_SEMANTIC_COLOR_ALIASES).forEach(([token, expectedVal]) => {
+    const regex = new RegExp(`${token}:\\s*([^;]+);`);
+    const match = css.match(regex);
+    if (!match) {
       issues.push({
         file: 'src/index.css',
         line: 1,
         matched: token,
-        message: `Semantic token ${token} must reference '${expectedReference}'.`,
+        message: `Semantic token ${token} is missing from src/index.css.`,
+      });
+    } else if (match[1].trim() !== expectedVal.trim()) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: token,
+        message: `Semantic token ${token} must reference '${expectedVal}' (got '${match[1].trim()}').`,
+      });
+    }
+  });
+
+  // Verify internal compatibility tokens map to frozen Numis reference tokens
+  Object.entries(YUEORA_COMPATIBILITY_COLOR_ALIASES).forEach(([token, expectedVal]) => {
+    const regex = new RegExp(`${token}:\\s*([^;]+);`);
+    const match = css.match(regex);
+    if (!match) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: token,
+        message: `Compatibility token ${token} is missing from src/index.css.`,
+      });
+    } else if (match[1].trim() !== expectedVal.trim()) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: token,
+        message: `Compatibility token ${token} must reference '${expectedVal}' (got '${match[1].trim()}').`,
       });
     }
   });
@@ -1775,7 +1742,7 @@ verifyCodebaseColorProvenance(totalViolations);
 if (totalViolations.length === 0) {
   console.log('✅ Design System integrity checks passed.');
   console.log(`   - Verified ${REQUIRED_TYPOGRAPHY.length} semantic typography roles in src/index.css`);
-  console.log(`   - Verified ${Object.keys(NUMIS_REFERENCE_MANIFEST.referenceTokens).length} frozen Numis reference tokens & ${SEMANTIC_TOKENS_MAPPING_REFERENCE.length} semantic alias mappings in src/index.css`);
+  console.log(`   - Verified ${Object.keys(NUMIS_ROOT_TOKENS).length} frozen Numis reference tokens, ${Object.keys(YUEORA_SEMANTIC_COLOR_ALIASES).length} Yueora semantic color mappings, ${Object.keys(YUEORA_COMPATIBILITY_COLOR_ALIASES).length} compatibility color mappings, and ${Object.keys(ELEVATION_SHADOW_TOKENS).length} elevation shadow tokens in src/index.css`);
   console.log(`   - Verified full codebase color provenance & Numis reference allowlist across ${totalColorProvenanceFilesCount} files in src/ (zero unknown physical colors)`);
   console.log(`   - Verified ${REQUIRED_SURFACE_AND_BRAND_TOKENS.length} canonical surface/brand tokens in src/index.css`);
   console.log(`   - Verified ${CANONICAL_CONTROL_TOKENS.length} canonical control tokens & ${REQUIRED_CONTROL_UTILITIES.length} utilities`);
