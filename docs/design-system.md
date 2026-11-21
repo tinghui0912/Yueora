@@ -254,14 +254,12 @@ Yueora enforces a contracted, single-owner Button API. **Pages compose; Button c
 - **Geometry:** Compact controls (`rounded-control: 10px`) with quiet `shadow-raised`.
 - **Single Prop Contract:** Button exposes a single semantic prop: `intent`. The legacy `variant` prop and legacy aliases (`default`, `outline`, `ghost`, `destructive`) are permanently retired and banned in CI.
 - **Intents:**
-  - `primary`: Antique Bronze Gold (`#C38322`) identity CTA with warm white text (`text-brand-foreground`: `hsl(40 20% 98%)` / `rgb(251, 250, 249)`), shadow, and `hover:bg-brand/90`.
-  - `secondary`: Warm white panel (`bg-surface-panel`) with subtle line (`border-line-subtle`) and `shadow-raised`.
-  - `quiet`: Subtle action with neutral hover (`hover:bg-neutral-hover`).
-  - `danger`: Destructive action aligned with Numis reference (`bg-danger text-danger-foreground shadow-control hover:bg-danger/90`).
-  - `subtle`: Neutral muted action (`bg-neutral-muted`).
-  - `link`: Inline text action with underline hover.
-  - `inverse`: High-contrast dark ink action (`bg-ink-primary text-surface-panel shadow-raised`) for dark surfaces.
-  - `inverse-secondary`: High-contrast transparent outlined action (`border border-line-strong text-ink-primary bg-transparent`) for dark surfaces.
+  - `primary`: Antique Bronze Gold (`#C38322`) identity CTA with warm white text (`text-brand-foreground`: `hsl(40 20% 98%)` / `rgb(251, 250, 249)`), shadow, and `hover:bg-brand/90`. Maps 1:1 to Numis `default`.
+  - `secondary`: Subtle line (`border-line-subtle`), transparent background, and `shadow-control` with hover accent. Maps 1:1 to Numis `outline`.
+  - `quiet`: Subtle action with neutral hover (`hover:bg-brand-soft hover:text-brand-soft-foreground`). Maps 1:1 to Numis `ghost`.
+  - `danger`: Destructive action aligned with Numis reference (`bg-danger text-danger-foreground shadow-control hover:bg-danger/90`). Maps 1:1 to Numis `destructive`.
+  - `subtle`: Neutral muted action (`bg-neutral-muted`). Maps 1:1 to Numis `secondary`.
+  - `link`: Inline text action with underline hover (`text-brand`). Maps 1:1 to Numis `link`.
 - **Sizes (5 Canonical Tiers):** `xs` (`28px`), `sm` (`32px`), `md` (`36px`, default), `lg` (`40px`), `xl` (`44px`). Legacy `hero` (`52px`) and `default` sizes are retired; button sizes map 1:1 with the canonical control tokens `--control-height-xs..xl`.
 - **Icon-Only Actions:** Dedicated primitive `<IconButton>` is used for all icon-only triggers.
 - **Appearance Ownership:** Pages compose buttons via `intent` and `size`. Pages MUST NOT override button colors, borders, shadows, or radii in `className`.
@@ -277,7 +275,7 @@ Yueora enforces a contracted, single-owner Button API. **Pages compose; Button c
 ```jsx
 import { Button } from '@/components/ui/button';
 
-// Primary call-to-action (near-black brand)
+// Primary call-to-action (brand gold)
 <Button intent="primary" size="md">Save score</Button>
 
 // Neutral secondary action
@@ -288,9 +286,6 @@ import { Button } from '@/components/ui/button';
 
 // Destructive action
 <Button intent="danger" size="md">Delete forever</Button>
-
-// High-contrast action on dark editorial cards
-<Button intent="inverse" size="xl">Start playing</Button>
 ```
 
 ### 4.2 IconButton

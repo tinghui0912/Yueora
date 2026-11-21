@@ -45,7 +45,7 @@ Yueora enforces a strict multi-layer Design System. **Pages compose; the Design 
 
 Before creating or styling any UI element:
 1. **Search existing Design System primitives:**
-   - Buttons: `<Button intent="primary|secondary|quiet|danger|subtle|link|inverse|inverse-secondary" size="xs|sm|md|lg|xl">` (Single semantic `intent` prop; sizes align 1:1 with the 5 canonical control tokens. Legacy `variant` prop and `hero` size are permanently retired. Pages compose; Button completely owns appearance. Do NOT override bg, border, radius, or shadow on Button via `className`).
+   - Buttons: `<Button intent="primary|secondary|quiet|danger|subtle|link" size="xs|sm|md|lg|xl">` (Single semantic `intent` prop; sizes align 1:1 with the 5 canonical control tokens. Legacy `variant` prop and `hero` size are permanently retired. Pages compose; Button completely owns appearance. Do NOT override bg, border, radius, or shadow on Button via `className`).
    - Icon Buttons: `<IconButton icon={Icon} label="Accessible name" tone="quiet|outline|primary|danger" size="xs|sm|md|lg">`
    - Form Fields: `<Field label="..." htmlFor="..." description="..." error={...} required><Input ... /></Field>`
    - Selects: `<NativeSelect>` or Radix `<Select>`
@@ -88,7 +88,7 @@ Before creating or styling any UI element:
    - **Legacy tokens are permanently retired from product code:** NEVER use `bg-accent`, `bg-muted`, `text-muted-foreground`, `bg-primary`, `text-primary`, `bg-card`, `bg-background`, `text-foreground`, `border-border`, `border-input`, `ring-ring` in pages or domain components.
    - Never use arbitrary `bg-brand/10` or raw hex colors (`#...`) in application JSX.
 4. **Appearance vs Composition Boundary:**
-   - **Design System Owns:** color tokens, typography roles, font family & scale, control size (`control-xs..xl`), icon size (`icon-xs..xl`), radius (`radius-control|container|overlay`), surface model (`canvas|panel|raised`), border & line tokens, shadow language (`none|raised|overlay`), interaction & hover states, button appearance & intents (`primary`, `secondary`, `quiet`, `danger`, `subtle`, `link`, `inverse`, `inverse-secondary`), page width system (`AppPage`), navigation states, selection contracts.
+   - **Design System Owns:** color tokens, typography roles, font family & scale, control size (`control-xs..xl`), icon size (`icon-xs..xl`), radius (`radius-control|container|overlay`), surface model (`canvas|panel|raised`), border & line tokens, shadow language (`none|raised|overlay`), interaction & hover states, button appearance & intents (`primary`, `secondary`, `quiet`, `danger`, `subtle`, `link`), page width system (`AppPage`), navigation states, selection contracts.
    - **Page Owns:** content, content order, grid/flex structure, responsive columns, domain geometry, local spacing (`gap-*`, `space-y-*`, `mt-*`), data rendering.
    - **Do not pursue "zero className":** Standard composition layout utilities (`grid gap-4`, `flex items-center`) are legitimate page responsibilities. Visual drift occurs only when pages invent custom colors, fonts, shadows, borders, radii, or interaction states.
    - **Primitive Appearance Ownership Contract:**

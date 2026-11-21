@@ -12,19 +12,15 @@ const buttonVariants = cva(
         primary:
           "bg-brand text-brand-foreground shadow hover:bg-brand/90",
         secondary:
-          "border border-line-subtle bg-transparent text-ink-primary shadow-control hover:bg-brand-soft hover:text-ink-primary",
+          "border border-line-subtle bg-transparent text-ink-primary shadow-control hover:bg-brand-soft hover:text-brand-soft-foreground",
         quiet:
-          "text-ink-secondary hover:text-ink-primary hover:bg-brand-soft",
+          "text-ink-secondary hover:text-brand-soft-foreground hover:bg-brand-soft",
         danger:
           "bg-danger text-danger-foreground shadow-control hover:bg-danger/90",
         subtle:
           "bg-neutral-muted text-ink-primary hover:bg-neutral-hover hover:text-ink-primary",
         link:
           "text-brand underline-offset-4 hover:underline hover:text-brand/90",
-        inverse:
-          "bg-ink-primary text-surface-panel shadow-control hover:bg-ink-secondary",
-        "inverse-secondary":
-          "border border-line-subtle/40 text-brand-foreground bg-transparent hover:bg-brand-soft/20 hover:text-brand-foreground",
       },
       size: {
         xs: "h-control-xs min-h-control-xs px-2.5 type-caption rounded-control gap-1.5 [&_svg]:icon-xs",
@@ -43,7 +39,7 @@ const buttonVariants = cva(
 
 /**
  * @typedef {React.ButtonHTMLAttributes<HTMLButtonElement> & {
- *   intent?: 'primary' | 'secondary' | 'quiet' | 'danger' | 'subtle' | 'link' | 'inverse' | 'inverse-secondary';
+ *   intent?: 'primary' | 'secondary' | 'quiet' | 'danger' | 'subtle' | 'link';
  *   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
  *   asChild?: boolean;
  *   children?: React.ReactNode;

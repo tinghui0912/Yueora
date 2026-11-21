@@ -969,14 +969,140 @@ assertColorNegative(
   'src/pages/TestOldColor.jsx'
 );
 
-// 3.11 Positive: Numis-approved reference value passes
-assertColorPositive(
-  'Numis-approved reference palette value passes in non-page component',
-  `export const DEFAULT_COLOR = '#b87a28';`,
-  'src/components/collection/CollectionCard.jsx'
+// 3.11 Negative: text-fuchsia-500 rejected
+assertColorNegative(
+  'text-fuchsia-500 rejected',
+  `export default function Comp() {
+    return <span className="text-fuchsia-500">Notice</span>;
+  }`,
+  'text-fuchsia-500',
+  'src/components/Comp.jsx'
 );
 
-// 3.12 Positive: GoogleIcon explicit external-brand exception passes
+// 3.12 Negative: bg-cyan-700 rejected
+assertColorNegative(
+  'bg-cyan-700 rejected',
+  `export default function Comp() {
+    return <div className="bg-cyan-700">Banner</div>;
+  }`,
+  'bg-cyan-700',
+  'src/components/Comp.jsx'
+);
+
+// 3.13 Negative: border-lime-300 rejected
+assertColorNegative(
+  'border-lime-300 rejected',
+  `export default function Comp() {
+    return <div className="border-lime-300">Box</div>;
+  }`,
+  'border-lime-300',
+  'src/components/Comp.jsx'
+);
+
+// 3.14 Negative: bg-black rejected outside approved provenance
+assertColorNegative(
+  'bg-black rejected outside approved provenance',
+  `export default function Comp() {
+    return <div className="bg-black">Backdrop</div>;
+  }`,
+  'bg-black',
+  'src/components/CustomBackdrop.jsx'
+);
+
+// 3.15 Negative: text-white rejected outside approved provenance
+assertColorNegative(
+  'text-white rejected outside approved provenance',
+  `export default function Comp() {
+    return <span className="text-white">Text</span>;
+  }`,
+  'text-white',
+  'src/components/Comp.jsx'
+);
+
+// 3.16 Negative: inline style rgb rejected
+assertColorNegative(
+  'inline style rgb rejected',
+  `export default function Comp() {
+    return <div style={{ color: 'rgb(12, 34, 56)' }}>Colored</div>;
+  }`,
+  'color',
+  'src/components/Comp.jsx'
+);
+
+// 3.17 Negative: inline style hsl rejected
+assertColorNegative(
+  'inline style hsl rejected',
+  `export default function Comp() {
+    return <div style={{ backgroundColor: 'hsl(170 60% 40%)' }}>Background</div>;
+  }`,
+  'backgroundColor',
+  'src/components/Comp.jsx'
+);
+
+// 3.18 Negative: inline style hex rejected
+assertColorNegative(
+  'inline style hex rejected',
+  `export default function Comp() {
+    return <div style={{ borderColor: '#ff00aa' }}>Border</div>;
+  }`,
+  '#ff00aa',
+  'src/components/Comp.jsx'
+);
+
+// 3.19 Negative: JS const rgb rejected
+assertColorNegative(
+  'JS const rgb rejected',
+  `export const BRAND_RGB = 'rgb(10, 20, 30)';`,
+  'rgb(10, 20, 30)',
+  'src/lib/colors.js'
+);
+
+// 3.20 Negative: JS const hsl rejected
+assertColorNegative(
+  'JS const hsl rejected',
+  `export const ACCENT_HSL = 'hsl(200, 50%, 50%)';`,
+  'hsl(200, 50%, 50%)',
+  'src/lib/colors.js'
+);
+
+// 3.21 Negative: SVG unknown opacity-on-chromatic-role rejected
+assertColorNegative(
+  'SVG unknown opacity-on-chromatic-role rejected',
+  `export default function Visual() {
+    return <svg><rect fill="hsl(var(--brand))" opacity="0.33" /></svg>;
+  }`,
+  'opacity="0.33"',
+  'src/components/visuals/CustomVisual.jsx'
+);
+
+// 3.22 Negative: Canvas unknown globalAlpha-on-chromatic-role rejected
+assertColorNegative(
+  'Canvas unknown globalAlpha-on-chromatic-role rejected',
+  `function render(ctx) {
+    ctx.globalAlpha = 0.77;
+  }`,
+  'globalAlpha',
+  'src/lib/videoRenderer.js'
+);
+
+// 3.23 Negative: Numis raw hex used in wrong Yueora context rejected
+assertColorNegative(
+  'Numis raw hex used in wrong Yueora context rejected',
+  `export const DEFAULT_COLOR = '#b87a28';`,
+  '#b87a28',
+  'src/components/library/CustomCard.jsx'
+);
+
+// 3.24 Positive: Numis actual named Tailwind status recipe accepted
+assertColorPositive(
+  'Numis actual named Tailwind status recipe accepted',
+  `export default function StatusChip() {
+    return <span className="border-emerald-200 bg-emerald-500/10 text-emerald-700">Active</span>;
+  }`,
+  'src/components/StatusChip.jsx'
+);
+
+// 3.25 Positive: GoogleIcon explicit external-brand exception passes
 assertColorPositive(
   'GoogleIcon explicit external-brand exception passes',
   `export default function GoogleIcon() {
@@ -992,14 +1118,21 @@ assertColorPositive(
   'src/components/GoogleIcon.jsx'
 );
 
-// 3.13 Positive: Numis-proven framework helper color passes where justified
+// 3.26 Positive: Numis-proven framework helper color passes in chart.jsx
 assertColorPositive(
   'Numis-proven framework helper color in chart.jsx passes',
   `const chartStyles = "[&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-dot[stroke='#fff']]:stroke-transparent";`,
   'src/components/ui/chart.jsx'
 );
 
-// 3.14 Positive: semantic token usage passes
+// 3.27 Positive: Numis dialog overlay bg-black/80 accepted in dialog.jsx
+assertColorPositive(
+  'Numis dialog overlay bg-black/80 accepted in dialog.jsx',
+  `<DialogOverlay className="fixed inset-0 z-50 bg-black/80" />`,
+  'src/components/ui/dialog.jsx'
+);
+
+// 3.28 Positive: semantic token usage passes without violations
 assertColorPositive(
   'semantic token usage passes without violations',
   `export default function Card() {
@@ -1010,6 +1143,24 @@ assertColorPositive(
     );
   }`,
   'src/components/Card.jsx'
+);
+
+// 3.29 Positive: approved Numis opacity recipe accepted
+assertColorPositive(
+  'approved Numis opacity recipe accepted',
+  `export default function Tag() {
+    return <span className="bg-brand/10 text-brand border border-line-subtle/50">Tag</span>;
+  }`,
+  'src/components/Tag.jsx'
+);
+
+// 3.30 Positive: approved Numis primitive recipe accepted
+assertColorPositive(
+  'approved Numis primitive recipe accepted',
+  `export default function Action() {
+    return <button className="bg-brand text-brand-foreground shadow hover:bg-brand/90">Action</button>;
+  }`,
+  'src/components/Action.jsx'
 );
 
 // -----------------------------------------------------------------------------

@@ -44,8 +44,8 @@ const SIZES = {
  */
 export default function Logo({ variant = 'full', size = 'md', tone = 'default', className = '', label = undefined }) {
   const s = SIZES[size] || SIZES.md;
-  const color = tone === 'inverse' ? 'text-white' : 'text-brand';
-  const wordColor = tone === 'inverse' ? 'text-white' : 'text-ink-primary';
+  const color = tone === 'inverse' ? 'text-brand-foreground' : 'text-brand';
+  const wordColor = tone === 'inverse' ? 'text-brand-foreground' : 'text-ink-primary';
 
   if (variant === 'mark') {
     return (

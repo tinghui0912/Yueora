@@ -126,6 +126,12 @@ export const NUMIS_REFERENCE_MANIFEST = {
   },
 };
 
+export const ELEVATION_REFERENCE_MANIFEST = {
+  '--shadow-control': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+  '--shadow-raised': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+  '--shadow-overlay': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+};
+
 export const SEMANTIC_TOKENS_MAPPING_REFERENCE = [
   { token: '--surface-canvas', expectedReference: '--numis-background' },
   { token: '--surface-panel', expectedReference: '--numis-card' },
@@ -147,24 +153,24 @@ export const SEMANTIC_TOKENS_MAPPING_REFERENCE = [
   { token: '--neutral-muted-foreground', expectedReference: '--numis-muted-foreground' },
   { token: '--neutral-hover', expectedReference: '--numis-sidebar-accent' },
   { token: '--neutral-hover-foreground', expectedReference: '--numis-foreground' },
-  { token: '--success', expectedReference: '--numis-chart-2' },
+  { token: '--success', expectedReference: '161 94% 30%' },
   { token: '--success-foreground', expectedReference: '--numis-primary-foreground' },
-  { token: '--warning', expectedReference: '--numis-primary' },
+  { token: '--warning', expectedReference: '32 95% 44%' },
   { token: '--warning-foreground', expectedReference: '--numis-primary-foreground' },
   { token: '--danger', expectedReference: '--numis-destructive' },
   { token: '--danger-foreground', expectedReference: '--numis-destructive-foreground' },
   { token: '--info', expectedReference: '--numis-sidebar-accent' },
   { token: '--info-foreground', expectedReference: '--numis-foreground' },
   { token: '--selection', expectedReference: '--numis-accent' },
-  { token: '--practice-following', expectedReference: '--numis-chart-2' },
+  { token: '--practice-following', expectedReference: '--success' },
   { token: '--practice-following-foreground', expectedReference: '--numis-primary-foreground' },
   { token: '--practice-waiting', expectedReference: '--numis-sidebar-foreground' },
   { token: '--practice-waiting-foreground', expectedReference: '--numis-primary-foreground' },
-  { token: '--practice-resyncing', expectedReference: '--numis-primary' },
+  { token: '--practice-resyncing', expectedReference: '--warning' },
   { token: '--practice-resyncing-foreground', expectedReference: '--numis-primary-foreground' },
   { token: '--practice-current', expectedReference: '--numis-primary' },
   { token: '--practice-current-foreground', expectedReference: '--numis-primary-foreground' },
-  { token: '--practice-correct', expectedReference: '--numis-chart-2' },
+  { token: '--practice-correct', expectedReference: '--success' },
   { token: '--practice-correct-foreground', expectedReference: '--numis-primary-foreground' },
   { token: '--practice-error', expectedReference: '--numis-destructive' },
   { token: '--practice-error-foreground', expectedReference: '--numis-destructive-foreground' },
@@ -390,16 +396,44 @@ function verifyFoundations(issues = []) {
     }
   });
 
-  // Verify semantic tokens map to frozen Numis reference tokens
+  // Verify semantic tokens map to frozen Numis reference tokens or recipes
   SEMANTIC_TOKENS_MAPPING_REFERENCE.forEach(({ token, expectedReference }) => {
-    const regex = new RegExp(`${token}:\\s*var\\(${expectedReference}\\)`);
+    const isVar = expectedReference.startsWith('--');
+    const regex = isVar
+      ? new RegExp(`${token}:\\s*var\\(${expectedReference}\\)`)
+      : new RegExp(`${token}:\\s*${expectedReference.replace(/\s+/g, '\\s+')}`);
     if (!regex.test(css)) {
       issues.push({
         file: 'src/index.css',
         line: 1,
         matched: token,
-        message: `Semantic token ${token} must reference Numis reference token ${expectedReference} (found no var(${expectedReference}) assignment).`,
+        message: `Semantic token ${token} must reference '${expectedReference}'.`,
       });
+    }
+  });
+
+  // Verify frozen shadow / elevation recipes match NumisCollection standard shadow specifications
+  Object.entries(ELEVATION_REFERENCE_MANIFEST).forEach(([shadowName, expectedVal]) => {
+    const normalizedExpected = expectedVal.replace(/\s+/g, ' ').trim();
+    const shadowRegex = new RegExp(`${shadowName}:\\s*([^;]+);`);
+    const match = css.match(shadowRegex);
+    if (!match) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: shadowName,
+        message: `Elevation reference shadow ${shadowName} is missing from src/index.css.`,
+      });
+    } else {
+      const normalizedActual = match[1].replace(/\s+/g, ' ').trim();
+      if (normalizedActual !== normalizedExpected) {
+        issues.push({
+          file: 'src/index.css',
+          line: 1,
+          matched: match[0],
+          message: `Elevation reference shadow ${shadowName} value '${normalizedActual}' does not match canonical Numis recipe '${normalizedExpected}'.`,
+        });
+      }
     }
   });
 
@@ -1655,7 +1689,7 @@ function verifyVisualFreedomContraction(issues = []) {
             file: rel,
             line,
             matched: 'variant=',
-            message: `Legacy Button 'variant' prop is retired. Use semantic 'intent' prop (primary, secondary, quiet, danger, subtle, link, inverse, inverse-secondary).`,
+            message: `Legacy Button 'variant' prop is retired. Use semantic 'intent' prop (primary, secondary, quiet, danger, subtle, link).`,
           });
         }
 

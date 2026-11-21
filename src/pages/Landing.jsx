@@ -715,7 +715,7 @@ export default function Landing() {
                 </div>
 
                 <div className="mt-10">
-                  <Button asChild intent="inverse" size="xl" className="w-full">
+                  <Button asChild intent="primary" size="xl" className="w-full">
                     <Link to={plusDestination}>Start Plus</Link>
                   </Button>
                 </div>
@@ -843,7 +843,7 @@ export default function Landing() {
                       Upload your first score in under two minutes.
                     </p>
                     <div className="mt-8 flex flex-col gap-3">
-                      <Button asChild intent="inverse" size="xl" className="w-full">
+                      <Button asChild intent="primary" size="xl" className="w-full">
                         <Link to={primaryPlayDestination}>
                           <span>Start playing</span>
                           <ArrowRight className="h-4 w-4" />

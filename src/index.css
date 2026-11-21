@@ -92,10 +92,10 @@
     --neutral-hover: var(--numis-sidebar-accent);
     --neutral-hover-foreground: var(--numis-foreground);
 
-    /* ---- Semantic status ---- */
-    --success: var(--numis-chart-2);
+    /* ---- Semantic status (Derived from Numis Actual Status Recipes: ItemCard.jsx, UserProfile.jsx, BulkEstimateButton.jsx) ---- */
+    --success: 161 94% 30%;
     --success-foreground: var(--numis-primary-foreground);
-    --warning: var(--numis-primary);
+    --warning: 32 95% 44%;
     --warning-foreground: var(--numis-primary-foreground);
     --danger: var(--numis-destructive);
     --danger-foreground: var(--numis-destructive-foreground);
@@ -105,16 +105,16 @@
     /* ---- Selection (Compact canvas selection alias) ---- */
     --selection: var(--numis-accent);
 
-    /* ---- Practice semantic colors (domain roles mapped to approved Numis reference colors) ---- */
-    --practice-following: var(--numis-chart-2);
+    /* ---- Practice semantic colors (domain roles mapped to approved Numis status & reference recipes) ---- */
+    --practice-following: var(--success);
     --practice-following-foreground: var(--numis-primary-foreground);
     --practice-waiting: var(--numis-sidebar-foreground);
     --practice-waiting-foreground: var(--numis-primary-foreground);
-    --practice-resyncing: var(--numis-primary);
+    --practice-resyncing: var(--warning);
     --practice-resyncing-foreground: var(--numis-primary-foreground);
     --practice-current: var(--numis-primary);
     --practice-current-foreground: var(--numis-primary-foreground);
-    --practice-correct: var(--numis-chart-2);
+    --practice-correct: var(--success);
     --practice-correct-foreground: var(--numis-primary-foreground);
     --practice-error: var(--numis-destructive);
     --practice-error-foreground: var(--numis-destructive-foreground);

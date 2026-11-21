@@ -101,7 +101,7 @@ export default function SyncPlayback({
               src={src}
               playsInline
               preload="metadata"
-              className="w-full rounded-container border border-line-subtle bg-black"
+              className="w-full rounded-container border border-line-subtle bg-ink-primary"
               onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || durationSeconds)}
               onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
               onPlay={() => setPlaying(true)}

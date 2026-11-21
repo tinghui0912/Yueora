@@ -313,7 +313,7 @@ export default function About() {
                   <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4">
                     <Button
                       asChild
-                      intent="inverse"
+                      intent="primary"
                       size="xl"
                       className="w-full"
                     >
@@ -325,7 +325,7 @@ export default function About() {
                     {!isAuthenticated && (
                       <Button
                         asChild
-                        intent="inverse-secondary"
+                        intent="secondary"
                         size="xl"
                         className="w-full"
                       >

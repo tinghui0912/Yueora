@@ -155,9 +155,7 @@ export async function composeShareVideo({
         if (layout === 'overlay') {
           drawCover(ctx, video, 0, 0, width, height);
           const scoreHeight = height * 0.36;
-          ctx.globalAlpha = 0.96;
           drawScoreBox({ x: width * 0.04, y: height - scoreHeight - height * 0.05, width: width * 0.92, height: scoreHeight }, frame, measure);
-          ctx.globalAlpha = 1;
         } else if (format === 'portrait') {
           const videoHeight = height * 0.52;
           drawCover(ctx, video, 0, 0, width, videoHeight);

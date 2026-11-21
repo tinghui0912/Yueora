@@ -697,11 +697,11 @@ export default function DesignSystemPreview() {
               Warm paper and antique gold define identity. Ivory is content surface. Chromatic color communicates functional status.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button intent="inverse" size="sm">
-                Inverse Action
+              <Button intent="primary" size="sm">
+                Primary Action
               </Button>
-              <Button intent="inverse-secondary" size="sm">
-                Outlined Action
+              <Button intent="secondary" size="sm">
+                Secondary Action
               </Button>
             </div>
           </div>
