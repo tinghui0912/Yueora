@@ -127,7 +127,7 @@ export default function Landing() {
       <section id="top" className="relative min-h-screen flex items-center overflow-hidden">
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center pt-28 pb-24 lg:py-0">
           {/* Left 7 Columns — Identity & Editorial Statement */}
-          <div className="lg:col-span-7 order-2 lg:order-1">
+          <div className="lg:col-span-7 order-1">
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -209,7 +209,7 @@ export default function Landing() {
           </div>
 
           {/* Right 5 Columns — Elevated Musical Media Object (Harmonized with headline hierarchy) */}
-          <div className="lg:col-span-5 order-1 lg:order-2 flex justify-center">
+          <div className="lg:col-span-5 order-2 flex justify-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -463,21 +463,21 @@ export default function Landing() {
 
             <Reveal delay={0.15}>
               <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Surface padding="md" interactive>
+                <Surface padding="md">
                   <h3 className="type-subsection text-ink-primary">Paced Following</h3>
                   <p className="mt-2 type-body-small text-ink-secondary">
                     Respects expressive rubato, slowing down and accelerating naturally with you.
                   </p>
                 </Surface>
 
-                <Surface padding="md" interactive>
+                <Surface padding="md">
                   <h3 className="type-subsection text-ink-primary">Phrase Looping</h3>
                   <p className="mt-2 type-body-small text-ink-secondary">
                     Select measures 14 to 22 with one tap to work through tricky transitions calmly.
                   </p>
                 </Surface>
 
-                <Surface padding="md" interactive className="sm:col-span-2">
+                <Surface padding="md" className="sm:col-span-2">
                   <h3 className="type-subsection text-ink-primary">Zero Accuracy Scoring</h3>
                   <p className="mt-2 type-body-small text-ink-secondary">
                     No percentage grades, no stars, no shaming—just a quiet, supportive companion at the keys.
@@ -715,7 +715,7 @@ export default function Landing() {
                 </div>
 
                 <div className="mt-10">
-                  <Button asChild intent="inverse" size="xl" className="w-full">
+                  <Button asChild intent="primary" size="xl" className="w-full">
                     <Link to={plusDestination}>Start Plus</Link>
                   </Button>
                 </div>
@@ -843,7 +843,7 @@ export default function Landing() {
                       Upload your first score in under two minutes.
                     </p>
                     <div className="mt-8 flex flex-col gap-3">
-                      <Button asChild intent="inverse" size="xl" className="w-full">
+                      <Button asChild intent="primary" size="xl" className="w-full">
                         <Link to={primaryPlayDestination}>
                           <span>Start playing</span>
                           <ArrowRight className="h-4 w-4" />

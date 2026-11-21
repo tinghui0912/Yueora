@@ -1,15 +1,16 @@
 import { useCallback, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Search, X } from 'lucide-react';
+import { Search, X, Music } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { signedUrlFor, slugify } from '@/lib/media';
 import { dayLabel } from '@/lib/practiceUtils';
 import PerformanceRow from '@/components/performances/PerformanceRow';
-import StateMessage from '@/components/patterns/StateMessage';
+import EmptyState from '@/components/patterns/EmptyState';
 import AppPage from '@/components/patterns/AppPage';
+import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
+import { SegmentedControl, SegmentedControlItem } from '@/components/patterns/SegmentedControl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
@@ -147,13 +148,13 @@ export default function Performances() {
   };
 
   return (
-    <AppPage size="standard" className="py-8">
+    <AppPage size="standard">
       {/* Page Title */}
       <div>
-        <h1 className="type-experience-title text-ink-primary">
+        <h1 className="type-workspace-title text-ink-primary">
           Preserved Moments
         </h1>
-        <p className="mt-1 type-body-small text-ink-secondary">
+        <p className="mt-1 type-page-subtitle text-ink-tertiary">
           The musical takes you chose to keep.
         </p>
       </div>
@@ -174,28 +175,28 @@ export default function Performances() {
       )}
 
       {/* Tabs */}
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-b border-line-subtle pb-3">
-        <Tabs value={tab} onValueChange={setTab}>
-          <TabsList aria-label="Performances view">
-            {TABS.map((t) => (
-              <TabsTrigger key={t.value} value={t.value}>
-                {t.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+        <SegmentedControl value={tab} onValueChange={setTab} aria-label="Preserved takes view">
+          {TABS.map((t) => (
+            <SegmentedControlItem key={t.value} value={t.value}>
+              {t.label}
+            </SegmentedControlItem>
+          ))}
+        </SegmentedControl>
 
         {source.length > 0 && (
           <div className="flex flex-wrap items-center gap-2">
-            <Tabs value={kind} onValueChange={setKind}>
-              <TabsList aria-label="Filter media type">
-                {FILTERS.map((f) => (
-                  <TabsTrigger key={f.value} value={f.value}>
-                    {f.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
+            <FilterTabs aria-label="Filter media type">
+              {FILTERS.map((f) => (
+                <FilterTab
+                  key={f.value}
+                  active={kind === f.value}
+                  onClick={() => setKind(f.value)}
+                >
+                  {f.label}
+                </FilterTab>
+              ))}
+            </FilterTabs>
 
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-tertiary" />
@@ -213,18 +214,20 @@ export default function Performances() {
       {/* List of Preserved Moments */}
       {source.length === 0 ? (
         <div className="mt-10">
-          <StateMessage
-            tone="neutral"
-            title={tab === 'mine' ? 'No preserved takes yet.' : 'Nothing shared with you yet'}
+          <EmptyState
+            icon={Music}
+            title={tab === 'mine' ? 'No preserved takes yet' : 'Nothing shared yet'}
             description={
               tab === 'mine'
                 ? 'When a practice take feels worth keeping, you can preserve it to revisit anytime.'
                 : 'When another musician shares a performance with you, it will appear here.'
             }
-            primaryAction={
-              tab === 'mine'
-                ? <Button intent="primary" size="md" asChild><Link to="/practice">Choose a piece to play</Link></Button>
-                : undefined
+            action={
+              tab === 'mine' ? (
+                <Button intent="primary" size="md" asChild>
+                  <Link to="/library">Choose a piece to play</Link>
+                </Button>
+              ) : undefined
             }
           />
         </div>

@@ -2,9 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'design-system/**'
   pull_request:
-    branches: [main]
 
 jobs:
   verify:
@@ -29,6 +30,9 @@ jobs:
 
       - name: Design System Guardrail Regression Tests
         run: npm run test:design-system-guardrails
+
+      - name: Typography Hierarchy & ds-allow Audit
+        run: npm run audit:typography
 
       - name: Commercial Flow & Pricing Verification
         run: npm run verify:commercial

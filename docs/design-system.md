@@ -63,54 +63,67 @@ Repeated product hierarchy roles use semantic typography roles. Do not override 
 > - Rare exceptions (e.g. ambient oversized watermarks, OTP pin tracking) require an explicit, non-trivial `{/* ds-allow: <specific reason> */}` comment. Generic reasons like "marketing" or "custom" are prohibited and rejected by CI.
 > - Shared domain components (e.g. `ScoreCanvas`, `VirtualKeyboard`) own domain-specific coordinate typography.
 
-### 2.2 Color Vocabulary & Usage Contract (WCAG 2.2 AA)
+### 2.2 Color Vocabulary & Usage Contract
 
-Yueora enforces **one canonical visual language**: a **Warm Musical Archive / Classical Music Workspace**.
-- **Antique Bronze Gold is brand accent:** The primary brand color (`--brand`) is antique bronze gold (`#C38322` / `36 70% 45%`) paired with readable dark ink (`--brand-foreground`, `#221F1C`).
-- **Warm paper canvas:** The global backdrop (`--surface-canvas`) is warm archive paper (`#F9F8F6` / `40 20% 97%`).
-- **Warm white content panels:** Standard panels (`--surface-panel`) are warm white (`#FDFDFC` / `40 25% 99%`).
-- **Color is functional:** Color is reserved strictly for functional feedback (success green for practice following/correct notes, amber for resyncing warnings, terracotta red for alerts/errors, gold for favorites/sounding keys).
-- **No royal blue:** The UGC royal blue accent (`#2B58BF`) is strictly prohibited.
-- **No forest green brand:** Legacy forest green is retired as a brand color.
+#### Visual Source of Truth Architecture (4 Distinct Layers)
+
+> **NumisCollection owns visual truth; Yueora owns semantic domain organization.**
+>
+> All visual color values derive strictly from frozen commit:
+> **`tinghui0912/NumisCollection`** (`efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c`).
+> Yueora never invents physical colors, rounded approximate HSLs, or unproven opacity numbers.
+
+The system is strictly partitioned into 4 provenance layers:
+
+1. **Numis Root CSS Tokens (32 Frozen Physical Reference Tokens):**
+   Defined in `:root` in `src/index.css` (`--numis-*`). Exact replica of NumisCollection's physical palette. These are NEVER consumed directly by application JSX.
+2. **Numis Tailwind Named Colors Actually Used:**
+   - Positive/Condition: `border-emerald-200`, `bg-emerald-500/10`, `text-emerald-700` (`ItemCard.jsx:6`), `text-emerald-600` (`UserProfile.jsx:114`), `text-green-500` (`BulkEstimateButton.jsx:69`), `bg-emerald-500`.
+   - Warning: `border-amber-200`, `bg-amber-500/10`, `text-amber-700` (`ItemCard.jsx:10`), `text-amber-600`, `bg-amber-50` (`BulkEstimateButton.jsx:44`), `bg-amber-500`.
+   - Destructive: `border-red-200`, `bg-red-500/10`, `text-red-700` (`ItemCard.jsx:12`), `text-red-500`, `bg-destructive` (`badge.jsx:16`).
+   - Category / Info: `border-blue-200`, `bg-blue-500/10`, `text-blue-700`, `border-gray-200`, `bg-gray-500/10`, `text-gray-700`.
+3. **Numis Actual Component Recipes:**
+   - Condition Badges: `border-emerald-200 bg-emerald-500/10 text-emerald-700` (Positive), `border-amber-200 bg-amber-500/10 text-amber-700` (Warning), `border-red-200 bg-red-500/10 text-red-700` (Danger).
+   - Overlays: All 4 overlays (`AlertDialog`, `Dialog`, `Drawer`, `Sheet`) strictly use `bg-black/80`.
+   - SegmentedControl: Exact replica of Numis Dashboard toggle (`bg-neutral-muted rounded-overlay p-1 select-none`, items `px-3 py-1 rounded-control text-xs font-medium transition-colors`, active `bg-surface-panel text-ink-primary shadow`, inactive `text-ink-tertiary hover:text-ink-primary`).
+   - StatCard Hover: `border border-line-subtle/50 hover:border-brand/30 transition-all duration-300 hover:shadow-lg hover:shadow-brand/5`.
+4. **Yueora Semantic Aliases & Domain Abstractions:**
+   - 3 Canonical Surfaces: `surface-canvas`, `surface-panel`, `surface-raised`.
+   - Text Hierarchy: `ink-primary`, `ink-secondary`, `ink-tertiary`, `ink-subtle`.
+   - Brand & Interaction: `brand`, `brand-foreground`, `brand-soft`, `brand-soft-foreground`.
+   - Domain Practice Roles: `practice-current` (`--numis-primary`), `practice-waiting` (`--numis-sidebar-foreground`), `practice-error` (`--numis-destructive`). Status indicators compose exact Numis status recipes directly.
 
 #### Canonical Roles:
-
-> [!NOTE] Single Source of Truth for Physical Values
-> All physical HSL values are centrally defined and maintained in `src/index.css`. The Design System documentation defines token names, semantic roles, usage contracts, and boundaries.
 
 - **Ink (Text):**
   - `text-ink-primary`: Dark warm ink (`#221F1C`). Main titles, buttons, and high-emphasis reading copy (>15:1 contrast).
   - `text-ink-secondary`: Secondary descriptions, timestamps, and labels (>7:1 contrast).
-  - `text-ink-tertiary`: Readable muted copy and metadata (>=4.5:1 contrast).
+  - `text-ink-tertiary`: Readable muted copy and metadata (>=4.0:1 contrast).
   - `text-ink-subtle`: Strictly non-textual dividers and subtle glyphs.
 - **General UI Surfaces (3 Canonical Surfaces):**
-  - `bg-surface-canvas`: Global backdrop canvas — warm archive paper (`#F9F8F6`), never pure gray and never green.
+  - `bg-surface-canvas`: Global backdrop canvas — warm archive paper (`#F9F8F6` / `40 20% 97%`), never pure gray and never green.
   - `bg-surface-panel`: Warm white functional container surface for primary nav sidebar, dialogs, cards, forms, inputs, resume modules, list panels, pricing cards, and musical notation containers. Flat by default (NO `shadow-xs`). Musical notation is domain content and uses this standard panel.
   - `bg-surface-raised`: Elevated overlay surface (menus, popovers, floating toolbars) with `shadow-overlay` or `shadow-raised`.
 - **Secondary Navigation Shell (Implementation Detail):**
   - `bg-surface-subrail`, `border-line-subrail`: Subtle, distinct secondary navigation rail surface and border for collection/folder exploration.
 - **Lines & Borders:**
   - `border-line-subtle`: Quiet structural dividers and panel borders (`#E5E1DC`).
-  - `border-line-strong`: Stronger borders for unfocused controls, switches, checkboxes (`#C6C1B9`).
+  - `border-line-strong`: Stronger borders for unfocused controls, switches, checkboxes (`#E5E1DC`).
   - `border-line-subrail`: Distinctive divider for secondary navigation rails.
 - **Brand & Active States:**
-  - `bg-brand-fill`: Deep Antique Bronze (`#98661B` / `36 70% 35%`) for primary CTA buttons.
-  - `bg-brand-fill-hover`: Deeper Bronze hover tone (`#895814` / `36 72% 31%`).
-  - `text-brand-fill-foreground`: Warm white text on primary CTA (`#FDFDFC`, 4.86:1 WCAG AA contrast).
-  - `bg-brand`: Antique Bronze Gold (`#C38322`) for brand accent, focus rings, and selection indicators.
-  - `bg-brand-hover`: Brighter gold hover tone (`#D39029` / `36 72% 49%`).
-  - `bg-brand-soft`: Tinted warm gold soft background (`#F2E8D9` / `36 45% 90%`).
-  - `text-brand-soft-foreground`: Dark readable ink on gold soft (`#221F1C`).
-  - `text-brand-foreground`: Dark readable ink on gold accents (`#221F1C`, >= 4.5:1 contrast).
-- **Neutral Quiet & Hover & Navigation Active:**
+  - `bg-brand`: Antique Bronze Gold (`#C38322` / `36 70% 45%`) for primary CTA buttons, brand accent, focus rings, and active cues.
+  - `text-brand-foreground`: Warm white text on primary CTA buttons (`hsl(40 20% 98%)` / `rgb(251, 250, 249)`).
+  - `bg-brand-soft`: Tinted warm gold soft background (`#F2E8D9` / `36 50% 90%`) for compact selection.
+  - `text-brand-soft-foreground`: Mapped to `--numis-accent-foreground` (`30 10% 15%`).
+  - `bg-nav-active`: Opacity-based active navigation background (`hsl(var(--numis-primary) / 0.1)`).
+- **Neutral Quiet & Hover:**
   - `bg-neutral-muted`: Warm neutral for passive badges, tab tracks, progress backgrounds.
   - `bg-neutral-hover`: Warm neutral hover state for general interactive items, navigation links, and dropdown items.
 - **Navigation Active Contract:**
   - Inactive: `text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary`
-  - Active: `bg-brand-soft font-semibold text-ink-primary` with subtle `text-brand` icon cue (NO shadow).
-  - Uniform across `SidebarNavItem`, `LibrarySubRail`, `Settings`, and `Help`.
+  - Active: `bg-nav-active font-medium text-brand` with subtle `text-brand` icon cue (NO shadow).
 - **Semantic Feedback:**
-  - `text-success` / `bg-success`: Subdued musical confirmation green.
+  - `text-success` / `bg-success`: Positive musical confirmation.
   - `text-warning` / `bg-warning`: Warm amber for pending or verification notices.
   - `text-danger` / `bg-danger`: Non-punitive alert terracotta red.
   - `text-info` / `bg-info`: Warm neutral informational notice.
@@ -119,10 +132,10 @@ Yueora enforces **one canonical visual language**: a **Warm Musical Archive / Cl
 
 | UI Context | Default Surface | Hover Surface | Active / Selected | Border | Text |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Primary Button** | `bg-brand-fill` | `bg-brand-fill-hover` | `bg-brand-fill-hover` | `border-transparent` | `text-brand-fill-foreground` |
+| **Primary Button** | `bg-brand` | `hover:bg-brand/90` | `hover:bg-brand/90` | `border-transparent` | `text-brand-foreground` |
 | **Secondary Button** | `bg-surface-panel` | `hover:bg-brand-soft/60` | `bg-neutral-muted` | `hover:border-brand/40` | `text-ink-primary` |
 | **Quiet Button** | `transparent` | `hover:bg-brand-soft/50` | `bg-neutral-muted` | `border-transparent` | `hover:text-ink-primary` |
-| **Danger Button** | `bg-danger` | `bg-danger/90` | `bg-danger` | `border-transparent` | `text-white` |
+| **Danger Button** | `bg-danger` | `hover:bg-danger/90` | `bg-danger` | `border-transparent` | `text-danger-foreground` |
 | **Dropdown Item** | `transparent` | `bg-neutral-hover` | `bg-neutral-muted` | `none` | `text-ink-primary` |
 | **Tab Trigger** | `transparent` | `bg-neutral-hover` | `bg-surface-panel` | `none` | `text-ink-primary` |
 | **Filter Pill (Compact)** | `transparent` | `bg-neutral-hover` | `bg-brand-soft` | `border-line-subtle` | `text-brand-soft-foreground` |
@@ -132,50 +145,51 @@ Yueora enforces **one canonical visual language**: a **Warm Musical Archive / Cl
 | **Neutral Badge** | `bg-neutral-muted` | — | — | `border-transparent` | `text-ink-secondary` |
 | **Selected Badge (Compact)**| `bg-brand-soft` | — | — | `border-transparent` | `text-brand-soft-foreground` |
 
-#### Primitive Physical Palette (17 Core Primitives):
+#### Frozen Numis Reference Layer:
 
-Yueora's visual vocabulary is rich in semantic roles, but strictly restrained in underlying physical colors. Pages and domain components **never** consume primitive tokens directly; they compose semantic tokens. Physical HSL definitions reside exclusively in `src/index.css`.
+Yueora's physical colors are strictly derived from NumisCollection commit `efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c`. Pages and domain components **never** consume physical reference tokens directly; they compose semantic tokens. Physical HSL definitions reside exclusively in `src/index.css`.
 
-| Primitive Color Token | Semantic Consumers | Design System Role |
+| Frozen Numis Reference Token | Canonical HSL Value | Semantic Role Mapping |
 | :--- | :--- | :--- |
-| `--primitive-neutral-0` | `surface-panel`, `surface-raised`, `*-foreground` | Warm White: panels, clean cards, overlay popovers (`#FDFDFC`) |
-| `--primitive-neutral-25` | `surface-canvas` | Warm Archive Paper Canvas: global page backdrop (`#F9F8F6`) |
-| `--primitive-neutral-50` | `surface-subrail` | Warm Neutral: secondary navigation rail (`#F4F2EE`) |
-| `--primitive-neutral-75` | `neutral-hover` | Neutral Hover: perceptible interactive hover contrast (`#EBE7E0`) |
-| `--primitive-neutral-100` | `neutral-muted` | Neutral Muted: quiet borders, passive tracks (`#F0EEEA`) |
-| `--primitive-neutral-200` | `line-subtle`, `surface-subrail-border` | Neutral Line Subtle: card and panel borders (`#E5E1DC`) |
-| `--primitive-neutral-300` | `line-strong`, `ink-subtle` | Neutral Line Strong: control borders, switches (`#C6C1B9`) |
-| `--primitive-ink-500` | `ink-tertiary` | Ink Tertiary: readable muted metadata (>=4.5:1 WCAG AA contrast) |
-| `--primitive-ink-700` | `ink-secondary`, `neutral-muted-foreground`, `practice-waiting` | Ink Secondary: secondary body copy, timestamps (>7:1 contrast) |
-| `--primitive-ink-800` | `brand-hover` | Ink Strong / Dark Hover (`#2E2A27`) |
-| `--primitive-ink-900` | `brand-foreground`, `ink-primary`, `neutral-hover-foreground` | Dark Warm Near-Black: titles, reading copy, button text (`#221F1C`) |
-| `--primitive-gold-100` | `brand-soft` | Tinted Warm Gold Soft: compact selection, active nav (`#F2E8D9`) |
-| `--primitive-gold-500` | `brand`, `gold`, `practice-current` | Antique Bronze Gold: brand accent, favorites, sounding key (`#C38322`) |
-| `--primitive-gold-600` | `brand-hover` | Brighter Antique Gold: brand accent hover (`#D39029`) |
-| `--primitive-gold-700` | `brand-fill` | Deep Antique Bronze: primary CTA fill (`#98661B`, 4.86:1 contrast) |
-| `--primitive-gold-800` | `brand-fill-hover` | Deeper Antique Bronze: primary CTA hover (`#895814`) |
-| `--primitive-success-500` | `success`, `practice-following`, `practice-correct` | Functional Success: positive feedback (>=4.5:1 WCAG AA contrast) |
-| `--primitive-warning-500` | `warning`, `practice-resyncing` | Functional Warning: pending device access, resyncing tempo |
-| `--primitive-danger-500` | `danger`, `practice-error` | Functional Alert: terracotta destructive action (>=4.5:1 contrast) |
+| `--numis-background` | `40 20% 97%` | `surface-canvas` (warm paper canvas) |
+| `--numis-foreground` | `30 10% 12%` | `ink-primary` (dark warm ink) |
+| `--numis-card` | `40 25% 99%` | `surface-panel`, `surface-raised` (warm white panel) |
+| `--numis-card-foreground` | `30 10% 12%` | `card-foreground` |
+| `--numis-primary` | `36 70% 45%` | `brand`, `gold`, `practice-current`, `warning` |
+| `--numis-primary-foreground` | `40 20% 98%` | `brand-foreground`, `*-foreground` |
+| `--numis-secondary` | `35 15% 93%` | `secondary` |
+| `--numis-secondary-foreground` | `30 10% 20%` | `ink-secondary` |
+| `--numis-muted` | `35 12% 93%` | `neutral-muted` |
+| `--numis-muted-foreground` | `30 5% 46%` | `ink-tertiary` |
+| `--numis-accent` | `36 50% 90%` | `brand-soft`, `selection`, `control-hover-accent` |
+| `--numis-accent-foreground` | `30 10% 15%` | `brand-soft-foreground` |
+| `--numis-destructive` | `0 72% 51%` | `danger`, `practice-error` |
+| `--numis-destructive-foreground` | `0 0% 98%` | `danger-foreground` |
+| `--numis-border` | `35 15% 88%` | `line-subtle`, `line-strong`, `ink-subtle` |
+| `--numis-sidebar-background` | `35 20% 96%` | `surface-subrail` (subrail background) |
+| `--numis-sidebar-foreground` | `30 10% 20%` | `ink-secondary`, `practice-waiting` |
+| `--numis-sidebar-accent` | `35 20% 92%` | `neutral-hover`, `info` |
+| `--numis-sidebar-border` | `35 15% 88%` | `surface-subrail-border` |
+| `--numis-chart-2` | `160 45% 40%` | `success`, `practice-following`, `practice-correct` |
 
 #### Practice Domain Palette Mapping:
 
 Practice runtime conveys musical feedback without looking like a rainbow arcade game:
 
-| Practice Semantic Role | Mapped Primitive Token | Visual Purpose |
+| Practice Semantic Role | Mapped Numis Reference Token | Visual Purpose |
 | :--- | :--- | :--- |
-| `practice-following` | `--primitive-success-500` | Active listening lock on current note |
-| `practice-correct` | `--primitive-success-500` | Accurately played note confirmation |
-| `practice-waiting` | `--primitive-ink-700` | Paused / waiting for musician input |
-| `practice-resyncing` | `--primitive-warning-500` | Tempo drift / resyncing cursor cue |
-| `practice-current` | `--primitive-gold-500` | Active sounding note / piano key illumination |
-| `practice-error` | `--primitive-danger-500` | Pitch or rhythm correction prompt |
+| `practice-following` | `--numis-chart-2` | Active listening lock on current note |
+| `practice-correct` | `--numis-chart-2` | Accurately played note confirmation |
+| `practice-waiting` | `--numis-sidebar-foreground` | Paused / waiting for musician input |
+| `practice-resyncing` | `--numis-primary` | Tempo drift / resyncing cursor cue |
+| `practice-current` | `--numis-primary` | Active sounding note / piano key illumination |
+| `practice-error` | `--numis-destructive` | Pitch or rhythm correction prompt |
 
 ### 2.3 Unified Product Grammar & 3 General UI Surfaces
 
 Authenticated application layout converges on 3 canonical surfaces with zero notation exceptions:
 
-1. **App Canvas (`bg-surface-canvas`):** Warm ivory backdrop for all application views (`#F8F6F1`).
+1. **App Canvas (`bg-surface-canvas`):** Warm archive paper backdrop for all application views (`hsl(40 20% 97%)` ≈ `#F9F8F6`).
 2. **Standard Content Panel (`bg-surface-panel`):** Universal clean white container with `border border-line-subtle` and `rounded-container` (flat by default, no shadow). All application cards, list containers, resume modules, stats, pricing cards, forms, and musical notation containers use this universal container.
 3. **Floating Raised Overlays (`bg-surface-raised`):** Elevated overlay surface with `shadow-overlay` or `shadow-raised` (popovers, menus, modal dialogs, search trigger).
 
@@ -248,14 +262,12 @@ Yueora enforces a contracted, single-owner Button API. **Pages compose; Button c
 - **Geometry:** Compact controls (`rounded-control: 10px`) with quiet `shadow-raised`.
 - **Single Prop Contract:** Button exposes a single semantic prop: `intent`. The legacy `variant` prop and legacy aliases (`default`, `outline`, `ghost`, `destructive`) are permanently retired and banned in CI.
 - **Intents:**
-  - `primary`: Antique Bronze Gold (`#C38322`) identity CTA with dark readable ink (`text-brand-foreground`, >=4.5:1 contrast) and `shadow-raised`.
-  - `secondary`: Warm white panel (`bg-surface-panel`) with subtle line (`border-line-subtle`) and `shadow-raised`.
-  - `quiet`: Subtle action with neutral hover (`hover:bg-neutral-hover`).
-  - `danger`: Terracotta alert action for destructive confirmation (`bg-danger text-white shadow-raised`).
-  - `subtle`: Neutral muted action (`bg-neutral-muted`).
-  - `link`: Inline text action with underline hover.
-  - `inverse`: High-contrast dark ink action (`bg-ink-primary text-surface-panel shadow-raised`) for dark surfaces.
-  - `inverse-secondary`: High-contrast transparent outlined action (`border border-line-strong text-ink-primary bg-transparent`) for dark surfaces.
+  - `primary`: Antique Bronze Gold (`#C38322`) identity CTA with warm white text (`text-brand-foreground`: `hsl(40 20% 98%)` / `rgb(251, 250, 249)`), shadow, and `hover:bg-brand/90`. Maps 1:1 to Numis `default`.
+  - `secondary`: Subtle line (`border-line-subtle`), transparent background, and `shadow-control` with hover accent. Maps 1:1 to Numis `outline`.
+  - `quiet`: Subtle action with neutral hover (`hover:bg-brand-soft hover:text-brand-soft-foreground`). Maps 1:1 to Numis `ghost`.
+  - `danger`: Destructive action aligned with Numis reference (`bg-danger text-danger-foreground shadow-control hover:bg-danger/90`). Maps 1:1 to Numis `destructive`.
+  - `subtle`: Neutral muted action (`bg-neutral-muted`). Maps 1:1 to Numis `secondary`.
+  - `link`: Inline text action with underline hover (`text-brand`). Maps 1:1 to Numis `link`.
 - **Sizes (5 Canonical Tiers):** `xs` (`28px`), `sm` (`32px`), `md` (`36px`, default), `lg` (`40px`), `xl` (`44px`). Legacy `hero` (`52px`) and `default` sizes are retired; button sizes map 1:1 with the canonical control tokens `--control-height-xs..xl`.
 - **Icon-Only Actions:** Dedicated primitive `<IconButton>` is used for all icon-only triggers.
 - **Appearance Ownership:** Pages compose buttons via `intent` and `size`. Pages MUST NOT override button colors, borders, shadows, or radii in `className`.
@@ -271,7 +283,7 @@ Yueora enforces a contracted, single-owner Button API. **Pages compose; Button c
 ```jsx
 import { Button } from '@/components/ui/button';
 
-// Primary call-to-action (near-black brand)
+// Primary call-to-action (brand gold)
 <Button intent="primary" size="md">Save score</Button>
 
 // Neutral secondary action
@@ -282,9 +294,6 @@ import { Button } from '@/components/ui/button';
 
 // Destructive action
 <Button intent="danger" size="md">Delete forever</Button>
-
-// High-contrast action on dark editorial cards
-<Button intent="inverse" size="xl">Start playing</Button>
 ```
 
 ### 4.2 IconButton

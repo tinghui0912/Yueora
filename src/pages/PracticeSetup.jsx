@@ -56,7 +56,6 @@ export default function PracticeSetup() {
   const [midiStatus, setMidiStatus] = useState(preflight.midiConnected ? 'connected' : 'no-device');
   const [cameraStatus, setCameraStatus] = useState(preflight.cameraGranted ? 'ready' : 'not-tested');
   const [modelStatus, setModelStatus] = useState(preflight.modelReady ? 'ready' : 'idle');
-  const [modelProgress, setModelProgress] = useState(preflight.modelReady ? 100 : 0);
   const [cameraStream, setCameraStream] = useState(null);
   const cameraRef = useRef(null);
 
@@ -77,7 +76,6 @@ export default function PracticeSetup() {
   useEffect(() => {
     if (!needsRecognition) return undefined;
     setModelStatus('ready');
-    setModelProgress(100);
     setPreflight({ modelReady: true });
     return undefined;
   }, [needsRecognition, setPreflight]);

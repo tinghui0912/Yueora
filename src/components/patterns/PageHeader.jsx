@@ -10,8 +10,8 @@ export function PageHeader({ title, description = undefined, primaryAction = nul
   return (
     <div className={cn('flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between', className)}>
       <div className="min-w-0">
-        <h1 className="type-page-title text-ink-primary">{title}</h1>
-        {description && <p className="mt-1.5 type-body-small text-ink-secondary">{description}</p>}
+        <h1 className="type-workspace-title text-ink-primary">{title}</h1>
+        {description && <p className="mt-1.5 type-page-subtitle text-ink-tertiary">{description}</p>}
       </div>
       {(primaryAction || secondaryAction) && (
         <div className="flex shrink-0 items-center gap-2">

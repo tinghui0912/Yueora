@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileMusic, RefreshCw, AlertTriangle, CheckCircle2, Pencil, ArrowRight, Trash2 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 import AppPage from '@/components/patterns/AppPage';
 import { Surface } from '@/components/patterns/Surface';
 import {
@@ -13,7 +14,7 @@ import FileThumbnail from '@/components/visuals/FileThumbnail';
 
 const statusMeta = {
   processing: { label: 'Processing your score…', color: 'text-brand' },
-  needs_review: { label: 'Needs review', color: 'text-warning' },
+  needs_review: { label: 'Needs review', color: 'text-amber-700' },
   failed: { label: 'Recognition failed', color: 'text-danger' },
   completed: { label: 'Completed', color: 'text-ink-tertiary' },
 };
@@ -74,7 +75,7 @@ export default function ImportDetail() {
         )}
         {imp.status === 'needs_review' && (
           <div className="flex items-center gap-3">
-            <AlertTriangle className="h-5 w-5 text-warning" />
+            <AlertTriangle className="h-5 w-5 text-amber-600" />
             <p className="type-body-small text-ink-secondary">Recognition finished with {issueCount} {issueCount === 1 ? 'spot' : 'spots'} to review.</p>
           </div>
         )}
@@ -84,7 +85,9 @@ export default function ImportDetail() {
               <AlertTriangle className="h-5 w-5 text-danger" />
               <p className="type-body-small text-ink-primary">{imp.failure}</p>
             </div>
-            <button onClick={handleRetry} className="mt-4 flex items-center gap-2 rounded-control border border-line-subtle px-3 py-2 type-body-small font-medium text-ink-primary hover:bg-neutral-hover transition-colors"><RefreshCw className="h-4 w-4" /> Try again</button>
+            <Button intent="secondary" size="sm" onClick={handleRetry} className="mt-4">
+              <RefreshCw className="icon-xs" /> Try again
+            </Button>
           </div>
         )}
         {imp.status === 'completed' && (
@@ -103,7 +106,7 @@ export default function ImportDetail() {
             <div key={i} className="flex items-center gap-3 rounded-container border border-line-subtle bg-surface-panel p-3">
               <FileThumbnail seed={importId + '-page-' + (i + 1)} className="h-14 w-12" />
               <span className="flex-1 type-body-small text-ink-primary">Page {i + 1}.pdf</span>
-              <button onClick={() => setReplaceOpen(true)} className="rounded-control p-1.5 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors" aria-label="Replace"><RefreshCw className="h-4 w-4" /></button>
+              <IconButton icon={RefreshCw} label="Replace" tone="quiet" size="sm" onClick={() => setReplaceOpen(true)} />
             </div>
           ))}
         </div>
@@ -123,23 +126,27 @@ export default function ImportDetail() {
       {/* Actions */}
       <div className="mt-6 flex flex-wrap gap-2">
         {imp.status === 'needs_review' && (
-          <Link to={`/review/${imp.id}`} className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 type-body-small font-semibold text-brand-foreground hover:bg-brand-hover transition-colors">
-            <Pencil className="h-4 w-4" /> Review recognition
-          </Link>
+          <Button asChild intent="primary" size="md">
+            <Link to={`/review/${imp.id}`}>
+              <Pencil className="h-4 w-4" /> Review recognition
+            </Link>
+          </Button>
         )}
         {imp.status === 'completed' && imp.scoreId && (
-          <Link to={`/score/${imp.scoreId}`} className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 type-body-small font-semibold text-brand-foreground hover:bg-brand-hover transition-colors">
-            Open score
-          </Link>
+          <Button asChild intent="primary" size="md">
+            <Link to={`/score/${imp.scoreId}`}>
+              Open score
+            </Link>
+          </Button>
         )}
         {imp.status === 'failed' && (
-          <button onClick={handleRetry} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 type-body-small font-medium text-ink-primary hover:bg-neutral-hover transition-colors">
+          <Button onClick={handleRetry} intent="secondary" size="md">
             <RefreshCw className="h-4 w-4" /> Try again
-          </button>
+          </Button>
         )}
-        <button onClick={() => setRemoveOpen(true)} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 type-body-small font-medium text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors">
+        <Button onClick={() => setRemoveOpen(true)} intent="secondary" size="md">
           <Trash2 className="h-4 w-4" /> Remove from import history
-        </button>
+        </Button>
       </div>
 
       {/* Replace source dialog */}

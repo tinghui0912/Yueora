@@ -12,6 +12,7 @@ import EditorInspector from '@/components/editor/EditorInspector';
 import SharingDialog from '@/components/sharing/SharingDialog';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
+import { SegmentedControl, SegmentedControlItem } from '@/components/patterns/SegmentedControl';
 import BackLink from '@/components/patterns/BackLink';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
@@ -197,7 +198,7 @@ export default function Editor() {
       {recovered && (
         <div className="flex items-center justify-between border-b border-gold/30 bg-gold/5 px-4 py-2 type-body-small">
           <span className="flex items-center gap-2 text-gold"><Check className="icon-sm" aria-hidden="true" /> Recovered unsaved changes from your recognition review.</span>
-          <button type="button" onClick={() => setRecovered(false)} className="text-ink-secondary hover:text-ink-primary transition-colors" aria-label="Dismiss banner"><X className="icon-sm" aria-hidden="true" /></button>
+          <IconButton icon={X} label="Dismiss banner" tone="quiet" size="xs" onClick={() => setRecovered(false)} />
         </div>
       )}
 
@@ -209,24 +210,22 @@ export default function Editor() {
             <span className="text-ink-secondary">· Measure {activeIssue.measure} · {activeIssue.type}</span>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
+            <IconButton
+              icon={ChevronLeft}
+              label="Previous issue"
+              tone="outline"
+              size="xs"
               onClick={goPrevIssue}
               disabled={issueIdx === 0}
-              className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary disabled:opacity-30 transition-colors"
-              aria-label="Previous issue"
-            >
-              <ChevronLeft className="icon-xs" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
+            />
+            <IconButton
+              icon={ChevronRight}
+              label="Next issue"
+              tone="outline"
+              size="xs"
               onClick={goNextIssue}
               disabled={issueIdx >= issues.length - 1}
-              className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary disabled:opacity-30 transition-colors"
-              aria-label="Next issue"
-            >
-              <ChevronRight className="icon-xs" aria-hidden="true" />
-            </button>
+            />
             <Button size="sm" intent="secondary" onClick={markIssueFixed}>{activeIssue.resolved ? 'Unmark' : 'Mark fixed'}</Button>
           </div>
         </div>
@@ -248,17 +247,28 @@ export default function Editor() {
           </button>
         ))}
         <div className="ml-auto flex items-center gap-1">
-          <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="flex h-7 w-7 items-center justify-center rounded-control text-ink-secondary hover:bg-neutral-hover" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
+          <IconButton icon={ZoomOut} label="Zoom out" tone="quiet" size="xs" onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} />
           <span className="type-metadata font-medium text-ink-secondary">{Math.round(zoom * 100)}%</span>
-          <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="flex h-7 w-7 items-center justify-center rounded-control text-ink-secondary hover:bg-neutral-hover" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
+          <IconButton icon={ZoomIn} label="Zoom in" tone="quiet" size="xs" onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} />
         </div>
       </div>
 
       {/* View toggle */}
       <div className="flex items-center gap-1 border-b border-line-subtle bg-surface-canvas/60 px-4 py-1.5">
-        <ViewTab active={view === 'score'} onClick={() => setView('score')} icon={Music2} label="Score" />
-        <ViewTab active={view === 'original'} onClick={() => setView('original')} icon={ScanLine} label="Original" />
-        <ViewTab active={view === 'split'} onClick={() => setView('split')} icon={ChevronLeft} label="Side by side" />
+        <SegmentedControl value={view} onValueChange={setView} aria-label="View mode">
+          <SegmentedControlItem value="score">
+            <Music2 className="icon-xs" />
+            <span>Score</span>
+          </SegmentedControlItem>
+          <SegmentedControlItem value="original">
+            <ScanLine className="icon-xs" />
+            <span>Original</span>
+          </SegmentedControlItem>
+          <SegmentedControlItem value="split">
+            <ChevronLeft className="icon-xs" />
+            <span>Side by side</span>
+          </SegmentedControlItem>
+        </SegmentedControl>
       </div>
 
       <div className="flex min-h-0 flex-1">
@@ -279,9 +289,9 @@ export default function Editor() {
             </button>
           ))}
           <div className="mt-auto flex flex-col items-center gap-1">
-            <button onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} className="flex h-8 w-8 items-center justify-center rounded-control text-ink-secondary hover:bg-neutral-hover" aria-label="Zoom in"><ZoomIn className="h-4 w-4" /></button>
+            <IconButton icon={ZoomIn} label="Zoom in" tone="quiet" size="sm" onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} />
             <span className="type-metadata font-medium text-ink-secondary">{Math.round(zoom * 100)}%</span>
-            <button onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} className="flex h-8 w-8 items-center justify-center rounded-control text-ink-secondary hover:bg-neutral-hover" aria-label="Zoom out"><ZoomOut className="h-4 w-4" /></button>
+            <IconButton icon={ZoomOut} label="Zoom out" tone="quiet" size="xs" onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} />
           </div>
         </div>
 
@@ -325,7 +335,7 @@ export default function Editor() {
               <Button intent="secondary" size="sm" className="w-full" onClick={copySelected}><Copy className="mr-1.5" /> Copy selected</Button>
               <div className="flex gap-1.5">
                 {['1', '2', '4', '8'].map((d) => (
-                  <button key={d} onClick={() => changeDurationSelected(d)} className="flex-1 rounded-control border border-line-subtle py-1 type-metadata font-medium text-ink-primary hover:bg-neutral-hover">{d}</button>
+                  <Button key={d} intent="secondary" size="xs" className="flex-1" onClick={() => changeDurationSelected(d)}>{d}</Button>
                 ))}
               </div>
             </div>
@@ -344,13 +354,13 @@ export default function Editor() {
       {/* Playback bar */}
       <div className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 type-body-small text-ink-secondary">
         <div className="flex items-center gap-2">
-          <button className="flex h-8 w-8 items-center justify-center rounded-control bg-brand text-brand-foreground hover:bg-brand-hover transition-colors" aria-label="Play"><Play className="h-4 w-4 fill-current" /></button>
+          <IconButton icon={Play} label="Play" tone="primary" size="sm" />
           <span className="font-medium text-ink-primary">Playback</span>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => setMeasure((m) => Math.max(1, m - 1))} className="flex h-7 w-7 items-center justify-center rounded-control border border-line-subtle hover:bg-neutral-hover" aria-label="Previous measure"><ChevronLeft className="h-3.5 w-3.5" /></button>
+          <IconButton icon={ChevronLeft} label="Previous measure" tone="outline" size="xs" onClick={() => setMeasure((m) => Math.max(1, m - 1))} />
           <span className="type-metadata font-medium text-ink-secondary">Measure {measure} / {score.measures || 16}</span>
-          <button onClick={() => setMeasure((m) => Math.min(score.measures || 16, m + 1))} className="flex h-7 w-7 items-center justify-center rounded-control border border-line-subtle hover:bg-neutral-hover" aria-label="Next measure"><ChevronRight className="h-3.5 w-3.5" /></button>
+          <IconButton icon={ChevronRight} label="Next measure" tone="outline" size="xs" onClick={() => setMeasure((m) => Math.min(score.measures || 16, m + 1))} />
         </div>
       </div>
 
@@ -371,19 +381,11 @@ export default function Editor() {
   );
 }
 
-function ViewTab({ active, onClick, icon: Icon, label }) {
-  return (
-    <button onClick={onClick} className={`flex items-center gap-1.5 rounded-control px-3.5 py-1.5 type-body-small transition-colors ${active ? 'bg-surface-panel font-semibold text-ink-primary' : 'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover'}`}>
-      <Icon className="h-4 w-4" /> {label}
-    </button>
-  );
-}
-
 function SaveIndicator({ state, onRetry, onFail }) {
   if (state === 'saving') return <span className="hidden items-center gap-1 type-body-small text-ink-secondary sm:flex"><Loader2 className="h-3.5 w-3.5 animate-spin" /> Saving…</span>;
   if (state === 'failed') return (
     <span className="hidden items-center gap-2 sm:flex">
-      <button onClick={onRetry} className="type-body-small text-danger font-medium">Save failed — Retry</button>
+      <Button intent="danger" size="xs" onClick={onRetry}>Retry</Button>
       <button onClick={onFail} className="type-metadata text-ink-tertiary underline" title="Demo: simulate save failure">Demo fail</button>
     </span>
   );

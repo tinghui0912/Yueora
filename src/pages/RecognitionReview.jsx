@@ -6,6 +6,8 @@ import { generateNotes } from '@/lib/mockData';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
 import MockScanPage from '@/components/visuals/MockScanPage';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import BackLink from '@/components/patterns/BackLink';
 import Surface from '@/components/patterns/Surface';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
@@ -60,8 +62,22 @@ export default function RecognitionReview() {
         <div className="flex items-center gap-3">
           {active && (
             <div className="hidden items-center gap-1 sm:flex">
-              <button onClick={goPrev} disabled={issues.findIndex((i) => i.id === active.id) === 0} className="rounded-control p-1 text-ink-secondary hover:bg-neutral-hover disabled:opacity-30" aria-label="Previous issue"><ChevronUp className="icon-sm" /></button>
-              <button onClick={goNext} disabled={issues.findIndex((i) => i.id === active.id) === issues.length - 1} className="rounded-control p-1 text-ink-secondary hover:bg-neutral-hover disabled:opacity-30" aria-label="Next issue"><ChevronDown className="icon-sm" /></button>
+              <IconButton
+                icon={ChevronUp}
+                label="Previous issue"
+                tone="quiet"
+                size="xs"
+                onClick={goPrev}
+                disabled={issues.findIndex((i) => i.id === active.id) === 0}
+              />
+              <IconButton
+                icon={ChevronDown}
+                label="Next issue"
+                tone="quiet"
+                size="xs"
+                onClick={goNext}
+                disabled={issues.findIndex((i) => i.id === active.id) === issues.length - 1}
+              />
             </div>
           )}
           <span className="type-body-small text-ink-secondary">Recognition review</span>
@@ -69,9 +85,17 @@ export default function RecognitionReview() {
       </div>
 
       {/* Mobile view toggle */}
-      <div className="flex border-b border-line-subtle md:hidden bg-surface-panel">
-        <button onClick={() => setMobileView('original')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 type-body-small font-medium ${mobileView === 'original' ? 'border-b-2 border-brand text-brand' : 'text-ink-secondary'}`}><ScanLine className="icon-sm" /> Original</button>
-        <button onClick={() => setMobileView('recognized')} className={`flex flex-1 items-center justify-center gap-1.5 py-2 type-body-small font-medium ${mobileView === 'recognized' ? 'border-b-2 border-brand text-brand' : 'text-ink-secondary'}`}><Pencil className="icon-sm" /> Recognized</button>
+      <div className="border-b border-line-subtle md:hidden bg-surface-panel p-1">
+        <Tabs value={mobileView} onValueChange={setMobileView} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="original" className="flex items-center gap-1.5">
+              <ScanLine className="icon-xs" /> Original
+            </TabsTrigger>
+            <TabsTrigger value="recognized" className="flex items-center gap-1.5">
+              <Pencil className="icon-xs" /> Recognized
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       <div className="flex min-h-0 flex-1">
@@ -82,7 +106,7 @@ export default function RecognitionReview() {
             <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-3">
               <MockScanPage seed={importId + '-scan'} className="aspect-[3/4] w-full" showHighlight={!!active} highlightMeasure={active?.measure} />
               <p className="mt-2 text-center type-metadata text-ink-tertiary">Page 1 (scan)</p>
-              {active && <p className="mt-1 text-center type-metadata text-warning">Highlight near measure {active.measure}</p>}
+              {active && <p className="mt-1 text-center type-metadata text-amber-700">Highlight near measure {active.measure}</p>}
             </div>
           </div>
         </div>
@@ -93,7 +117,7 @@ export default function RecognitionReview() {
             <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-3">
               <MockScanPage seed={importId + '-scan'} className="aspect-[3/4] w-full" showHighlight={!!active} highlightMeasure={active?.measure} />
               <p className="mt-2 text-center type-metadata text-ink-tertiary">Page 1 (scan)</p>
-              {active && <p className="mt-1 text-center type-metadata text-warning">Highlight near measure {active.measure}</p>}
+              {active && <p className="mt-1 text-center type-metadata text-amber-700">Highlight near measure {active.measure}</p>}
             </div>
           </div>
         )}
@@ -105,8 +129,8 @@ export default function RecognitionReview() {
             <Surface padding="lg" className="mx-auto max-w-3xl">
               <ScoreCanvas notes={notes} selectedIds={new Set()} onSelect={() => {}} zoom={1} activeIssueMeasure={active?.measure} />
               {active && (
-                <div className="mt-3 rounded-control border border-warning/40 bg-warning/10 px-3 py-2">
-                  <p className="type-body-small font-medium text-warning">Measure {active.measure}: {active.type}</p>
+                <div className="mt-3 rounded-control border border-amber-200 bg-amber-500/10 px-3 py-2">
+                  <p className="type-body-small font-medium text-amber-700">Measure {active.measure}: {active.type}</p>
                   <p className="type-metadata text-ink-secondary">{active.detail}</p>
                 </div>
               )}
@@ -134,8 +158,8 @@ export default function RecognitionReview() {
             {issues.map((iss) => (
               <button key={iss.id} onClick={() => { setActiveIssue(iss.id); setMobileIssuesOpen(false); }} className={`w-full rounded-control border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-neutral-hover' : 'border-line-subtle'} ${iss.resolved ? 'opacity-50' : ''}`}>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="h-3.5 w-3.5 text-warning" /> Measure {iss.measure}</span>
-                  {iss.resolved && <Check className="h-3.5 w-3.5 text-success" />}
+                  <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="h-3.5 w-3.5 text-amber-600" /> Measure {iss.measure}</span>
+                  {iss.resolved && <Check className="h-3.5 w-3.5 text-emerald-600" />}
                 </div>
                 <p className="mt-0.5 type-metadata text-ink-tertiary">{iss.type}</p>
               </button>
@@ -186,8 +210,8 @@ function IssuesPanel({ issues, activeIssue, setActiveIssue, active, onMarkFixed,
             className={`w-full rounded-container border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-neutral-hover' : 'border-line-subtle bg-surface-panel hover:bg-neutral-hover'} ${iss.resolved ? 'opacity-50' : ''}`}
           >
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="icon-xs text-warning" /> Measure {iss.measure}</span>
-              {iss.resolved && <Check className="icon-xs text-success" />}
+              <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="icon-xs text-amber-600" /> Measure {iss.measure}</span>
+              {iss.resolved && <Check className="icon-xs text-emerald-600" />}
             </div>
             <p className="mt-0.5 type-metadata text-ink-secondary">{iss.type}</p>
             <p className="mt-0.5 type-metadata text-ink-secondary">{iss.detail}</p>

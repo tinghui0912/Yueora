@@ -223,7 +223,7 @@ export default function Pricing() {
                   {onPlus ? (
                     <Button
                       asChild
-                      intent="inverse-secondary"
+                      intent="secondary"
                       size="xl"
                       className="w-full"
                     >
@@ -233,7 +233,7 @@ export default function Pricing() {
                     <>
                       <Button
                         asChild
-                        intent="inverse"
+                        intent="primary"
                         size="xl"
                         className="w-full"
                       >

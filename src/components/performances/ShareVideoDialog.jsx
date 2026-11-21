@@ -190,7 +190,7 @@ export default function ShareVideoDialog({
                   src={previewUrl}
                   controls
                   playsInline
-                  className="mt-2 w-full rounded-container border border-line-subtle bg-black"
+                  className="mt-2 w-full rounded-container border border-line-subtle bg-ink-primary"
                 />
               </div>
             )}

@@ -52,7 +52,7 @@ export default function AddScore() {
   const imports = usePrototypeStore((s) => s.imports);
   const subscription = usePrototypeStore((s) => s.subscription);
 
-  const { liveCount, reservedCount, effectiveCount } = getEffectiveScoreUsage(scores, imports);
+  const { effectiveCount } = getEffectiveScoreUsage(scores, imports);
   const scoreQuota = getScoreQuota(subscription?.plan);
   const importQuota = getImportQuota(subscription?.plan);
   const storageQuota = getStorageQuota(subscription?.plan);

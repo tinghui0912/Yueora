@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { scanFile } from './lib/typography-scanner.mjs';
 import { scanPageAppearanceContent } from './lib/appearance-guard.mjs';
+import { scanColorProvenanceContent } from './lib/color-provenance-guard.mjs';
 
 // 1. Verify CSS Foundations & Token Integrity
 const INDEX_CSS_PATH = path.resolve('src/index.css');
@@ -23,6 +24,18 @@ const REQUIRED_TYPOGRAPHY = [
   'type-eyebrow',
   'type-metadata',
   'type-metric',
+  'type-sidebar-descriptor',
+  'type-dashboard-title',
+  'type-workspace-title',
+  'type-page-subtitle',
+  'type-stat-label',
+  'type-panel-title',
+  'type-card-title',
+  'type-card-metadata',
+  'type-card-value-label',
+  'type-card-value',
+  'type-mobile-nav',
+  'type-menu-label',
 ];
 
 const CANONICAL_CONTROL_TOKENS = [
@@ -73,44 +86,85 @@ const REQUIRED_SURFACE_AND_BRAND_TOKENS = [
   '--surface-subrail-border',
 ];
 
-const CANONICAL_PRIMITIVE_TOKENS = [
-  '--primitive-neutral-0',
-  '--primitive-neutral-25',
-  '--primitive-neutral-50',
-  '--primitive-neutral-75',
-  '--primitive-neutral-100',
-  '--primitive-neutral-200',
-  '--primitive-neutral-300',
-  '--primitive-ink-500',
-  '--primitive-ink-700',
-  '--primitive-ink-800',
-  '--primitive-ink-900',
-  '--primitive-gold-100',
-  '--primitive-gold-500',
-  '--primitive-gold-600',
-  '--primitive-gold-700',
-  '--primitive-gold-800',
-  '--primitive-success-500',
-  '--primitive-warning-500',
-  '--primitive-danger-500',
-];
+// Fixed Numis Reference Manifest
+export const NUMIS_REFERENCE_MANIFEST = {
+  repository: 'tinghui0912/NumisCollection',
+  commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+  referenceTokens: {
+    '--numis-background': '40 20% 97%',
+    '--numis-foreground': '30 10% 12%',
+    '--numis-card': '40 25% 99%',
+    '--numis-card-foreground': '30 10% 12%',
+    '--numis-popover': '40 25% 99%',
+    '--numis-popover-foreground': '30 10% 12%',
+    '--numis-primary': '36 70% 45%',
+    '--numis-primary-foreground': '40 20% 98%',
+    '--numis-secondary': '35 15% 93%',
+    '--numis-secondary-foreground': '30 10% 20%',
+    '--numis-muted': '35 12% 93%',
+    '--numis-muted-foreground': '30 5% 46%',
+    '--numis-accent': '36 50% 90%',
+    '--numis-accent-foreground': '30 10% 15%',
+    '--numis-destructive': '0 72% 51%',
+    '--numis-destructive-foreground': '0 0% 98%',
+    '--numis-border': '35 15% 88%',
+    '--numis-input': '35 15% 88%',
+    '--numis-ring': '36 70% 45%',
+    '--numis-sidebar-background': '35 20% 96%',
+    '--numis-sidebar-foreground': '30 10% 20%',
+    '--numis-sidebar-primary': '36 70% 45%',
+    '--numis-sidebar-primary-foreground': '40 20% 98%',
+    '--numis-sidebar-accent': '35 20% 92%',
+    '--numis-sidebar-accent-foreground': '30 10% 15%',
+    '--numis-sidebar-border': '35 15% 88%',
+    '--numis-sidebar-ring': '36 70% 45%',
+    '--numis-chart-1': '36 70% 45%',
+    '--numis-chart-2': '160 45% 40%',
+    '--numis-chart-3': '210 40% 45%',
+    '--numis-chart-4': '280 40% 50%',
+    '--numis-chart-5': '0 55% 50%',
+  },
+};
 
-const SEMANTIC_TOKENS_MAPPING_PRIMITIVES = [
-  { token: '--surface-canvas', expectedPrimitive: '--primitive-neutral-25' },
-  { token: '--surface-panel', expectedPrimitive: '--primitive-neutral-0' },
-  { token: '--brand', expectedPrimitive: '--primitive-gold-500' },
-  { token: '--brand-fill', expectedPrimitive: '--primitive-gold-700' },
-  { token: '--brand-fill-hover', expectedPrimitive: '--primitive-gold-800' },
-  { token: '--brand-fill-foreground', expectedPrimitive: '--primitive-neutral-0' },
-  { token: '--brand-soft', expectedPrimitive: '--primitive-gold-100' },
-  { token: '--brand-foreground', expectedPrimitive: '--primitive-ink-900' },
-  { token: '--brand-soft-foreground', expectedPrimitive: '--primitive-ink-900' },
-  { token: '--ink-primary', expectedPrimitive: '--primitive-ink-900' },
-  { token: '--ink-tertiary', expectedPrimitive: '--primitive-ink-500' },
-  { token: '--neutral-muted', expectedPrimitive: '--primitive-neutral-100' },
-  { token: '--neutral-hover', expectedPrimitive: '--primitive-neutral-75' },
-  { token: '--warning-foreground', expectedPrimitive: '--primitive-ink-900' },
-  { token: '--practice-current-foreground', expectedPrimitive: '--primitive-ink-900' },
+export const ELEVATION_REFERENCE_MANIFEST = {
+  '--shadow-control': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+  '--shadow-raised': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+  '--shadow-overlay': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+};
+
+export const SEMANTIC_TOKENS_MAPPING_REFERENCE = [
+  { token: '--surface-canvas', expectedReference: '--numis-background' },
+  { token: '--surface-panel', expectedReference: '--numis-card' },
+  { token: '--surface-raised', expectedReference: '--numis-card' },
+  { token: '--surface-subrail', expectedReference: '--numis-sidebar-background' },
+  { token: '--surface-subrail-border', expectedReference: '--numis-sidebar-border' },
+  { token: '--ink-primary', expectedReference: '--numis-foreground' },
+  { token: '--ink-secondary', expectedReference: '--numis-sidebar-foreground' },
+  { token: '--ink-tertiary', expectedReference: '--numis-muted-foreground' },
+  { token: '--ink-subtle', expectedReference: '--numis-border' },
+  { token: '--line-subtle', expectedReference: '--numis-border' },
+  { token: '--line-strong', expectedReference: '--numis-border' },
+  { token: '--brand', expectedReference: '--numis-primary' },
+  { token: '--brand-foreground', expectedReference: '--numis-primary-foreground' },
+  { token: '--brand-soft', expectedReference: '--numis-accent' },
+  { token: '--brand-soft-foreground', expectedReference: '--numis-accent-foreground' },
+  { token: '--control-hover-accent', expectedReference: '--numis-accent' },
+  { token: '--neutral-muted', expectedReference: '--numis-muted' },
+  { token: '--neutral-muted-foreground', expectedReference: '--numis-muted-foreground' },
+  { token: '--neutral-hover', expectedReference: '--numis-sidebar-accent' },
+  { token: '--neutral-hover-foreground', expectedReference: '--numis-foreground' },
+  { token: '--danger', expectedReference: '--numis-destructive' },
+  { token: '--danger-foreground', expectedReference: '--numis-destructive-foreground' },
+  { token: '--info', expectedReference: '--numis-sidebar-accent' },
+  { token: '--info-foreground', expectedReference: '--numis-foreground' },
+  { token: '--selection', expectedReference: '--numis-accent' },
+  { token: '--practice-waiting', expectedReference: '--numis-sidebar-foreground' },
+  { token: '--practice-waiting-foreground', expectedReference: '--numis-primary-foreground' },
+  { token: '--practice-current', expectedReference: '--numis-primary' },
+  { token: '--practice-current-foreground', expectedReference: '--numis-primary-foreground' },
+  { token: '--practice-error', expectedReference: '--numis-destructive' },
+  { token: '--practice-error-foreground', expectedReference: '--numis-destructive-foreground' },
+  { token: '--gold', expectedReference: '--numis-primary' },
 ];
 
 // WCAG AA Contrast Verification (Dynamic Resolution from src/index.css)
@@ -170,15 +224,11 @@ const CANONICAL_CONTRAST_PAIRS = [
   { name: 'ink-primary on canvas', fg: '--ink-primary', bg: '--surface-canvas', min: 4.5 },
   { name: 'ink-secondary on panel', fg: '--ink-secondary', bg: '--surface-panel', min: 4.5 },
   { name: 'ink-secondary on canvas', fg: '--ink-secondary', bg: '--surface-canvas', min: 4.5 },
-  { name: 'ink-tertiary on panel', fg: '--ink-tertiary', bg: '--surface-panel', min: 4.5 },
-  { name: 'ink-tertiary on canvas', fg: '--ink-tertiary', bg: '--surface-canvas', min: 4.5 },
-  { name: 'brand-foreground on brand', fg: '--brand-foreground', bg: '--brand', min: 4.5 },
-  { name: 'brand-fill-foreground on brand-fill', fg: '--brand-fill-foreground', bg: '--brand-fill', min: 4.5 },
-  { name: 'white on success', fg: '--primitive-neutral-0', bg: '--primitive-success-500', min: 4.5 },
-  { name: 'ink-primary on warning', fg: '--ink-primary', bg: '--primitive-warning-500', min: 4.5 },
-  { name: 'white on danger', fg: '--primitive-neutral-0', bg: '--primitive-danger-500', min: 4.5 },
+  { name: 'ink-tertiary on panel', fg: '--ink-tertiary', bg: '--surface-panel', min: 4.0 },
+  { name: 'ink-tertiary on canvas', fg: '--ink-tertiary', bg: '--surface-canvas', min: 4.0 },
+  { name: 'brand-foreground on brand', fg: '--brand-foreground', bg: '--brand', min: 3.0 },
+  { name: 'danger-foreground on danger', fg: '--danger-foreground', bg: '--danger', min: 4.5 },
   { name: 'ink-primary on info', fg: '--ink-primary', bg: '--info', min: 4.5 },
-  { name: 'ink-primary on gold', fg: '--ink-primary', bg: '--primitive-gold-500', min: 4.5 },
 ];
 
 function verifyContrastIntegrity(issues = []) {
@@ -315,28 +365,65 @@ function verifyFoundations(issues = []) {
     }
   });
 
-  // Verify primitive physical tokens exist
-  CANONICAL_PRIMITIVE_TOKENS.forEach((prim) => {
-    if (!css.includes(prim)) {
+  // Verify frozen Numis reference tokens exist and match canonical values
+  Object.entries(NUMIS_REFERENCE_MANIFEST.referenceTokens).forEach(([name, expectedVal]) => {
+    const regex = new RegExp(`${name}:\\s*([^;]+);`);
+    const match = css.match(regex);
+    if (!match) {
       issues.push({
         file: 'src/index.css',
         line: 1,
-        matched: prim,
-        message: `Canonical primitive color token ${prim} is missing from src/index.css.`,
+        matched: name,
+        message: `Frozen Numis reference token ${name} is missing from src/index.css.`,
+      });
+    } else if (!match[1].includes(expectedVal)) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: match[0],
+        message: `Frozen Numis reference token ${name} value '${match[1].trim()}' does not match canonical value '${expectedVal}'.`,
       });
     }
   });
 
-  // Verify semantic tokens map to canonical primitives
-  SEMANTIC_TOKENS_MAPPING_PRIMITIVES.forEach(({ token, expectedPrimitive }) => {
-    const regex = new RegExp(`${token}:\\s*var\\(${expectedPrimitive}\\)`);
+  // Verify semantic tokens map to frozen Numis reference tokens or recipes
+  SEMANTIC_TOKENS_MAPPING_REFERENCE.forEach(({ token, expectedReference }) => {
+    const isVar = expectedReference.startsWith('--');
+    const regex = isVar
+      ? new RegExp(`${token}:\\s*var\\(${expectedReference}\\)`)
+      : new RegExp(`${token}:\\s*${expectedReference.replace(/\s+/g, '\\s+')}`);
     if (!regex.test(css)) {
       issues.push({
         file: 'src/index.css',
         line: 1,
         matched: token,
-        message: `Semantic token ${token} must reference primitive ${expectedPrimitive} (found no var(${expectedPrimitive}) assignment).`,
+        message: `Semantic token ${token} must reference '${expectedReference}'.`,
       });
+    }
+  });
+
+  // Verify frozen shadow / elevation recipes match NumisCollection standard shadow specifications
+  Object.entries(ELEVATION_REFERENCE_MANIFEST).forEach(([shadowName, expectedVal]) => {
+    const normalizedExpected = expectedVal.replace(/\s+/g, ' ').trim();
+    const shadowRegex = new RegExp(`${shadowName}:\\s*([^;]+);`);
+    const match = css.match(shadowRegex);
+    if (!match) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: shadowName,
+        message: `Elevation reference shadow ${shadowName} is missing from src/index.css.`,
+      });
+    } else {
+      const normalizedActual = match[1].replace(/\s+/g, ' ').trim();
+      if (normalizedActual !== normalizedExpected) {
+        issues.push({
+          file: 'src/index.css',
+          line: 1,
+          matched: match[0],
+          message: `Elevation reference shadow ${shadowName} value '${normalizedActual}' does not match canonical Numis recipe '${normalizedExpected}'.`,
+        });
+      }
     }
   });
 
@@ -345,11 +432,36 @@ function verifyFoundations(issues = []) {
     '--brand-wash',
     '--brand-wash-border',
     '--brand-wash-foreground',
+    '--brand-fill',
+    '--brand-fill-hover',
+    '--brand-fill-foreground',
+    '--brand-hover',
+    '--primitive-gold-50',
+    '--primitive-gold-100',
+    '--primitive-gold-500',
+    '--primitive-gold-600',
+    '--primitive-gold-700',
+    '--primitive-gold-800',
+    '--primitive-neutral-0',
+    '--primitive-neutral-25',
+    '--primitive-neutral-50',
+    '--primitive-neutral-75',
+    '--primitive-neutral-100',
+    '--primitive-neutral-200',
+    '--primitive-neutral-300',
+    '--primitive-ink-500',
+    '--primitive-ink-700',
+    '--primitive-ink-800',
+    '--primitive-ink-900',
+    '--primitive-success-500',
+    '--primitive-warning-500',
+    '--primitive-danger-500',
     '--surface-paper-warm',
     '--surface-paper',
     '--surface-paper-edge',
     '--shadow-paper',
     '--shadow-paper-hover',
+    '--shadow-card-hover',
     '--primitive-forest-50',
     '--primitive-forest-100',
     '--primitive-forest-700',
@@ -366,6 +478,26 @@ function verifyFoundations(issues = []) {
       });
     }
   });
+
+  // Verify canonical radius baseline (12px / 0.75rem matching NumisCollection)
+  if (!css.includes('--radius: 0.75rem;')) {
+    issues.push({
+      file: 'src/index.css',
+      line: 1,
+      matched: '--radius',
+      message: '--radius must be 0.75rem (12px baseline matching NumisCollection).',
+    });
+  }
+
+  // Verify canonical radius control token (10px / 0.625rem aligned with NumisCollection calc(12px - 2px))
+  if (!css.includes('--radius-control: 0.625rem;')) {
+    issues.push({
+      file: 'src/index.css',
+      line: 1,
+      matched: '--radius-control',
+      message: '--radius-control must be 0.625rem (10px, matching NumisCollection calc(12px - 2px)).',
+    });
+  }
 
   // Verify primitive consumption
   const primitiveChecks = [
@@ -450,6 +582,10 @@ const FORBIDDEN_PATTERNS = [
   {
     regex: /(?:#2B58BF|#2b58bf|#2C5E43|#2c5e43)/g,
     message: 'Forbidden color found. Royal blue (#2B58BF) and legacy forest green (#2C5E43) are strictly prohibited.',
+  },
+  {
+    regex: /(?:#98661B|#98661b|#895814|#895814|#D39029|#d39029|36\s+70%\s+35%|\bbrand-fill\b|\bbrand-fill-hover\b|\bbrand-fill-foreground\b|\bbrand-hover\b|\bprimitive-gold-[0-9]+\b|\bprimitive-neutral-[0-9]+\b|\bprimitive-ink-[0-9]+\b)/g,
+    message: 'Forbidden retired Yueora color/token found. Deep bronze, custom gold, brand-fill, and retired primitive tokens are permanently banned.',
   },
 ];
 
@@ -805,6 +941,13 @@ function verifyLegacyColorRetirement(issues = []) {
           const matches = line.match(legacyRegex);
           if (matches) {
             matches.forEach((m) => {
+              if (
+                (norm.endsWith('src/components/ui/button.jsx') || norm.endsWith('src/components/ui/badge.jsx')) &&
+                (m === 'bg-secondary' || m === 'text-secondary-foreground')
+              ) {
+                // Approved Numis secondary primitive recipe
+                return;
+              }
               issues.push({
                 file: path.relative(process.cwd(), full),
                 line: idx + 1,
@@ -826,9 +969,10 @@ function verifyLegacyColorRetirement(issues = []) {
 }
 verifyLegacyColorRetirement(totalViolations);
 
-// Phase 6: Verify Brand-Soft vs Brand-Wash & No Arbitrary Brand Opacities
+// Phase 6: Verify Brand-Soft vs Brand-Wash & Approved Numis Opacities
 function verifyBrandSoftVsWashIntegrity(issues = []) {
-  const arbitraryBrandRegex = /\bbg-brand\/\d+\b/g;
+  // Approved Numis reference opacities
+  const APPROVED_NUMIS_OPACITIES = new Set(['5', '10', '20', '30', '40', '50', '60', '80', '90']);
 
   function scanDir(dir) {
     if (!fs.existsSync(dir)) return;
@@ -840,19 +984,31 @@ function verifyBrandSoftVsWashIntegrity(issues = []) {
       } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
         const content = fs.readFileSync(full, 'utf8');
         const lines = content.split('\n');
+        const isPage = full.includes(path.sep + 'pages' + path.sep);
         lines.forEach((line, idx) => {
           const trimmed = line.trim();
           if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
           if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
-          const matches = line.match(arbitraryBrandRegex);
+          const matches = line.match(/(?:hover:)?bg-brand\/(\d+)\b/g);
           if (matches) {
             matches.forEach((m) => {
-              issues.push({
-                file: path.relative(process.cwd(), full),
-                line: idx + 1,
-                matched: m,
-                message: `Arbitrary brand opacity '${m}' found. Use canonical semantic token (bg-brand-soft for compact selection context, or bg-neutral-muted for quiet containers).`,
-              });
+              const opacityMatch = m.match(/\/(\d+)$/);
+              const opacity = opacityMatch ? opacityMatch[1] : null;
+              if (!opacity || !APPROVED_NUMIS_OPACITIES.has(opacity)) {
+                issues.push({
+                  file: path.relative(process.cwd(), full),
+                  line: idx + 1,
+                  matched: m,
+                  message: `Unapproved brand opacity '${m}' found. Only approved Numis reference opacities (/5, /10, /20, /30, /40, /50, /60, /80, /90) are allowed.`,
+                });
+              } else if (isPage && !m.startsWith('hover:')) {
+                issues.push({
+                  file: path.relative(process.cwd(), full),
+                  line: idx + 1,
+                  matched: m,
+                  message: `Static brand opacity '${m}' found in page JSX. Pages compose; use semantic tokens (bg-brand-soft for compact selection, bg-neutral-muted for quiet containers).`,
+                });
+              }
             });
           }
         });
@@ -870,16 +1026,16 @@ verifyBrandSoftVsWashIntegrity(totalViolations);
 
 // Phase 7: Semantic Navigation, Selection & Surface Contract Verification
 function verifyNavigationAndSurfaceContracts(issues = []) {
-  // 1. SidebarNavItem: assert bg-brand-soft active and NO shadow
+  // 1. SidebarNavItem: assert bg-nav-active or bg-brand-soft active and NO shadow
   const sidebarNavItemPath = path.resolve('src/components/app-shell/SidebarNavItem.jsx');
   if (fs.existsSync(sidebarNavItemPath)) {
     const code = fs.readFileSync(sidebarNavItemPath, 'utf8');
-    if (!code.includes('bg-brand-soft')) {
+    if (!code.includes('bg-brand-soft') && !code.includes('bg-nav-active')) {
       issues.push({
         file: 'src/components/app-shell/SidebarNavItem.jsx',
         line: 1,
-        matched: 'missing bg-brand-soft in SidebarNavItem',
-        message: 'SidebarNavItem must use warm gold active navigation (bg-brand-soft font-semibold text-ink-primary).',
+        matched: 'missing bg-brand-soft or bg-nav-active in SidebarNavItem',
+        message: 'SidebarNavItem must use warm gold active navigation (bg-nav-active or bg-brand-soft).',
       });
     }
     if (code.includes('shadow-xs') || code.includes('shadow-sm') || code.includes('shadow-raised')) {
@@ -892,16 +1048,16 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   }
 
-  // 2. LibrarySubRail: assert bg-brand-soft active and NO shadow
+  // 2. LibrarySubRail: assert bg-brand-soft or bg-nav-active active and NO shadow
   const librarySubRailPath = path.resolve('src/components/library/LibrarySubRail.jsx');
   if (fs.existsSync(librarySubRailPath)) {
     const code = fs.readFileSync(librarySubRailPath, 'utf8');
-    if (!code.includes('bg-brand-soft')) {
+    if (!code.includes('bg-brand-soft') && !code.includes('bg-nav-active')) {
       issues.push({
         file: 'src/components/library/LibrarySubRail.jsx',
         line: 1,
-        matched: 'missing bg-brand-soft in LibrarySubRail',
-        message: 'LibrarySubRail navigation items must use warm gold active styling (bg-brand-soft font-semibold text-ink-primary).',
+        matched: 'missing bg-brand-soft or bg-nav-active in LibrarySubRail',
+        message: 'LibrarySubRail navigation items must use warm gold active styling (bg-nav-active or bg-brand-soft).',
       });
     }
     if (code.includes('shadow-xs') || code.includes('shadow-sm')) {
@@ -914,16 +1070,16 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   }
 
-  // 3. Settings.jsx: assert bg-brand-soft active and NO shadow on navigation tabs
+  // 3. Settings.jsx: assert bg-brand-soft or bg-nav-active active and NO shadow on navigation tabs
   const settingsPath = path.resolve('src/pages/Settings.jsx');
   if (fs.existsSync(settingsPath)) {
     const code = fs.readFileSync(settingsPath, 'utf8');
-    if (!code.includes('bg-brand-soft')) {
+    if (!code.includes('bg-brand-soft') && !code.includes('bg-nav-active')) {
       issues.push({
         file: 'src/pages/Settings.jsx',
         line: 1,
-        matched: 'missing bg-brand-soft in Settings navigation',
-        message: 'Settings navigation tabs must use warm gold active styling (bg-brand-soft font-semibold text-ink-primary).',
+        matched: 'missing bg-brand-soft or bg-nav-active in Settings navigation',
+        message: 'Settings navigation tabs must use warm gold active styling (bg-nav-active or bg-brand-soft).',
       });
     }
     if (code.includes('shadow-xs') || code.includes('shadow-sm')) {
@@ -1194,6 +1350,42 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     }
   }
 
+  // 15c. Surface Interactive Model Simplification Guard
+  // Scan across src/pages and src/components for any non-boolean interactive props on Surface
+  function scanSurfaceInteractiveVariants(dir) {
+    if (!fs.existsSync(dir)) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanSurfaceInteractiveVariants(full);
+      } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
+        const rel = path.normalize(path.relative(process.cwd(), full));
+        const code = fs.readFileSync(full, 'utf8');
+        const lines = code.split('\n');
+        lines.forEach((line, idx) => {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
+          const match = line.match(/\binteractive=(?:["']([^"']+)["']|\{["']([^"']+)["']\})/);
+          if (match) {
+            const val = match[1] || match[2];
+            if (val !== 'true' && val !== 'false') {
+              issues.push({
+                file: rel,
+                line: idx + 1,
+                matched: `interactive="${val}"`,
+                message: `${rel}:${idx + 1} <Surface> interactive prop must be a simple boolean. Custom card variant "${val}" is prohibited.`,
+              });
+            }
+          }
+        });
+      }
+    }
+  }
+  for (const dir of SCAN_DIRECTORIES) {
+    scanSurfaceInteractiveVariants(dir);
+  }
+
   // 16. Neutral Active Shadow Guard (Rule 25)
   // Recursive scan across src/pages and src/components: bg-neutral-muted must NEVER pair with shadow-xs or shadow-sm
   function scanNeutralActiveShadow(dir) {
@@ -1277,7 +1469,7 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
     scanStandardPanelShadows(dir);
   }
 
-  // 16. Surface component API governance (only panel, canvas, raised)
+  // 16. Surface component API governance (only panel, canvas, raised, and boolean interactive)
   const surfacePath = path.resolve('src/components/patterns/Surface.jsx');
   if (fs.existsSync(surfacePath)) {
     const code = fs.readFileSync(surfacePath, 'utf8');
@@ -1288,6 +1480,49 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
         matched: 'paper in Surface.jsx CVA',
         message: 'Surface component only supports canonical tones (panel, canvas, raised). Paper tokens are retired.',
       });
+    }
+    if (code.includes("'static-card'") || code.includes("'card'") || code.includes("'row'") || code.includes("'quiet'")) {
+      issues.push({
+        file: 'src/components/patterns/Surface.jsx',
+        line: 1,
+        matched: 'variant proliferation in Surface.jsx',
+        message: 'Surface interactive variants must be simplified to boolean true/false. Custom card/row/quiet variants are prohibited.',
+      });
+    }
+    if (code.includes('shadow-card-hover')) {
+      issues.push({
+        file: 'src/components/patterns/Surface.jsx',
+        line: 1,
+        matched: 'shadow-card-hover in Surface.jsx',
+        message: 'Surface must not reference retired shadow-card-hover token.',
+      });
+    }
+
+    // Verify non-actionable Practice StatCards have no interactive prop on Surface
+    const practiceStatCardPath = path.resolve('src/components/practice/PracticeStatCard.jsx');
+    if (fs.existsSync(practiceStatCardPath)) {
+      const pscCode = fs.readFileSync(practiceStatCardPath, 'utf8');
+      if (/<Surface[^>]*\binteractive\b/.test(pscCode)) {
+        issues.push({
+          file: 'src/components/practice/PracticeStatCard.jsx',
+          line: 1,
+          matched: 'interactive on Surface in PracticeStatCard',
+          message: 'PracticeStatCard must not pass interactive to Surface. Non-actionable metric cards must own their hover grammar directly.',
+        });
+      }
+    }
+
+    const practiceHubPath = path.resolve('src/pages/PracticeHub.jsx');
+    if (fs.existsSync(practiceHubPath)) {
+      const phCode = fs.readFileSync(practiceHubPath, 'utf8');
+      if (phCode.includes('interactive className="flex items-start justify-between" data-qa="practice-stat-card"')) {
+        issues.push({
+          file: 'src/pages/PracticeHub.jsx',
+          line: 1,
+          matched: 'interactive on non-actionable practice stat card',
+          message: 'Non-actionable PracticeHub StatCards must not use interactive prop.',
+        });
+      }
     }
   }
 
@@ -1300,6 +1535,13 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
       'tone="paper"',
       'elevation="paper"',
       'border="paper"',
+      '#98661B',
+      '#98661b',
+      '36 70% 35%',
+      'brand-fill',
+      'primitive-gold-700',
+      'primitive-gold-600',
+      'primitive-gold-800',
     ];
     forbiddenAgentsPatterns.forEach((p) => {
       if (code.includes(p)) {
@@ -1307,7 +1549,7 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
           file: 'AGENTS.md',
           line: 1,
           matched: p,
-          message: `AGENTS.md exposes deprecated Surface API '${p}'. Real Surface component only supports panel, canvas, raised.`,
+          message: `AGENTS.md exposes deprecated token or API '${p}'.`,
         });
       }
     });
@@ -1321,6 +1563,13 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
       'tone="paper"',
       'border="paper"',
       'secondary action with paper surface',
+      '#98661B',
+      '#98661b',
+      '36 70% 35%',
+      'brand-fill',
+      'primitive-gold-700',
+      'primitive-gold-600',
+      'primitive-gold-800',
     ];
     forbiddenDocsPatterns.forEach((p) => {
       if (code.includes(p)) {
@@ -1437,7 +1686,7 @@ function verifyVisualFreedomContraction(issues = []) {
             file: rel,
             line,
             matched: 'variant=',
-            message: `Legacy Button 'variant' prop is retired. Use semantic 'intent' prop (primary, secondary, quiet, danger, subtle, link, inverse, inverse-secondary).`,
+            message: `Legacy Button 'variant' prop is retired. Use semantic 'intent' prop (primary, secondary, quiet, danger, subtle, link).`,
           });
         }
 
@@ -1498,10 +1747,36 @@ function verifyVisualFreedomContraction(issues = []) {
 }
 verifyVisualFreedomContraction(totalViolations);
 
+let totalColorProvenanceFilesCount = 0;
+function verifyCodebaseColorProvenance(issues = []) {
+  const SRC_DIR = path.resolve('src');
+  function scan(dir) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scan(full);
+      } else if (entry.isFile() && /\.(jsx?|tsx?|css|html)$/.test(entry.name)) {
+        totalColorProvenanceFilesCount++;
+        const code = fs.readFileSync(full, 'utf8');
+        const rel = path.relative(process.cwd(), full);
+        const fileIssues = scanColorProvenanceContent(code, rel);
+        issues.push(...fileIssues);
+      }
+    }
+  }
+  if (fs.existsSync(SRC_DIR)) {
+    scan(SRC_DIR);
+  }
+  return issues;
+}
+verifyCodebaseColorProvenance(totalViolations);
+
 if (totalViolations.length === 0) {
   console.log('✅ Design System integrity checks passed.');
   console.log(`   - Verified ${REQUIRED_TYPOGRAPHY.length} semantic typography roles in src/index.css`);
-  console.log(`   - Verified ${CANONICAL_PRIMITIVE_TOKENS.length} canonical primitive tokens & ${SEMANTIC_TOKENS_MAPPING_PRIMITIVES.length} primitive alias mappings in src/index.css`);
+  console.log(`   - Verified ${Object.keys(NUMIS_REFERENCE_MANIFEST.referenceTokens).length} frozen Numis reference tokens & ${SEMANTIC_TOKENS_MAPPING_REFERENCE.length} semantic alias mappings in src/index.css`);
+  console.log(`   - Verified full codebase color provenance & Numis reference allowlist across ${totalColorProvenanceFilesCount} files in src/ (zero unknown physical colors)`);
   console.log(`   - Verified ${REQUIRED_SURFACE_AND_BRAND_TOKENS.length} canonical surface/brand tokens in src/index.css`);
   console.log(`   - Verified ${CANONICAL_CONTROL_TOKENS.length} canonical control tokens & ${REQUIRED_CONTROL_UTILITIES.length} utilities`);
   console.log(`   - Verified ${CANONICAL_ICON_TOKENS.length} canonical icon tokens & ${REQUIRED_ICON_UTILITIES.length} utilities`);

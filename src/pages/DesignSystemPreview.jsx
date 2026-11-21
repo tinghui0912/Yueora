@@ -6,6 +6,7 @@ import {
   Heart,
   Plus,
   Sparkles,
+  Music,
 } from 'lucide-react';
 import { AppPage } from '@/components/patterns/AppPage';
 import { PageHeader } from '@/components/patterns/PageHeader';
@@ -14,12 +15,43 @@ import { Stepper } from '@/components/patterns/Stepper';
 import { ChoiceCard } from '@/components/patterns/ChoiceCard';
 import { Surface } from '@/components/patterns/Surface';
 import BackLink from '@/components/patterns/BackLink';
+import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
+import { SegmentedControl, SegmentedControlItem } from '@/components/patterns/SegmentedControl';
+import EmptyState from '@/components/patterns/EmptyState';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Switch } from '@/components/ui/switch';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
+import {
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from '@/components/ui/toast';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SearchTrigger from '@/components/app-shell/SearchTrigger';
 
 export default function DesignSystemPreview() {
@@ -27,6 +59,12 @@ export default function DesignSystemPreview() {
   const [selectedChoice, setSelectedChoice] = useState('pdf');
   const [inputValue, setInputValue] = useState('Debussy — Clair de Lune');
   const [hasError, setHasError] = useState(false);
+  const [checkboxChecked, setCheckboxChecked] = useState(true);
+  const [radioValue, setRadioValue] = useState('acoustic');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [switchChecked, setSwitchChecked] = useState(true);
+  const [filterActive, setFilterActive] = useState('all');
+  const [segmentedValue, setSegmentedValue] = useState('overview');
 
   return (
     <AppPage size="standard" className="space-y-12">
@@ -143,13 +181,9 @@ export default function DesignSystemPreview() {
                 <span className="type-caption text-ink-primary">Raised</span>
                 <p className="type-metadata text-ink-tertiary">Overlay / Menu</p>
               </Surface>
-              <div className="rounded-control border border-transparent bg-brand-fill p-3 text-center text-brand-fill-foreground">
-                <span className="type-caption text-brand-fill-foreground">Brand CTA</span>
-                <p className="type-metadata text-brand-fill-foreground/80">Primary Fill</p>
-              </div>
               <div className="rounded-control border border-transparent bg-brand p-3 text-center text-brand-foreground">
-                <span className="type-caption text-brand-foreground">Brand Accent</span>
-                <p className="type-metadata text-brand-foreground/80">Antique Gold</p>
+                <span className="type-caption text-brand-foreground">Brand Primary</span>
+                <p className="type-metadata text-brand-foreground/80">Primary Gold</p>
               </div>
               <div className="rounded-control border border-brand bg-brand-soft p-3 text-center">
                 <span className="type-caption text-brand-soft-foreground">Brand Soft</span>
@@ -188,7 +222,7 @@ export default function DesignSystemPreview() {
               </div>
               <div className="rounded-control border border-line-subtle bg-surface-panel p-3 text-center">
                 <p className="type-caption text-ink-primary">Nav Active</p>
-                <div className="mt-2 flex items-center justify-center gap-1.5 rounded-control bg-brand-soft px-3 py-1.5 type-body-small font-semibold text-ink-primary">
+                <div className="mt-2 flex items-center justify-center gap-1.5 rounded-control bg-nav-active px-3 py-1.5 type-body-small font-medium text-brand">
                   <span className="h-1.5 w-1.5 rounded-full bg-brand" />
                   Nav Active
                 </div>
@@ -258,6 +292,17 @@ export default function DesignSystemPreview() {
           </div>
 
           <div className="space-y-2">
+            <span className="type-caption text-ink-secondary/70">Segmented Control (Tabs)</span>
+            <Tabs defaultValue="all">
+              <TabsList data-qa="design-system-tabs-list">
+                <TabsTrigger value="all" data-qa="design-system-tabs-trigger">All items</TabsTrigger>
+                <TabsTrigger value="active">Active</TabsTrigger>
+                <TabsTrigger value="archived">Archived</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+
+          <div className="space-y-2">
             <span className="type-caption text-ink-secondary/70">Compact Controls (10px Rounded Control)</span>
             <div className="flex flex-wrap items-center gap-3">
               <Button intent="primary">Primary Control</Button>
@@ -305,6 +350,224 @@ export default function DesignSystemPreview() {
                 <option>Recital Preparation</option>
               </NativeSelect>
             </Field>
+          </div>
+        </Surface>
+      </section>
+
+      {/* 3b. Form & Selection Primitives (Pixel-Parity Specimen) */}
+      <section className="space-y-4" data-qa="primitive-parity-section">
+        <SectionHeader
+          title="Selection & Overlay Primitives"
+          description="Checkbox, Radio, Switch, Popover, Tooltip, Badges, and FilterTabs aligned with NumisCollection 12px baseline."
+        />
+        <Surface tone="panel" padding="md" className="space-y-6">
+          {/* Checkbox & Radio & Switch */}
+          <div className="grid gap-6 sm:grid-cols-3">
+            {/* Checkbox specimen */}
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Checkbox</span>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={checkboxChecked}
+                    onCheckedChange={(checked) => setCheckboxChecked(checked === true)}
+                    data-qa="design-system-checkbox"
+                  />
+                  <span className="type-body-small text-ink-primary">Keep preserved take</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={false}
+                    data-qa="design-system-checkbox-unchecked"
+                  />
+                  <span className="type-body-small text-ink-secondary">Unchecked state</span>
+                </label>
+              </div>
+            </div>
+
+            {/* RadioGroup specimen */}
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Radio Group</span>
+              <RadioGroup
+                value={radioValue}
+                onValueChange={setRadioValue}
+                data-qa="design-system-radio"
+              >
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <RadioGroupItem value="acoustic" id="ds-radio-acoustic" />
+                  <span className="type-body-small text-ink-primary">Acoustic Piano</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <RadioGroupItem value="digital" id="ds-radio-digital" />
+                  <span className="type-body-small text-ink-secondary">Digital / MIDI</span>
+                </label>
+              </RadioGroup>
+            </div>
+
+            {/* Switch specimen */}
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Switch Toggle</span>
+              <div className="space-y-2">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Switch
+                    checked={switchChecked}
+                    onCheckedChange={setSwitchChecked}
+                    data-qa="design-system-switch"
+                  />
+                  <span className="type-body-small text-ink-primary">Acoustic listening</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Switch
+                    checked={false}
+                    data-qa="design-system-switch-unchecked"
+                  />
+                  <span className="type-body-small text-ink-secondary">Muted</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Popover & Tooltip & FilterTabs */}
+          <div className="border-t border-line-subtle pt-6 grid gap-6 sm:grid-cols-3">
+            {/* Popover specimen */}
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Popover (shadow-md, rounded-md)</span>
+              <div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button intent="secondary" size="sm" data-qa="design-system-popover-trigger">
+                      Open Popover
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent data-qa="design-system-popover">
+                    <div className="space-y-2">
+                      <p className="type-body-small font-semibold text-ink-primary">Popover Specimen</p>
+                      <p className="type-caption text-ink-secondary">
+                        Aligned to shadow-md and 10px radius (rounded-md).
+                      </p>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+
+            {/* Tooltip specimen */}
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Tooltip (WCAG AA gold badge)</span>
+              <div>
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button intent="quiet" size="sm" data-qa="design-system-tooltip-trigger">
+                        Hover for Tooltip
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent data-qa="design-system-tooltip">
+                      Preserved Take Details
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </div>
+
+            {/* FilterTabs specimen */}
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">FilterTabs (role=group, aria-pressed)</span>
+              <FilterTabs aria-label="Specimen filter" data-qa="design-system-filter-tabs">
+                <FilterTab active={filterActive === 'all'} onClick={() => setFilterActive('all')}>
+                  All
+                </FilterTab>
+                <FilterTab active={filterActive === 'takes'} onClick={() => setFilterActive('takes')}>
+                  Takes
+                </FilterTab>
+                <FilterTab active={filterActive === 'notes'} onClick={() => setFilterActive('notes')}>
+                  Notes
+                </FilterTab>
+              </FilterTabs>
+            </div>
+          </div>
+
+          {/* Badges specimen */}
+          <div className="border-t border-line-subtle pt-6 space-y-3">
+            <span className="type-caption text-ink-secondary/70">Badges (AA Contrast &amp; Semantic Statuses)</span>
+            <div className="flex flex-wrap items-center gap-2" data-qa="design-system-badge-group">
+              <Badge variant="default" data-qa="design-system-badge">Default Brand (AA)</Badge>
+              <Badge variant="brand">Brand Soft</Badge>
+              <Badge variant="secondary">Secondary</Badge>
+              <Badge variant="outline">Outline</Badge>
+              <Badge variant="success">Success</Badge>
+              <Badge variant="warning">Warning</Badge>
+              <Badge variant="destructive">Destructive</Badge>
+            </div>
+          </div>
+
+          {/* Overlays: Dialog & DropdownMenu Specimen */}
+          <div className="border-t border-line-subtle pt-6 grid gap-6 sm:grid-cols-2">
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Dialog Specimen (12px radius, shadow-lg, full border)</span>
+              <div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button intent="secondary" size="sm" data-qa="design-system-dialog-trigger">
+                      Open Dialog Specimen
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent data-qa="design-system-dialog">
+                    <DialogHeader>
+                      <DialogTitle>Dialog Specimen</DialogTitle>
+                      <DialogDescription>
+                        Aligned to shadow-lg, 12px radius, and full border line.
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <span className="type-caption text-ink-secondary/70">Dropdown Menu Specimen (8px item radius, brand-soft hover)</span>
+              <div>
+                <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      intent="secondary"
+                      size="sm"
+                      data-qa="design-system-dropdown-trigger"
+                      onClick={() => setDropdownOpen((prev) => !prev)}
+                    >
+                      Open Menu Specimen
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent data-qa="design-system-dropdown-content">
+                    <DropdownMenuItem data-qa="design-system-dropdown-item">Menu Item Specimen</DropdownMenuItem>
+                    <DropdownMenuItem>Second Option</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          </div>
+
+          {/* Toast Specimens (Default & Destructive) */}
+          <div className="border-t border-line-subtle pt-6 space-y-3">
+            <span className="type-caption text-ink-secondary/70">Toast Specimens (Default &amp; Destructive)</span>
+            <ToastProvider>
+              <Toast variant="default" data-qa="design-system-toast">
+                <div className="grid gap-1">
+                  <ToastTitle>Take Preserved</ToastTitle>
+                  <ToastDescription>Audio recording saved to your archive.</ToastDescription>
+                </div>
+                <ToastClose />
+              </Toast>
+
+              <Toast variant="destructive" data-qa="design-system-toast-destructive">
+                <div className="grid gap-1">
+                  <ToastTitle>Sync Failed</ToastTitle>
+                  <ToastDescription>Could not sync audio take to cloud.</ToastDescription>
+                </div>
+                <ToastClose />
+              </Toast>
+              <ToastViewport className="relative top-auto left-auto right-auto bottom-auto max-h-none p-0 md:max-w-none grid gap-4 sm:grid-cols-2" />
+            </ToastProvider>
           </div>
         </Surface>
       </section>
@@ -434,15 +697,47 @@ export default function DesignSystemPreview() {
               Warm paper and antique gold define identity. Ivory is content surface. Chromatic color communicates functional status.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button intent="inverse" size="sm">
-                Inverse Action
+              <Button intent="primary" size="sm">
+                Primary Action
               </Button>
-              <Button intent="inverse-secondary" size="sm">
-                Outlined Action
+              <Button intent="secondary" size="sm">
+                Secondary Action
               </Button>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* 8. Pattern Primitives: SegmentedControl & EmptyState */}
+      <section className="space-y-4" data-qa="design-system-patterns-section">
+        <SectionHeader
+          title="Pattern Primitives: SegmentedControl & EmptyState"
+          description="Tactile view switches and calm empty state messaging aligned to application grammar."
+        />
+        <Surface tone="panel" padding="md" className="space-y-6">
+          <div className="space-y-3">
+            <span className="type-caption text-ink-secondary/70">SegmentedControl (~44px height, 12px radius, card active surface)</span>
+            <div>
+              <SegmentedControl value={segmentedValue} onValueChange={setSegmentedValue} aria-label="Demo view switch">
+                <SegmentedControlItem value="overview">Overview</SegmentedControlItem>
+                <SegmentedControlItem value="recordings">Recordings</SegmentedControlItem>
+                <SegmentedControlItem value="shared">Shared with me</SegmentedControlItem>
+              </SegmentedControl>
+            </div>
+          </div>
+
+          <div className="border-t border-line-subtle pt-6 space-y-3">
+            <span className="type-caption text-ink-secondary/70">EmptyState Pattern</span>
+            <div className="rounded-container border border-line-subtle bg-surface-panel p-6">
+              <EmptyState
+                icon={Music}
+                title="No preserved takes yet"
+                description="When a practice take feels worth keeping, you can preserve it to revisit anytime."
+                action={<Button intent="primary" size="md">Choose a piece to play</Button>}
+              />
+            </div>
+          </div>
+        </Surface>
       </section>
     </AppPage>
   );

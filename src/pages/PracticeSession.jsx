@@ -381,7 +381,7 @@ export default function PracticeSession() {
             >
               <Video className="h-3.5 w-3.5 text-ink-secondary" aria-hidden="true" />
               {isPlaying && (
-                <span className="absolute left-1 top-1 flex items-center gap-1 rounded-control bg-danger px-1 py-px text-[9px] font-bold uppercase tracking-wider text-white"> {/* ds-allow: miniature simulation badge */}
+                <span className="absolute left-1 top-1 flex items-center gap-1 rounded-control bg-danger px-1 py-px text-[9px] font-bold uppercase tracking-wider text-danger-foreground"> {/* ds-allow: miniature simulation badge */}
                   REC
                 </span>
               )}

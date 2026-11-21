@@ -14,6 +14,7 @@ import SectionHeader from '@/components/patterns/SectionHeader';
 import StateMessage from '@/components/patterns/StateMessage';
 import AppPage from '@/components/patterns/AppPage';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
@@ -160,9 +161,7 @@ export default function PerformanceDetail() {
           {isOwner && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="rounded-control border border-line-subtle p-2.5 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors" aria-label="More actions">
-                  <MoreHorizontal className="h-4 w-4" />
-                </button>
+                <IconButton icon={MoreHorizontal} label="More actions" tone="outline" size="sm" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
                 <DropdownMenuItem onClick={() => setConfirmDelete(true)}>

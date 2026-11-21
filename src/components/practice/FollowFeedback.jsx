@@ -9,17 +9,17 @@ const STATUS_PRESENTATION = {
   waiting: {
     label: 'Listening for note…',
     tone: 'text-ink-secondary',
-    dot: 'bg-practice-waiting',
+    dot: 'bg-ink-tertiary',
   },
   matched: {
     label: 'Following your phrasing',
-    tone: 'text-practice-following',
-    dot: 'bg-practice-following',
+    tone: 'text-emerald-600',
+    dot: 'bg-emerald-500',
   },
   wrong: {
     label: 'Take your time — Yueora is waiting here',
-    tone: 'text-practice-resyncing',
-    dot: 'bg-practice-resyncing',
+    tone: 'text-amber-600',
+    dot: 'bg-amber-500',
   },
   skipped: {
     label: 'Advancing phrase',

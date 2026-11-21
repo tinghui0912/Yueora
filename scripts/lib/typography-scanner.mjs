@@ -22,6 +22,18 @@ export const SEMANTIC_ROLES = [
   'type-caption',
   'type-metadata',
   'type-metric',
+  'type-sidebar-descriptor',
+  'type-dashboard-title',
+  'type-workspace-title',
+  'type-page-subtitle',
+  'type-stat-label',
+  'type-panel-title',
+  'type-card-title',
+  'type-card-metadata',
+  'type-card-value-label',
+  'type-card-value',
+  'type-mobile-nav',
+  'type-menu-label',
 ];
 
 export const RAW_TEXT_REGEX = /\b(text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|7xl|\[\d+px\]))\b/g;
@@ -30,7 +42,7 @@ export const RAW_UPPERCASE_REGEX = /\buppercase\b/g;
 export const RAW_TRACKING_REGEX = /\btracking-(?:wide|wider|widest|\[[^\]]+\])\b/g;
 export const REDUNDANT_CAPTION_REGEX = /\b(font-semibold|uppercase|tracking-(?:wide|wider|widest|\[0\.2em\]))\b/g;
 export const LEADING_OVERRIDE_REGEX = /\b(leading-(?:none|tight|snug|normal|relaxed|loose|\[[^\]]+\]))\b/g;
-export const SEMANTIC_TYPE_REGEX = /\b(type-(?:hero-title|marketing-title|eyebrow|editorial-quote|marketing-body|display|experience-title|page-title|section-title|subsection|body-small|body|label|caption|metadata|metric))\b/g;
+export const SEMANTIC_TYPE_REGEX = /\b(type-(?:hero-title|marketing-title|eyebrow|editorial-quote|marketing-body|display|experience-title|page-title|section-title|subsection|body-small|body|label|caption|metadata|metric|sidebar-descriptor|dashboard-title|page-subtitle|stat-label|panel-title|card-title|card-metadata|card-value-label|card-value|mobile-nav|menu-label))\b/g;
 
 export const TRIVIAL_REASONS = /^(?:marketing|custom|looks better|test|override)$/i;
 

@@ -4,18 +4,18 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const iconButtonVariants = cva(
-  'inline-flex items-center justify-center shrink-0 rounded-control transition-[color,background-color,border-color,box-shadow,transform] duration-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface-canvas disabled:pointer-events-none disabled:opacity-40 select-none',
+  'inline-flex items-center justify-center shrink-0 rounded-control transition-[color,background-color,border-color,box-shadow,transform] duration-base focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand disabled:pointer-events-none disabled:opacity-40 select-none',
   {
     variants: {
       tone: {
         quiet:
-          'text-ink-secondary hover:text-ink-primary hover:bg-brand-soft/50 active:scale-[0.98]',
+          'hover:bg-brand-soft hover:text-brand-soft-foreground',
         outline:
-          'border border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-brand-soft/60 hover:border-brand/40 shadow-raised active:scale-[0.98]',
+          'border border-line-subtle bg-transparent shadow-control hover:bg-brand-soft hover:text-brand-soft-foreground',
         primary:
-          'bg-brand-fill text-brand-fill-foreground shadow-raised hover:bg-brand-fill-hover active:scale-[0.98]',
+          'bg-brand text-brand-foreground shadow hover:bg-brand/90',
         danger:
-          'text-danger hover:bg-danger/10 hover:text-danger active:scale-[0.98]',
+          'bg-danger text-danger-foreground shadow-control hover:bg-danger/90',
       },
       size: {
         xs: 'h-control-xs w-control-xs min-h-control-xs min-w-control-xs p-1 [&_svg]:icon-xs',
@@ -24,7 +24,7 @@ const iconButtonVariants = cva(
         lg: 'h-control-lg w-control-lg min-h-control-lg min-w-control-lg p-2.5 [&_svg]:icon-lg',
       },
       active: {
-        true: 'bg-brand-soft text-ink-primary font-semibold ring-1 ring-brand/40',
+        true: 'bg-nav-active text-brand font-medium',
       },
     },
     defaultVariants: {

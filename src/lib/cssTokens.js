@@ -13,7 +13,6 @@ export const REQUIRED_SVG_TOKENS = [
   '--primary',
   '--practice-current',
   '--selection',
-  '--warning',
   '--card',
   '--surface-panel',
   '--surface-canvas',

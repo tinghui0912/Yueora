@@ -40,8 +40,7 @@ export default function ScoreCanvas({
   // Highlight tone: practice/editor share the canvas, so tone is explicit
   const activeFill =
     activeMeasureVariant === 'practice' ? 'hsl(var(--practice-current) / 0.18)'
-      : activeMeasureVariant === 'warning' ? 'hsl(var(--warning) / 0.12)'
-        : 'hsl(var(--primary) / 0.08)';
+      : 'hsl(var(--primary) / 0.08)';
 
   const width = STAFF_LEFT + MEASURES * MEASURE_W + 20;
   const height = STAVES[STAVES.length - 1].top + 70;
@@ -129,8 +128,8 @@ export default function ScoreCanvas({
                     y={st.top - 4}
                     width={MEASURE_W}
                     height={4 * LINE_GAP + 8}
-                    fill="hsl(var(--warning) / 0.12)"
-                    stroke="hsl(var(--warning) / 0.5)"
+                    fill="hsl(var(--numis-accent))"
+                    stroke="hsl(var(--numis-primary) / 0.4)"
                     strokeWidth={1}
                     rx={2}
                   />
