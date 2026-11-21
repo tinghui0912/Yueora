@@ -36,10 +36,10 @@ export default function EmptyState({
     >
       {Icon && (
         <div
-          className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-brand-soft/50"
+          className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-brand/5"
           data-qa="empty-state-icon-surround"
         >
-          <Icon className="h-12 w-12 text-brand/60" data-qa="empty-state-icon" />
+          <Icon className="h-12 w-12 text-brand/40" data-qa="empty-state-icon" />
         </div>
       )}
       {title && (

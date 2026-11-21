@@ -75,10 +75,6 @@ module.exports = {
 				/* ---- Brand ---- */
 				brand: {
 					DEFAULT: 'hsl(var(--brand))',
-					hover: 'hsl(var(--brand-hover))',
-					fill: 'hsl(var(--brand-fill))',
-					'fill-hover': 'hsl(var(--brand-fill-hover))',
-					'fill-foreground': 'hsl(var(--brand-fill-foreground))',
 					soft: 'hsl(var(--brand-soft))',
 					'soft-foreground': 'hsl(var(--brand-soft-foreground))',
 					foreground: 'hsl(var(--brand-foreground))',

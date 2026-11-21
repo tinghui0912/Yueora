@@ -123,23 +123,27 @@ export default function ImportDetail() {
       {/* Actions */}
       <div className="mt-6 flex flex-wrap gap-2">
         {imp.status === 'needs_review' && (
-          <Link to={`/review/${imp.id}`} className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 type-body-small font-semibold text-brand-foreground hover:bg-brand-hover transition-colors">
-            <Pencil className="h-4 w-4" /> Review recognition
-          </Link>
+          <Button asChild intent="primary" size="md">
+            <Link to={`/review/${imp.id}`}>
+              <Pencil className="h-4 w-4" /> Review recognition
+            </Link>
+          </Button>
         )}
         {imp.status === 'completed' && imp.scoreId && (
-          <Link to={`/score/${imp.scoreId}`} className="flex items-center gap-2 rounded-control bg-brand px-4 py-2.5 type-body-small font-semibold text-brand-foreground hover:bg-brand-hover transition-colors">
-            Open score
-          </Link>
+          <Button asChild intent="primary" size="md">
+            <Link to={`/score/${imp.scoreId}`}>
+              Open score
+            </Link>
+          </Button>
         )}
         {imp.status === 'failed' && (
-          <button onClick={handleRetry} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 type-body-small font-medium text-ink-primary hover:bg-neutral-hover transition-colors">
+          <Button onClick={handleRetry} intent="secondary" size="md">
             <RefreshCw className="h-4 w-4" /> Try again
-          </button>
+          </Button>
         )}
-        <button onClick={() => setRemoveOpen(true)} className="flex items-center gap-2 rounded-control border border-line-subtle px-4 py-2.5 type-body-small font-medium text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors">
+        <Button onClick={() => setRemoveOpen(true)} intent="secondary" size="md">
           <Trash2 className="h-4 w-4" /> Remove from import history
-        </button>
+        </Button>
       </div>
 
       {/* Replace source dialog */}

@@ -503,9 +503,13 @@ async function verifyComputedStyles(client, baseUrl) {
   console.log(`  XL Button Height: ${componentStyles.xlBtn?.height}`);
   console.log(`  Standard Input: height=${componentStyles.input.height}, radius=${componentStyles.input.borderRadius}`);
 
-  // Assert primary button background is deep bronze (rgb(152, 102, 27) = #98661B)
-  if (!componentStyles.primaryBtn.backgroundColor.includes('152, 102, 27')) {
-    throw new Error(`Primary button background mismatch: ${componentStyles.primaryBtn.backgroundColor} (expected rgb(152, 102, 27) / #98661B)`);
+  // Assert primary button background is Numis canonical primary (rgb(195, 131, 34) = #C38322)
+  if (!componentStyles.primaryBtn.backgroundColor.includes('195, 131, 34')) {
+    throw new Error(`Primary button background mismatch: ${componentStyles.primaryBtn.backgroundColor} (expected rgb(195, 131, 34) / #C38322)`);
+  }
+  // Assert primary button foreground is warm white matching --numis-primary-foreground (rgb(251, 250, 249))
+  if (!componentStyles.primaryBtn.color.includes('251, 250, 249')) {
+    throw new Error(`Primary button foreground mismatch: ${componentStyles.primaryBtn.color} (expected rgb(251, 250, 249))`);
   }
   // Assert button height is 36px (h-control-md)
   if (Math.round(parseFloat(componentStyles.primaryBtn.height)) !== 36) {
@@ -742,14 +746,16 @@ async function verifyComputedStyles(client, baseUrl) {
   if (sidebarStyles.activeNav.iconColor && !sidebarStyles.activeNav.iconColor.includes('195, 131, 34')) {
     throw new Error(`Active sidebar nav icon color mismatch: ${sidebarStyles.activeNav.iconColor} (expected gold rgb(195, 131, 34))`);
   }
-  const isNavActive = sidebarStyles.activeNav.backgroundColor.includes('247, 241, 232')
+  const isNavActive = sidebarStyles.activeNav.backgroundColor.includes('195, 131, 34, 0.1')
+    || sidebarStyles.activeNav.backgroundColor.includes('rgba(195, 131, 34, 0.1)')
+    || sidebarStyles.activeNav.backgroundColor.includes('247, 241, 232')
     || sidebarStyles.activeNav.backgroundColor.includes('248, 241, 232')
     || sidebarStyles.activeNav.backgroundColor.includes('250, 244, 235')
     || sidebarStyles.activeNav.backgroundColor.includes('250, 243, 232')
     || sidebarStyles.activeNav.backgroundColor.includes('242, 232, 217')
     || sidebarStyles.activeNav.backgroundColor.includes('241, 232, 218');
   if (!isNavActive) {
-    throw new Error(`Active sidebar nav background mismatch: ${sidebarStyles.activeNav.backgroundColor} (expected bg-nav-active / bg-brand-soft)`);
+    throw new Error(`Active sidebar nav background mismatch: ${sidebarStyles.activeNav.backgroundColor} (expected Numis reference primary/10 rgba(195, 131, 34, 0.1) or bg-brand-soft)`);
   }
   if (sidebarStyles.activeNav.boxShadow !== 'none') {
     throw new Error(`Active navigation must be planar (no shadow), got: ${sidebarStyles.activeNav.boxShadow}`);
@@ -1303,8 +1309,8 @@ async function verifyComputedStyles(client, baseUrl) {
   if (!formPrimitives.badge.backgroundColor.includes('195, 131, 34')) {
     throw new Error(`Default Badge background is ${formPrimitives.badge.backgroundColor} (expected brand gold)`);
   }
-  if (!formPrimitives.badge.color.includes('34, 31, 28')) {
-    throw new Error(`Default Badge foreground is ${formPrimitives.badge.color} (expected dark ink)`);
+  if (!formPrimitives.badge.color.includes('251, 250, 249') && !formPrimitives.badge.color.includes('253, 253, 252')) {
+    throw new Error(`Default Badge foreground is ${formPrimitives.badge.color} (expected warm white matching Numis primary-foreground)`);
   }
   if (!formPrimitives.badge.boxShadow || formPrimitives.badge.boxShadow === 'none') {
     throw new Error(`Default Badge must have shadow (matching Numis default badge)`);
@@ -1328,7 +1334,7 @@ async function verifyComputedStyles(client, baseUrl) {
   })()`);
   if (badgeHoverBg) {
     if (badgeHoverBg.includes('211, 144, 41')) {
-      throw new Error(`Badge hover background is ${badgeHoverBg} (detected stale hover:bg-brand-hover, must use softened hover:bg-brand/80)`);
+      throw new Error(`Badge hover background is ${badgeHoverBg} (detected unapproved hover color, must use softened hover:bg-brand/80)`);
     }
     const isSoftenedGoldHover = badgeHoverBg.includes('rgba(195, 131, 34, 0.8)') || badgeHoverBg.includes('0.8');
     if (!isSoftenedGoldHover) {
@@ -1338,7 +1344,7 @@ async function verifyComputedStyles(client, baseUrl) {
   // Move pointer away
   await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 0, y: 0 });
   await new Promise((r) => setTimeout(r, 100));
-  console.log(`  ✓ Badge Primitive: 12px text, 10px radius, shadow, brand background, dark ink foreground, reference softened hover verified.`);
+  console.log(`  ✓ Badge Primitive: 12px text, 10px radius, shadow, brand background, warm white foreground, reference softened hover verified.`);
 
   // 6c. Popover Assertions
   await ev(`document.querySelector('[data-qa="design-system-popover-trigger"]')?.click()`);
@@ -1459,23 +1465,25 @@ async function verifyComputedStyles(client, baseUrl) {
     throw new Error(`Toast close button default opacity is ${toastStyles.defaultToast.closeOpacity} (expected 0, visible on hover/focus)`);
   }
   if (!toastStyles.destructiveToast) throw new Error('Destructive Toast specimen not found');
-  if (!toastStyles.destructiveToast.backgroundColor.includes('189, 40, 40')) {
-    throw new Error(`Destructive Toast background is ${toastStyles.destructiveToast.backgroundColor} (expected danger rgb(189, 40, 40))`);
+  if (!toastStyles.destructiveToast.backgroundColor.includes('220, 40, 40') && !toastStyles.destructiveToast.backgroundColor.includes('189, 40, 40')) {
+    throw new Error(`Destructive Toast background is ${toastStyles.destructiveToast.backgroundColor} (expected danger rgb(220, 40, 40))`);
   }
-  if (!toastStyles.destructiveToast.color.includes('253, 253, 252') && !toastStyles.destructiveToast.color.includes('255, 255, 255')) {
+  if (!toastStyles.destructiveToast.color.includes('250, 250, 250') && !toastStyles.destructiveToast.color.includes('253, 253, 252') && !toastStyles.destructiveToast.color.includes('255, 255, 255')) {
     throw new Error(`Destructive Toast text color is ${toastStyles.destructiveToast.color} (expected white/danger-foreground)`);
   }
   if (!toastStyles.destructiveToast.titleColor) {
     throw new Error('Destructive Toast title element not found for computed color check');
   }
-  if (!toastStyles.destructiveToast.titleColor.includes('253, 253, 252') && !toastStyles.destructiveToast.titleColor.includes('255, 255, 255')) {
+  if (!toastStyles.destructiveToast.titleColor.includes('250, 250, 250') && !toastStyles.destructiveToast.titleColor.includes('253, 253, 252') && !toastStyles.destructiveToast.titleColor.includes('255, 255, 255')) {
     throw new Error(`Destructive Toast title color is ${toastStyles.destructiveToast.titleColor} (expected light danger-foreground, child must inherit root color)`);
   }
   if (!toastStyles.destructiveToast.descColor) {
     throw new Error('Destructive Toast description element not found for computed color check');
   }
-  const isDestDescWhite = toastStyles.destructiveToast.descColor.includes('253, 253, 252') ||
+  const isDestDescWhite = toastStyles.destructiveToast.descColor.includes('250, 250, 250') ||
+    toastStyles.destructiveToast.descColor.includes('253, 253, 252') ||
     toastStyles.destructiveToast.descColor.includes('255, 255, 255') ||
+    toastStyles.destructiveToast.descColor.includes('rgba(250, 250, 250') ||
     toastStyles.destructiveToast.descColor.includes('rgba(253, 253, 252') ||
     toastStyles.destructiveToast.descColor.includes('rgba(255, 255, 255');
   if (!isDestDescWhite) {

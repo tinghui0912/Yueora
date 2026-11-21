@@ -13,7 +13,7 @@ const iconButtonVariants = cva(
         outline:
           'border border-line-subtle bg-transparent text-ink-secondary hover:text-ink-primary hover:bg-brand-soft shadow-control',
         primary:
-          'bg-brand-fill text-brand-fill-foreground shadow-control hover:bg-brand-fill-hover',
+          'bg-brand text-brand-foreground shadow hover:bg-brand/90',
         danger:
           'text-danger hover:bg-danger/10 hover:text-danger',
       },

@@ -34,6 +34,9 @@ export const GENERIC_RADIUS_REGEX = /(?<![a-zA-Z0-9_-])(rounded|rounded-(?:none|
 // Physical surface colors regex
 export const PHYSICAL_COLOR_REGEX = /(?<![a-zA-Z0-9_-])(bg-white(?:\/\d+)?|bg-black(?:\/\d+)?)(?![a-zA-Z0-9_-])/;
 
+// Retired Yueora physical colors and tokens regex
+export const RETIRED_COLOR_REGEX = /(?:#98661B|#98661b|#895814|#895814|#D39029|#d39029|36\s+70%\s+35%|\bbrand-fill\b|\bbrand-fill-hover\b|\bbrand-fill-foreground\b|\bbrand-hover\b|\bprimitive-gold-[0-9]+\b|\bprimitive-neutral-[0-9]+\b|\bprimitive-ink-[0-9]+\b)/i;
+
 /**
  * Parses a class token into modifiers and base utility.
  * Detects arbitrary selector variants like [&>svg]:
@@ -657,6 +660,16 @@ export function scanPageAppearanceContent(content, filePath = 'anonymous.jsx') {
                 line,
                 matched: token,
                 message: `Physical color '${token}' is banned in pages. Surfaces must be mediated by semantic tokens (bg-surface-panel, bg-surface-canvas, text-white, text-ink-primary).`,
+              });
+            }
+
+            // J. Retired Yueora colors and tokens
+            if (RETIRED_COLOR_REGEX.test(token) || RETIRED_COLOR_REGEX.test(base)) {
+              issues.push({
+                file: filePath,
+                line,
+                matched: token,
+                message: `Retired Yueora color/token '${token}' is banned. Only approved Numis reference colors and semantic tokens are permitted.`,
               });
             }
           }

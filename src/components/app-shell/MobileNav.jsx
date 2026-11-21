@@ -40,7 +40,7 @@ export default function MobileNav() {
         className="flex flex-col items-center justify-center min-h-12 py-1 select-none min-w-0"
         aria-label="Add score"
       >
-        <span className="flex h-9 w-9 items-center justify-center rounded-control bg-brand-fill text-brand-fill-foreground shadow-control transition-transform">
+        <span className="flex h-9 w-9 items-center justify-center rounded-control bg-brand text-brand-foreground shadow hover:bg-brand/90 transition-transform">
           <Plus className="h-4 w-4" />
         </span>
       </NavLink>

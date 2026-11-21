@@ -71,6 +71,43 @@ assertNegative(
   'src/pages/NewFeature.tsx'
 );
 
+// 1.1b Retired Yueora colors and tokens
+assertNegative(
+  'Retired brand-fill token rejected in page',
+  `export default function Page() {
+    return <div className="bg-brand-fill text-brand-fill-foreground" />;
+  }`,
+  'bg-brand-fill',
+  'src/pages/TestRetiredColor.jsx'
+);
+
+assertNegative(
+  'Retired deep bronze hex (#98661B) rejected in page',
+  `export default function Page() {
+    return <div className="bg-[#98661B]" />;
+  }`,
+  '#98661B',
+  'src/pages/TestRetiredColor.jsx'
+);
+
+assertNegative(
+  'Retired primitive-gold-700 token rejected in page',
+  `export default function Page() {
+    return <div className="bg-primitive-gold-700" />;
+  }`,
+  'primitive-gold-700',
+  'src/pages/TestRetiredColor.jsx'
+);
+
+assertNegative(
+  'Retired brand-hover token rejected in page',
+  `export default function Page() {
+    return <div className="hover:bg-brand-hover" />;
+  }`,
+  'hover:bg-brand-hover',
+  'src/pages/TestRetiredColor.jsx'
+);
+
 // 1.2 Button appearance: text color
 assertNegative(
   'Button className with text-danger',

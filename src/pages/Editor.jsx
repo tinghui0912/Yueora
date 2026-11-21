@@ -344,13 +344,13 @@ export default function Editor() {
       {/* Playback bar */}
       <div className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 type-body-small text-ink-secondary">
         <div className="flex items-center gap-2">
-          <button className="flex h-8 w-8 items-center justify-center rounded-control bg-brand text-brand-foreground hover:bg-brand-hover transition-colors" aria-label="Play"><Play className="h-4 w-4 fill-current" /></button>
+          <IconButton icon={Play} label="Play" tone="primary" size="sm" />
           <span className="font-medium text-ink-primary">Playback</span>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => setMeasure((m) => Math.max(1, m - 1))} className="flex h-7 w-7 items-center justify-center rounded-control border border-line-subtle hover:bg-neutral-hover" aria-label="Previous measure"><ChevronLeft className="h-3.5 w-3.5" /></button>
+          <IconButton icon={ChevronLeft} label="Previous measure" tone="outline" size="xs" onClick={() => setMeasure((m) => Math.max(1, m - 1))} />
           <span className="type-metadata font-medium text-ink-secondary">Measure {measure} / {score.measures || 16}</span>
-          <button onClick={() => setMeasure((m) => Math.min(score.measures || 16, m + 1))} className="flex h-7 w-7 items-center justify-center rounded-control border border-line-subtle hover:bg-neutral-hover" aria-label="Next measure"><ChevronRight className="h-3.5 w-3.5" /></button>
+          <IconButton icon={ChevronRight} label="Next measure" tone="outline" size="xs" onClick={() => setMeasure((m) => Math.min(score.measures || 16, m + 1))} />
         </div>
       </div>
 

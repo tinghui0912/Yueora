@@ -182,7 +182,7 @@ export default function SyncPlayback({
             type="button"
             onClick={() => (playing ? pause() : play())}
             disabled={unavailable}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-brand text-brand-foreground shadow-raised hover:bg-brand-hover disabled:opacity-40"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-brand text-brand-foreground shadow hover:bg-brand/90 disabled:opacity-40"
             aria-label={playing ? 'Pause' : 'Play'}
           >
             {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}

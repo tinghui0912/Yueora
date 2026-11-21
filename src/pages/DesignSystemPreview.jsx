@@ -181,13 +181,9 @@ export default function DesignSystemPreview() {
                 <span className="type-caption text-ink-primary">Raised</span>
                 <p className="type-metadata text-ink-tertiary">Overlay / Menu</p>
               </Surface>
-              <div className="rounded-control border border-transparent bg-brand-fill p-3 text-center text-brand-fill-foreground">
-                <span className="type-caption text-brand-fill-foreground">Brand CTA</span>
-                <p className="type-metadata text-brand-fill-foreground/80">Primary Fill</p>
-              </div>
               <div className="rounded-control border border-transparent bg-brand p-3 text-center text-brand-foreground">
-                <span className="type-caption text-brand-foreground">Brand Accent</span>
-                <p className="type-metadata text-brand-foreground/80">Antique Gold</p>
+                <span className="type-caption text-brand-foreground">Brand Primary</span>
+                <p className="type-metadata text-brand-foreground/80">Primary Gold</p>
               </div>
               <div className="rounded-control border border-brand bg-brand-soft p-3 text-center">
                 <span className="type-caption text-brand-soft-foreground">Brand Soft</span>

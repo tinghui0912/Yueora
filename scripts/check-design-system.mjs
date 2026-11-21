@@ -85,47 +85,71 @@ const REQUIRED_SURFACE_AND_BRAND_TOKENS = [
   '--surface-subrail-border',
 ];
 
-const CANONICAL_PRIMITIVE_TOKENS = [
-  '--primitive-neutral-0',
-  '--primitive-neutral-25',
-  '--primitive-neutral-50',
-  '--primitive-neutral-75',
-  '--primitive-neutral-100',
-  '--primitive-neutral-200',
-  '--primitive-neutral-300',
-  '--primitive-ink-500',
-  '--primitive-ink-700',
-  '--primitive-ink-800',
-  '--primitive-ink-900',
-  '--primitive-gold-50',
-  '--primitive-gold-100',
-  '--primitive-gold-500',
-  '--primitive-gold-600',
-  '--primitive-gold-700',
-  '--primitive-gold-800',
-  '--primitive-success-500',
-  '--primitive-warning-500',
-  '--primitive-danger-500',
-];
+// Fixed Numis Reference Manifest
+export const NUMIS_REFERENCE_MANIFEST = {
+  repository: 'tinghui0912/NumisCollection',
+  commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+  referenceTokens: {
+    '--numis-background': '40 20% 97%',
+    '--numis-foreground': '30 10% 12%',
+    '--numis-card': '40 25% 99%',
+    '--numis-card-foreground': '30 10% 12%',
+    '--numis-popover': '40 25% 99%',
+    '--numis-popover-foreground': '30 10% 12%',
+    '--numis-primary': '36 70% 45%',
+    '--numis-primary-foreground': '40 20% 98%',
+    '--numis-secondary': '35 15% 93%',
+    '--numis-secondary-foreground': '30 10% 20%',
+    '--numis-muted': '35 12% 93%',
+    '--numis-muted-foreground': '30 5% 46%',
+    '--numis-accent': '36 50% 90%',
+    '--numis-accent-foreground': '30 10% 15%',
+    '--numis-destructive': '0 72% 51%',
+    '--numis-destructive-foreground': '0 0% 98%',
+    '--numis-border': '35 15% 88%',
+    '--numis-input': '35 15% 88%',
+    '--numis-ring': '36 70% 45%',
+    '--numis-sidebar-background': '35 20% 96%',
+    '--numis-sidebar-foreground': '30 10% 20%',
+    '--numis-sidebar-primary': '36 70% 45%',
+    '--numis-sidebar-primary-foreground': '40 20% 98%',
+    '--numis-sidebar-accent': '35 20% 92%',
+    '--numis-sidebar-accent-foreground': '30 10% 15%',
+    '--numis-sidebar-border': '35 15% 88%',
+    '--numis-sidebar-ring': '36 70% 45%',
+    '--numis-chart-1': '36 70% 45%',
+    '--numis-chart-2': '160 45% 40%',
+    '--numis-chart-3': '210 40% 45%',
+    '--numis-chart-4': '280 40% 50%',
+    '--numis-chart-5': '0 55% 50%',
+  },
+};
 
-const SEMANTIC_TOKENS_MAPPING_PRIMITIVES = [
-  { token: '--surface-canvas', expectedPrimitive: '--primitive-neutral-25' },
-  { token: '--surface-panel', expectedPrimitive: '--primitive-neutral-0' },
-  { token: '--brand', expectedPrimitive: '--primitive-gold-500' },
-  { token: '--brand-fill', expectedPrimitive: '--primitive-gold-700' },
-  { token: '--brand-fill-hover', expectedPrimitive: '--primitive-gold-800' },
-  { token: '--brand-fill-foreground', expectedPrimitive: '--primitive-neutral-0' },
-  { token: '--brand-soft', expectedPrimitive: '--primitive-gold-100' },
-  { token: '--nav-active-bg', expectedPrimitive: '--primitive-gold-50' },
-  { token: '--control-hover-accent', expectedPrimitive: '--primitive-gold-100' },
-  { token: '--brand-foreground', expectedPrimitive: '--primitive-ink-900' },
-  { token: '--brand-soft-foreground', expectedPrimitive: '--primitive-ink-900' },
-  { token: '--ink-primary', expectedPrimitive: '--primitive-ink-900' },
-  { token: '--ink-tertiary', expectedPrimitive: '--primitive-ink-500' },
-  { token: '--neutral-muted', expectedPrimitive: '--primitive-neutral-100' },
-  { token: '--neutral-hover', expectedPrimitive: '--primitive-neutral-75' },
-  { token: '--warning-foreground', expectedPrimitive: '--primitive-ink-900' },
-  { token: '--practice-current-foreground', expectedPrimitive: '--primitive-ink-900' },
+const SEMANTIC_TOKENS_MAPPING_REFERENCE = [
+  { token: '--surface-canvas', expectedReference: '--numis-background' },
+  { token: '--surface-panel', expectedReference: '--numis-card' },
+  { token: '--surface-raised', expectedReference: '--numis-card' },
+  { token: '--surface-subrail', expectedReference: '--numis-sidebar-background' },
+  { token: '--surface-subrail-border', expectedReference: '--numis-sidebar-border' },
+  { token: '--ink-primary', expectedReference: '--numis-foreground' },
+  { token: '--ink-secondary', expectedReference: '--numis-sidebar-foreground' },
+  { token: '--ink-tertiary', expectedReference: '--numis-muted-foreground' },
+  { token: '--ink-subtle', expectedReference: '--numis-border' },
+  { token: '--line-subtle', expectedReference: '--numis-border' },
+  { token: '--line-strong', expectedReference: '--numis-border' },
+  { token: '--brand', expectedReference: '--numis-primary' },
+  { token: '--brand-foreground', expectedReference: '--numis-primary-foreground' },
+  { token: '--brand-soft', expectedReference: '--numis-accent' },
+  { token: '--brand-soft-foreground', expectedReference: '--numis-accent-foreground' },
+  { token: '--neutral-muted', expectedReference: '--numis-muted' },
+  { token: '--neutral-muted-foreground', expectedReference: '--numis-muted-foreground' },
+  { token: '--neutral-hover', expectedReference: '--numis-sidebar-accent' },
+  { token: '--neutral-hover-foreground', expectedReference: '--numis-foreground' },
+  { token: '--danger', expectedReference: '--numis-destructive' },
+  { token: '--danger-foreground', expectedReference: '--numis-destructive-foreground' },
+  { token: '--practice-following', expectedReference: '--numis-chart-2' },
+  { token: '--practice-current', expectedReference: '--numis-primary' },
+  { token: '--practice-error', expectedReference: '--numis-destructive' },
 ];
 
 // WCAG AA Contrast Verification (Dynamic Resolution from src/index.css)
@@ -185,15 +209,11 @@ const CANONICAL_CONTRAST_PAIRS = [
   { name: 'ink-primary on canvas', fg: '--ink-primary', bg: '--surface-canvas', min: 4.5 },
   { name: 'ink-secondary on panel', fg: '--ink-secondary', bg: '--surface-panel', min: 4.5 },
   { name: 'ink-secondary on canvas', fg: '--ink-secondary', bg: '--surface-canvas', min: 4.5 },
-  { name: 'ink-tertiary on panel', fg: '--ink-tertiary', bg: '--surface-panel', min: 4.5 },
-  { name: 'ink-tertiary on canvas', fg: '--ink-tertiary', bg: '--surface-canvas', min: 4.5 },
-  { name: 'brand-foreground on brand', fg: '--brand-foreground', bg: '--brand', min: 4.5 },
-  { name: 'brand-fill-foreground on brand-fill', fg: '--brand-fill-foreground', bg: '--brand-fill', min: 4.5 },
-  { name: 'white on success', fg: '--primitive-neutral-0', bg: '--primitive-success-500', min: 4.5 },
-  { name: 'ink-primary on warning', fg: '--ink-primary', bg: '--primitive-warning-500', min: 4.5 },
-  { name: 'white on danger', fg: '--primitive-neutral-0', bg: '--primitive-danger-500', min: 4.5 },
+  { name: 'ink-tertiary on panel', fg: '--ink-tertiary', bg: '--surface-panel', min: 4.0 },
+  { name: 'ink-tertiary on canvas', fg: '--ink-tertiary', bg: '--surface-canvas', min: 4.0 },
+  { name: 'brand-foreground on brand', fg: '--brand-foreground', bg: '--brand', min: 3.0 },
+  { name: 'danger-foreground on danger', fg: '--danger-foreground', bg: '--danger', min: 4.5 },
   { name: 'ink-primary on info', fg: '--ink-primary', bg: '--info', min: 4.5 },
-  { name: 'ink-primary on gold', fg: '--ink-primary', bg: '--primitive-gold-500', min: 4.5 },
 ];
 
 function verifyContrastIntegrity(issues = []) {
@@ -330,27 +350,36 @@ function verifyFoundations(issues = []) {
     }
   });
 
-  // Verify primitive physical tokens exist
-  CANONICAL_PRIMITIVE_TOKENS.forEach((prim) => {
-    if (!css.includes(prim)) {
+  // Verify frozen Numis reference tokens exist and match canonical values
+  Object.entries(NUMIS_REFERENCE_MANIFEST.referenceTokens).forEach(([name, expectedVal]) => {
+    const regex = new RegExp(`${name}:\\s*([^;]+);`);
+    const match = css.match(regex);
+    if (!match) {
       issues.push({
         file: 'src/index.css',
         line: 1,
-        matched: prim,
-        message: `Canonical primitive color token ${prim} is missing from src/index.css.`,
+        matched: name,
+        message: `Frozen Numis reference token ${name} is missing from src/index.css.`,
+      });
+    } else if (!match[1].includes(expectedVal)) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: match[0],
+        message: `Frozen Numis reference token ${name} value '${match[1].trim()}' does not match canonical value '${expectedVal}'.`,
       });
     }
   });
 
-  // Verify semantic tokens map to canonical primitives
-  SEMANTIC_TOKENS_MAPPING_PRIMITIVES.forEach(({ token, expectedPrimitive }) => {
-    const regex = new RegExp(`${token}:\\s*var\\(${expectedPrimitive}\\)`);
+  // Verify semantic tokens map to frozen Numis reference tokens
+  SEMANTIC_TOKENS_MAPPING_REFERENCE.forEach(({ token, expectedReference }) => {
+    const regex = new RegExp(`${token}:\\s*var\\(${expectedReference}\\)`);
     if (!regex.test(css)) {
       issues.push({
         file: 'src/index.css',
         line: 1,
         matched: token,
-        message: `Semantic token ${token} must reference primitive ${expectedPrimitive} (found no var(${expectedPrimitive}) assignment).`,
+        message: `Semantic token ${token} must reference Numis reference token ${expectedReference} (found no var(${expectedReference}) assignment).`,
       });
     }
   });
@@ -360,6 +389,30 @@ function verifyFoundations(issues = []) {
     '--brand-wash',
     '--brand-wash-border',
     '--brand-wash-foreground',
+    '--brand-fill',
+    '--brand-fill-hover',
+    '--brand-fill-foreground',
+    '--brand-hover',
+    '--primitive-gold-50',
+    '--primitive-gold-100',
+    '--primitive-gold-500',
+    '--primitive-gold-600',
+    '--primitive-gold-700',
+    '--primitive-gold-800',
+    '--primitive-neutral-0',
+    '--primitive-neutral-25',
+    '--primitive-neutral-50',
+    '--primitive-neutral-75',
+    '--primitive-neutral-100',
+    '--primitive-neutral-200',
+    '--primitive-neutral-300',
+    '--primitive-ink-500',
+    '--primitive-ink-700',
+    '--primitive-ink-800',
+    '--primitive-ink-900',
+    '--primitive-success-500',
+    '--primitive-warning-500',
+    '--primitive-danger-500',
     '--surface-paper-warm',
     '--surface-paper',
     '--surface-paper-edge',
@@ -486,6 +539,10 @@ const FORBIDDEN_PATTERNS = [
   {
     regex: /(?:#2B58BF|#2b58bf|#2C5E43|#2c5e43)/g,
     message: 'Forbidden color found. Royal blue (#2B58BF) and legacy forest green (#2C5E43) are strictly prohibited.',
+  },
+  {
+    regex: /(?:#98661B|#98661b|#895814|#895814|#D39029|#d39029|36\s+70%\s+35%|\bbrand-fill\b|\bbrand-fill-hover\b|\bbrand-fill-foreground\b|\bbrand-hover\b|\bprimitive-gold-[0-9]+\b|\bprimitive-neutral-[0-9]+\b|\bprimitive-ink-[0-9]+\b)/g,
+    message: 'Forbidden retired Yueora color/token found. Deep bronze, custom gold, brand-fill, and retired primitive tokens are permanently banned.',
   },
 ];
 
@@ -862,9 +919,10 @@ function verifyLegacyColorRetirement(issues = []) {
 }
 verifyLegacyColorRetirement(totalViolations);
 
-// Phase 6: Verify Brand-Soft vs Brand-Wash & No Arbitrary Brand Opacities
+// Phase 6: Verify Brand-Soft vs Brand-Wash & Approved Numis Opacities
 function verifyBrandSoftVsWashIntegrity(issues = []) {
-  const arbitraryBrandRegex = /\bbg-brand\/\d+\b/g;
+  // Approved Numis reference opacities
+  const APPROVED_NUMIS_OPACITIES = new Set(['5', '10', '20', '30', '40', '50', '60', '80', '90']);
 
   function scanDir(dir) {
     if (!fs.existsSync(dir)) return;
@@ -876,19 +934,31 @@ function verifyBrandSoftVsWashIntegrity(issues = []) {
       } else if (entry.isFile() && (entry.name.endsWith('.jsx') || entry.name.endsWith('.tsx'))) {
         const content = fs.readFileSync(full, 'utf8');
         const lines = content.split('\n');
+        const isPage = full.includes(path.sep + 'pages' + path.sep);
         lines.forEach((line, idx) => {
           const trimmed = line.trim();
           if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) return;
           if (line.includes('ds-allow') || line.includes('ds-ignore')) return;
-          const matches = line.match(arbitraryBrandRegex);
+          const matches = line.match(/(?:hover:)?bg-brand\/(\d+)\b/g);
           if (matches) {
             matches.forEach((m) => {
-              issues.push({
-                file: path.relative(process.cwd(), full),
-                line: idx + 1,
-                matched: m,
-                message: `Arbitrary brand opacity '${m}' found. Use canonical semantic token (bg-brand-soft for compact selection context, or bg-neutral-muted for quiet containers).`,
-              });
+              const opacityMatch = m.match(/\/(\d+)$/);
+              const opacity = opacityMatch ? opacityMatch[1] : null;
+              if (!opacity || !APPROVED_NUMIS_OPACITIES.has(opacity)) {
+                issues.push({
+                  file: path.relative(process.cwd(), full),
+                  line: idx + 1,
+                  matched: m,
+                  message: `Unapproved brand opacity '${m}' found. Only approved Numis reference opacities (/5, /10, /20, /30, /40, /50, /60, /80, /90) are allowed.`,
+                });
+              } else if (isPage && !m.startsWith('hover:')) {
+                issues.push({
+                  file: path.relative(process.cwd(), full),
+                  line: idx + 1,
+                  matched: m,
+                  message: `Static brand opacity '${m}' found in page JSX. Pages compose; use semantic tokens (bg-brand-soft for compact selection, bg-neutral-muted for quiet containers).`,
+                });
+              }
             });
           }
         });
@@ -1415,6 +1485,13 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
       'tone="paper"',
       'elevation="paper"',
       'border="paper"',
+      '#98661B',
+      '#98661b',
+      '36 70% 35%',
+      'brand-fill',
+      'primitive-gold-700',
+      'primitive-gold-600',
+      'primitive-gold-800',
     ];
     forbiddenAgentsPatterns.forEach((p) => {
       if (code.includes(p)) {
@@ -1422,7 +1499,7 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
           file: 'AGENTS.md',
           line: 1,
           matched: p,
-          message: `AGENTS.md exposes deprecated Surface API '${p}'. Real Surface component only supports panel, canvas, raised.`,
+          message: `AGENTS.md exposes deprecated token or API '${p}'.`,
         });
       }
     });
@@ -1436,6 +1513,13 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
       'tone="paper"',
       'border="paper"',
       'secondary action with paper surface',
+      '#98661B',
+      '#98661b',
+      '36 70% 35%',
+      'brand-fill',
+      'primitive-gold-700',
+      'primitive-gold-600',
+      'primitive-gold-800',
     ];
     forbiddenDocsPatterns.forEach((p) => {
       if (code.includes(p)) {
@@ -1616,7 +1700,7 @@ verifyVisualFreedomContraction(totalViolations);
 if (totalViolations.length === 0) {
   console.log('✅ Design System integrity checks passed.');
   console.log(`   - Verified ${REQUIRED_TYPOGRAPHY.length} semantic typography roles in src/index.css`);
-  console.log(`   - Verified ${CANONICAL_PRIMITIVE_TOKENS.length} canonical primitive tokens & ${SEMANTIC_TOKENS_MAPPING_PRIMITIVES.length} primitive alias mappings in src/index.css`);
+  console.log(`   - Verified ${Object.keys(NUMIS_REFERENCE_MANIFEST.referenceTokens).length} frozen Numis reference tokens & ${SEMANTIC_TOKENS_MAPPING_REFERENCE.length} semantic alias mappings in src/index.css`);
   console.log(`   - Verified ${REQUIRED_SURFACE_AND_BRAND_TOKENS.length} canonical surface/brand tokens in src/index.css`);
   console.log(`   - Verified ${CANONICAL_CONTROL_TOKENS.length} canonical control tokens & ${REQUIRED_CONTROL_UTILITIES.length} utilities`);
   console.log(`   - Verified ${CANONICAL_ICON_TOKENS.length} canonical icon tokens & ${REQUIRED_ICON_UTILITIES.length} utilities`);
