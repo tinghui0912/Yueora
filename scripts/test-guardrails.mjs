@@ -1093,13 +1093,13 @@ assertColorNegative(
   'src/components/library/CustomCard.jsx'
 );
 
-// 3.24 Positive: Numis actual named Tailwind status recipe accepted
+// 3.24 Positive: Numis actual named Tailwind status recipe accepted in approved owner
 assertColorPositive(
   'Numis actual named Tailwind status recipe accepted',
-  `export default function StatusChip() {
+  `export default function StatusIndicator() {
     return <span className="border-emerald-200 bg-emerald-500/10 text-emerald-700">Active</span>;
   }`,
-  'src/components/StatusChip.jsx'
+  'src/components/patterns/StatusIndicator.jsx'
 );
 
 // 3.25 Positive: GoogleIcon explicit external-brand exception passes
@@ -1349,17 +1349,17 @@ assertColorNegative(
 assertColorPositive(
   'exact Numis positive status recipe accepted',
   `<span className="border-emerald-200 bg-emerald-500/10 text-emerald-700">FDC</span>`,
-  'src/components/Badge.jsx'
+  'src/components/ui/badge.jsx'
 );
 assertColorPositive(
   'exact Numis warning status recipe accepted',
   `<span className="border-amber-200 bg-amber-500/10 text-amber-700">TTB</span>`,
-  'src/components/Badge.jsx'
+  'src/components/ui/badge.jsx'
 );
 assertColorPositive(
   'exact Numis danger status recipe accepted',
   `<span className="border-red-200 bg-red-500/10 text-red-700">B</span>`,
-  'src/components/Badge.jsx'
+  'src/components/ui/badge.jsx'
 );
 
 // 4.22 Positive: exact Numis color-opacity pairs accepted
@@ -1419,6 +1419,212 @@ assertColorPositive(
   'exact Numis SegmentedControl recipe accepted',
   `<div className="rounded-overlay bg-neutral-muted p-1"><button className="rounded-control px-3 py-1 type-caption font-medium bg-surface-panel text-ink-primary shadow">Toggle</button></div>`,
   'src/components/patterns/SegmentedControl.jsx'
+);
+
+// -----------------------------------------------------------------------------
+// 5. SECTIONS 31-33 EXACT RECIPE & OPACITY PROVENANCE HARDENING SUITE
+// -----------------------------------------------------------------------------
+console.log('--- Sections 31-33 Provenance & Status Hardening Fixtures ---');
+
+// 5.1 Status Guard Negative Regressions (Section 31)
+assertColorNegative(
+  'standalone bg-emerald-500 rejected',
+  `<span className="bg-emerald-500">Dot</span>`,
+  'bg-emerald-500',
+  'src/components/StatusIndicator.jsx'
+);
+assertColorNegative(
+  'standalone bg-amber-500 rejected',
+  `<span className="bg-amber-500">Dot</span>`,
+  'bg-amber-500',
+  'src/components/StatusIndicator.jsx'
+);
+assertColorNegative(
+  'partial status bg-emerald-500/10 text-emerald-600 rejected',
+  `<span className="bg-emerald-500/10 text-emerald-600">Partial</span>`,
+  'bg-emerald-500/10 + text-emerald-600',
+  'src/components/ui/badge.jsx'
+);
+assertColorNegative(
+  'partial status border-emerald-200 text-emerald-600 rejected',
+  `<span className="border-emerald-200 text-emerald-600">Partial</span>`,
+  'border-emerald-200 + text-emerald-600',
+  'src/components/ui/badge.jsx'
+);
+assertColorNegative(
+  'status recipe missing border rejected',
+  `<span className="bg-emerald-500/10 text-emerald-700">Missing Border</span>`,
+  'bg-emerald-500/10 + text-emerald-700',
+  'src/components/ui/badge.jsx'
+);
+assertColorNegative(
+  'partial status bg-amber-500/10 text-amber-600 rejected',
+  `<span className="bg-amber-500/10 text-amber-600">Partial</span>`,
+  'bg-amber-500/10 + text-amber-600',
+  'src/components/ui/badge.jsx'
+);
+assertColorNegative(
+  'mismatched status border-amber-200 bg-amber-500/10 text-red-700 rejected',
+  `<span className="border-amber-200 bg-amber-500/10 text-red-700">Mismatched</span>`,
+  'border-amber-200',
+  'src/components/ui/badge.jsx'
+);
+assertColorNegative(
+  'single text-emerald-600 in unapproved owner rejected',
+  `<span className="text-emerald-600">Metric</span>`,
+  'text-emerald-600',
+  'src/pages/PracticeHub.jsx'
+);
+
+// 5.2 Status Guard Positive Regressions (Section 31)
+assertColorPositive(
+  'exact 3-class condition recipe in approved owner accepted',
+  `<span className="border-emerald-200 bg-emerald-500/10 text-emerald-700">Approved</span>`,
+  'src/components/ui/badge.jsx'
+);
+assertColorPositive(
+  'single text-emerald-600 in approved owner accepted',
+  `<span className="text-emerald-600 font-semibold">+12%</span>`,
+  'src/pages/UserProfile.jsx'
+);
+
+// 5.3 Opacity Guard Negative Regressions (Section 32)
+assertColorNegative(
+  'bg-brand/60 rejected',
+  `<div className="bg-brand/60">Box</div>`,
+  'bg-brand/60',
+  'src/components/Box.jsx'
+);
+assertColorNegative(
+  'border-brand/60 rejected',
+  `<div className="border-brand/60">Box</div>`,
+  'border-brand/60',
+  'src/components/Box.jsx'
+);
+assertColorNegative(
+  'shadow-brand/60 rejected',
+  `<div className="shadow-brand/60">Box</div>`,
+  'shadow-brand/60',
+  'src/components/Box.jsx'
+);
+assertColorNegative(
+  'ring-brand/60 rejected',
+  `<div className="ring-brand/60">Box</div>`,
+  'ring-brand/60',
+  'src/components/Box.jsx'
+);
+assertColorNegative(
+  'bg-surface-canvas/50 rejected',
+  `<div className="bg-surface-canvas/50">Box</div>`,
+  'bg-surface-canvas/50',
+  'src/components/Box.jsx'
+);
+assertColorNegative(
+  'bg-surface-canvas/60 rejected',
+  `<div className="bg-surface-canvas/60">Box</div>`,
+  'bg-surface-canvas/60',
+  'src/components/Box.jsx'
+);
+assertColorNegative(
+  'bg-brand/70 rejected',
+  `<div className="bg-brand/70">Box</div>`,
+  'bg-brand/70',
+  'src/components/Box.jsx'
+);
+assertColorNegative(
+  'text-brand/70 rejected',
+  `<div className="text-brand/70">Box</div>`,
+  'text-brand/70',
+  'src/components/Box.jsx'
+);
+
+// 5.4 Opacity Guard Positive Regressions (Section 32)
+assertColorPositive(
+  'text-brand/60 accepted',
+  `<span className="text-brand/60">Text</span>`,
+  'src/components/Text.jsx'
+);
+assertColorPositive(
+  'shadow-brand/5 accepted',
+  `<div className="shadow-brand/5">Box</div>`,
+  'src/components/Box.jsx'
+);
+assertColorPositive(
+  'border-brand/40 accepted',
+  `<div className="border-brand/40">Box</div>`,
+  'src/components/Box.jsx'
+);
+assertColorPositive(
+  'bg-brand/90 accepted',
+  `<button className="bg-brand/90">Button</button>`,
+  'src/components/Button.jsx'
+);
+assertColorPositive(
+  'from-brand/10 accepted',
+  `<div className="from-brand/10">Gradient</div>`,
+  'src/components/Gradient.jsx'
+);
+assertColorPositive(
+  'to-brand/15 accepted',
+  `<div className="to-brand/15">Gradient</div>`,
+  'src/components/Gradient.jsx'
+);
+assertColorPositive(
+  'bg-neutral-muted/50 accepted',
+  `<div className="bg-neutral-muted/50">Box</div>`,
+  'src/components/Box.jsx'
+);
+assertColorPositive(
+  'border-line-subtle/50 accepted',
+  `<div className="border-line-subtle/50">Box</div>`,
+  'src/components/Box.jsx'
+);
+assertColorPositive(
+  'text-ink-tertiary/60 accepted',
+  `<span className="text-ink-tertiary/60">Text</span>`,
+  'src/components/Text.jsx'
+);
+
+// 5.5 Semantic Alias Fail-Closed in index.css (Section 33)
+assertColorNegative(
+  'unknown semantic alias --new-role referencing numis token rejected in index.css',
+  `:root {
+    --new-role: var(--numis-chart-4);
+  }`,
+  '--new-role',
+  'src/index.css'
+);
+assertColorNegative(
+  'unknown semantic alias --new-wash with alpha composition rejected in index.css',
+  `:root {
+    --new-wash: var(--numis-primary) / 0.37;
+  }`,
+  '--new-wash',
+  'src/index.css'
+);
+assertColorNegative(
+  'unknown semantic alias --future-status rejected in index.css',
+  `:root {
+    --future-status: var(--numis-chart-2);
+  }`,
+  '--future-status',
+  'src/index.css'
+);
+assertColorNegative(
+  'unknown semantic alias --random-foreground rejected in index.css',
+  `:root {
+    --random-foreground: var(--numis-primary-foreground);
+  }`,
+  '--random-foreground',
+  'src/index.css'
+);
+assertColorPositive(
+  'non-color tokens in index.css unaffected and accepted',
+  `:root {
+    --radius-control: 10px;
+    --radius-container: 16px;
+  }`,
+  'src/index.css'
 );
 
 // -----------------------------------------------------------------------------

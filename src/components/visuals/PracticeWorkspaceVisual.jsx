@@ -22,16 +22,15 @@ export default function PracticeWorkspaceVisual() {
         </div>
 
         {/* Calm following state pill */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-500/10 px-3 py-1">
-          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="type-metadata font-medium text-emerald-700">
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-500/10 px-3 py-1 text-emerald-700">
+          <span className="type-metadata font-medium">
             Following your phrasing · mm. 14–22
           </span>
         </div>
       </div>
 
       {/* Interactive Sheet Music Stand */}
-      <div className="relative mt-4 overflow-hidden rounded border border-line-subtle bg-surface-canvas/50">
+      <div className="relative mt-4 overflow-hidden rounded border border-line-subtle bg-surface-canvas">
         <div className="aspect-[16/9] w-full">
           <ScorePreview id="practice-visual" className="h-full w-full" />
         </div>
@@ -66,7 +65,7 @@ export default function PracticeWorkspaceVisual() {
       </div>
 
       {/* Minimal Tactile Transport */}
-      <div className="mt-4 flex flex-wrap items-center justify-between rounded-control border border-line-subtle bg-surface-canvas/60 px-3 sm:px-4 py-2.5 gap-2">
+      <div className="mt-4 flex flex-wrap items-center justify-between rounded-control border border-line-subtle bg-surface-canvas px-3 sm:px-4 py-2.5 gap-2">
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-control bg-brand text-brand-foreground shadow-raised hover:bg-brand/90 shrink-0">
             <Play className="h-4 w-4 fill-current" />

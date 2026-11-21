@@ -254,7 +254,7 @@ export default function Editor() {
       </div>
 
       {/* View toggle */}
-      <div className="flex items-center gap-1 border-b border-line-subtle bg-surface-canvas/60 px-4 py-1.5">
+      <div className="flex items-center gap-1 border-b border-line-subtle bg-surface-canvas px-4 py-1.5">
         <SegmentedControl value={view} onValueChange={setView} aria-label="View mode">
           <SegmentedControlItem value="score">
             <Music2 className="icon-xs" />

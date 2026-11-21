@@ -106,7 +106,7 @@ export default function ScoreDetail() {
             </h1>
             <button
               onClick={handleFavorite}
-              className="text-ink-tertiary hover:text-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded-control p-0.5"
+              className="text-ink-tertiary hover:text-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-control p-0.5"
               aria-label={score.favorite ? 'Remove favorite' : 'Add to favorites'}
             >
               {score.favorite ? (
@@ -117,7 +117,7 @@ export default function ScoreDetail() {
             </button>
           </div>
           <p className="mt-1 type-body-small text-ink-secondary font-medium">{score.composer} · {score.instrument}</p>
-          <div className="mt-2 flex flex-wrap items-center gap-2 type-metadata text-ink-secondary/80">
+          <div className="mt-2 flex flex-wrap items-center gap-2 type-metadata text-ink-secondary">
             <span className="rounded-control bg-neutral-muted px-2 py-0.5 border border-line-subtle font-medium">
               {score.source}
             </span>
@@ -215,7 +215,7 @@ export default function ScoreDetail() {
         <div className="lg:col-span-8 space-y-6">
           <Surface tone="panel" className="p-4 sm:p-6">
             {/* Score folio viewer */}
-            <div className="flex justify-center overflow-auto rounded-container bg-surface-canvas/60 p-4">
+            <div className="flex justify-center overflow-auto rounded-container bg-surface-canvas p-4">
               <div
                 style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
                 className="aspect-[16/10] w-full max-w-2xl transition-transform duration-fast"

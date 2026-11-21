@@ -36,7 +36,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
       {/* Visual Artifact Preview Zone (~50% height, modeled on NumisCollection ItemCard) */}
       <div
         data-qa="score-card-visual"
-        className="relative aspect-[4/3] w-full overflow-hidden border-b border-line-subtle/50 bg-surface-canvas/50 pointer-events-none"
+        className="relative aspect-[4/3] w-full overflow-hidden border-b border-line-subtle/50 bg-surface-canvas pointer-events-none"
       >
         <ScorePreview
           id={score.id}
@@ -46,7 +46,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
         {/* Top Overlay Badges */}
         <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5 z-10 pointer-events-auto">
           {sharedText && (
-            <span className="rounded-control bg-surface-panel/90 backdrop-blur-xs px-2 py-0.5 type-metadata text-ink-secondary border border-line-subtle/60">
+            <span className="rounded-control bg-surface-panel/90 backdrop-blur-xs px-2 py-0.5 type-metadata text-ink-secondary border border-line-subtle/50">
               {sharedText}
             </span>
           )}
@@ -54,7 +54,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
 
         <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-10 pointer-events-auto">
           {score.favorite && (
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-surface-panel/90 backdrop-blur-xs border border-line-subtle/60">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-surface-panel/90 backdrop-blur-xs border border-line-subtle/50">
               <Star className="icon-xs fill-gold text-gold" />
             </span>
           )}

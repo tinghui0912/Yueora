@@ -77,8 +77,8 @@ export default function InviteAcceptance() {
             {isAuthenticated ? (
               wrongAccount ? (
                 <div className="mt-8 flex flex-col items-center gap-3">
-                  <div className="flex items-start gap-2 rounded-control border border-amber-200 bg-amber-500/10 p-3 text-left">
-                    <AlertTriangle className="mt-0.5 h-4 w-4 text-amber-700" />
+                  <div className="flex items-start gap-2 rounded-control border border-amber-200 bg-amber-500/10 p-3 text-left text-amber-700">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                     <p className="type-body-small text-ink-secondary">This invitation was sent to <strong>{invitedEmail}</strong>, but you are signed in as <strong>{user?.email}</strong>. Switch accounts to accept it.</p>
                   </div>
                   <div className="flex gap-2">

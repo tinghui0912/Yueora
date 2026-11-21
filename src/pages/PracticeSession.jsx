@@ -366,7 +366,7 @@ export default function PracticeSession() {
       >
         <button
           onClick={() => (phase === 'ready' ? navigate(`/score/${scoreId}`) : setExitOpen(true))}
-          className="flex min-w-0 items-center gap-2 type-label font-medium text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded-control"
+          className="flex min-w-0 items-center gap-2 type-label font-medium text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-control"
         >
           <ArrowLeft className="h-4 w-4 shrink-0" />
           <span className="truncate type-subsection text-ink-primary">{score.title}</span>
@@ -377,7 +377,7 @@ export default function PracticeSession() {
             <div
               role="img"
               aria-label="Camera preview"
-              className="relative hidden h-9 w-14 items-center justify-center overflow-hidden rounded-control border border-line-subtle bg-ink-primary/10 sm:flex"
+              className="relative hidden h-9 w-14 items-center justify-center overflow-hidden rounded-control border border-line-subtle bg-neutral-muted sm:flex"
             >
               <Video className="h-3.5 w-3.5 text-ink-secondary" aria-hidden="true" />
               {isPlaying && (
@@ -520,7 +520,7 @@ export default function PracticeSession() {
 
         {/* Count-in Overlay */}
         {phase === 'countin' && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-surface-canvas/80 backdrop-blur-xs">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-surface-canvas backdrop-blur-xs">
             <div className="text-center">
               {/* ds-allow: oversized rehearsal count-in number */}
               <p className="font-display text-7xl font-medium text-ink-primary animate-pulse">

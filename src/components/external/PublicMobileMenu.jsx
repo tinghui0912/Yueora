@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
  * PublicMobileMenu — UGC Parity expanding header-owned dropdown navigation.
  * - Header-owned expanding panel
  * - Full available viewport width
- * - Warm translucent surface: bg-surface-canvas/95 backdrop-blur-xl
+ * - Warm surface: bg-surface-canvas
  * - Vertical text-lg link rows with subtle border-b
  * - Large 44px CTA below (touch target >= 44px)
  */
@@ -22,41 +22,41 @@ export default function PublicMobileMenu({ open, onClose }) {
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="md:hidden overflow-hidden bg-surface-canvas/95 backdrop-blur-xl border-t border-line-subtle/80"
+          className="md:hidden overflow-hidden bg-surface-canvas border-t border-line-subtle"
         >
           <div className="px-6 py-5 flex flex-col">
             <a
               href="/#lifecycle"
               onClick={onClose}
-              className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/40 hover:text-brand transition-colors"
+              className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/50 hover:text-brand transition-colors"
             >
               The Lifecycle
             </a>
             <a
               href="/#practice"
               onClick={onClose}
-              className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/40 hover:text-brand transition-colors"
+              className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/50 hover:text-brand transition-colors"
             >
               Practice Stand
             </a>
             <a
               href="/#repertoire"
               onClick={onClose}
-              className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/40 hover:text-brand transition-colors"
+              className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/50 hover:text-brand transition-colors"
             >
               Personal Repertoire
             </a>
             <Link
               to="/about"
               onClick={onClose}
-              className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/40 hover:text-brand transition-colors"
+              className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/50 hover:text-brand transition-colors"
             >
               About Yueora
             </Link>
             <Link
               to="/pricing"
               onClick={onClose}
-              className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/40 hover:text-brand transition-colors"
+              className="py-3.5 text-lg tracking-wide text-ink-primary border-b border-line-subtle/50 hover:text-brand transition-colors"
             >
               Pricing &amp; Plans
             </Link>

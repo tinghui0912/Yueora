@@ -456,7 +456,7 @@ export default function Library() {
               <div
                 key={s.id}
                 className={`flex items-center gap-4 p-3.5 transition-colors hover:bg-neutral-hover ${
-                  selected.includes(s.id) ? 'bg-neutral-muted/70' : ''
+                  selected.includes(s.id) ? 'bg-neutral-muted/50' : ''
                 }`}
               >
                 <Checkbox

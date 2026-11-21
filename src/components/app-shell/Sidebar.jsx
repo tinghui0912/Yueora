@@ -43,7 +43,7 @@ export default function Sidebar() {
         <NavLink
           to="/practice"
           aria-label="Yueora Practice"
-          className="inline-flex focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded"
+          className="inline-flex focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded"
         >
           <Logo variant="full" size="sidebar" />
         </NavLink>

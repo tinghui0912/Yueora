@@ -12,7 +12,7 @@ export function BackLink({ to = '/library', label = 'Back', className = '', ...p
     <Link
       to={to}
       className={cn(
-        'group inline-flex items-center gap-1.5 type-label text-ink-secondary transition-colors duration-150 hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded-control px-1 py-0.5 -mx-1',
+        'group inline-flex items-center gap-1.5 type-label text-ink-secondary transition-colors duration-150 hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-control px-1 py-0.5 -mx-1',
         className
       )}
       {...props}

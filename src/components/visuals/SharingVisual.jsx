@@ -18,13 +18,13 @@ export default function SharingVisual() {
             Selective Sharing
           </p>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-line-subtle bg-surface-canvas/80 px-2.5 py-0.5 type-metadata text-ink-secondary self-start sm:self-auto shrink-0">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-line-subtle bg-surface-canvas px-2.5 py-0.5 type-metadata text-ink-secondary self-start sm:self-auto shrink-0">
           <Lock className="h-3 w-3 text-brand shrink-0" /> Private by default
         </span>
       </div>
 
       {/* Shared Item Overview */}
-      <div className="mt-4 rounded-control border border-line-subtle bg-surface-canvas/50 p-3 sm:p-4">
+      <div className="mt-4 rounded-control border border-line-subtle bg-surface-canvas p-3 sm:p-4">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <span className="type-caption text-ink-tertiary">Sharing 1 take & score</span>
@@ -36,7 +36,7 @@ export default function SharingVisual() {
             </p>
           </div>
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-tertiary">
-            <Heart className="h-4 w-4 fill-brand/15 text-brand" />
+            <Heart className="h-4 w-4 fill-current text-brand" />
           </span>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default function SharingVisual() {
         </div>
 
         {/* Accompanying personal message */}
-        <div className="rounded-control border border-dashed border-line-subtle bg-surface-canvas/40 px-3.5 py-2.5">
+        <div className="rounded-control border border-dashed border-line-subtle bg-surface-canvas px-3.5 py-2.5">
           <div className="flex items-center gap-1.5 text-xs text-ink-tertiary">
             <Mail className="h-3 w-3" /> Accompanying note
           </div>

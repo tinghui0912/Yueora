@@ -194,7 +194,7 @@ export default function PracticeHub() {
             <span className="type-card-metadata text-ink-secondary">7-day view</span>
           </div>
 
-          <div className="flex justify-between items-center rounded-control bg-neutral-muted/60 p-4 border border-line-subtle/50">
+          <div className="flex justify-between items-center rounded-control bg-neutral-muted/50 p-4 border border-line-subtle/50">
             {week.days.map((d, i) => (
               <div key={d.key} className="flex flex-col items-center gap-2">
                 <span

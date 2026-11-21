@@ -261,7 +261,7 @@ export default function PlanSettings() {
           <div className="rounded-container border border-line-subtle bg-surface-panel overflow-hidden">
             <div className="divide-y divide-line-subtle type-body-small">
               {billingHistory.map((b) => (
-                <div key={b.id} className="flex flex-wrap items-center justify-between gap-3 p-4 hover:bg-neutral-hover/40 transition-colors">
+                <div key={b.id} className="flex flex-wrap items-center justify-between gap-3 p-4 hover:bg-neutral-hover transition-colors">
                   <div className="min-w-0">
                     <p className="font-medium text-ink-primary">{b.date} · {b.amount}</p>
                     <p className="type-metadata text-ink-tertiary">

@@ -87,7 +87,7 @@ export function SegmentedControlItem({
       data-state={isSelected ? 'active' : 'inactive'}
       data-qa="segmented-control-item"
       className={cn(
-        'inline-flex items-center justify-center whitespace-nowrap rounded-control px-3 py-1 text-xs font-medium transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand disabled:pointer-events-none disabled:opacity-50',
+        'inline-flex items-center justify-center whitespace-nowrap rounded-control px-3 py-1 text-xs font-medium transition-colors cursor-pointer select-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
         isSelected
           ? 'bg-surface-panel text-ink-primary shadow'
           : 'text-ink-tertiary hover:text-ink-primary',

@@ -679,21 +679,21 @@ export default function DesignSystemPreview() {
         </Surface>
       </section>
 
-      {/* 7. Inverse Editorial Surface */}
+      {/* 7. Editorial Surface */}
       <section className="space-y-4">
         <SectionHeader
-          title="Inverse Editorial Surface (UGC Conversion Pattern)"
-          description="Dramatic deep archive container (bg-ink-primary text-surface-canvas) with ambient background typography and tactile compact actions."
+          title="Editorial Surface (Conversion Pattern)"
+          description="Standard content panel container (bg-surface-panel border-line-subtle) with ambient background typography and tactile compact actions."
         />
-        <div className="relative rounded-container bg-ink-primary text-surface-canvas p-8 md:p-10 overflow-hidden">
+        <div className="relative rounded-container bg-surface-panel border border-line-subtle p-8 md:p-10 overflow-hidden">
           <div aria-hidden className="pointer-events-none absolute -bottom-6 -right-6 select-none">
             {/* ds-allow: ambient oversized background typography showcase */}
-            <span className="font-display italic text-8xl text-surface-canvas/[0.04]">music</span>
+            <span className="font-display italic text-8xl text-ink-primary/[0.04]">music</span>
           </div>
           <div className="relative z-10 max-w-xl">
-            <p className="type-eyebrow text-surface-canvas/60 mb-3">Sanctuary Callout</p>
-            <h3 className="type-display font-medium text-surface-canvas">Play what you love.</h3>
-            <p className="mt-2 type-body-small text-surface-canvas/75">
+            <p className="type-eyebrow text-ink-secondary mb-3">Sanctuary Callout</p>
+            <h3 className="type-display font-medium text-ink-primary">Play what you love.</h3>
+            <p className="mt-2 type-body-small text-ink-secondary">
               Warm paper and antique gold define identity. Ivory is content surface. Chromatic color communicates functional status.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">

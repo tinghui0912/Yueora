@@ -13,13 +13,13 @@ const STATUS_PRESENTATION = {
   },
   matched: {
     label: 'Following your phrasing',
-    tone: 'text-emerald-600',
-    dot: 'bg-emerald-500',
+    tone: 'text-brand',
+    dot: 'bg-brand',
   },
   wrong: {
     label: 'Take your time — Yueora is waiting here',
-    tone: 'text-amber-600',
-    dot: 'bg-amber-500',
+    tone: 'text-ink-secondary',
+    dot: 'bg-ink-tertiary',
   },
   skipped: {
     label: 'Advancing phrase',

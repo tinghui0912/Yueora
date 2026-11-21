@@ -130,7 +130,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
                     <Folder className={cn('icon-sm shrink-0 transition-colors', active === `folder:${f.id}` ? 'text-brand' : 'opacity-70')} />
                     <span className="truncate min-w-0">{f.name}</span>
                   </button>
-                  <div className="absolute right-1 flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 bg-surface-subrail/90 backdrop-blur-xs rounded-control">
+                  <div className="absolute right-1 flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 bg-surface-subrail rounded-control">
                     <IconButton
                       icon={Pencil}
                       size="xs"

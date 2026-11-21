@@ -14,7 +14,7 @@ import FileThumbnail from '@/components/visuals/FileThumbnail';
 
 const statusMeta = {
   processing: { label: 'Processing your score…', color: 'text-brand' },
-  needs_review: { label: 'Needs review', color: 'text-amber-700' },
+  needs_review: { label: 'Needs review', color: 'text-brand' },
   failed: { label: 'Recognition failed', color: 'text-danger' },
   completed: { label: 'Completed', color: 'text-ink-tertiary' },
 };
@@ -75,7 +75,7 @@ export default function ImportDetail() {
         )}
         {imp.status === 'needs_review' && (
           <div className="flex items-center gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-600" />
+            <AlertTriangle className="h-5 w-5 text-brand" />
             <p className="type-body-small text-ink-secondary">Recognition finished with {issueCount} {issueCount === 1 ? 'spot' : 'spots'} to review.</p>
           </div>
         )}
@@ -154,7 +154,7 @@ export default function ImportDetail() {
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Replace source file</DialogTitle></DialogHeader>
           <p className="type-body-small text-ink-secondary">Choose a replacement file. Recognition will start over with the new source.</p>
-          <div className="mt-3 rounded-control border border-dashed border-line-subtle bg-surface-canvas/50 p-6 text-center">
+          <div className="mt-3 rounded-control border border-dashed border-line-subtle bg-surface-canvas p-6 text-center">
             <FileMusic className="mx-auto h-8 w-8 text-ink-secondary" />
             <p className="mt-2 type-caption text-ink-secondary">Drop a file here, or click to browse</p>
           </div>

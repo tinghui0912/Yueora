@@ -54,7 +54,7 @@ export default function PublicHeader() {
       {...headerMotionProps}
       className={`fixed top-0 inset-x-0 z-50 transition-colors duration-500 ${
         scrolled || mobileOpen
-          ? 'border-b border-line-subtle/80 bg-surface-canvas/90 backdrop-blur-xl'
+          ? 'border-b border-line-subtle bg-surface-canvas backdrop-blur-xl'
           : 'border-b border-transparent bg-transparent'
       }`}
     >

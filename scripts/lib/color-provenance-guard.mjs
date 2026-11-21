@@ -4,8 +4,8 @@ import path from 'path';
  * Color Provenance and Allowlist Guard
  *
  * Enforces that no unknown physical colors, hexes, rgbs, named Tailwind physical colors,
- * unapproved SVG opacities, unapproved Canvas alphas, or unproven color-opacity pairs
- * enter the codebase.
+ * unapproved SVG opacities, unapproved Canvas alphas, unproven color-opacity utilities,
+ * or unknown semantic color aliases enter the codebase.
  * Every visual recipe must trace to tinghui0912/NumisCollection (efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c).
  */
 
@@ -27,7 +27,7 @@ export const FRAMEWORK_SELECTOR_EXCEPTIONS = {
   ]),
 };
 
-// 3. 32 Frozen Numis Root Tokens (Source of Truth in src/index.css)
+// 3. 32 Frozen Numis Physical Root Color Tokens (Source of Truth in src/index.css)
 export const NUMIS_ROOT_TOKENS = new Set([
   '--numis-background',
   '--numis-foreground',
@@ -63,88 +63,193 @@ export const NUMIS_ROOT_TOKENS = new Set([
   '--numis-chart-5',
 ]);
 
-// 4. Approved Elevation Shadow Custom Properties in src/index.css
+// 4. Approved Yueora Semantic Color Custom Properties in src/index.css
+export const YUEORA_SEMANTIC_COLOR_ALIASES = new Set([
+  '--surface-canvas',
+  '--surface-panel',
+  '--surface-raised',
+  '--surface-subrail',
+  '--surface-subrail-border',
+  '--ink-primary',
+  '--ink-secondary',
+  '--ink-tertiary',
+  '--ink-subtle',
+  '--line-subtle',
+  '--line-strong',
+  '--brand',
+  '--brand-foreground',
+  '--brand-soft',
+  '--brand-soft-foreground',
+  '--nav-active-bg',
+  '--control-hover-accent',
+  '--neutral-muted',
+  '--neutral-muted-foreground',
+  '--neutral-hover',
+  '--neutral-hover-foreground',
+  '--danger',
+  '--danger-foreground',
+  '--info',
+  '--info-foreground',
+  '--selection',
+  '--practice-waiting',
+  '--practice-waiting-foreground',
+  '--practice-current',
+  '--practice-current-foreground',
+  '--practice-error',
+  '--practice-error-foreground',
+  '--gold',
+]);
+
+// 5. Approved Radix / shadcn Compatibility Color Custom Properties in src/index.css
+export const YUEORA_COMPATIBILITY_COLOR_ALIASES = new Set([
+  '--background',
+  '--foreground',
+  '--card',
+  '--card-foreground',
+  '--popover',
+  '--popover-foreground',
+  '--primary',
+  '--primary-foreground',
+  '--secondary',
+  '--secondary-foreground',
+  '--muted',
+  '--muted-foreground',
+  '--accent',
+  '--accent-foreground',
+  '--destructive',
+  '--destructive-foreground',
+  '--border',
+  '--input',
+  '--ring',
+]);
+
+// 6. Approved Elevation Shadow Custom Properties in src/index.css
 export const ELEVATION_SHADOW_TOKENS = new Set([
   '--shadow-control',
   '--shadow-raised',
   '--shadow-overlay',
 ]);
 
-// 5. Numis Actual Status Recipes (Role-aware manifest traced to exact source files)
+// 7. Numis Actual Status Recipes (Role-aware manifest traced to exact source files)
 export const NUMIS_STATUS_RECIPES = [
   {
     id: 'condition-positive',
-    source: 'src/components/collection/ItemCard.jsx:6',
-    classes: ['border-emerald-200', 'bg-emerald-500/10', 'text-emerald-700'],
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/collection/ItemCard.jsx:6',
+    },
+    sourceClasses: ['border-emerald-200', 'bg-emerald-500/10', 'text-emerald-700'],
+    yueoraClasses: ['border-emerald-200', 'bg-emerald-500/10', 'text-emerald-700'],
+    allowedOwners: [
+      'src/components/ui/badge.jsx',
+      'src/components/patterns/CountBadge.jsx',
+      'src/components/patterns/StatusIndicator.jsx',
+      'src/components/visuals/PracticeWorkspaceVisual.jsx',
+    ],
   },
   {
     id: 'condition-warning',
-    source: 'src/components/collection/ItemCard.jsx:10',
-    classes: ['border-amber-200', 'bg-amber-500/10', 'text-amber-700'],
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/collection/ItemCard.jsx:10',
+    },
+    sourceClasses: ['border-amber-200', 'bg-amber-500/10', 'text-amber-700'],
+    yueoraClasses: ['border-amber-200', 'bg-amber-500/10', 'text-amber-700'],
+    allowedOwners: [
+      'src/components/ui/badge.jsx',
+      'src/components/patterns/CountBadge.jsx',
+      'src/components/patterns/StatusIndicator.jsx',
+      'src/pages/InviteAcceptance.jsx',
+      'src/pages/RecognitionReview.jsx',
+      'src/components/sharing/SharingDialog.jsx',
+    ],
   },
   {
     id: 'condition-danger',
-    source: 'src/components/collection/ItemCard.jsx:12',
-    classes: ['border-red-200', 'bg-red-500/10', 'text-red-700'],
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/collection/ItemCard.jsx:12',
+    },
+    sourceClasses: ['border-red-200', 'bg-red-500/10', 'text-red-700'],
+    yueoraClasses: ['border-red-200', 'bg-red-500/10', 'text-red-700'],
+    allowedOwners: [
+      'src/components/ui/badge.jsx',
+      'src/components/patterns/CountBadge.jsx',
+      'src/components/patterns/StatusIndicator.jsx',
+    ],
   },
   {
     id: 'condition-blue',
-    source: 'src/components/collection/ItemCard.jsx:8',
-    classes: ['border-blue-200', 'bg-blue-500/10', 'text-blue-700'],
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/collection/ItemCard.jsx:8',
+    },
+    sourceClasses: ['border-blue-200', 'bg-blue-500/10', 'text-blue-700'],
+    yueoraClasses: ['border-blue-200', 'bg-blue-500/10', 'text-blue-700'],
+    allowedOwners: [],
   },
   {
     id: 'condition-gray',
-    source: 'src/components/collection/ItemCard.jsx:13',
-    classes: ['border-gray-200', 'bg-gray-500/10', 'text-gray-700'],
-  },
-  {
-    id: 'callout-warning',
-    source: 'src/components/collection/BulkEstimateButton.jsx:44',
-    classes: ['text-amber-600', 'bg-amber-50'],
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/collection/ItemCard.jsx:13',
+    },
+    sourceClasses: ['border-gray-200', 'bg-gray-500/10', 'text-gray-700'],
+    yueoraClasses: ['border-gray-200', 'bg-gray-500/10', 'text-gray-700'],
+    allowedOwners: [],
   },
   {
     id: 'positive-metric',
-    source: 'src/pages/UserProfile.jsx:114, ItemCard.jsx:84, ItemDetailDialog.jsx:61',
-    classes: ['text-emerald-600'],
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/pages/UserProfile.jsx:114',
+    },
+    sourceClasses: ['text-emerald-600'],
+    yueoraClasses: ['text-emerald-600'],
+    allowedOwners: ['src/pages/UserProfile.jsx'],
   },
   {
     id: 'negative-metric',
-    source: 'src/pages/UserProfile.jsx:114, ItemCard.jsx:84, ItemDetailDialog.jsx:61',
-    classes: ['text-red-500'],
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/pages/UserProfile.jsx:114',
+    },
+    sourceClasses: ['text-red-500'],
+    yueoraClasses: ['text-red-500'],
+    allowedOwners: ['src/pages/UserProfile.jsx'],
   },
   {
-    id: 'success-icon',
-    source: 'src/components/collection/BulkEstimateButton.jsx:69',
-    classes: ['text-green-500'],
+    id: 'warning-callout',
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/collection/BulkEstimateButton.jsx:44',
+    },
+    sourceClasses: ['text-amber-600', 'bg-amber-50'],
+    yueoraClasses: ['text-amber-600', 'bg-amber-50'],
+    allowedOwners: ['src/components/collection/BulkEstimateButton.jsx'],
   },
   {
-    id: 'inline-warning-text',
-    source: 'src/components/collection/BulkEstimateButton.jsx:44, ItemCard.jsx:10',
-    classes: ['text-amber-700'],
-  },
-  {
-    id: 'status-dot-emerald',
-    source: 'Numis emerald palette for status indicator dot',
-    classes: ['bg-emerald-500'],
-  },
-  {
-    id: 'status-dot-amber',
-    source: 'Numis amber palette for status indicator dot',
-    classes: ['bg-amber-500'],
+    id: 'toast-destructive-close',
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/ui/toast.jsx:62',
+    },
+    sourceClasses: ['text-red-300', 'hover:text-red-50', 'focus:ring-red-400', 'focus:ring-offset-red-600'],
+    yueoraClasses: ['text-red-300', 'hover:text-red-50', 'focus:ring-red-400', 'focus:ring-offset-red-600'],
+    allowedOwners: ['src/components/ui/toast.jsx'],
   },
 ];
 
-export const NUMIS_ACTUAL_STATUS_RECIPES = new Set(
-  NUMIS_STATUS_RECIPES.flatMap((r) => r.classes).concat([
-    'text-red-300', 'hover:text-red-50', 'focus:ring-red-400', 'focus:ring-offset-red-600',
-    'bg-slate-50', 'bg-slate-100', 'bg-slate-200',
-    'border-slate-100', 'border-slate-200', 'border-slate-300',
-    'text-slate-300', 'text-slate-600', 'text-slate-700', 'text-slate-800', 'text-slate-900',
-    'ring-slate-500',
-  ])
-);
-
-// 6. Numis Dialog / Drawer Overlay Recipes (Verbatim Numis alert-dialog, dialog, drawer, sheet: ALL /80)
+// 8. Numis Dialog / Drawer Overlay Recipes (Verbatim Numis alert-dialog, dialog, drawer, sheet: ALL /80)
 export const NUMIS_OVERLAY_RECIPES = {
   'src/components/ui/alert-dialog.jsx': new Set(['bg-black/80']),
   'src/components/ui/dialog.jsx': new Set(['bg-black/80']),
@@ -152,67 +257,126 @@ export const NUMIS_OVERLAY_RECIPES = {
   'src/components/ui/sheet.jsx': new Set(['bg-black/80']),
 };
 
-// 7. Exact Color + Opacity Pairs (Verified from NumisCollection efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c)
-// Note: /70 is permanently removed from chromatic allowlist as it has no chromatic source provenance.
-export const NUMIS_COLOR_OPACITY_PAIRS = new Set([
+// 9. Exact Utility + Color + Opacity Manifest (Verified from NumisCollection efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c)
+// Every entry contains the full utility prefix, token, and opacity.
+export const NUMIS_EXACT_COLOR_UTILITIES = new Set([
   // Primary (Brand) opacities
-  'brand/5',
-  'brand/10',
-  'brand/15',
-  'brand/20',
-  'brand/30',
-  'brand/40',
-  'brand/50',
-  'brand/60',
-  'brand/80',
-  'brand/90',
+  'bg-brand/5',
+  'bg-brand/10',
+  'bg-brand/20',
+  'bg-brand/80',
+  'bg-brand/90',
+  'bg-primary/5',
+  'bg-primary/10',
+  'bg-primary/20',
+  'bg-primary/80',
+  'bg-primary/90',
+  'border-brand/10',
+  'border-brand/20',
+  'border-brand/30',
+  'border-brand/40',
+  'border-brand/50',
+  'border-primary/10',
+  'border-primary/20',
+  'border-primary/30',
+  'border-primary/40',
+  'border-primary/50',
+  'text-brand/30',
+  'text-brand/40',
+  'text-brand/50',
+  'text-brand/60',
+  'text-primary/30',
+  'text-primary/40',
+  'text-primary/50',
+  'text-primary/60',
+  'shadow-brand/5',
+  'shadow-primary/5',
+  'from-brand/5',
+  'from-brand/10',
+  'from-primary/5',
+  'from-primary/10',
+  'to-brand/5',
+  'to-brand/15',
+  'to-primary/5',
+  'to-primary/15',
 
   // Practice domain aliases of primary (brand)
-  'practice-current/10',
-  'practice-current/20',
-  'practice-current/40',
+  'bg-practice-current/10',
+  'bg-practice-current/20',
+  'border-practice-current/40',
 
   // Destructive (Danger) opacities
-  'danger/10',
-  'danger/30',
-  'danger/50',
-  'danger/80',
-  'danger/90',
+  'bg-danger/10',
+  'bg-danger/80',
+  'bg-danger/90',
+  'border-danger/30',
+  'border-danger/50',
+  'bg-destructive/10',
+  'bg-destructive/80',
+  'bg-destructive/90',
+  'border-destructive/30',
+  'border-destructive/50',
 
-  // Status named colors with exact opacity
-  'emerald-500/10',
-  'amber-500/10',
-  'red-500/10',
-  'blue-500/10',
-  'gray-500/10',
-  'orange-500/10',
+  // Secondary opacities
+  'bg-secondary/80',
 
-  // Surface / Line / Neutral opacities
-  'surface-canvas/50',
-  'surface-canvas/60',
-  'surface-panel/90',
-  'surface-panel/95',
-  'line-subtle/30',
-  'line-subtle/50',
-  'neutral-muted/30',
-  'neutral-muted/40',
-  'neutral-muted/50',
-  'ink-primary/50',
-  'ink-secondary/70',
-  'ink-tertiary/30',
-  'ink-tertiary/40',
-  'ink-tertiary/60',
+  // Card / Surface-panel opacities
+  'bg-surface-panel/90',
+  'bg-surface-panel/95',
+  'bg-card/90',
+  'bg-card/95',
 
-  // Black overlay
-  'black/80',
+  // Muted / Neutral-muted opacities
+  'bg-neutral-muted/30',
+  'bg-neutral-muted/40',
+  'bg-neutral-muted/50',
+  'border-neutral-muted/40',
+  'bg-muted/30',
+  'bg-muted/40',
+  'bg-muted/50',
+  'border-muted/40',
+
+  // Muted-foreground / Ink-tertiary opacities
+  'text-ink-tertiary/30',
+  'text-ink-tertiary/40',
+  'text-ink-tertiary/60',
+  'text-muted-foreground/30',
+  'text-muted-foreground/40',
+  'text-muted-foreground/60',
+
+  // Foreground / Ink-primary opacities
+  'text-ink-primary/50',
+  'text-foreground/50',
+
+  // Sidebar-foreground / Ink-secondary opacities (Numis sidebar.jsx:367)
+  'text-ink-secondary/70',
+  'text-sidebar-foreground/70',
+
+  // Border / Line-subtle opacities
+  'border-line-subtle/30',
+  'border-line-subtle/50',
+  'stroke-line-subtle/50',
+  'border-border/30',
+  'border-border/50',
+  'stroke-border/50',
+
+  // Accent opacities (Numis navigation-menu.jsx:36)
+  'bg-accent/50',
+
+  // Status named colors with exact opacity (ItemCard condition badges)
+  'bg-emerald-500/10',
+  'bg-amber-500/10',
+  'bg-red-500/10',
+  'bg-blue-500/10',
+  'bg-gray-500/10',
+  'bg-orange-500/10',
+
+  // Overlays
+  'bg-black/50',
+  'bg-black/80',
 ]);
 
-// Backward compatibility alias for any legacy test references
-export const ALLOWED_CHROMATIC_OPACITIES = new Set([
-  '5', '10', '15', '20', '30', '40', '50', '60', '80', '90', '95'
-]);
-
-// 8. Retired Yueora Physical Colors & Tokens (Zero Tolerance Blacklist)
+// 10. Retired Yueora Physical Colors & Tokens (Zero Tolerance Blacklist)
 export const RETIRED_YUEORA_PATTERNS = [
   /#98661B/i,
   /#895814/i,
@@ -310,6 +474,26 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
             });
           }
         }
+
+        // Check if property contains semantic/compatibility color references or color alpha composition
+        const hasVarColorRef = /var\(--(?:numis-|background|foreground|card|popover|primary|secondary|muted|accent|destructive|border|input|ring|sidebar-|chart-)/.test(propVal);
+        const hasColorComposition = /var\([^)]+\)\s*\/\s*[\d.]+/.test(propVal);
+
+        if (hasVarColorRef || hasColorComposition) {
+          if (
+            !NUMIS_ROOT_TOKENS.has(propName) &&
+            !YUEORA_SEMANTIC_COLOR_ALIASES.has(propName) &&
+            !YUEORA_COMPATIBILITY_COLOR_ALIASES.has(propName) &&
+            !ELEVATION_SHADOW_TOKENS.has(propName)
+          ) {
+            issues.push({
+              file: filePath,
+              line: lineNum,
+              matched: propName,
+              message: `Unknown semantic color alias '${propName}' with value '${propVal}' found in src/index.css. New semantic color aliases must trace to an approved manifest in color-provenance-guard.mjs.`,
+            });
+          }
+        }
       }
     }
 
@@ -353,52 +537,43 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
       }
     }
 
-    // 5. Check Tailwind named physical colors (covering gradients: from-, via-, to-, decoration-, outline-, etc.)
+    // 5. Check Tailwind named physical colors & Exact Recipe Matching
     const namedUtilsOnLine = [];
     for (const colorName of TAILWIND_NAMED_COLORS) {
-      const namedColorRegex = new RegExp(`\\b(?:bg|text|border|ring|fill|stroke|from|via|to|decoration|outline|caret|accent|shadow)-${colorName}(?:-\\d+)?(?:\\/\\d+)?\\b`, 'g');
+      const namedColorRegex = new RegExp(`\\b(?:bg|text|border|ring|fill|stroke|from|via|to|decoration|outline|caret|accent|shadow|hover:text|focus:ring|focus:ring-offset)-${colorName}(?:-\\d+)?(?:\\/\\d+)?\\b`, 'g');
       let namedMatch;
       while ((namedMatch = namedColorRegex.exec(line)) !== null) {
         const util = namedMatch[0];
-        namedUtilsOnLine.push({ util, colorName });
-        // Allow if it matches an approved Numis actual status recipe
-        if (!NUMIS_ACTUAL_STATUS_RECIPES.has(util)) {
-          issues.push({
-            file: filePath,
-            line: lineNum,
-            matched: util,
-            message: `Tailwind named physical color '${util}' found without Numis provenance. Only verified Numis actual status recipes or canonical semantic tokens are allowed.`,
-          });
-        }
+        namedUtilsOnLine.push(util);
       }
     }
 
-    // Role-Aware Status Recipe Grouping & Cross-Color Mixing Guard
-    if (namedUtilsOnLine.length > 1) {
-      const colorFamilies = new Set(namedUtilsOnLine.map((u) => u.colorName));
-      // Cross-color mixing check (e.g. emerald with red, or blue with emerald)
-      if (colorFamilies.size > 1) {
-        // Exempt toast close button red variants
-        const isToastClose = namedUtilsOnLine.every((u) => u.colorName === 'red');
-        if (!isToastClose) {
-          issues.push({
-            file: filePath,
-            line: lineNum,
-            matched: namedUtilsOnLine.map((u) => u.util).join(' + '),
-            message: `Mixed status recipe combines conflicting color families (${[...colorFamilies].join(', ')}). Status utilities cannot cross color roles.`,
-          });
-        }
-      }
+    if (namedUtilsOnLine.length > 0) {
+      // Find matching recipe in NUMIS_STATUS_RECIPES
+      const matchedRecipe = NUMIS_STATUS_RECIPES.find((r) => {
+        if (r.yueoraClasses.length !== namedUtilsOnLine.length) return false;
+        return r.yueoraClasses.every((c) => namedUtilsOnLine.includes(c));
+      });
 
-      // Check partial/mismatched recipe combinations: bg-amber-500/10 with text-amber-600
-      const utilsSet = new Set(namedUtilsOnLine.map((u) => u.util));
-      if (utilsSet.has('bg-amber-500/10') && utilsSet.has('text-amber-600')) {
+      if (!matchedRecipe) {
         issues.push({
           file: filePath,
           line: lineNum,
-          matched: 'bg-amber-500/10 + text-amber-600',
-          message: `Mismatched status recipe: bg-amber-500/10 must be paired with text-amber-700 (ItemCard condition recipe), found text-amber-600.`,
+          matched: namedUtilsOnLine.join(' + '),
+          message: `Unapproved status recipe combination '${namedUtilsOnLine.join(' ')}' found. Named physical colors must match an exact Numis recipe with all required classes.`,
         });
+      } else {
+        // Recipe matched, now verify owner scope
+        if (matchedRecipe.allowedOwners && matchedRecipe.allowedOwners.length > 0) {
+          if (!matchedRecipe.allowedOwners.includes(normPath)) {
+            issues.push({
+              file: filePath,
+              line: lineNum,
+              matched: namedUtilsOnLine.join(' + '),
+              message: `Status recipe '${matchedRecipe.id}' (${matchedRecipe.yueoraClasses.join(' ')}) is not approved for owner '${normPath}'.`,
+            });
+          }
+        }
       }
     }
 
@@ -549,29 +724,18 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
       }
     }
 
-    // 14. Check Exact Color + Opacity Recipes (Exact Token + Opacity pair validation)
-    const chromaticOpacityMatches = line.matchAll(/\b(bg|text|border|ring|shadow|to|from)-(brand|danger|warning|success|practice-[a-z]+)\/(\d+)\b/g);
+    // 14. Check Exact Utility + Color + Opacity Recipes across ALL semantic color families
+    const chromaticOpacityMatches = line.matchAll(/\b((?:bg|text|border|ring|shadow|to|from|stroke|fill)-(?:brand|danger|warning|success|info|surface-[a-z]+|line-[a-z]+|neutral-[a-z]+|ink-[a-z]+|practice-[a-z]+|secondary|muted|accent|destructive|primary|card|popover|background|foreground|sidebar-[a-z]+)\/(\d+))\b/g);
     for (const m of chromaticOpacityMatches) {
-      const utilPrefix = m[1];
-      const token = m[2];
-      const opVal = m[3];
-      const pair = `${token}/${opVal}`;
+      const fullUtil = m[1];
 
-      // Check if pair is in exact Numis manifest
-      if (!NUMIS_COLOR_OPACITY_PAIRS.has(pair)) {
+      // Check if full utility (prefix + token + opacity) is in exact Numis manifest
+      if (!NUMIS_EXACT_COLOR_UTILITIES.has(fullUtil)) {
         issues.push({
           file: filePath,
           line: lineNum,
-          matched: m[0],
-          message: `Unapproved chromatic color+opacity recipe '${m[0]}' found without Numis provenance. Pair '${pair}' is not in NUMIS_COLOR_OPACITY_PAIRS.`,
-        });
-      } else if (utilPrefix === 'border' && token === 'brand' && opVal === '60') {
-        // Numis only has text-primary/60 (CollectionFormDialog.jsx, Dashboard.jsx), never border-primary/60
-        issues.push({
-          file: filePath,
-          line: lineNum,
-          matched: m[0],
-          message: `Unapproved chromatic opacity recipe 'border-brand/60' found without Numis source provenance (only text-brand/60 is proven).`,
+          matched: fullUtil,
+          message: `Unapproved color+opacity utility '${fullUtil}' found without Numis source provenance. Every color utility with opacity must trace to NUMIS_EXACT_COLOR_UTILITIES.`,
         });
       }
     }

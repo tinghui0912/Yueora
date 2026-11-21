@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, ArrowRight, Sparkles } from 'lucide-react';
+import { Check, ArrowRight } from 'lucide-react';
 import PublicShell from '@/components/public/PublicShell';
 import AppPage from '@/components/patterns/AppPage';
 import Surface from '@/components/patterns/Surface';
@@ -154,65 +154,60 @@ export default function Pricing() {
               </div>
             </Reveal>
 
-            {/* Plus Plan — Featured Middle Near-Black Inverse Card (Most Popular) */}
+            {/* Plus Plan — Featured Middle Panel (Most Popular) */}
             <Reveal delay={0.1} y={32}>
-              <div className="relative h-full rounded-container p-6 sm:p-8 md:p-9 bg-ink-primary text-surface-canvas border border-ink-primary flex flex-col justify-between hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                {/* Ambient glow decoration */}
-                <div aria-hidden className="pointer-events-none absolute -bottom-8 -right-8 select-none">
-                  <Sparkles className="w-40 h-40 text-surface-canvas/[0.04]" />
-                </div>
-
+              <div className="relative h-full rounded-container p-6 sm:p-8 md:p-9 bg-surface-panel text-ink-primary border-2 border-brand flex flex-col justify-between hover:-translate-y-1 transition-all duration-300">
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-6">
-                    <span className="type-eyebrow text-surface-canvas/60">
+                    <span className="type-eyebrow text-brand">
                       Regular Musician
                     </span>
-                    <span className="rounded-full border border-surface-canvas/20 bg-surface-canvas/15 px-3 py-0.5 type-metadata font-medium text-surface-canvas">
+                    <span className="rounded-full bg-brand-soft px-3 py-0.5 type-metadata font-medium text-brand-soft-foreground">
                       Most Popular
                     </span>
                   </div>
 
-                  <h3 className="type-display font-medium text-surface-canvas">
+                  <h3 className="type-display font-medium text-ink-primary">
                     {plans.plus.name}
                   </h3>
-                  <p className="mt-2.5 type-body-small text-surface-canvas/75">
+                  <p className="mt-2.5 type-body-small text-ink-secondary">
                     For active players who build a solid repertoire and value practice insights.
                   </p>
 
                   <div className="mt-6 flex items-baseline gap-1.5">
-                    <span className="type-display font-medium text-surface-canvas">
+                    <span className="type-display font-medium text-ink-primary">
                       {formatPrice(yearly ? plans.plus.priceYearly : plans.plus.priceMonthly)}
                     </span>
-                    <span className="type-metadata text-surface-canvas/70">
+                    <span className="type-metadata text-ink-tertiary">
                       /{intervalNoun(interval)}
                     </span>
                   </div>
-                  <p className="mt-1 type-metadata text-surface-canvas/60">
+                  <p className="mt-1 type-metadata text-ink-tertiary">
                     {yearly
                       ? `${formatPrice(monthlyEquivalent(plans.plus, 'yearly'))} a month, billed annually`
                       : 'Billed monthly. Change or cancel anytime.'}
                   </p>
 
-                  <div className="mt-7 pt-5 border-t border-surface-canvas/15">
-                    <ul className="space-y-3 type-body-small text-surface-canvas/85">
+                  <div className="mt-7 pt-5 border-t border-line-subtle">
+                    <ul className="space-y-3 type-body-small text-ink-primary">
                       <li className="flex items-start gap-2.5">
-                        <Check className="w-4 h-4 mt-0.5 text-surface-canvas shrink-0" />
+                        <Check className="w-4 h-4 mt-0.5 text-brand shrink-0" />
                         <span><strong>{plans.plus.scores}</strong> in your library</span>
                       </li>
                       <li className="flex items-start gap-2.5">
-                        <Check className="w-4 h-4 mt-0.5 text-surface-canvas shrink-0" />
+                        <Check className="w-4 h-4 mt-0.5 text-brand shrink-0" />
                         <span><strong>{plans.plus.imports}</strong></span>
                       </li>
                       <li className="flex items-start gap-2.5">
-                        <Check className="w-4 h-4 mt-0.5 text-surface-canvas shrink-0" />
+                        <Check className="w-4 h-4 mt-0.5 text-brand shrink-0" />
                         <span><strong>{plans.plus.storage}</strong> storage</span>
                       </li>
                       <li className="flex items-start gap-2.5">
-                        <Check className="w-4 h-4 mt-0.5 text-surface-canvas shrink-0" />
+                        <Check className="w-4 h-4 mt-0.5 text-brand shrink-0" />
                         <span>{plans.plus.sharing} sharing</span>
                       </li>
                       <li className="flex items-start gap-2.5">
-                        <Check className="w-4 h-4 mt-0.5 text-surface-canvas shrink-0" />
+                        <Check className="w-4 h-4 mt-0.5 text-brand shrink-0" />
                         <span>Practice insights &amp; progress journal</span>
                       </li>
                     </ul>
@@ -242,7 +237,7 @@ export default function Pricing() {
                           <ArrowRight className="w-4 h-4" />
                         </Link>
                       </Button>
-                      <p className="mt-2 text-center type-metadata text-surface-canvas/50">
+                      <p className="mt-2 text-center type-metadata text-ink-tertiary">
                         {isAuthenticated ? 'Continue to checkout.' : 'Create an account, then continue.'}
                       </p>
                     </>
@@ -370,10 +365,10 @@ export default function Pricing() {
                   </thead>
                   <tbody className="divide-y divide-line-subtle">
                     {features.map((f) => (
-                      <tr key={f.key} className="hover:bg-neutral-hover/50 transition-colors">
+                      <tr key={f.key} className="hover:bg-neutral-hover transition-colors">
                         <td className="px-6 py-4 text-ink-secondary">{f.label}</td>
                         <td className="px-6 py-4 text-center text-ink-primary">{renderVal(plans.free[f.key])}</td>
-                        <td className="px-6 py-4 text-center font-medium text-ink-primary bg-neutral-muted/20">{renderVal(plans.plus[f.key])}</td>
+                        <td className="px-6 py-4 text-center font-medium text-ink-primary bg-neutral-muted/30">{renderVal(plans.plus[f.key])}</td>
                         <td className="px-6 py-4 text-center font-medium text-ink-primary">{renderVal(plans.pro[f.key])}</td>
                       </tr>
                     ))}

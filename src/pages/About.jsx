@@ -44,7 +44,7 @@ export default function About() {
                 {/* Score Footer Details */}
                 <div className="pt-4 border-t border-line-subtle flex items-center justify-between type-metadata text-ink-tertiary">
                   <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500" /> Acoustic Listener Ready
+                    <span className="w-2 h-2 rounded-full bg-brand" /> Acoustic Listener Ready
                   </span>
                   <span>Personal Repertoire · Page 1</span>
                 </div>
@@ -109,7 +109,7 @@ export default function About() {
         </section>
 
         {/* 2. Etymology Section — The Sound & Meaning */}
-        <section className="py-24 md:py-36 border-t border-line-subtle/80 bg-surface-panel/30">
+        <section className="py-24 md:py-36 border-t border-line-subtle bg-surface-panel">
           <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5">
               <Reveal>
@@ -226,7 +226,7 @@ export default function About() {
         </section>
 
         {/* 4. Companion, Not Coach & Sanctuary Guarantees */}
-        <section className="py-24 md:py-36 border-t border-line-subtle/80 bg-surface-panel/30">
+        <section className="py-24 md:py-36 border-t border-line-subtle bg-surface-panel">
           <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
             <div className="lg:col-span-6">
               <Reveal>
@@ -284,28 +284,28 @@ export default function About() {
         <section className="py-24 md:py-36">
           <div className="max-w-7xl mx-auto px-6 md:px-10">
             <Reveal y={36}>
-              <div className="relative rounded-container bg-ink-primary text-surface-canvas p-10 md:p-16 lg:p-20 overflow-hidden">
+              <div className="relative rounded-container bg-surface-panel border border-line-subtle p-10 md:p-16 lg:p-20 overflow-hidden">
                 {/* Ambient watermark */}
                 <div aria-hidden className="pointer-events-none absolute -bottom-10 -right-8 select-none">
                   {/* ds-allow: ambient oversized background typography */}
-                  <span className="font-display italic text-[22vw] leading-none text-surface-canvas/[0.04]">
+                  <span className="font-display italic text-[22vw] leading-none text-ink-primary/[0.04]">
                     joy
                   </span>
                 </div>
 
                 <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
                   <div className="lg:col-span-8">
-                    <p className="type-eyebrow text-surface-canvas/60 mb-5">
+                    <p className="type-eyebrow text-ink-secondary mb-5">
                       Start Your Sanctuary
                     </p>
-                    <h2 className="type-marketing-title text-surface-canvas">
+                    <h2 className="type-marketing-title text-ink-primary">
                       Play what you love.
                       <br />
-                      <span className="italic font-normal text-surface-canvas/80">
+                      <span className="italic font-normal text-ink-secondary">
                         Bring the music that matters.
                       </span>
                     </h2>
-                    <p className="mt-6 max-w-xl type-marketing-body text-surface-canvas/75">
+                    <p className="mt-6 max-w-xl type-marketing-body text-ink-secondary">
                       Begin with whatever is sitting on your piano right now. Free to start, private forever.
                     </p>
                   </div>

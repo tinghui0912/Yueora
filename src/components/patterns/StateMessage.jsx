@@ -4,8 +4,8 @@ import { cn } from '@/lib/utils';
 const toneStyles = {
   neutral: { icon: 'text-ink-tertiary', title: 'text-ink-primary', desc: 'text-ink-secondary' },
   brand: { icon: 'text-brand', title: 'text-ink-primary', desc: 'text-ink-secondary' },
-  success: { icon: 'text-emerald-600', title: 'text-ink-primary', desc: 'text-ink-secondary' },
-  warning: { icon: 'text-amber-600', title: 'text-ink-primary', desc: 'text-ink-secondary' },
+  success: { icon: 'text-brand', title: 'text-ink-primary', desc: 'text-ink-secondary' },
+  warning: { icon: 'text-brand', title: 'text-ink-primary', desc: 'text-ink-secondary' },
   danger: { icon: 'text-danger', title: 'text-ink-primary', desc: 'text-ink-secondary' },
 };
 
@@ -26,7 +26,7 @@ export default function StateMessage({
   return (
     <div className={cn('flex flex-col items-center px-6 py-16 text-center', className)}>
       {Icon && (
-        <div className={cn('mb-4 flex h-12 w-12 items-center justify-center rounded-container bg-surface-canvas/60', s.icon)}>
+        <div className={cn('mb-4 flex h-12 w-12 items-center justify-center rounded-container bg-surface-canvas', s.icon)}>
           <Icon className="icon-xl" aria-hidden="true" />
         </div>
       )}

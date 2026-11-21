@@ -21,7 +21,7 @@ export default function VirtualKeyboard({ current, showNames }) {
         {BLACK_AFTER.map((i) => (
           <div
             key={`b-${i}`}
-            className="absolute top-0 h-10 w-[4.2%] rounded-b-sm bg-ink-primary/85"
+            className="absolute top-0 h-10 w-[4.2%] rounded-b-sm bg-ink-primary"
             style={{ left: `${((i + 1) / WHITE_KEYS.length) * 100}%`, transform: 'translateX(-50%)' }}
           />
         ))}

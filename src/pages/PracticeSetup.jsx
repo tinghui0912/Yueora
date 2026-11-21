@@ -330,7 +330,7 @@ export default function PracticeSetup() {
                     muted
                     playsInline
                     aria-label="Camera preview"
-                    className="h-16 w-24 rounded-control border border-line-subtle bg-ink-primary/10 object-cover"
+                    className="h-16 w-24 rounded-control border border-line-subtle bg-neutral-muted object-cover"
                   />
                   <p className="type-metadata text-ink-tertiary">This is the camera Yueora will record from.</p>
                 </div>

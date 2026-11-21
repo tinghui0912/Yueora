@@ -372,7 +372,7 @@ export default function AddScore() {
                 <div className="relative aspect-[4/3] rounded-container border border-line-subtle bg-surface-canvas overflow-hidden flex flex-col items-center justify-center p-6 text-center">
                   {/* Framing outline */}
                   <div className="absolute inset-6 rounded-control border-2 border-dashed border-line-strong pointer-events-none flex items-center justify-center">
-                    <span className="type-caption text-ink-tertiary bg-surface-canvas/90 px-3 py-1 rounded-full">
+                    <span className="type-caption text-ink-tertiary bg-surface-canvas px-3 py-1 rounded-full">
                       Align sheet within borders
                     </span>
                   </div>
@@ -489,7 +489,7 @@ export default function AddScore() {
 
             {/* QA Testing Triggers (development-only) */}
             {import.meta.env.DEV && (
-              <div className="flex flex-wrap items-center gap-2 rounded-control border border-line-subtle bg-surface-canvas/50 px-3 py-2">
+              <div className="flex flex-wrap items-center gap-2 rounded-control border border-line-subtle bg-surface-canvas px-3 py-2">
                 <span className="type-caption text-ink-secondary">DEV QA:</span>
                 {Object.entries(errorTypes).map(([k, v]) => (
                   <button

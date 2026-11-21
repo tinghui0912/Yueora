@@ -157,7 +157,7 @@ export default function PracticeProgress() {
                       className={`w-full rounded-t-control transition-colors ${d.isToday ? 'bg-brand' : 'bg-neutral-muted hover:bg-neutral-hover'}`}
                       style={{ height: `${(d.minutes / max) * 100}%`, minHeight: d.minutes > 0 ? 3 : 0 }}
                     />
-                    <span className="type-metadata font-medium text-ink-secondary/80">{d.label}</span>
+                    <span className="type-metadata font-medium text-ink-secondary">{d.label}</span>
                   </div>
                 ))}
               </div>

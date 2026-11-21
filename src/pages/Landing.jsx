@@ -243,7 +243,7 @@ export default function Landing() {
           className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-ink-tertiary"
         >
           <span className="type-eyebrow">Scroll</span>
-          <span className="w-px h-8 bg-ink-primary/20 overflow-hidden relative">
+          <span className="w-px h-8 bg-line-subtle overflow-hidden relative">
             <motion.span
               className="absolute inset-x-0 top-0 h-1/2 bg-ink-primary"
               animate={{ y: [-16, 32] }}
@@ -254,7 +254,7 @@ export default function Landing() {
       </section>
 
       {/* 2. REASSURANCE / PHILOSOPHY STRIP — UGC BrandTrustBar Parity */}
-      <section id="trust" className="py-20 md:py-24 border-y border-line-subtle/80 bg-surface-panel/40">
+      <section id="trust" className="py-20 md:py-24 border-y border-line-subtle bg-surface-panel">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <p className="text-center type-eyebrow text-ink-tertiary mb-10">
@@ -263,7 +263,7 @@ export default function Landing() {
           </Reveal>
 
           <Reveal delay={0.05}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-line-subtle/80 rounded-container overflow-hidden border border-line-subtle/80">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-line-subtle rounded-container overflow-hidden border border-line-subtle">
               <div className="bg-surface-canvas px-6 py-8 text-center">
                 <div className="type-display text-brand">0</div>
                 <div className="mt-2 type-eyebrow text-ink-secondary">
@@ -334,7 +334,7 @@ export default function Landing() {
                       <span className="type-caption font-mono text-ink-primary">
                         {s.step}
                       </span>
-                      <span className="type-caption rounded-full bg-surface-canvas px-3 py-0.5 text-ink-tertiary border border-line-subtle/60">
+                      <span className="type-caption rounded-full bg-surface-canvas px-3 py-0.5 text-ink-tertiary border border-line-subtle/50">
                         {s.tag}
                       </span>
                     </div>
@@ -363,7 +363,7 @@ export default function Landing() {
                       <p className="type-eyebrow text-ink-tertiary">Step 01 · Original Paper Scan</p>
                       <span className="type-body-small font-medium text-ink-primary">Debussy · Clair de Lune</span>
                     </div>
-                    <div className="mt-6 overflow-hidden rounded-container border border-line-subtle bg-surface-canvas/50">
+                    <div className="mt-6 overflow-hidden rounded-container border border-line-subtle bg-surface-canvas">
                       <MockScanPage seed="step-scan-original" className="aspect-[16/10] w-full" />
                     </div>
                     <p className="mt-4 text-center type-metadata text-ink-tertiary italic">
@@ -396,7 +396,7 @@ export default function Landing() {
                       <p className="type-eyebrow text-ink-tertiary">Step 03 · Living Repertoire</p>
                       <span className="type-body-small font-medium text-ink-primary">Curated Collection</span>
                     </div>
-                    <div className="mt-6 rounded-container border border-line-subtle bg-surface-canvas/50 p-5">
+                    <div className="mt-6 rounded-container border border-line-subtle bg-surface-canvas p-5">
                       <div className="flex items-start justify-between">
                         <div>
                           <h4 className="type-subsection text-ink-primary">
@@ -430,7 +430,7 @@ export default function Landing() {
       </section>
 
       {/* 4. THE PRACTICE STAND — UGC 5/7 Editorial Asymmetry */}
-      <section id="practice" className="py-24 md:py-36 bg-surface-panel/30 border-y border-line-subtle/80">
+      <section id="practice" className="py-24 md:py-36 bg-surface-panel border-y border-line-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left 5 Columns — Visual */}
           <Reveal className="lg:col-span-5" y={36}>
@@ -514,7 +514,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             <Reveal delay={0}>
               <Surface padding="lg" interactive>
-                <div className="aspect-[4/3] overflow-hidden rounded-container border border-line-subtle bg-surface-canvas/50">
+                <div className="aspect-[4/3] overflow-hidden rounded-container border border-line-subtle bg-surface-canvas">
                   <ScorePreview id="rep-clair" className="h-full w-full object-cover" />
                 </div>
                 <div className="mt-5">
@@ -531,7 +531,7 @@ export default function Landing() {
 
             <Reveal delay={0.08}>
               <Surface padding="lg" interactive>
-                <div className="aspect-[4/3] overflow-hidden rounded-container border border-line-subtle bg-surface-canvas/50">
+                <div className="aspect-[4/3] overflow-hidden rounded-container border border-line-subtle bg-surface-canvas">
                   <ScorePreview id="rep-gymno" className="h-full w-full object-cover" />
                 </div>
                 <div className="mt-5">
@@ -548,7 +548,7 @@ export default function Landing() {
 
             <Reveal delay={0.16}>
               <Surface padding="lg" interactive>
-                <div className="aspect-[4/3] overflow-hidden rounded-container border border-line-subtle bg-surface-canvas/50 flex items-center justify-center">
+                <div className="aspect-[4/3] overflow-hidden rounded-container border border-line-subtle bg-surface-canvas flex items-center justify-center">
                   <div className="text-center p-6">
                     <ScoreSheetGlyph className="h-8 w-8 text-ink-primary mx-auto mb-3" />
                     <p className="type-subsection text-ink-primary">Your Next Piece</p>
@@ -571,7 +571,7 @@ export default function Landing() {
       </section>
 
       {/* 6. PRESERVED PERFORMANCES & INTIMATE SHARING */}
-      <section id="performances" className="py-24 md:py-36 bg-surface-panel/30 border-y border-line-subtle/80">
+      <section id="performances" className="py-24 md:py-36 bg-surface-panel border-y border-line-subtle">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
@@ -672,30 +672,30 @@ export default function Landing() {
               </div>
             </Reveal>
 
-            {/* Plus Plan — Featured Middle Inverse Dark Card (Most Popular) */}
+            {/* Plus Plan — Featured Middle Panel (Most Popular) */}
             <Reveal delay={0.1}>
-              <div className="h-full rounded-container p-8 md:p-9 flex flex-col justify-between bg-ink-primary text-surface-canvas border border-ink-primary transition-all duration-300 hover:-translate-y-1">
+              <div className="h-full rounded-container p-8 md:p-9 flex flex-col justify-between bg-surface-panel text-ink-primary border-2 border-brand transition-all duration-300 hover:-translate-y-1">
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="type-eyebrow text-surface-canvas/60">
+                    <span className="type-eyebrow text-brand">
                       Regular Musician
                     </span>
                     <span className="rounded-full bg-brand text-brand-foreground px-3 py-1 type-caption">
                       Most Popular
                     </span>
                   </div>
-                  <h3 className="type-display text-surface-canvas mt-4">
+                  <h3 className="type-display text-ink-primary mt-4">
                     {plans.plus.name}
                   </h3>
-                  <p className="mt-3 type-body-small text-surface-canvas/75">
+                  <p className="mt-3 type-body-small text-ink-secondary">
                     For active players building their repertoire with practice insights.
                   </p>
-                  <div className="mt-6 type-display text-surface-canvas">
+                  <div className="mt-6 type-display text-ink-primary">
                     {formatPrice(plans.plus.priceMonthly)}
-                    <span className="type-metadata font-normal text-surface-canvas/60 ml-2">/ month</span>
+                    <span className="type-metadata font-normal text-ink-tertiary ml-2">/ month</span>
                   </div>
 
-                  <ul className="mt-8 space-y-3.5 border-t border-surface-canvas/20 pt-6 type-body-small text-surface-canvas/85">
+                  <ul className="mt-8 space-y-3.5 border-t border-line-subtle pt-6 type-body-small text-ink-primary">
                     <li className="flex items-center gap-3">
                       <Check className="h-4 w-4 text-brand shrink-0" /> <strong>{plans.plus.scores}</strong> in your library
                     </li>
@@ -776,7 +776,7 @@ export default function Landing() {
       </section>
 
       {/* 8. EDITORIAL FAQ */}
-      <section className="py-24 md:py-36 border-t border-line-subtle/80 bg-surface-panel/30">
+      <section className="py-24 md:py-36 border-t border-line-subtle bg-surface-panel">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 md:px-10">
           <Reveal>
             <div className="text-center">
@@ -807,22 +807,22 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* 9. FINAL INVERSE CONVERSION BLOCK — UGC ContactCTA Parity */}
+      {/* 9. FINAL CONVERSION BLOCK — UGC ContactCTA Parity */}
       <section className="py-24 md:py-36">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
-          <div className="rounded-container bg-ink-primary text-surface-canvas overflow-hidden relative">
+          <div className="rounded-container bg-surface-panel border border-line-subtle overflow-hidden relative">
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 p-8 md:p-14 lg:p-20 items-center">
               {/* Left 7 Columns — Pitch */}
               <div className="lg:col-span-7">
                 <Reveal>
-                  <p className="type-eyebrow text-surface-canvas/50 mb-6">
+                  <p className="type-eyebrow text-ink-secondary mb-6">
                     A Personal Sanctuary
                   </p>
-                  <h2 className="type-marketing-title text-balance text-surface-canvas">
+                  <h2 className="type-marketing-title text-balance text-ink-primary">
                     Play what you love. <br />
-                    <span className="italic text-surface-canvas/80">乐，是为了悦。</span>
+                    <span className="italic text-ink-secondary">乐，是为了悦。</span>
                   </h2>
-                  <p className="mt-7 type-marketing-body text-surface-canvas/75 max-w-lg">
+                  <p className="mt-7 type-marketing-body text-ink-secondary max-w-lg">
                     Your music is waiting on your piano stand. Bring it into Yueora and start your
                     journey with the pieces that already matter to you.
                   </p>
@@ -832,14 +832,14 @@ export default function Landing() {
               {/* Right 5 Columns — Action Card */}
               <div className="lg:col-span-5 flex flex-col justify-center">
                 <Reveal delay={0.1}>
-                  <div className="rounded-container border border-surface-canvas/15 p-8 md:p-10 bg-surface-canvas/5 backdrop-blur-md">
-                    <p className="type-caption text-surface-canvas/60 mb-2">
+                  <div className="rounded-container border border-line-subtle p-8 md:p-10 bg-surface-canvas">
+                    <p className="type-caption text-ink-tertiary mb-2">
                       Get Started Today
                     </p>
-                    <p className="type-subsection text-surface-canvas">
+                    <p className="type-subsection text-ink-primary">
                       No card required for free tier.
                     </p>
-                    <p className="type-body-small text-surface-canvas/75 mt-2">
+                    <p className="type-body-small text-ink-secondary mt-2">
                       Upload your first score in under two minutes.
                     </p>
                     <div className="mt-8 flex flex-col gap-3">
@@ -849,7 +849,7 @@ export default function Landing() {
                           <ArrowRight className="h-4 w-4" />
                         </Link>
                       </Button>
-                      <p className="text-center type-metadata text-surface-canvas/50 mt-1">
+                      <p className="text-center type-metadata text-ink-tertiary mt-1">
                         Encrypted · Private by Default · Cancel Anytime
                       </p>
                     </div>

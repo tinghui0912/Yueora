@@ -1,33 +1,24 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-const toneDot = {
-  neutral: 'bg-ink-tertiary',
-  brand: 'bg-brand',
-  success: 'bg-emerald-500',
-  warning: 'bg-amber-500',
-  danger: 'bg-danger',
-  practice: 'bg-brand',
-};
-
-const toneText = {
-  neutral: 'text-ink-secondary',
-  brand: 'text-ink-primary',
-  success: 'text-emerald-700',
-  warning: 'text-amber-700',
-  danger: 'text-danger',
-  practice: 'text-brand',
-};
-
 /**
- * StatusIndicator — dot + label for import status, save state, live input, MIDI, sharing, invitation.
+ * StatusIndicator — status badge/pill for import status, save state, live input, MIDI, sharing, invitation.
+ * Sourced directly from NumisCollection ItemCard condition recipes.
  */
+const toneStyles = {
+  neutral: 'border border-line-subtle bg-surface-canvas text-ink-secondary',
+  brand: 'border border-brand/20 bg-brand-soft text-brand-soft-foreground',
+  success: 'border border-emerald-200 bg-emerald-500/10 text-emerald-700',
+  warning: 'border border-amber-200 bg-amber-500/10 text-amber-700',
+  danger: 'border border-red-200 bg-red-500/10 text-red-700',
+  practice: 'border border-brand/20 bg-brand-soft text-brand-soft-foreground',
+};
+
 export default function StatusIndicator({ tone = 'neutral', label, className = '', pulse = false }) {
-  const dot = toneDot[tone] || toneDot.neutral;
-  const text = toneText[tone] || toneText.neutral;
+  const recipe = toneStyles[tone] || toneStyles.neutral;
   return (
-    <span className={cn('inline-flex items-center gap-1.5 type-body-small', text, className)}>
-      <span className={cn('h-2 w-2 rounded-full', dot, pulse && 'animate-pulse')} />
+    <span className={cn('inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 type-body-small font-medium', recipe, className)}>
+      {pulse && <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />}
       {label}
     </span>
   );

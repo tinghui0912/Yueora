@@ -106,7 +106,7 @@ export default function RecognitionReview() {
             <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-3">
               <MockScanPage seed={importId + '-scan'} className="aspect-[3/4] w-full" showHighlight={!!active} highlightMeasure={active?.measure} />
               <p className="mt-2 text-center type-metadata text-ink-tertiary">Page 1 (scan)</p>
-              {active && <p className="mt-1 text-center type-metadata text-amber-700">Highlight near measure {active.measure}</p>}
+              {active && <p className="mt-1 text-center type-metadata text-brand">Highlight near measure {active.measure}</p>}
             </div>
           </div>
         </div>
@@ -117,7 +117,7 @@ export default function RecognitionReview() {
             <div className="mx-auto max-w-sm rounded-container border border-line-subtle bg-surface-panel p-3">
               <MockScanPage seed={importId + '-scan'} className="aspect-[3/4] w-full" showHighlight={!!active} highlightMeasure={active?.measure} />
               <p className="mt-2 text-center type-metadata text-ink-tertiary">Page 1 (scan)</p>
-              {active && <p className="mt-1 text-center type-metadata text-amber-700">Highlight near measure {active.measure}</p>}
+              {active && <p className="mt-1 text-center type-metadata text-brand">Highlight near measure {active.measure}</p>}
             </div>
           </div>
         )}
@@ -129,8 +129,8 @@ export default function RecognitionReview() {
             <Surface padding="lg" className="mx-auto max-w-3xl">
               <ScoreCanvas notes={notes} selectedIds={new Set()} onSelect={() => {}} zoom={1} activeIssueMeasure={active?.measure} />
               {active && (
-                <div className="mt-3 rounded-control border border-amber-200 bg-amber-500/10 px-3 py-2">
-                  <p className="type-body-small font-medium text-amber-700">Measure {active.measure}: {active.type}</p>
+                <div className="mt-3 rounded-control border border-amber-200 bg-amber-500/10 px-3 py-2 text-amber-700">
+                  <p className="type-body-small font-medium">Measure {active.measure}: {active.type}</p>
                   <p className="type-metadata text-ink-secondary">{active.detail}</p>
                 </div>
               )}
@@ -158,8 +158,8 @@ export default function RecognitionReview() {
             {issues.map((iss) => (
               <button key={iss.id} onClick={() => { setActiveIssue(iss.id); setMobileIssuesOpen(false); }} className={`w-full rounded-control border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-neutral-hover' : 'border-line-subtle'} ${iss.resolved ? 'opacity-50' : ''}`}>
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="h-3.5 w-3.5 text-amber-600" /> Measure {iss.measure}</span>
-                  {iss.resolved && <Check className="h-3.5 w-3.5 text-emerald-600" />}
+                  <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="h-3.5 w-3.5 text-brand" /> Measure {iss.measure}</span>
+                  {iss.resolved && <Check className="h-3.5 w-3.5 text-brand" />}
                 </div>
                 <p className="mt-0.5 type-metadata text-ink-tertiary">{iss.type}</p>
               </button>
@@ -210,8 +210,8 @@ function IssuesPanel({ issues, activeIssue, setActiveIssue, active, onMarkFixed,
             className={`w-full rounded-container border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-neutral-hover' : 'border-line-subtle bg-surface-panel hover:bg-neutral-hover'} ${iss.resolved ? 'opacity-50' : ''}`}
           >
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="icon-xs text-amber-600" /> Measure {iss.measure}</span>
-              {iss.resolved && <Check className="icon-xs text-emerald-600" />}
+              <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="icon-xs text-brand" /> Measure {iss.measure}</span>
+              {iss.resolved && <Check className="icon-xs text-brand" />}
             </div>
             <p className="mt-0.5 type-metadata text-ink-secondary">{iss.type}</p>
             <p className="mt-0.5 type-metadata text-ink-secondary">{iss.detail}</p>
