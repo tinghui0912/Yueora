@@ -6,6 +6,7 @@ import {
   Heart,
   Plus,
   Sparkles,
+  Music,
 } from 'lucide-react';
 import { AppPage } from '@/components/patterns/AppPage';
 import { PageHeader } from '@/components/patterns/PageHeader';
@@ -15,6 +16,8 @@ import { ChoiceCard } from '@/components/patterns/ChoiceCard';
 import { Surface } from '@/components/patterns/Surface';
 import BackLink from '@/components/patterns/BackLink';
 import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
+import { SegmentedControl, SegmentedControlItem } from '@/components/patterns/SegmentedControl';
+import EmptyState from '@/components/patterns/EmptyState';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import { Field } from '@/components/ui/field';
@@ -61,6 +64,7 @@ export default function DesignSystemPreview() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [switchChecked, setSwitchChecked] = useState(true);
   const [filterActive, setFilterActive] = useState('all');
+  const [segmentedValue, setSegmentedValue] = useState('overview');
 
   return (
     <AppPage size="standard" className="space-y-12">
@@ -706,6 +710,38 @@ export default function DesignSystemPreview() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* 8. Pattern Primitives: SegmentedControl & EmptyState */}
+      <section className="space-y-4" data-qa="design-system-patterns-section">
+        <SectionHeader
+          title="Pattern Primitives: SegmentedControl & EmptyState"
+          description="Tactile view switches and calm empty state messaging aligned to application grammar."
+        />
+        <Surface tone="panel" padding="md" className="space-y-6">
+          <div className="space-y-3">
+            <span className="type-caption text-ink-secondary/70">SegmentedControl (~44px height, 12px radius, card active surface)</span>
+            <div>
+              <SegmentedControl value={segmentedValue} onValueChange={setSegmentedValue} aria-label="Demo view switch">
+                <SegmentedControlItem value="overview">Overview</SegmentedControlItem>
+                <SegmentedControlItem value="recordings">Recordings</SegmentedControlItem>
+                <SegmentedControlItem value="shared">Shared with me</SegmentedControlItem>
+              </SegmentedControl>
+            </div>
+          </div>
+
+          <div className="border-t border-line-subtle pt-6 space-y-3">
+            <span className="type-caption text-ink-secondary/70">EmptyState Pattern</span>
+            <div className="rounded-container border border-line-subtle bg-surface-panel p-6">
+              <EmptyState
+                icon={Music}
+                title="No preserved takes yet"
+                description="When a practice take feels worth keeping, you can preserve it to revisit anytime."
+                action={<Button intent="primary" size="md">Choose a piece to play</Button>}
+              />
+            </div>
+          </div>
+        </Surface>
       </section>
     </AppPage>
   );

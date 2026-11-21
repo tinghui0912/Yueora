@@ -72,6 +72,7 @@ const TARGETS = [
   { name: 'sharing-pro', category: 'DEV Demo', path: '/score/clair-de-lune?dialog=sharing&plan=pro&demo=true', w: 1440, h: 900, isDialog: true },
   { name: 'perf-locked-download', category: 'DEV Demo', path: '/performances/perf-clair-take-1?plan=free&demo=true', w: 1440, h: 900 },
   { name: 'perf-pro-download', category: 'DEV Demo', path: '/performances/perf-clair-take-1?plan=pro&demo=true', w: 1440, h: 900 },
+  { name: 'performances-desktop', category: 'DEV Demo', path: '/performances?demo=true', w: 1440, h: 900 },
 
   // Interactive Component State Captures (Visual QA Verification)
   { name: 'hover-button-primary', category: 'Interaction', path: '/design-system?demo=true', w: 1440, h: 900, isInteraction: 'hover-button-primary' },
@@ -1618,7 +1619,7 @@ async function verifyComputedStyles(client, baseUrl) {
     await new Promise((r) => setTimeout(r, 200));
   }
   const perfSemantics = await ev(`(() => {
-    const viewTabs = document.querySelector('[aria-label="Performances view"]');
+    const viewTabs = document.querySelector('[data-qa="segmented-control"]') || document.querySelector('[aria-label="Preserved takes view"]') || document.querySelector('[aria-label="Performances view"]');
     const filterTabs = document.querySelector('[aria-label="Filter media type"]');
     const tabsContainer = viewTabs ? viewTabs.closest('.flex') : null;
     const tabsRowBorder = tabsContainer ? window.getComputedStyle(tabsContainer).borderBottomWidth : '0px';
@@ -1640,6 +1641,167 @@ async function verifyComputedStyles(client, baseUrl) {
     throw new Error(`Performances controls container must NOT have persistent border-b divider`);
   }
   console.log(`  ✓ Performances Page Semantics: Tabs view switch, FilterTabs media filter, no persistent border-b divider verified.`);
+
+  // 9. SegmentedControl & EmptyState Computed Styles (Numis Parity)
+  const segmentedStyles = await ev(`(() => {
+    const sc = document.querySelector('[data-qa="segmented-control"]');
+    if (!sc) return null;
+    const scCs = window.getComputedStyle(sc);
+    const activeItem = sc.querySelector('[data-qa="segmented-control-item"][data-state="active"]');
+    const activeCs = activeItem ? window.getComputedStyle(activeItem) : null;
+    const inactiveItem = sc.querySelector('[data-qa="segmented-control-item"][data-state="inactive"]');
+    const inactiveCs = inactiveItem ? window.getComputedStyle(inactiveItem) : null;
+    const scRect = sc.getBoundingClientRect();
+
+    return {
+      outerRadius: Math.round(parseFloat(scCs.borderRadius)),
+      outerPaddingTop: Math.round(parseFloat(scCs.paddingTop)),
+      outerPaddingLeft: Math.round(parseFloat(scCs.paddingLeft)),
+      outerGap: Math.round(parseFloat(scCs.gap)),
+      height: Math.round(scRect.height),
+      active: activeCs ? {
+        borderRadius: Math.round(parseFloat(activeCs.borderRadius)),
+        paddingTop: Math.round(parseFloat(activeCs.paddingTop)),
+        paddingBottom: Math.round(parseFloat(activeCs.paddingBottom)),
+        paddingLeft: Math.round(parseFloat(activeCs.paddingLeft)),
+        paddingRight: Math.round(parseFloat(activeCs.paddingRight)),
+        fontSize: Math.round(parseFloat(activeCs.fontSize)),
+        fontWeight: parseInt(activeCs.fontWeight, 10),
+        backgroundColor: activeCs.backgroundColor,
+        color: activeCs.color,
+        boxShadow: activeCs.boxShadow,
+      } : null,
+      inactive: inactiveCs ? {
+        backgroundColor: inactiveCs.backgroundColor,
+        color: inactiveCs.color,
+      } : null,
+    };
+  })()`);
+
+  if (!segmentedStyles) throw new Error('SegmentedControl [data-qa="segmented-control"] not found on /performances');
+  if (segmentedStyles.outerRadius !== 12) {
+    throw new Error(`SegmentedControl outer radius is ${segmentedStyles.outerRadius}px (expected 12px / rounded-overlay)`);
+  }
+  if (segmentedStyles.outerPaddingTop !== 4 || segmentedStyles.outerPaddingLeft !== 4) {
+    throw new Error(`SegmentedControl outer padding is ${segmentedStyles.outerPaddingTop}px (expected 4px / p-1)`);
+  }
+  if (segmentedStyles.outerGap !== 4) {
+    throw new Error(`SegmentedControl gap is ${segmentedStyles.outerGap}px (expected 4px / gap-1)`);
+  }
+  if (segmentedStyles.height < 38 || segmentedStyles.height > 48) {
+    throw new Error(`SegmentedControl height is ${segmentedStyles.height}px (expected ~44px, between 38px and 48px)`);
+  }
+  if (!segmentedStyles.active) throw new Error('Active SegmentedControl item not found');
+  if (segmentedStyles.active.borderRadius !== 10) {
+    throw new Error(`SegmentedControl active item radius is ${segmentedStyles.active.borderRadius}px (expected 10px / rounded-control)`);
+  }
+  if (segmentedStyles.active.paddingLeft !== 16 || segmentedStyles.active.paddingRight !== 16) {
+    throw new Error(`SegmentedControl active item horizontal padding is ${segmentedStyles.active.paddingLeft}px (expected 16px / px-4)`);
+  }
+  if (segmentedStyles.active.paddingTop !== 8 || segmentedStyles.active.paddingBottom !== 8) {
+    throw new Error(`SegmentedControl active item vertical padding is ${segmentedStyles.active.paddingTop}px (expected 8px / py-2)`);
+  }
+  if (segmentedStyles.active.fontSize !== 14) {
+    throw new Error(`SegmentedControl active item fontSize is ${segmentedStyles.active.fontSize}px (expected 14px / type-label)`);
+  }
+  if (segmentedStyles.active.fontWeight !== 500) {
+    throw new Error(`SegmentedControl active item fontWeight is ${segmentedStyles.active.fontWeight} (expected 500 / font-medium)`);
+  }
+  if (!segmentedStyles.active.backgroundColor.includes('253, 253, 252') && !segmentedStyles.active.backgroundColor.includes('255, 255, 255')) {
+    throw new Error(`SegmentedControl active item background is ${segmentedStyles.active.backgroundColor} (expected surface-panel warm white)`);
+  }
+  if (!segmentedStyles.active.boxShadow || segmentedStyles.active.boxShadow === 'none') {
+    throw new Error(`SegmentedControl active item must feature shadow-raised`);
+  }
+  console.log(`  ✓ SegmentedControl: ~44px height (${segmentedStyles.height}px), 12px container radius, 10px item radius, 16px/8px item padding, 14px/500 label, shadow-raised active card verified.`);
+
+  // Click 'Shared with me' tab to verify empty state display on /performances
+  await ev(`(() => {
+    const items = Array.from(document.querySelectorAll('[data-qa="segmented-control-item"]'));
+    const sharedItem = items.find(i => i.textContent.includes('Shared'));
+    if (sharedItem) sharedItem.click();
+  })()`);
+  await new Promise((r) => setTimeout(r, 400));
+
+  const emptyStateStyles = await ev(`(() => {
+    const es = document.querySelector('[data-qa="empty-state"]');
+    if (!es) return null;
+    const esCs = window.getComputedStyle(es);
+    const surround = es.querySelector('[data-qa="empty-state-icon-surround"]');
+    const surroundCs = surround ? window.getComputedStyle(surround) : null;
+    const icon = es.querySelector('[data-qa="empty-state-icon"]');
+    const iconCs = icon ? window.getComputedStyle(icon) : null;
+    const title = es.querySelector('[data-qa="empty-state-title"]');
+    const titleCs = title ? window.getComputedStyle(title) : null;
+    const desc = es.querySelector('[data-qa="empty-state-description"]');
+    const descCs = desc ? window.getComputedStyle(desc) : null;
+
+    return {
+      paddingTop: Math.round(parseFloat(esCs.paddingTop)),
+      paddingBottom: Math.round(parseFloat(esCs.paddingBottom)),
+      textAlign: esCs.textAlign,
+      surround: surroundCs ? {
+        width: Math.round(parseFloat(surroundCs.width)),
+        height: Math.round(parseFloat(surroundCs.height)),
+        borderRadius: Math.round(parseFloat(surroundCs.borderRadius)),
+        backgroundColor: surroundCs.backgroundColor,
+      } : null,
+      icon: iconCs ? {
+        width: Math.round(parseFloat(iconCs.width)),
+        height: Math.round(parseFloat(iconCs.height)),
+      } : null,
+      title: titleCs ? {
+        fontSize: Math.round(parseFloat(titleCs.fontSize)),
+        fontWeight: parseInt(titleCs.fontWeight, 10),
+        fontFamily: titleCs.fontFamily.toLowerCase(),
+      } : null,
+      desc: descCs ? {
+        fontSize: Math.round(parseFloat(descCs.fontSize)),
+      } : null,
+    };
+  })()`);
+
+  if (emptyStateStyles) {
+    if (emptyStateStyles.paddingTop !== 80 || emptyStateStyles.paddingBottom !== 80) {
+      throw new Error(`EmptyState container padding is ${emptyStateStyles.paddingTop}px (expected 80px / py-20)`);
+    }
+    if (emptyStateStyles.textAlign !== 'center') {
+      throw new Error(`EmptyState textAlign must be center`);
+    }
+    if (emptyStateStyles.surround) {
+      if (emptyStateStyles.surround.width !== 96 || emptyStateStyles.surround.height !== 96) {
+        throw new Error(`EmptyState icon surround is ${emptyStateStyles.surround.width}x${emptyStateStyles.surround.height}px (expected 96x96px / h-24 w-24)`);
+      }
+    }
+    if (emptyStateStyles.icon) {
+      if (emptyStateStyles.icon.width !== 48 || emptyStateStyles.icon.height !== 48) {
+        throw new Error(`EmptyState icon is ${emptyStateStyles.icon.width}x${emptyStateStyles.icon.height}px (expected 48x48px / h-12 w-12)`);
+      }
+    }
+    if (emptyStateStyles.title) {
+      if (emptyStateStyles.title.fontSize !== 20) {
+        throw new Error(`EmptyState title fontSize is ${emptyStateStyles.title.fontSize}px (expected 20px / text-xl)`);
+      }
+      if (emptyStateStyles.title.fontWeight !== 600) {
+        throw new Error(`EmptyState title fontWeight is ${emptyStateStyles.title.fontWeight} (expected 600)`);
+      }
+      if (!emptyStateStyles.title.fontFamily.includes('playfair')) {
+        throw new Error(`EmptyState title fontFamily must include Playfair, got: ${emptyStateStyles.title.fontFamily}`);
+      }
+    }
+    if (emptyStateStyles.desc && emptyStateStyles.desc.fontSize !== 16) {
+      throw new Error(`EmptyState description fontSize is ${emptyStateStyles.desc.fontSize}px (expected 16px / type-body)`);
+    }
+    console.log(`  ✓ EmptyState: py-20 (80px), 96px soft brand circle, 48px icon, 20px Playfair title, 16px description verified.`);
+  }
+
+  // Restore 'My preserved takes' tab
+  await ev(`(() => {
+    const items = Array.from(document.querySelectorAll('[data-qa="segmented-control-item"]'));
+    const mineItem = items.find(i => i.textContent.includes('My preserved'));
+    if (mineItem) mineItem.click();
+  })()`);
+  await new Promise((r) => setTimeout(r, 200));
 
   console.log(`✅ All computed style assertions passed.\n`);
 }
@@ -1853,6 +2015,150 @@ async function verifyPageStructure(client, baseUrl) {
     throw new Error(`PracticeHub resume module must link to setup route, got href: ${practiceData.resumeHref}`);
   }
   console.log(`  ✓ Practice Dashboard: 4 StatCards & Resume module verified (link: ${practiceData.resumeHref}).`);
+
+  // 2a. PracticeStatCard Hover Feedback Invariants (Numis Parity)
+  const statCardRest = await ev(`(() => {
+    const card = document.querySelector('[data-qa="practice-stat-card"]');
+    if (!card) return null;
+    const cs = window.getComputedStyle(card);
+    const r = card.getBoundingClientRect();
+    return {
+      cursor: cs.cursor,
+      transform: cs.transform,
+      borderColor: cs.borderColor,
+      boxShadow: cs.boxShadow,
+      center: { x: r.left + r.width / 2, y: r.top + r.height / 2 },
+    };
+  })()`);
+
+  if (!statCardRest) throw new Error('PracticeStatCard [data-qa="practice-stat-card"] not found');
+  if (statCardRest.cursor !== 'default') {
+    throw new Error(`PracticeStatCard cursor is '${statCardRest.cursor}' (expected 'default')`);
+  }
+  if (statCardRest.transform !== 'none') {
+    throw new Error(`PracticeStatCard must have no transform at rest, got: ${statCardRest.transform}`);
+  }
+
+  // Hover over StatCard
+  await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: statCardRest.center.x, y: statCardRest.center.y });
+  await new Promise((r) => setTimeout(r, 350));
+
+  const statCardHover = await ev(`(() => {
+    const card = document.querySelector('[data-qa="practice-stat-card"]');
+    if (!card) return null;
+    const cs = window.getComputedStyle(card);
+    return {
+      cursor: cs.cursor,
+      transform: cs.transform,
+      borderColor: cs.borderColor,
+      boxShadow: cs.boxShadow,
+    };
+  })()`);
+
+  if (statCardHover.cursor !== 'default') {
+    throw new Error(`PracticeStatCard hover cursor must remain 'default', got: ${statCardHover.cursor}`);
+  }
+  if (statCardHover.transform !== 'none') {
+    throw new Error(`PracticeStatCard hover must have zero geometric transform (Numis parity), got: ${statCardHover.transform}`);
+  }
+  if (!statCardHover.boxShadow || statCardHover.boxShadow === 'none') {
+    throw new Error(`PracticeStatCard hover must feature soft elevation (hover:shadow-lg hover:shadow-brand/5)`);
+  }
+  console.log(`  ✓ PracticeStatCard Hover: cursor-default, zero transform, soft warm elevation verified.`);
+
+  // Move mouse away to reset hover
+  await S('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 0, y: 0 });
+  await new Promise((r) => setTimeout(r, 100));
+
+  // 2b. Practice Resume Module Hit Testing Bug Fix & Real Mouse Navigation Test
+  const resumeBtnCoords = await ev(`(() => {
+    const resumeModule = document.querySelector('[data-qa="practice-resume-module"]');
+    if (!resumeModule) return null;
+    const btn = Array.from(resumeModule.querySelectorAll('button, span')).find(el => el.textContent.includes('Resume playing'));
+    if (!btn) return null;
+    const r = btn.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2, width: r.width, height: r.height };
+  })()`);
+
+  if (!resumeBtnCoords || resumeBtnCoords.width === 0) {
+    throw new Error('Visible Resume playing CTA button not found or hidden');
+  }
+
+  // Real mouse click directly on visible "Resume playing" button CTA center
+  await S('Input.dispatchMouseEvent', { type: 'mousePressed', x: resumeBtnCoords.x, y: resumeBtnCoords.y, button: 'left', clickCount: 1 });
+  await S('Input.dispatchMouseEvent', { type: 'mouseReleased', x: resumeBtnCoords.x, y: resumeBtnCoords.y, button: 'left', clickCount: 1 });
+  await new Promise((r) => setTimeout(r, 450));
+
+  const resumeNavPath = await ev('window.location.pathname');
+  console.log(`  Resume playing real mouse click navigated to: ${resumeNavPath}`);
+  if (!resumeNavPath.endsWith('/setup')) {
+    throw new Error(`Clicking 'Resume playing' CTA must navigate to setup route (ended with ${resumeNavPath}, expected /score/:id/setup). Hit testing bug detected!`);
+  }
+  console.log(`  ✓ Practice Resume Hit Testing: real mouse click on visible CTA successfully navigated to ${resumeNavPath}.`);
+
+  // Navigate back to /practice?demo=true
+  await navigateAndWait(`${baseUrl}/practice?demo=true`);
+
+  // 2c. Practice Score details Real Mouse Click Test
+  const detailsBtnCoords = await ev(`(() => {
+    const resumeModule = document.querySelector('[data-qa="practice-resume-module"]');
+    if (!resumeModule) return null;
+    const btn = Array.from(resumeModule.querySelectorAll('a, button')).find(el => el.textContent.includes('Score details'));
+    if (!btn) return null;
+    const r = btn.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  })()`);
+
+  if (!detailsBtnCoords) throw new Error('Score details button not found in Resume module');
+
+  await S('Input.dispatchMouseEvent', { type: 'mousePressed', x: detailsBtnCoords.x, y: detailsBtnCoords.y, button: 'left', clickCount: 1 });
+  await S('Input.dispatchMouseEvent', { type: 'mouseReleased', x: detailsBtnCoords.x, y: detailsBtnCoords.y, button: 'left', clickCount: 1 });
+  await new Promise((r) => setTimeout(r, 450));
+
+  const detailsNavPath = await ev('window.location.pathname');
+  console.log(`  Score details real mouse click navigated to: ${detailsNavPath}`);
+  if (detailsNavPath.endsWith('/setup') || !detailsNavPath.startsWith('/score/')) {
+    throw new Error(`Clicking 'Score details' must navigate to score view (/score/:id), got: ${detailsNavPath}`);
+  }
+  console.log(`  ✓ Score Details Navigation: real mouse click successfully navigated to ${detailsNavPath}.`);
+
+  // Navigate back to /practice?demo=true
+  await navigateAndWait(`${baseUrl}/practice?demo=true`);
+
+  // 2d. Weekly Rhythm & Dedicated Quick Links Architecture Invariants
+  const practiceIa = await ev(`(() => {
+    const rhythmHeading = Array.from(document.querySelectorAll('h2')).find(h => h.textContent.includes('Weekly Rhythm'));
+    const rhythmCard = rhythmHeading ? rhythmHeading.closest('[class*="rounded-container"]') : null;
+    const rhythmButtons = rhythmCard ? Array.from(rhythmCard.querySelectorAll('button, a')) : [];
+
+    const quickLinksSection = document.querySelector('[data-qa="practice-quick-links"]');
+    const quickLinks = quickLinksSection ? Array.from(quickLinksSection.querySelectorAll('[data-qa="practice-quick-link"]')) : [];
+
+    return {
+      rhythmButtonCount: rhythmButtons.length,
+      hasQuickLinksSection: !!quickLinksSection,
+      quickLinkCount: quickLinks.length,
+      linkTags: quickLinks.map(q => q.tagName),
+      linkHrefs: quickLinks.map(q => q.getAttribute('href')),
+    };
+  })()`);
+
+  if (practiceIa.rhythmButtonCount > 0) {
+    throw new Error(`Weekly Rhythm card must NOT contain navigation buttons, found ${practiceIa.rhythmButtonCount} buttons/links inside`);
+  }
+  if (!practiceIa.hasQuickLinksSection) {
+    throw new Error('PracticeHub must contain dedicated [data-qa="practice-quick-links"] section');
+  }
+  if (practiceIa.quickLinkCount !== 2) {
+    throw new Error(`PracticeHub quick links section must have exactly 2 links, found: ${practiceIa.quickLinkCount}`);
+  }
+  for (const tag of practiceIa.linkTags) {
+    if (tag !== 'A') throw new Error(`Each quick link must be a semantic <Link> (tag 'A'), found: ${tag}`);
+  }
+  if (practiceIa.linkHrefs[0] !== '/practice/history' || practiceIa.linkHrefs[1] !== '/practice/progress') {
+    throw new Error(`Quick links href mismatch: [${practiceIa.linkHrefs.join(', ')}] (expected /practice/history and /practice/progress)`);
+  }
+  console.log(`  ✓ Practice Information Architecture: Weekly Rhythm is rhythm-only (0 internal buttons), dedicated 2-column quick links verified.`);
 
   // 3. Settings Card (1440px)
   await navigateAndWait(`${baseUrl}/settings/account?demo=true`);
@@ -2310,6 +2616,14 @@ async function captureAndValidateTarget(client, target, baseUrl) {
     })()`);
     if (!check.pass) throw new Error(`perf-pro-download: ${check.reason}`);
     assertionDescription = 'Contains active "Download recording" button without locked badge';
+  } else if (target.name === 'performances-desktop') {
+    const check = await ev(`(() => {
+      const sc = document.querySelector('[data-qa="segmented-control"]');
+      const title = document.querySelector('.type-workspace-title');
+      return !!sc && !!title;
+    })()`);
+    if (!check) throw new Error('performances-desktop missing SegmentedControl or workspace title');
+    assertionDescription = 'Displays Preserved Moments with SegmentedControl view selector';
   } else if (target.name === 'checkout-payment-failure') {
     const check = await ev(`document.body.innerText.includes('declined')`);
     if (!check) throw new Error('checkout-payment-failure missing card declined message');

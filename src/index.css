@@ -143,7 +143,7 @@
     --radius-container: 1rem;
     --radius-dialog: 0.75rem;
     --radius-menu: 0.625rem;
-    --radius-overlay: 0.625rem;
+    --radius-overlay: 0.75rem;
 
     /* ---- Motion ---- */
     --motion-fast: 150ms;

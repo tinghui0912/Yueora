@@ -4,6 +4,8 @@ import { usePrototypeStore } from '@/stores/prototypeStore';
 import { practiceWeek } from '@/lib/practiceStats';
 import ScorePreview from '@/components/library/ScorePreview';
 import { Surface } from '@/components/patterns/Surface';
+import PracticeStatCard from '@/components/practice/PracticeStatCard';
+import PracticeQuickLink from '@/components/practice/PracticeQuickLink';
 import { Button } from '@/components/ui/button';
 import { PracticeGlyph } from '@/components/brand/MusicalGlyphs';
 
@@ -57,49 +59,33 @@ export default function PracticeHub() {
 
       {/* 4-column StatCards row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-qa="practice-stat-cards">
-        <Surface tone="panel" padding="md" className="flex items-start justify-between" data-qa="practice-stat-card">
-          <div>
-            <p className="type-stat-label text-ink-tertiary" data-qa="practice-stat-label">Minutes Played</p>
-            <p className="type-metric text-ink-primary mt-1.5" data-qa="practice-stat-metric">{thisWeekMinutes} <span className="type-card-metadata text-ink-secondary font-normal">min</span></p>
-            <p className="type-card-metadata text-ink-secondary mt-1">This week in music</p>
-          </div>
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nav bg-brand-soft text-brand" data-qa="practice-stat-icon">
-            <Clock className="icon-md text-brand" />
-          </div>
-        </Surface>
-
-        <Surface tone="panel" padding="md" className="flex items-start justify-between" data-qa="practice-stat-card">
-          <div>
-            <p className="type-stat-label text-ink-tertiary" data-qa="practice-stat-label">Calm Sessions</p>
-            <p className="type-metric text-ink-primary mt-1.5" data-qa="practice-stat-metric">{thisWeekSessions}</p>
-            <p className="type-card-metadata text-ink-secondary mt-1">Across 7 days</p>
-          </div>
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nav bg-brand-soft text-brand" data-qa="practice-stat-icon">
-            <Play className="icon-md text-brand fill-current" />
-          </div>
-        </Surface>
-
-        <Surface tone="panel" padding="md" className="flex items-start justify-between" data-qa="practice-stat-card">
-          <div>
-            <p className="type-stat-label text-ink-tertiary" data-qa="practice-stat-label">Active Pieces</p>
-            <p className="type-metric text-ink-primary mt-1.5" data-qa="practice-stat-metric">{thisWeekPieces}</p>
-            <p className="type-card-metadata text-ink-secondary mt-1">{activeScores.length} total in repertoire</p>
-          </div>
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nav bg-brand-soft text-brand" data-qa="practice-stat-icon">
-            <Music className="icon-md text-brand" />
-          </div>
-        </Surface>
-
-        <Surface tone="panel" padding="md" className="flex items-start justify-between" data-qa="practice-stat-card">
-          <div>
-            <p className="type-stat-label text-ink-tertiary" data-qa="practice-stat-label">Days Active</p>
-            <p className="type-metric text-ink-primary mt-1.5" data-qa="practice-stat-metric">{thisWeekMarks.filter(Boolean).length} <span className="type-card-metadata text-ink-secondary font-normal">/ 7</span></p>
-            <p className="type-card-metadata text-ink-secondary mt-1">Weekly playing rhythm</p>
-          </div>
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nav bg-brand-soft text-brand" data-qa="practice-stat-icon">
-            <Sparkles className="icon-md text-brand" />
-          </div>
-        </Surface>
+        <PracticeStatCard
+          title="Minutes Played"
+          value={thisWeekMinutes}
+          unit="min"
+          subtitle="This week in music"
+          icon={Clock}
+        />
+        <PracticeStatCard
+          title="Calm Sessions"
+          value={thisWeekSessions}
+          subtitle="Across 7 days"
+          icon={Play}
+          iconClassName="fill-current"
+        />
+        <PracticeStatCard
+          title="Active Pieces"
+          value={thisWeekPieces}
+          subtitle={`${activeScores.length} total in repertoire`}
+          icon={Music}
+        />
+        <PracticeStatCard
+          title="Days Active"
+          value={thisWeekMarks.filter(Boolean).length}
+          unit="/ 7"
+          subtitle="Weekly playing rhythm"
+          icon={Sparkles}
+        />
       </div>
 
       {/* Hero Resume Module */}
@@ -138,7 +124,7 @@ export default function PracticeHub() {
               </div>
             </div>
 
-            <div className="relative z-10 flex shrink-0 items-center gap-2">
+            <div className="relative z-10 flex shrink-0 items-center gap-2 pointer-events-none">
               <div className="pointer-events-none" aria-hidden="true">
                 <Button intent="primary" size="md" asChild tabIndex={-1}>
                   <span className="select-none">
@@ -226,22 +212,23 @@ export default function PracticeHub() {
               Music is a sanctuary, not an assignment. You have spent <span className="font-semibold text-ink-primary">{thisWeekMinutes} calm minutes</span> with your instruments this week.
             </p>
           </div>
-
-          <div className="flex flex-wrap gap-2.5 pt-2">
-            <Button intent="secondary" size="sm" asChild>
-              <Link to="/practice/history">
-                <Clock className="icon-sm" />
-                <span>Practice history</span>
-              </Link>
-            </Button>
-            <Button intent="secondary" size="sm" asChild>
-              <Link to="/practice/progress">
-                <BarChart2 className="icon-sm" />
-                <span>Progress &amp; insights</span>
-              </Link>
-            </Button>
-          </div>
         </Surface>
+      </div>
+
+      {/* 2-column Quick Links Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" data-qa="practice-quick-links">
+        <PracticeQuickLink
+          to="/practice/history"
+          icon={Clock}
+          title="Practice history"
+          description="Review past sessions and practice notes."
+        />
+        <PracticeQuickLink
+          to="/practice/progress"
+          icon={BarChart2}
+          title="Progress & insights"
+          description="See trends across your playing over time."
+        />
       </div>
 
       {/* 0-Score Welcome */}
