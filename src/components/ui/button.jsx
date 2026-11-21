@@ -14,13 +14,13 @@ const buttonVariants = cva(
         secondary:
           "border border-line-subtle bg-transparent text-ink-primary shadow-control hover:bg-brand-soft hover:text-brand-soft-foreground",
         quiet:
-          "text-ink-secondary hover:text-brand-soft-foreground hover:bg-brand-soft",
+          "hover:text-brand-soft-foreground hover:bg-brand-soft",
         danger:
           "bg-danger text-danger-foreground shadow-control hover:bg-danger/90",
         subtle:
-          "bg-neutral-muted text-ink-primary hover:bg-neutral-hover hover:text-ink-primary",
+          "bg-secondary text-secondary-foreground shadow-control hover:bg-secondary/80",
         link:
-          "text-brand underline-offset-4 hover:underline hover:text-brand/90",
+          "text-brand underline-offset-4 hover:underline",
       },
       size: {
         xs: "h-control-xs min-h-control-xs px-2.5 type-caption rounded-control gap-1.5 [&_svg]:icon-xs",

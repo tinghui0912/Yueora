@@ -87,14 +87,6 @@ module.exports = {
 					hover: 'hsl(var(--neutral-hover))',
 				},
 				/* ---- Semantic status ---- */
-				success: {
-					DEFAULT: 'hsl(var(--success))',
-					foreground: 'hsl(var(--success-foreground))',
-				},
-				warning: {
-					DEFAULT: 'hsl(var(--warning))',
-					foreground: 'hsl(var(--warning-foreground))',
-				},
 				danger: {
 					DEFAULT: 'hsl(var(--danger))',
 					foreground: 'hsl(var(--danger-foreground))',
@@ -107,10 +99,7 @@ module.exports = {
 				/* ---- Practice semantic ---- */
 				practice: {
 					current: 'hsl(var(--practice-current))',
-					following: 'hsl(var(--practice-following))',
 					waiting: 'hsl(var(--practice-waiting))',
-					resyncing: 'hsl(var(--practice-resyncing))',
-					correct: 'hsl(var(--practice-correct))',
 					error: 'hsl(var(--practice-error))',
 				},
 			},

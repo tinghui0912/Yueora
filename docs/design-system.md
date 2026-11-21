@@ -65,25 +65,33 @@ Repeated product hierarchy roles use semantic typography roles. Do not override 
 
 ### 2.2 Color Vocabulary & Usage Contract
 
-#### Visual Source of Truth
-> **Yueora does not define an independent visual palette.**
->
-> All visual color values are derived exactly from:
-> **`tinghui0912/NumisCollection`**  
-> commit **`efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c`**
->
-> Yueora may define semantic aliases and domain roles, but may not invent new physical colors.
->
-> **Visual parity takes precedence over accessibility-driven recoloring.**  
-> If the visual reference itself exhibits a particular contrast characteristic (e.g. primary button text), it is documented and preserved rather than adjusted.
+#### Visual Source of Truth Architecture (4 Distinct Layers)
 
-- **Antique Bronze Gold is canonical primary & brand accent:** The primary brand color (`--brand`) is antique bronze gold (`#C38322` / `36 70% 45%`) paired with warm white foreground (`--brand-foreground`, `hsl(40 20% 98%)` / `rgb(251, 250, 249)`).
-- **Warm paper canvas:** The global backdrop (`--surface-canvas`) is warm archive paper (`#F9F8F6` / `40 20% 97%`).
-- **Warm white content panels:** Standard panels (`--surface-panel`) are warm white (`hsl(40 25% 99%)`).
-- **Color is functional:** Color is reserved strictly for functional feedback (success for practice following/correct notes, warning for resyncing warnings, destructive for alerts/errors, gold for favorites/sounding keys).
-- **No royal blue:** The UGC royal blue accent (`#2B58BF`) is strictly prohibited.
-- **No forest green brand:** Legacy forest green is retired as a brand color.
-- **No invented physical colors:** Deep bronze, custom CTA fills, and custom gold scales are permanently removed.
+> **NumisCollection owns visual truth; Yueora owns semantic domain organization.**
+>
+> All visual color values derive strictly from frozen commit:
+> **`tinghui0912/NumisCollection`** (`efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c`).
+> Yueora never invents physical colors, rounded approximate HSLs, or unproven opacity numbers.
+
+The system is strictly partitioned into 4 provenance layers:
+
+1. **Numis Root CSS Tokens (32 Frozen Physical Reference Tokens):**
+   Defined in `:root` in `src/index.css` (`--numis-*`). Exact replica of NumisCollection's physical palette. These are NEVER consumed directly by application JSX.
+2. **Numis Tailwind Named Colors Actually Used:**
+   - Positive/Condition: `border-emerald-200`, `bg-emerald-500/10`, `text-emerald-700` (`ItemCard.jsx:6`), `text-emerald-600` (`UserProfile.jsx:114`), `text-green-500` (`BulkEstimateButton.jsx:69`), `bg-emerald-500`.
+   - Warning: `border-amber-200`, `bg-amber-500/10`, `text-amber-700` (`ItemCard.jsx:10`), `text-amber-600`, `bg-amber-50` (`BulkEstimateButton.jsx:44`), `bg-amber-500`.
+   - Destructive: `border-red-200`, `bg-red-500/10`, `text-red-700` (`ItemCard.jsx:12`), `text-red-500`, `bg-destructive` (`badge.jsx:16`).
+   - Category / Info: `border-blue-200`, `bg-blue-500/10`, `text-blue-700`, `border-gray-200`, `bg-gray-500/10`, `text-gray-700`.
+3. **Numis Actual Component Recipes:**
+   - Condition Badges: `border-emerald-200 bg-emerald-500/10 text-emerald-700` (Positive), `border-amber-200 bg-amber-500/10 text-amber-700` (Warning), `border-red-200 bg-red-500/10 text-red-700` (Danger).
+   - Overlays: All 4 overlays (`AlertDialog`, `Dialog`, `Drawer`, `Sheet`) strictly use `bg-black/80`.
+   - SegmentedControl: Exact replica of Numis Dashboard toggle (`bg-neutral-muted rounded-overlay p-1 select-none`, items `px-3 py-1 rounded-control text-xs font-medium transition-colors`, active `bg-surface-panel text-ink-primary shadow`, inactive `text-ink-tertiary hover:text-ink-primary`).
+   - StatCard Hover: `border border-line-subtle/50 hover:border-brand/30 transition-all duration-300 hover:shadow-lg hover:shadow-brand/5`.
+4. **Yueora Semantic Aliases & Domain Abstractions:**
+   - 3 Canonical Surfaces: `surface-canvas`, `surface-panel`, `surface-raised`.
+   - Text Hierarchy: `ink-primary`, `ink-secondary`, `ink-tertiary`, `ink-subtle`.
+   - Brand & Interaction: `brand`, `brand-foreground`, `brand-soft`, `brand-soft-foreground`.
+   - Domain Practice Roles: `practice-current` (`--numis-primary`), `practice-waiting` (`--numis-sidebar-foreground`), `practice-error` (`--numis-destructive`). Status indicators compose exact Numis status recipes directly.
 
 #### Canonical Roles:
 

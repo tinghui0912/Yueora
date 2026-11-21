@@ -86,7 +86,7 @@ export default function SyncPlayback({
         <div className="min-w-0">
           {error ? (
             <div className="flex aspect-video flex-col items-center justify-center rounded-container border border-line-subtle bg-surface-panel px-6 text-center">
-              <AlertCircle className="h-6 w-6 text-warning" aria-hidden="true" />
+              <AlertCircle className="h-6 w-6 text-amber-600" aria-hidden="true" />
               <p className="mt-2 type-body-small text-ink-primary">This recording could not be opened.</p>
               <p className="mt-1 type-metadata text-ink-tertiary">{error}</p>
               {onRetry && <Button intent="secondary" size="sm" className="mt-3" onClick={onRetry}>Try again</Button>}

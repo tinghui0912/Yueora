@@ -4,8 +4,8 @@ import { cn } from '@/lib/utils';
 const toneStyles = {
   neutral: { icon: 'text-ink-tertiary', title: 'text-ink-primary', desc: 'text-ink-secondary' },
   brand: { icon: 'text-brand', title: 'text-ink-primary', desc: 'text-ink-secondary' },
-  success: { icon: 'text-success', title: 'text-ink-primary', desc: 'text-ink-secondary' },
-  warning: { icon: 'text-warning', title: 'text-ink-primary', desc: 'text-ink-secondary' },
+  success: { icon: 'text-emerald-600', title: 'text-ink-primary', desc: 'text-ink-secondary' },
+  warning: { icon: 'text-amber-600', title: 'text-ink-primary', desc: 'text-ink-secondary' },
   danger: { icon: 'text-danger', title: 'text-ink-primary', desc: 'text-ink-secondary' },
 };
 

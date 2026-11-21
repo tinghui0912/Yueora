@@ -22,9 +22,9 @@ export default function PracticeWorkspaceVisual() {
         </div>
 
         {/* Calm following state pill */}
-        <div className="inline-flex items-center gap-2 rounded-full bg-practice-following/10 px-3 py-1">
-          <span className="h-2 w-2 rounded-full bg-practice-following animate-pulse" />
-          <span className="type-metadata font-medium text-ink-secondary">
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-500/10 px-3 py-1">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="type-metadata font-medium text-emerald-700">
             Following your phrasing · mm. 14–22
           </span>
         </div>
@@ -68,7 +68,7 @@ export default function PracticeWorkspaceVisual() {
       {/* Minimal Tactile Transport */}
       <div className="mt-4 flex flex-wrap items-center justify-between rounded-control border border-line-subtle bg-surface-canvas/60 px-3 sm:px-4 py-2.5 gap-2">
         <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-control bg-brand text-brand-foreground shadow-raised hover:opacity-95 shrink-0">
+          <span className="flex h-8 w-8 items-center justify-center rounded-control bg-brand text-brand-foreground shadow-raised hover:bg-brand/90 shrink-0">
             <Play className="h-4 w-4 fill-current" />
           </span>
           <span className="type-metadata font-medium text-ink-secondary">

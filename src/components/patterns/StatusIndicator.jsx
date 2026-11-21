@@ -4,19 +4,19 @@ import { cn } from '@/lib/utils';
 const toneDot = {
   neutral: 'bg-ink-tertiary',
   brand: 'bg-brand',
-  success: 'bg-success',
-  warning: 'bg-warning',
+  success: 'bg-emerald-500',
+  warning: 'bg-amber-500',
   danger: 'bg-danger',
-  practice: 'bg-practice-current',
+  practice: 'bg-brand',
 };
 
 const toneText = {
   neutral: 'text-ink-secondary',
   brand: 'text-ink-primary',
-  success: 'text-success',
-  warning: 'text-warning',
+  success: 'text-emerald-700',
+  warning: 'text-amber-700',
   danger: 'text-danger',
-  practice: 'text-practice-current',
+  practice: 'text-brand',
 };
 
 /**

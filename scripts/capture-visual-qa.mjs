@@ -1723,8 +1723,8 @@ async function verifyComputedStyles(client, baseUrl) {
   if (segmentedStyles.outerGap !== 4) {
     throw new Error(`SegmentedControl gap is ${segmentedStyles.outerGap}px (expected 4px / gap-1)`);
   }
-  if (segmentedStyles.height < 42 || segmentedStyles.height > 46) {
-    throw new Error(`SegmentedControl height is ${segmentedStyles.height}px (expected ~44px, between 42px and 46px)`);
+  if (segmentedStyles.height < 26 || segmentedStyles.height > 38) {
+    throw new Error(`SegmentedControl height is ${segmentedStyles.height}px (expected ~30px, between 26px and 38px)`);
   }
   if (!segmentedStyles.active) throw new Error('Active SegmentedControl item not found');
   for (const tag of segmentedStyles.itemTags) {
@@ -1749,17 +1749,17 @@ async function verifyComputedStyles(client, baseUrl) {
   if (segmentedStyles.inactive.hasAriaSelected) {
     throw new Error(`SegmentedControl inactive item must NOT have aria-selected`);
   }
-  if (segmentedStyles.active.borderRadius !== 12) {
-    throw new Error(`SegmentedControl active item radius is ${segmentedStyles.active.borderRadius}px (expected 12px / rounded-overlay, 10px rounded-control is rejected)`);
+  if (segmentedStyles.active.borderRadius !== 10) {
+    throw new Error(`SegmentedControl active item radius is ${segmentedStyles.active.borderRadius}px (expected 10px / rounded-control, matching Numis rounded-md)`);
   }
-  if (segmentedStyles.active.paddingLeft !== 16 || segmentedStyles.active.paddingRight !== 16) {
-    throw new Error(`SegmentedControl active item horizontal padding is ${segmentedStyles.active.paddingLeft}px (expected 16px / px-4)`);
+  if (segmentedStyles.active.paddingLeft !== 12 || segmentedStyles.active.paddingRight !== 12) {
+    throw new Error(`SegmentedControl active item horizontal padding is ${segmentedStyles.active.paddingLeft}px (expected 12px / px-3)`);
   }
-  if (segmentedStyles.active.paddingTop !== 8 || segmentedStyles.active.paddingBottom !== 8) {
-    throw new Error(`SegmentedControl active item vertical padding is ${segmentedStyles.active.paddingTop}px (expected 8px / py-2)`);
+  if (segmentedStyles.active.paddingTop !== 4 || segmentedStyles.active.paddingBottom !== 4) {
+    throw new Error(`SegmentedControl active item vertical padding is ${segmentedStyles.active.paddingTop}px (expected 4px / py-1)`);
   }
-  if (segmentedStyles.active.fontSize !== 14) {
-    throw new Error(`SegmentedControl active item fontSize is ${segmentedStyles.active.fontSize}px (expected 14px / type-label)`);
+  if (segmentedStyles.active.fontSize !== 12) {
+    throw new Error(`SegmentedControl active item fontSize is ${segmentedStyles.active.fontSize}px (expected 12px / type-caption text-xs)`);
   }
   if (segmentedStyles.active.fontWeight !== 500) {
     throw new Error(`SegmentedControl active item fontWeight is ${segmentedStyles.active.fontWeight} (expected 500 / font-medium)`);
@@ -1773,7 +1773,7 @@ async function verifyComputedStyles(client, baseUrl) {
   if (segmentedStyles.active.boxShadow.includes('rgba(0, 0, 0, 0.06)')) {
     throw new Error(`SegmentedControl active item must use standard shadow, NOT shadow-raised (found shadow-raised 0.06 alpha)`);
   }
-  console.log(`  ✓ SegmentedControl: ~44px height (${segmentedStyles.height}px), 12px container radius, 12px item radius, role="group", aria-pressed, 16px/8px item padding, 14px/500 label, standard shadow active card verified.`);
+  console.log(`  ✓ SegmentedControl: ~30px height (${segmentedStyles.height}px), 12px container radius, 10px item radius, role="group", aria-pressed, 12px/4px item padding, 12px/500 caption, standard shadow active card verified.`);
 
   // Capture close crop of SegmentedControl for human review
   const scCropRect = await ev(`(() => {

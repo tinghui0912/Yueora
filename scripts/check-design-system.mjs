@@ -153,25 +153,15 @@ export const SEMANTIC_TOKENS_MAPPING_REFERENCE = [
   { token: '--neutral-muted-foreground', expectedReference: '--numis-muted-foreground' },
   { token: '--neutral-hover', expectedReference: '--numis-sidebar-accent' },
   { token: '--neutral-hover-foreground', expectedReference: '--numis-foreground' },
-  { token: '--success', expectedReference: '161 94% 30%' },
-  { token: '--success-foreground', expectedReference: '--numis-primary-foreground' },
-  { token: '--warning', expectedReference: '32 95% 44%' },
-  { token: '--warning-foreground', expectedReference: '--numis-primary-foreground' },
   { token: '--danger', expectedReference: '--numis-destructive' },
   { token: '--danger-foreground', expectedReference: '--numis-destructive-foreground' },
   { token: '--info', expectedReference: '--numis-sidebar-accent' },
   { token: '--info-foreground', expectedReference: '--numis-foreground' },
   { token: '--selection', expectedReference: '--numis-accent' },
-  { token: '--practice-following', expectedReference: '--success' },
-  { token: '--practice-following-foreground', expectedReference: '--numis-primary-foreground' },
   { token: '--practice-waiting', expectedReference: '--numis-sidebar-foreground' },
   { token: '--practice-waiting-foreground', expectedReference: '--numis-primary-foreground' },
-  { token: '--practice-resyncing', expectedReference: '--warning' },
-  { token: '--practice-resyncing-foreground', expectedReference: '--numis-primary-foreground' },
   { token: '--practice-current', expectedReference: '--numis-primary' },
   { token: '--practice-current-foreground', expectedReference: '--numis-primary-foreground' },
-  { token: '--practice-correct', expectedReference: '--success' },
-  { token: '--practice-correct-foreground', expectedReference: '--numis-primary-foreground' },
   { token: '--practice-error', expectedReference: '--numis-destructive' },
   { token: '--practice-error-foreground', expectedReference: '--numis-destructive-foreground' },
   { token: '--gold', expectedReference: '--numis-primary' },
@@ -951,6 +941,13 @@ function verifyLegacyColorRetirement(issues = []) {
           const matches = line.match(legacyRegex);
           if (matches) {
             matches.forEach((m) => {
+              if (
+                (norm.endsWith('src/components/ui/button.jsx') || norm.endsWith('src/components/ui/badge.jsx')) &&
+                (m === 'bg-secondary' || m === 'text-secondary-foreground')
+              ) {
+                // Approved Numis secondary primitive recipe
+                return;
+              }
               issues.push({
                 file: path.relative(process.cwd(), full),
                 line: idx + 1,

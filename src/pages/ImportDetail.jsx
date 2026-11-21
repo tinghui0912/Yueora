@@ -14,7 +14,7 @@ import FileThumbnail from '@/components/visuals/FileThumbnail';
 
 const statusMeta = {
   processing: { label: 'Processing your score…', color: 'text-brand' },
-  needs_review: { label: 'Needs review', color: 'text-warning' },
+  needs_review: { label: 'Needs review', color: 'text-amber-700' },
   failed: { label: 'Recognition failed', color: 'text-danger' },
   completed: { label: 'Completed', color: 'text-ink-tertiary' },
 };
@@ -75,7 +75,7 @@ export default function ImportDetail() {
         )}
         {imp.status === 'needs_review' && (
           <div className="flex items-center gap-3">
-            <AlertTriangle className="h-5 w-5 text-warning" />
+            <AlertTriangle className="h-5 w-5 text-amber-600" />
             <p className="type-body-small text-ink-secondary">Recognition finished with {issueCount} {issueCount === 1 ? 'spot' : 'spots'} to review.</p>
           </div>
         )}

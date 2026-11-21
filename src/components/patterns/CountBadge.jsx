@@ -7,11 +7,11 @@ const countBadgeVariants = cva(
   {
     variants: {
       tone: {
-        informational: 'bg-brand-soft text-ink-primary',
+        informational: 'bg-brand-soft text-brand-soft-foreground',
         attention: 'bg-brand text-brand-foreground',
         neutral: 'bg-neutral-muted text-ink-secondary',
-        warning: 'bg-warning/10 text-warning',
-        danger: 'bg-danger/10 text-danger',
+        warning: 'border border-amber-200 bg-amber-500/10 text-amber-700',
+        danger: 'border border-red-200 bg-red-500/10 text-red-700',
       },
     },
     defaultVariants: {

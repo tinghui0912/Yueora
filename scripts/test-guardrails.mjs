@@ -1163,6 +1163,264 @@ assertColorPositive(
   'src/components/Action.jsx'
 );
 
+// --- Phase 4: Numis Exact Provenance & Closure Hardening Fixtures ---
+
+// 4.1 Negative: overlay alert-dialog /50 rejected
+assertColorNegative(
+  'overlay alert-dialog /50 rejected',
+  `<AlertDialogOverlay className="fixed inset-0 z-50 bg-black/50" />`,
+  'bg-black/50',
+  'src/components/ui/alert-dialog.jsx'
+);
+
+// 4.2 Negative: overlay sheet /50 rejected
+assertColorNegative(
+  'overlay sheet /50 rejected',
+  `<SheetOverlay className="fixed inset-0 z-50 bg-black/50" />`,
+  'bg-black/50',
+  'src/components/ui/sheet.jsx'
+);
+
+// 4.3 Positive: all four overlay /80 accepted in exact files
+assertColorPositive(
+  'alert-dialog overlay /80 accepted in alert-dialog.jsx',
+  `<AlertDialogOverlay className="fixed inset-0 z-50 bg-black/80" />`,
+  'src/components/ui/alert-dialog.jsx'
+);
+assertColorPositive(
+  'dialog overlay /80 accepted in dialog.jsx',
+  `<DialogOverlay className="fixed inset-0 z-50 bg-black/80" />`,
+  'src/components/ui/dialog.jsx'
+);
+assertColorPositive(
+  'drawer overlay /80 accepted in drawer.jsx',
+  `<DrawerOverlay className="fixed inset-0 z-50 bg-black/80" />`,
+  'src/components/ui/drawer.jsx'
+);
+assertColorPositive(
+  'sheet overlay /80 accepted in sheet.jsx',
+  `<SheetOverlay className="fixed inset-0 z-50 bg-black/80" />`,
+  'src/components/ui/sheet.jsx'
+);
+
+// 4.4 Negative: approximate success raw HSL rejected in index.css
+assertColorNegative(
+  'approximate success raw HSL rejected',
+  `:root {
+    --success: 161 94% 30%;
+  }`,
+  '--success',
+  'src/index.css'
+);
+
+// 4.5 Negative: approximate warning raw HSL rejected in index.css
+assertColorNegative(
+  'approximate warning raw HSL rejected',
+  `:root {
+    --warning: 32 95% 44%;
+  }`,
+  '--warning',
+  'src/index.css'
+);
+
+// 4.6 Negative: unknown raw color custom property in index.css rejected
+assertColorNegative(
+  'unknown raw color custom property in index.css rejected',
+  `:root {
+    --new-purple: 280 90% 50%;
+  }`,
+  '--new-purple',
+  'src/index.css'
+);
+
+// 4.7 Negative: mixed emerald/red/blue status recipe rejected
+assertColorNegative(
+  'mixed emerald/red status recipe rejected',
+  `<span className="border-emerald-200 bg-emerald-500/10 text-red-700">Mix</span>`,
+  'border-emerald-200',
+  'src/components/Chip.jsx'
+);
+
+// 4.8 Negative: partial/mismatched status recipe rejected
+assertColorNegative(
+  'partial/mismatched status recipe rejected',
+  `<div className="bg-amber-500/10 text-amber-600">Mismatch</div>`,
+  'bg-amber-500/10 + text-amber-600',
+  'src/components/Warning.jsx'
+);
+
+// 4.9 Negative: bg-danger/95 rejected unless exact source pair exists
+assertColorNegative(
+  'bg-danger/95 rejected unless exact source pair exists',
+  `<div className="bg-danger/95 text-danger-foreground">Error</div>`,
+  'bg-danger/95',
+  'src/components/Alert.jsx'
+);
+
+// 4.10 Negative: text-warning/90 rejected unless exact source pair exists
+assertColorNegative(
+  'text-warning/90 rejected unless exact source pair exists',
+  `<span className="text-warning/90">Warn</span>`,
+  'text-warning/90',
+  'src/components/Warn.jsx'
+);
+
+// 4.11 Negative: border-brand/60 rejected unless exact source pair exists
+assertColorNegative(
+  'border-brand/60 rejected unless exact source pair exists',
+  `<div className="border border-brand/60">Border</div>`,
+  'border-brand/60',
+  'src/components/Card.jsx'
+);
+
+// 4.12 Negative: hover:opacity-95 on chromatic branded control rejected
+assertColorNegative(
+  'hover:opacity-95 on chromatic branded control rejected',
+  `<button className="bg-brand text-brand-foreground hover:opacity-95">Play</button>`,
+  'hover:opacity-95',
+  'src/components/Control.jsx'
+);
+
+// 4.13 Negative: from-fuchsia-500 rejected
+assertColorNegative(
+  'from-fuchsia-500 rejected',
+  `<div className="bg-gradient-to-r from-fuchsia-500 to-brand">Gradient</div>`,
+  'from-fuchsia-500',
+  'src/components/Banner.jsx'
+);
+
+// 4.14 Negative: via-cyan-600 rejected
+assertColorNegative(
+  'via-cyan-600 rejected',
+  `<div className="bg-gradient-to-r from-brand via-cyan-600 to-brand">Gradient</div>`,
+  'via-cyan-600',
+  'src/components/Banner.jsx'
+);
+
+// 4.15 Negative: to-lime-300 rejected
+assertColorNegative(
+  'to-lime-300 rejected',
+  `<div className="bg-gradient-to-r from-brand to-lime-300">Gradient</div>`,
+  'to-lime-300',
+  'src/components/Banner.jsx'
+);
+
+// 4.16 Negative: fill-white outside provenance rejected
+assertColorNegative(
+  'fill-white outside provenance rejected',
+  `<svg><rect className="fill-white" /></svg>`,
+  'fill-white',
+  'src/components/Icon.jsx'
+);
+
+// 4.17 Negative: stroke-black outside provenance rejected
+assertColorNegative(
+  'stroke-black outside provenance rejected',
+  `<svg><line className="stroke-black" /></svg>`,
+  'stroke-black',
+  'src/components/Icon.jsx'
+);
+
+// 4.18 Negative: object-literal rgb rejected
+assertColorNegative(
+  'object-literal rgb rejected',
+  `const theme = { danger: 'rgb(255, 0, 0)' };`,
+  'rgb(255, 0, 0)',
+  'src/lib/theme.js'
+);
+
+// 4.19 Negative: object-literal hsl rejected
+assertColorNegative(
+  'object-literal hsl rejected',
+  `const theme = { accent: 'hsl(36, 70%, 45%)' };`,
+  'hsl(36, 70%, 45%)',
+  'src/lib/theme.js'
+);
+
+// 4.20 Negative: object-literal hex rejected
+assertColorNegative(
+  'object-literal hex rejected',
+  `const theme = { custom: '#1a2b3c' };`,
+  '#1a2b3c',
+  'src/lib/theme.js'
+);
+
+// 4.21 Positive: exact Numis status recipes accepted
+assertColorPositive(
+  'exact Numis positive status recipe accepted',
+  `<span className="border-emerald-200 bg-emerald-500/10 text-emerald-700">FDC</span>`,
+  'src/components/Badge.jsx'
+);
+assertColorPositive(
+  'exact Numis warning status recipe accepted',
+  `<span className="border-amber-200 bg-amber-500/10 text-amber-700">TTB</span>`,
+  'src/components/Badge.jsx'
+);
+assertColorPositive(
+  'exact Numis danger status recipe accepted',
+  `<span className="border-red-200 bg-red-500/10 text-red-700">B</span>`,
+  'src/components/Badge.jsx'
+);
+
+// 4.22 Positive: exact Numis color-opacity pairs accepted
+assertColorPositive(
+  'exact Numis brand/40 border hover accepted',
+  `<div className="border border-brand/40">Item</div>`,
+  'src/components/Item.jsx'
+);
+assertColorPositive(
+  'exact Numis brand/30 border hover accepted',
+  `<div className="border border-brand/30">Stat</div>`,
+  'src/components/Stat.jsx'
+);
+assertColorPositive(
+  'exact Numis brand/5 shadow accepted',
+  `<div className="shadow-brand/5">Card</div>`,
+  'src/components/Card.jsx'
+);
+assertColorPositive(
+  'exact Numis danger/80 hover accepted',
+  `<span className="hover:bg-danger/80">Badge</span>`,
+  'src/components/Badge.jsx'
+);
+assertColorPositive(
+  'exact Numis danger/90 button hover accepted',
+  `<button className="hover:bg-danger/90">Button</button>`,
+  'src/components/Button.jsx'
+);
+
+// 4.23 Positive: exact Numis primitive recipes accepted
+assertColorPositive(
+  'exact Numis Button secondary recipe accepted',
+  `<button className="bg-secondary text-secondary-foreground shadow-control hover:bg-secondary/80">Secondary</button>`,
+  'src/components/ui/button.jsx'
+);
+assertColorPositive(
+  'exact Numis Button ghost recipe accepted',
+  `<button className="hover:bg-brand-soft hover:text-brand-soft-foreground">Ghost</button>`,
+  'src/components/ui/button.jsx'
+);
+assertColorPositive(
+  'exact Numis Button link recipe accepted',
+  `<button className="text-brand underline-offset-4 hover:underline">Link</button>`,
+  'src/components/ui/button.jsx'
+);
+assertColorPositive(
+  'exact Numis Badge secondary recipe accepted',
+  `<div className="border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">Secondary</div>`,
+  'src/components/ui/badge.jsx'
+);
+assertColorPositive(
+  'exact Numis Tabs recipe accepted',
+  `<div className="rounded-nav bg-neutral-muted p-1 text-ink-tertiary"><button className="rounded-control px-3 py-1 type-body-small font-medium data-[state=active]:bg-surface-canvas data-[state=active]:text-ink-primary data-[state=active]:shadow">Tab</button></div>`,
+  'src/components/ui/tabs.jsx'
+);
+assertColorPositive(
+  'exact Numis SegmentedControl recipe accepted',
+  `<div className="rounded-overlay bg-neutral-muted p-1"><button className="rounded-control px-3 py-1 type-caption font-medium bg-surface-panel text-ink-primary shadow">Toggle</button></div>`,
+  'src/components/patterns/SegmentedControl.jsx'
+);
+
 // -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------

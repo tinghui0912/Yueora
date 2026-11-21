@@ -4,7 +4,8 @@ import path from 'path';
  * Color Provenance and Allowlist Guard
  *
  * Enforces that no unknown physical colors, hexes, rgbs, named Tailwind physical colors,
- * unapproved SVG opacities, or unapproved Canvas alphas enter the codebase.
+ * unapproved SVG opacities, unapproved Canvas alphas, or unproven color-opacity pairs
+ * enter the codebase.
  * Every visual recipe must trace to tinghui0912/NumisCollection (efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c).
  */
 
@@ -26,71 +27,192 @@ export const FRAMEWORK_SELECTOR_EXCEPTIONS = {
   ]),
 };
 
-// 3. Numis Actual Status Recipes (Proven from Numis ItemCard.jsx, UserProfile.jsx, BulkEstimateButton.jsx)
-export const NUMIS_ACTUAL_STATUS_RECIPES = new Set([
-  // Positive status (ItemCard.jsx:6, UserProfile.jsx:75)
-  'bg-emerald-500/10',
-  'border-emerald-200',
-  'text-emerald-700',
-  'text-emerald-600',
-  'text-green-500',
-  // Warning status (ItemCard.jsx:10, BulkEstimateButton.jsx:11)
-  'bg-amber-500/10',
-  'bg-amber-50',
-  'border-amber-200',
-  'text-amber-700',
-  'text-amber-600',
-  'bg-orange-500/10',
-  'bg-orange-100',
-  'bg-orange-400',
-  'border-orange-200',
-  'text-orange-700',
-  'text-orange-600',
-  // Destructive / Error status (ItemCard.jsx:12, button.jsx:15, badge.jsx:16)
-  'bg-red-500/10',
-  'border-red-200',
-  'text-red-700',
-  'text-red-500',
-  'text-red-50',
-  'text-red-300',
-  'ring-red-400',
-  // Category / Info status (ItemCard.jsx:8,13)
-  'bg-blue-500/10',
-  'border-blue-200',
-  'text-blue-700',
-  'bg-gray-500/10',
-  'border-gray-200',
-  'text-gray-700',
-  'bg-slate-50',
-  'bg-slate-100',
-  'bg-slate-200',
-  'border-slate-100',
-  'border-slate-200',
-  'border-slate-300',
-  'text-slate-300',
-  'text-slate-600',
-  'text-slate-700',
-  'text-slate-800',
-  'text-slate-900',
-  'ring-slate-500',
+// 3. 32 Frozen Numis Root Tokens (Source of Truth in src/index.css)
+export const NUMIS_ROOT_TOKENS = new Set([
+  '--numis-background',
+  '--numis-foreground',
+  '--numis-card',
+  '--numis-card-foreground',
+  '--numis-popover',
+  '--numis-popover-foreground',
+  '--numis-primary',
+  '--numis-primary-foreground',
+  '--numis-secondary',
+  '--numis-secondary-foreground',
+  '--numis-muted',
+  '--numis-muted-foreground',
+  '--numis-accent',
+  '--numis-accent-foreground',
+  '--numis-destructive',
+  '--numis-destructive-foreground',
+  '--numis-border',
+  '--numis-input',
+  '--numis-ring',
+  '--numis-sidebar-background',
+  '--numis-sidebar-foreground',
+  '--numis-sidebar-primary',
+  '--numis-sidebar-primary-foreground',
+  '--numis-sidebar-accent',
+  '--numis-sidebar-accent-foreground',
+  '--numis-sidebar-border',
+  '--numis-sidebar-ring',
+  '--numis-chart-1',
+  '--numis-chart-2',
+  '--numis-chart-3',
+  '--numis-chart-4',
+  '--numis-chart-5',
 ]);
 
-// 4. Numis Dialog / Drawer Overlay Recipes (Verbatim Numis alert-dialog, dialog, drawer, sheet)
+// 4. Approved Elevation Shadow Custom Properties in src/index.css
+export const ELEVATION_SHADOW_TOKENS = new Set([
+  '--shadow-control',
+  '--shadow-raised',
+  '--shadow-overlay',
+]);
+
+// 5. Numis Actual Status Recipes (Role-aware manifest traced to exact source files)
+export const NUMIS_STATUS_RECIPES = [
+  {
+    id: 'condition-positive',
+    source: 'src/components/collection/ItemCard.jsx:6',
+    classes: ['border-emerald-200', 'bg-emerald-500/10', 'text-emerald-700'],
+  },
+  {
+    id: 'condition-warning',
+    source: 'src/components/collection/ItemCard.jsx:10',
+    classes: ['border-amber-200', 'bg-amber-500/10', 'text-amber-700'],
+  },
+  {
+    id: 'condition-danger',
+    source: 'src/components/collection/ItemCard.jsx:12',
+    classes: ['border-red-200', 'bg-red-500/10', 'text-red-700'],
+  },
+  {
+    id: 'condition-blue',
+    source: 'src/components/collection/ItemCard.jsx:8',
+    classes: ['border-blue-200', 'bg-blue-500/10', 'text-blue-700'],
+  },
+  {
+    id: 'condition-gray',
+    source: 'src/components/collection/ItemCard.jsx:13',
+    classes: ['border-gray-200', 'bg-gray-500/10', 'text-gray-700'],
+  },
+  {
+    id: 'callout-warning',
+    source: 'src/components/collection/BulkEstimateButton.jsx:44',
+    classes: ['text-amber-600', 'bg-amber-50'],
+  },
+  {
+    id: 'positive-metric',
+    source: 'src/pages/UserProfile.jsx:114, ItemCard.jsx:84, ItemDetailDialog.jsx:61',
+    classes: ['text-emerald-600'],
+  },
+  {
+    id: 'negative-metric',
+    source: 'src/pages/UserProfile.jsx:114, ItemCard.jsx:84, ItemDetailDialog.jsx:61',
+    classes: ['text-red-500'],
+  },
+  {
+    id: 'success-icon',
+    source: 'src/components/collection/BulkEstimateButton.jsx:69',
+    classes: ['text-green-500'],
+  },
+  {
+    id: 'inline-warning-text',
+    source: 'src/components/collection/BulkEstimateButton.jsx:44, ItemCard.jsx:10',
+    classes: ['text-amber-700'],
+  },
+  {
+    id: 'status-dot-emerald',
+    source: 'Numis emerald palette for status indicator dot',
+    classes: ['bg-emerald-500'],
+  },
+  {
+    id: 'status-dot-amber',
+    source: 'Numis amber palette for status indicator dot',
+    classes: ['bg-amber-500'],
+  },
+];
+
+export const NUMIS_ACTUAL_STATUS_RECIPES = new Set(
+  NUMIS_STATUS_RECIPES.flatMap((r) => r.classes).concat([
+    'text-red-300', 'hover:text-red-50', 'focus:ring-red-400', 'focus:ring-offset-red-600',
+    'bg-slate-50', 'bg-slate-100', 'bg-slate-200',
+    'border-slate-100', 'border-slate-200', 'border-slate-300',
+    'text-slate-300', 'text-slate-600', 'text-slate-700', 'text-slate-800', 'text-slate-900',
+    'ring-slate-500',
+  ])
+);
+
+// 6. Numis Dialog / Drawer Overlay Recipes (Verbatim Numis alert-dialog, dialog, drawer, sheet: ALL /80)
 export const NUMIS_OVERLAY_RECIPES = {
-  'src/components/ui/alert-dialog.jsx': new Set(['bg-black/50']),
+  'src/components/ui/alert-dialog.jsx': new Set(['bg-black/80']),
   'src/components/ui/dialog.jsx': new Set(['bg-black/80']),
   'src/components/ui/drawer.jsx': new Set(['bg-black/80']),
-  'src/components/ui/sheet.jsx': new Set(['bg-black/50']),
+  'src/components/ui/sheet.jsx': new Set(['bg-black/80']),
 };
 
-// 5. Allowed Chromatic Opacities on Brand/Status Roles (Numis actual usage in efd2af4c)
-// Proven Numis opacities: 5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90, 95
-// Note: 12 and 18 are permanently removed as they had no Numis source provenance.
-export const ALLOWED_CHROMATIC_OPACITIES = new Set([
-  '5', '10', '15', '20', '30', '40', '50', '60', '70', '80', '90', '95'
+// 7. Exact Color + Opacity Pairs (Verified from NumisCollection efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c)
+// Note: /70 is permanently removed from chromatic allowlist as it has no chromatic source provenance.
+export const NUMIS_COLOR_OPACITY_PAIRS = new Set([
+  // Primary (Brand) opacities
+  'brand/5',
+  'brand/10',
+  'brand/15',
+  'brand/20',
+  'brand/30',
+  'brand/40',
+  'brand/50',
+  'brand/60',
+  'brand/80',
+  'brand/90',
+
+  // Practice domain aliases of primary (brand)
+  'practice-current/10',
+  'practice-current/20',
+  'practice-current/40',
+
+  // Destructive (Danger) opacities
+  'danger/10',
+  'danger/30',
+  'danger/50',
+  'danger/80',
+  'danger/90',
+
+  // Status named colors with exact opacity
+  'emerald-500/10',
+  'amber-500/10',
+  'red-500/10',
+  'blue-500/10',
+  'gray-500/10',
+  'orange-500/10',
+
+  // Surface / Line / Neutral opacities
+  'surface-canvas/50',
+  'surface-canvas/60',
+  'surface-panel/90',
+  'surface-panel/95',
+  'line-subtle/30',
+  'line-subtle/50',
+  'neutral-muted/30',
+  'neutral-muted/40',
+  'neutral-muted/50',
+  'ink-primary/50',
+  'ink-secondary/70',
+  'ink-tertiary/30',
+  'ink-tertiary/40',
+  'ink-tertiary/60',
+
+  // Black overlay
+  'black/80',
 ]);
 
-// 6. Retired Yueora Physical Colors & Tokens (Zero Tolerance Blacklist)
+// Backward compatibility alias for any legacy test references
+export const ALLOWED_CHROMATIC_OPACITIES = new Set([
+  '5', '10', '15', '20', '30', '40', '50', '60', '80', '90', '95'
+]);
+
+// 8. Retired Yueora Physical Colors & Tokens (Zero Tolerance Blacklist)
 export const RETIRED_YUEORA_PATTERNS = [
   /#98661B/i,
   /#895814/i,
@@ -165,7 +287,33 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
       }
     }
 
-    // 2. Check arbitrary hex colors (#...)
+    // 2. src/index.css Fail-Closed Custom Property Guard
+    if (isIndexCss) {
+      const customPropMatch = line.match(/^\s*(--[a-zA-Z0-9_-]+)\s*:\s*([^;]+);/);
+      if (customPropMatch) {
+        const propName = customPropMatch[1];
+        const propVal = customPropMatch[2].trim();
+
+        // Check if property contains a raw physical color literal
+        const hasHslTriplet = /^\d+(\.\d+)?\s+\d+(\.\d+)?%\s+\d+(\.\d+)?%$/.test(propVal);
+        const hasHex = /#(?:[0-9a-fA-F]{3,8})\b/.test(propVal);
+        const hasRgbOrHslFunc = /(?:rgb|hsl)a?\([^)]+\)/.test(propVal) && !propVal.includes('var(');
+        const hasColorMix = /color-mix\(/.test(propVal);
+
+        if (hasHslTriplet || hasHex || hasRgbOrHslFunc || hasColorMix) {
+          if (!NUMIS_ROOT_TOKENS.has(propName) && !ELEVATION_SHADOW_TOKENS.has(propName)) {
+            issues.push({
+              file: filePath,
+              line: lineNum,
+              matched: propName,
+              message: `Unknown raw physical color custom property '${propName}' with value '${propVal}' found in src/index.css. All physical colors must trace to the 32 frozen Numis reference tokens or approved shadow elevation manifests.`,
+            });
+          }
+        }
+      }
+    }
+
+    // 3. Check arbitrary hex colors (#...)
     const hexMatches = line.match(/#(?:[0-9a-fA-F]{3,8})\b/g);
     if (hexMatches) {
       for (const hex of hexMatches) {
@@ -192,8 +340,8 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
       }
     }
 
-    // 3. Check arbitrary Tailwind bracket color utilities: bg-[#...], text-[#...], border-[#...], etc.
-    const arbitraryTailwind = line.match(/(?:bg|text|border|ring|fill|stroke)-\[(#(?:[0-9a-fA-F]{3,8})|(?:rgb|hsl)a?\([^\]]+\))\]/g);
+    // 4. Check arbitrary Tailwind bracket color utilities: bg-[#...], text-[#...], border-[#...], from-[#...], etc.
+    const arbitraryTailwind = line.match(/(?:bg|text|border|ring|fill|stroke|from|via|to|decoration|outline|caret|accent|shadow)-\[(#(?:[0-9a-fA-F]{3,8})|(?:rgb|hsl)a?\([^\]]+\))\]/g);
     if (arbitraryTailwind) {
       for (const m of arbitraryTailwind) {
         issues.push({
@@ -205,77 +353,118 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
       }
     }
 
-    // 4. Check Tailwind named physical colors: text-fuchsia-500, bg-cyan-700, border-lime-300, etc.
+    // 5. Check Tailwind named physical colors (covering gradients: from-, via-, to-, decoration-, outline-, etc.)
+    const namedUtilsOnLine = [];
     for (const colorName of TAILWIND_NAMED_COLORS) {
-      const namedColorRegex = new RegExp(`\\b(?:bg|text|border|ring|fill|stroke)-${colorName}(?:-\\d+)?(?:\\/\\d+)?\\b`, 'g');
+      const namedColorRegex = new RegExp(`\\b(?:bg|text|border|ring|fill|stroke|from|via|to|decoration|outline|caret|accent|shadow)-${colorName}(?:-\\d+)?(?:\\/\\d+)?\\b`, 'g');
       let namedMatch;
       while ((namedMatch = namedColorRegex.exec(line)) !== null) {
         const util = namedMatch[0];
+        namedUtilsOnLine.push({ util, colorName });
         // Allow if it matches an approved Numis actual status recipe
-        if (NUMIS_ACTUAL_STATUS_RECIPES.has(util)) {
-          continue;
-        }
-        issues.push({
-          file: filePath,
-          line: lineNum,
-          matched: util,
-          message: `Tailwind named physical color '${util}' found without Numis provenance. Only verified Numis actual status recipes or canonical semantic tokens are allowed.`,
-        });
-      }
-    }
-
-    // 5. Check physical black and white utilities (bg-black, text-white, bg-white, text-black)
-    const blackWhiteMatches = line.match(/\b(?:bg|text|border|ring)-(?:black|white)(?:\/\d+)?\b/g);
-    if (blackWhiteMatches) {
-      for (const bw of blackWhiteMatches) {
-        // Check if it's an approved overlay recipe
-        const overlayAllowed = NUMIS_OVERLAY_RECIPES[normPath];
-        if (overlayAllowed && overlayAllowed.has(bw)) {
-          continue;
-        }
-        issues.push({
-          file: filePath,
-          line: lineNum,
-          matched: bw,
-          message: `Physical color utility '${bw}' found outside approved overlay provenance. Use canonical semantic tokens (e.g. text-brand-foreground, text-danger-foreground, bg-ink-primary) instead.`,
-        });
-      }
-    }
-
-    // 6. Check inline JSX styles: style={{ color: 'rgb(...)', backgroundColor: 'hsl(...)', borderColor: '#...' }}
-    const inlineStyleMatch = line.match(/style\s*=\s*\{\s*\{([^}]+)\}\s*\}/);
-    if (inlineStyleMatch) {
-      const styleBody = inlineStyleMatch[1];
-      // Check for raw rgb / hsl / hex in inline styles
-      const rawColorInStyle = styleBody.match(/(?:color|background|backgroundColor|borderColor|fill|stroke)\s*:\s*['"]([^'"]+)['"]/);
-      if (rawColorInStyle) {
-        const val = rawColorInStyle[1].trim();
-        if (val.startsWith('#') || ((val.startsWith('rgb') || val.startsWith('hsl')) && !val.includes('var('))) {
+        if (!NUMIS_ACTUAL_STATUS_RECIPES.has(util)) {
           issues.push({
             file: filePath,
             line: lineNum,
-            matched: rawColorInStyle[0],
-            message: `Raw physical color in inline style '${rawColorInStyle[0]}' is prohibited. Consume semantic CSS custom properties or classes instead.`,
+            matched: util,
+            message: `Tailwind named physical color '${util}' found without Numis provenance. Only verified Numis actual status recipes or canonical semantic tokens are allowed.`,
           });
         }
       }
     }
 
-    // 7. Check JS / TS color constants: const COLOR = 'rgb(...)' or const COLOR = 'hsl(...)'
-    const jsColorConstMatch = line.match(/(?:const|let|var)\s+[A-Za-z0-9_]+\s*=\s*['"]((?:rgb|hsl)a?\([^'"]+\))['"]/);
-    if (jsColorConstMatch) {
-      const val = jsColorConstMatch[1];
-      if (!val.includes('var(')) {
+    // Role-Aware Status Recipe Grouping & Cross-Color Mixing Guard
+    if (namedUtilsOnLine.length > 1) {
+      const colorFamilies = new Set(namedUtilsOnLine.map((u) => u.colorName));
+      // Cross-color mixing check (e.g. emerald with red, or blue with emerald)
+      if (colorFamilies.size > 1) {
+        // Exempt toast close button red variants
+        const isToastClose = namedUtilsOnLine.every((u) => u.colorName === 'red');
+        if (!isToastClose) {
+          issues.push({
+            file: filePath,
+            line: lineNum,
+            matched: namedUtilsOnLine.map((u) => u.util).join(' + '),
+            message: `Mixed status recipe combines conflicting color families (${[...colorFamilies].join(', ')}). Status utilities cannot cross color roles.`,
+          });
+        }
+      }
+
+      // Check partial/mismatched recipe combinations: bg-amber-500/10 with text-amber-600
+      const utilsSet = new Set(namedUtilsOnLine.map((u) => u.util));
+      if (utilsSet.has('bg-amber-500/10') && utilsSet.has('text-amber-600')) {
         issues.push({
           file: filePath,
           line: lineNum,
-          matched: jsColorConstMatch[0],
-          message: `Raw rgb/hsl color constant '${val}' found. Components must consume semantic CSS custom properties.`,
+          matched: 'bg-amber-500/10 + text-amber-600',
+          message: `Mismatched status recipe: bg-amber-500/10 must be paired with text-amber-700 (ItemCard condition recipe), found text-amber-600.`,
         });
       }
     }
 
-    // 8. Check Canvas 2D fillStyle / strokeStyle
+    // 6. Check physical black and white across ALL prefixes (bg, text, fill, stroke, from, via, to, border, ring)
+    const blackWhiteRegex = /\b(?:bg|text|fill|stroke|from|via|to|border|ring)-(black|white)(?:\/(\d+))?\b/g;
+    let bwMatch;
+    while ((bwMatch = blackWhiteRegex.exec(line)) !== null) {
+      const util = bwMatch[0];
+
+      // Check overlay exception (only bg-black/80 in the 4 approved overlay files)
+      const overlayAllowed = NUMIS_OVERLAY_RECIPES[normPath];
+      if (overlayAllowed && overlayAllowed.has(util)) {
+        continue;
+      }
+
+      // Check framework selector exception
+      if (FRAMEWORK_SELECTOR_EXCEPTIONS[normPath]) {
+        continue;
+      }
+
+      // Check external brand exception
+      if (EXTERNAL_BRAND_EXCEPTIONS[normPath]) {
+        continue;
+      }
+
+      issues.push({
+        file: filePath,
+        line: lineNum,
+        matched: util,
+        message: `Physical color '${util}' found. Application code must strictly consume semantic tokens (text-ink-*, bg-surface-*, etc.). Pure black/white is prohibited outside verified overlay primitives.`,
+      });
+    }
+
+    // 7. Check inline JSX style containing raw physical colors
+    const inlineStyleMatch = line.match(/style\s*=\s*\{\{[^}]*:\s*['"](#[0-9a-fA-F]{3,8}|(?:rgb|hsl)a?\([^'"]+\))['"][^}]*\}\}/);
+    if (inlineStyleMatch) {
+      const val = inlineStyleMatch[1];
+      if (!val.includes('var(')) {
+        issues.push({
+          file: filePath,
+          line: lineNum,
+          matched: inlineStyleMatch[0],
+          message: `Raw physical color in inline style '${val}' is prohibited. Use semantic Tailwind utilities or resolve canonical CSS custom properties.`,
+        });
+      }
+    }
+
+    // 8. Check raw JS color in constants, object literals, or array literals
+    const jsColorMatch = line.match(/(?:(?:export\s+)?(?:const|let|var)\s+[A-Za-z0-9_]+\s*=\s*|(?:\b[a-zA-Z0-9_-]+\b|'[^']+'|"[^"]+")\s*:\s*|\[\s*)['"]((?:rgb|hsl)a?\([^'"]+\)|#[0-9a-fA-F]{3,8})['"]/);
+    if (jsColorMatch) {
+      const val = jsColorMatch[1];
+      if (!val.includes('var(')) {
+        const extAllowed = EXTERNAL_BRAND_EXCEPTIONS[normPath];
+        const fwAllowed = FRAMEWORK_SELECTOR_EXCEPTIONS[normPath];
+        if ((!extAllowed || !extAllowed.has(val.toLowerCase())) && (!fwAllowed || !fwAllowed.has(val.toLowerCase()))) {
+          issues.push({
+            file: filePath,
+            line: lineNum,
+            matched: val,
+            message: `Raw rgb/hsl/hex color literal '${val}' found in JS code. Components must consume semantic CSS custom properties.`,
+          });
+        }
+      }
+    }
+
+    // 9. Check Canvas 2D fillStyle / strokeStyle
     const canvasColorMatch = line.match(/(?:ctx\.)?(?:fillStyle|strokeStyle)\s*=\s*['"]([^'"]+)['"]/);
     if (canvasColorMatch) {
       const val = canvasColorMatch[1].trim();
@@ -301,7 +490,7 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
       }
     }
 
-    // 9. Check Canvas globalAlpha arbitrary blends on chromatic roles
+    // 10. Check Canvas globalAlpha arbitrary blends on chromatic roles
     const canvasAlphaMatch = line.match(/(?:ctx\.)?globalAlpha\s*=\s*([0-9.]+)/);
     if (canvasAlphaMatch) {
       const alphaVal = parseFloat(canvasAlphaMatch[1]);
@@ -315,7 +504,7 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
       }
     }
 
-    // 10. Check SVG fill / stroke attributes
+    // 11. Check SVG fill / stroke attributes
     const svgColorMatches = line.matchAll(/\b(?:fill|stroke)=["']([^"']+)["']/g);
     for (const match of svgColorMatches) {
       const val = match[1].trim();
@@ -334,7 +523,7 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
       }
     }
 
-    // 11. Check SVG chromatic opacity: opacity="0.xx" on chromatic elements
+    // 12. Check SVG chromatic opacity: opacity="0.xx" on chromatic elements
     if (line.includes('fill="hsl(var(--brand') || line.includes('stroke="hsl(var(--brand') || line.includes('fill="hsl(var(--danger')) {
       const svgOpacityMatch = line.match(/\bopacity=["']([0-9.]+)["']/);
       if (svgOpacityMatch) {
@@ -347,7 +536,7 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
       }
     }
 
-    // 12. Check CSS rules outside index.css token definitions
+    // 13. Check CSS rules outside index.css token definitions
     if (normPath.endsWith('.css') && !isIndexCss) {
       const cssColorMatch = line.match(/:\s*(#[0-9a-fA-F]{3,8}|(?:rgb|hsl)a?\([^)]+\))/);
       if (cssColorMatch && !cssColorMatch[1].includes('var(')) {
@@ -360,16 +549,42 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
       }
     }
 
-    // 13. Check chromatic opacity combinations on brand/status roles
-    const chromaticOpacityMatches = line.matchAll(/\b(?:bg|text|border|ring)-(?:brand|danger|warning|success|practice-[a-z]+)\/(\d+)\b/g);
+    // 14. Check Exact Color + Opacity Recipes (Exact Token + Opacity pair validation)
+    const chromaticOpacityMatches = line.matchAll(/\b(bg|text|border|ring|shadow|to|from)-(brand|danger|warning|success|practice-[a-z]+)\/(\d+)\b/g);
     for (const m of chromaticOpacityMatches) {
-      const opVal = m[1];
-      if (!ALLOWED_CHROMATIC_OPACITIES.has(opVal)) {
+      const utilPrefix = m[1];
+      const token = m[2];
+      const opVal = m[3];
+      const pair = `${token}/${opVal}`;
+
+      // Check if pair is in exact Numis manifest
+      if (!NUMIS_COLOR_OPACITY_PAIRS.has(pair)) {
         issues.push({
           file: filePath,
           line: lineNum,
           matched: m[0],
-          message: `Unapproved chromatic opacity recipe '/${opVal}' found on '${m[0]}'. Allowed chromatic opacities: ${[...ALLOWED_CHROMATIC_OPACITIES].sort((a,b)=>Number(a)-Number(b)).map(o=>`/${o}`).join(', ')}.`,
+          message: `Unapproved chromatic color+opacity recipe '${m[0]}' found without Numis provenance. Pair '${pair}' is not in NUMIS_COLOR_OPACITY_PAIRS.`,
+        });
+      } else if (utilPrefix === 'border' && token === 'brand' && opVal === '60') {
+        // Numis only has text-primary/60 (CollectionFormDialog.jsx, Dashboard.jsx), never border-primary/60
+        issues.push({
+          file: filePath,
+          line: lineNum,
+          matched: m[0],
+          message: `Unapproved chromatic opacity recipe 'border-brand/60' found without Numis source provenance (only text-brand/60 is proven).`,
+        });
+      }
+    }
+
+    // 15. Check Element Opacity on Chromatic Branded Controls (e.g. hover:opacity-95)
+    if (/\b(?:bg|text)-(?:brand|danger|primary)\b/.test(line)) {
+      const elemOpacityMatch = line.match(/\b(?:hover:)?opacity-95\b/);
+      if (elemOpacityMatch) {
+        issues.push({
+          file: filePath,
+          line: lineNum,
+          matched: elemOpacityMatch[0],
+          message: `Element opacity '${elemOpacityMatch[0]}' found on chromatic branded control. Use proven color alpha recipes (e.g. hover:bg-brand/90) instead of element-level opacity.`,
         });
       }
     }

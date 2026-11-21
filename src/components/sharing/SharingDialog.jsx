@@ -150,7 +150,7 @@ export default function SharingDialog({ score, open, onOpenChange }) {
                       <span className="type-caption text-ink-tertiary">Owner</span>
                     ) : person.role === 'Invitation pending' ? (
                       <>
-                        <span className="type-caption text-warning">Pending · {person.pendingRole || 'Can view'}</span>
+                        <span className="type-caption text-amber-700">Pending · {person.pendingRole || 'Can view'}</span>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button className="rounded-control p-1 text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary">
@@ -257,8 +257,8 @@ export default function SharingDialog({ score, open, onOpenChange }) {
                 </Select>
               </div>
               {sharing.link.access === 'Can edit' && (
-                <div className="flex items-center gap-2 border-t border-line-subtle bg-warning/10 px-3 py-2">
-                  <span className="type-caption text-warning">Anyone with this link can edit.</span>
+                <div className="flex items-center gap-2 border-t border-line-subtle bg-amber-500/10 px-3 py-2">
+                  <span className="type-caption text-amber-700">Anyone with this link can edit.</span>
                 </div>
               )}
               {sharing.link.access !== 'Off' && (

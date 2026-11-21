@@ -44,7 +44,7 @@ export default function About() {
                 {/* Score Footer Details */}
                 <div className="pt-4 border-t border-line-subtle flex items-center justify-between type-metadata text-ink-tertiary">
                   <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-practice-following" /> Acoustic Listener Ready
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" /> Acoustic Listener Ready
                   </span>
                   <span>Personal Repertoire · Page 1</span>
                 </div>
