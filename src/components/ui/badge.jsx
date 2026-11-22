@@ -15,12 +15,12 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-danger text-danger-foreground shadow hover:bg-danger/80",
         outline: "border-line-subtle text-ink-primary",
-        /* Semantic status variants — aligned to Numis primitive & neutral roles */
-        brand: "border-transparent bg-brand-soft text-brand-soft-foreground",
-        success: "border-transparent bg-brand-soft text-brand-soft-foreground",
-        warning: "border-line-subtle bg-neutral-muted text-ink-secondary",
+        /* Semantic status variants — mapped to exact Numis canonical badge recipes */
+        brand: "border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80",
+        success: "border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80",
+        warning: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         danger: "border-transparent bg-danger text-danger-foreground shadow hover:bg-danger/80",
-        neutral: "border-transparent bg-neutral-muted text-ink-secondary",
+        neutral: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
       },
     },
     defaultVariants: {

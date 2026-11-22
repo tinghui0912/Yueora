@@ -4,6 +4,7 @@
  * sharing is a deliberate door you choose to open, not an enterprise access matrix.
  */
 import { Lock, Heart, ArrowUpRight, ShieldCheck, Mail } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 export default function SharingVisual() {
   return (
@@ -58,9 +59,9 @@ export default function SharingVisual() {
               <p className="type-metadata text-ink-tertiary truncate">emma.debussy@example.com</p>
             </div>
           </div>
-          <span className="rounded-control bg-neutral-muted px-2.5 py-1 type-caption font-medium text-ink-secondary border border-line-subtle self-start sm:self-auto shrink-0">
+          <Badge variant="secondary" className="self-start sm:self-auto shrink-0">
             Can view &amp; annotate
-          </span>
+          </Badge>
         </div>
 
         {/* Accompanying personal message */}

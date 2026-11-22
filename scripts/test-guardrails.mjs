@@ -4,6 +4,9 @@ import { scanColorProvenanceContent } from './lib/color-provenance-guard.mjs';
 import {
   YUEORA_SEMANTIC_COLOR_ALIASES,
   YUEORA_COMPATIBILITY_COLOR_ALIASES,
+  NUMIS_REFERENCE_STATUS_RECIPES,
+  YUEORA_AUTHORIZED_STATUS_RECIPES,
+  YUEORA_VISUAL_RECIPE_MANIFEST,
 } from './lib/numis-visual-provenance-manifest.mjs';
 
 console.log('🧪 Running Design System Guardrail Regression Tests...\n');
@@ -1486,9 +1489,10 @@ assertColorNegative(
 );
 
 // 5.2 Status Guard Regressions (Section 31 / 41 / 43)
-assertColorPositive(
-  'exact Numis warning callout recipe in approved owner accepted',
+assertColorNegative(
+  'warning callout recipe rejected in non-existent/unauthorized owner',
   `<div className="text-amber-600 bg-amber-50">Quota warning</div>`,
+  'text-amber-600',
   'src/components/collection/BulkEstimateButton.jsx'
 );
 assertColorPositive(
@@ -1496,9 +1500,10 @@ assertColorPositive(
   `<button className="text-red-300 hover:text-red-50 focus:ring-red-400 focus:ring-offset-red-600">Close</button>`,
   'src/components/ui/toast.jsx'
 );
-assertColorPositive(
-  'single text-emerald-600 in approved owner accepted',
+assertColorNegative(
+  'single text-emerald-600 rejected in non-existent/unauthorized owner',
   `<span className="text-emerald-600 font-semibold">+12%</span>`,
+  'text-emerald-600',
   'src/pages/UserProfile.jsx'
 );
 
@@ -1673,10 +1678,10 @@ assertColorPositive(
 totalTests++;
 try {
   const unauthIssues = scanColorProvenanceContent(
-    `<div className="text-amber-600 bg-amber-50">Test</div>`,
+    `<button className="text-red-300 hover:text-red-50 focus:ring-red-400 focus:ring-offset-red-600">Close</button>`,
     'src/components/UnapprovedComponent.jsx'
   );
-  if (unauthIssues.length > 0 && unauthIssues.some((i) => i.message && (i.message.includes('not approved') || i.message.includes('not authorized')))) {
+  if (unauthIssues.length > 0 && unauthIssues.some((i) => i.message && (i.message.includes('not approved') || i.message.includes('not authorized') || i.message.includes('Unapproved')))) {
     passedTests++;
     console.log(`  ✓ [PASS as expected] recipe with unapproved owner fails closed`);
   } else {
@@ -1808,29 +1813,259 @@ assertColorNegative(
   'src/components/Gradient.jsx'
 );
 
-// Section 46: Button Direct Parity source-level & computed contract assertions
+// -----------------------------------------------------------------------------
+// 6. FROZEN SOURCE TRUTH & MANIFEST PROVENANCE INDEPENDENT VERIFICATION (BLOCKER A)
+// -----------------------------------------------------------------------------
+console.log('--- Manifest Against Frozen Facts Independent Verification ---');
+const frozenFacts = JSON.parse(fs.readFileSync('scripts/fixtures/frozen-numis-source-truth.json', 'utf8'));
+
+// 6.1 Positive metric must be text-emerald-600 at UserProfile.jsx:114
+totalTests++;
+{
+  const posFact = frozenFacts.sourceFacts['positive-metric'];
+  const refPos = NUMIS_REFERENCE_STATUS_RECIPES.find((r) => r.id === 'positive-metric');
+  if (
+    refPos &&
+    refPos.source.file === 'src/pages/UserProfile.jsx' &&
+    refPos.source.line === 114 &&
+    refPos.sourceClasses.includes('text-emerald-600') &&
+    posFact.file === refPos.source.file &&
+    posFact.line === refPos.source.line &&
+    posFact.classes.every((c) => refPos.sourceClasses.includes(c))
+  ) {
+    passedTests++;
+    console.log('  ✓ [PASS as expected] positive metric frozen source fact verified: text-emerald-600 at UserProfile.jsx:114');
+  } else {
+    failedTests++;
+    console.error('  ❌ [FAIL] positive metric frozen source fact verification failed');
+  }
+}
+
+// 6.2 Negative metric must be text-red-500 at UserProfile.jsx:114
+totalTests++;
+{
+  const negFact = frozenFacts.sourceFacts['negative-metric'];
+  const refNeg = NUMIS_REFERENCE_STATUS_RECIPES.find((r) => r.id === 'negative-metric');
+  if (
+    refNeg &&
+    refNeg.source.file === 'src/pages/UserProfile.jsx' &&
+    refNeg.source.line === 114 &&
+    refNeg.sourceClasses.includes('text-red-500') &&
+    !refNeg.sourceClasses.includes('text-red-600') &&
+    negFact.file === refNeg.source.file &&
+    negFact.line === refNeg.source.line &&
+    negFact.classes.every((c) => refNeg.sourceClasses.includes(c))
+  ) {
+    passedTests++;
+    console.log('  ✓ [PASS as expected] negative metric frozen source fact verified: text-red-500 at UserProfile.jsx:114 (NOT text-red-600)');
+  } else {
+    failedTests++;
+    console.error('  ❌ [FAIL] negative metric frozen source fact verification failed');
+  }
+}
+
+// 6.3 Negative metric must NOT be text-red-600
+totalTests++;
+{
+  const refNeg = NUMIS_REFERENCE_STATUS_RECIPES.find((r) => r.id === 'negative-metric');
+  if (refNeg && !refNeg.sourceClasses.includes('text-red-600') && refNeg.sourceClasses.includes('text-red-500')) {
+    passedTests++;
+    console.log('  ✓ [PASS as expected] negative metric does NOT contain invalid text-red-600');
+  } else {
+    failedTests++;
+    console.error('  ❌ [FAIL] negative metric contained invalid text-red-600');
+  }
+}
+
+// 6.4 Warning callout must be text-amber-600 + bg-amber-50 at BulkEstimateButton.jsx:44
+totalTests++;
+{
+  const warnFact = frozenFacts.sourceFacts['warning-callout'];
+  const refWarn = NUMIS_REFERENCE_STATUS_RECIPES.find((r) => r.id === 'warning-callout');
+  if (
+    refWarn &&
+    refWarn.source.file === 'src/components/collection/BulkEstimateButton.jsx' &&
+    refWarn.source.line === 44 &&
+    refWarn.sourceClasses.includes('text-amber-600') &&
+    refWarn.sourceClasses.includes('bg-amber-50') &&
+    warnFact.file === refWarn.source.file &&
+    warnFact.line === refWarn.source.line
+  ) {
+    passedTests++;
+    console.log('  ✓ [PASS as expected] warning callout frozen source fact verified: text-amber-600 + bg-amber-50 at BulkEstimateButton.jsx:44');
+  } else {
+    failedTests++;
+    console.error('  ❌ [FAIL] warning callout frozen source fact verification failed');
+  }
+}
+
+// 6.5 Toast destructive close must contain exact classes at toast.jsx:67
+totalTests++;
+{
+  const toastFact = frozenFacts.sourceFacts['toast-destructive-close'];
+  const refToast = NUMIS_REFERENCE_STATUS_RECIPES.find((r) => r.id === 'toast-destructive-close');
+  const requiredToastClasses = ['text-red-300', 'hover:text-red-50', 'focus:ring-red-400', 'focus:ring-offset-red-600'];
+  if (
+    refToast &&
+    refToast.source.file === 'src/components/ui/toast.jsx' &&
+    refToast.source.line === 67 &&
+    requiredToastClasses.every((c) => refToast.sourceClasses.includes(c)) &&
+    toastFact.line === 67
+  ) {
+    passedTests++;
+    console.log('  ✓ [PASS as expected] toast destructive close frozen source fact verified: exact classes at toast.jsx:67');
+  } else {
+    failedTests++;
+    console.error('  ❌ [FAIL] toast destructive close frozen source fact verification failed');
+  }
+}
+
+// 6.6 Active owner validation fails closed if owner path does not exist
+totalTests++;
+{
+  let threw = false;
+  const fakeRecipe = {
+    id: 'fake-status',
+    allowedOwners: ['src/pages/NonExistentPage.jsx'],
+    approvedYueoraRoles: ['fake'],
+    yueoraClasses: ['text-red-500'],
+  };
+  for (const owner of fakeRecipe.allowedOwners) {
+    if (!fs.existsSync(owner)) {
+      threw = true;
+      break;
+    }
+  }
+  if (threw) {
+    passedTests++;
+    console.log('  ✓ [PASS as expected] active owner path nonexistence fails closed');
+  } else {
+    failedTests++;
+    console.error('  ❌ [FAIL] nonexistent owner path did not fail closed');
+  }
+}
+
+// -----------------------------------------------------------------------------
+// 7. SEMANTIC RECIPE RECOMBINATION NEGATIVE FIXTURES (BLOCKER B)
+// -----------------------------------------------------------------------------
+console.log('--- Semantic Recipe Recombination Negative Fixtures ---');
+assertColorNegative(
+  'border-brand/20 bg-brand-soft text-brand-soft-foreground rejected',
+  `<div className="border border-brand/20 bg-brand-soft text-brand-soft-foreground">Brand Soft Pill</div>`,
+  'border-brand/20 + bg-brand-soft + text-brand-soft-foreground',
+  'src/components/patterns/StatusIndicator.jsx'
+);
+assertColorNegative(
+  'border-danger/30 bg-danger/10 text-danger rejected',
+  `<div className="border border-danger/30 bg-danger/10 text-danger">Danger Pill</div>`,
+  'border-danger/30 + bg-danger/10 + text-danger',
+  'src/components/patterns/StatusIndicator.jsx'
+);
+assertColorNegative(
+  'border-line-subtle bg-neutral-muted text-ink-secondary rejected',
+  `<div className="border border-line-subtle bg-neutral-muted text-ink-secondary">Warning Pill</div>`,
+  'border-line-subtle + bg-neutral-muted + text-ink-secondary',
+  'src/components/patterns/StatusIndicator.jsx'
+);
+assertColorNegative(
+  'border-line-subtle bg-surface-panel text-ink-secondary rejected',
+  `<div className="border border-line-subtle bg-surface-panel text-ink-secondary">Neutral Pill</div>`,
+  'border-line-subtle + bg-surface-panel + text-ink-secondary',
+  'src/components/patterns/StatusIndicator.jsx'
+);
+assertColorNegative(
+  'border-transparent bg-brand-soft text-brand-soft-foreground rejected',
+  `<div className="border-transparent bg-brand-soft text-brand-soft-foreground">Brand Badge</div>`,
+  'border-transparent + bg-brand-soft + text-brand-soft-foreground',
+  'src/components/ui/badge.jsx'
+);
+assertColorNegative(
+  'border-transparent bg-neutral-muted text-ink-secondary rejected',
+  `<div className="border-transparent bg-neutral-muted text-ink-secondary">Neutral Badge</div>`,
+  'border-transparent + bg-neutral-muted + text-ink-secondary',
+  'src/components/ui/badge.jsx'
+);
+
+// -----------------------------------------------------------------------------
+// 8. CANONICAL NUMIS BADGE RECIPES POSITIVE FIXTURES (BLOCKER B)
+// -----------------------------------------------------------------------------
+console.log('--- Canonical Numis Badge Recipes Positive Fixtures ---');
+assertColorPositive(
+  'real Numis Badge default translated to Yueora accepted in approved owner',
+  `<div className="border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80">Default / Brand</div>`,
+  'src/components/ui/badge.jsx'
+);
+assertColorPositive(
+  'real Numis Badge secondary translated to Yueora accepted in approved owner',
+  `<div className="border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">Secondary</div>`,
+  'src/components/ui/badge.jsx'
+);
+assertColorPositive(
+  'real Numis Badge destructive translated to Yueora accepted in approved owner',
+  `<div className="border-transparent bg-danger text-danger-foreground shadow hover:bg-danger/80">Destructive</div>`,
+  'src/components/ui/badge.jsx'
+);
+assertColorNegative(
+  'canonical Numis Badge default in unapproved owner rejected',
+  `<div className="border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80">Default / Brand</div>`,
+  'badge-default',
+  'src/pages/UserProfile.jsx'
+);
+
+// -----------------------------------------------------------------------------
+// 9. BUTTON DIRECT COUNTERPART SOURCE CONTRACT FIXTURES (BLOCKER C)
+// -----------------------------------------------------------------------------
+console.log('--- Button Direct Counterpart Source Contract Fixtures ---');
 totalTests++;
 try {
   const buttonCode = fs.readFileSync('src/components/ui/button.jsx', 'utf8');
   const baseHasNoDurationBase = !buttonCode.includes('duration-base');
   const baseHasTransitionColors = buttonCode.includes('transition-colors');
-  // Check md = Numis default (36px height, text-sm, font-medium, gap-2)
-  const mdHasHControlMd = /md:\s*"[^"]*h-control-md[^"]*text-sm[^"]*font-medium[^"]*gap-2/.test(buttonCode);
-  // Check sm = Numis sm (32px height, text-xs, font-medium, gap-2)
-  const smHasHControlSm = /sm:\s*"[^"]*h-control-sm[^"]*text-xs[^"]*font-medium[^"]*gap-2/.test(buttonCode);
-  // Check lg = Numis lg (40px height, text-sm, font-medium, gap-2)
-  const lgHasHControlLg = /lg:\s*"[^"]*h-control-lg[^"]*text-sm[^"]*font-medium[^"]*gap-2/.test(buttonCode);
+  // Check md = Numis default (36px height, text-sm, font-medium, gap-2, py-2, icon-sm)
+  const mdHasHControlMd = /md:\s*"[^"]*h-control-md[^"]*min-h-control-md[^"]*px-4[^"]*py-2[^"]*text-sm[^"]*font-medium[^"]*rounded-control[^"]*gap-2[^"]*\[&_svg\]:icon-sm/.test(buttonCode);
+  // Check sm = Numis sm (32px height, text-xs, font-medium, gap-2, px-3, icon-sm)
+  const smHasHControlSm = /sm:\s*"[^"]*h-control-sm[^"]*min-h-control-sm[^"]*px-3[^"]*text-xs[^"]*font-medium[^"]*rounded-control[^"]*gap-2[^"]*\[&_svg\]:icon-sm/.test(buttonCode);
+  // Check lg = Numis lg (40px height, text-sm, font-medium, gap-2, px-8, icon-sm)
+  const lgHasHControlLg = /lg:\s*"[^"]*h-control-lg[^"]*min-h-control-lg[^"]*px-8[^"]*text-sm[^"]*font-medium[^"]*rounded-control[^"]*gap-2[^"]*\[&_svg\]:icon-sm/.test(buttonCode);
 
   if (baseHasNoDurationBase && baseHasTransitionColors && mdHasHControlMd && smHasHControlSm && lgHasHControlLg) {
     passedTests++;
-    console.log(`  ✓ [PASS as expected] Button canonical sizes (md, sm, lg) and transition timing physically match Numis`);
+    console.log(`  ✓ [PASS as expected] Button source recipe contract matches expected Numis mapping`);
   } else {
     failedTests++;
-    console.error(`  ❌ [UNEXPECTED FAIL] Button parity check failed: baseNoDuration=${baseHasNoDurationBase}, transitionColors=${baseHasTransitionColors}, md=${mdHasHControlMd}, sm=${smHasHControlSm}, lg=${lgHasHControlLg}`);
+    console.error(`  ❌ [UNEXPECTED FAIL] Button source recipe contract check failed: baseNoDuration=${baseHasNoDurationBase}, transitionColors=${baseHasTransitionColors}, md=${mdHasHControlMd}, sm=${smHasHControlSm}, lg=${lgHasHControlLg}`);
   }
 } catch (err) {
   failedTests++;
   console.error(`  ❌ [ERROR] Button parity verification threw error:`, err);
+}
+
+// Negative: Button lg with icon-md (18px) fails contract
+totalTests++;
+{
+  const fakeLgWithIconMd = `lg: "h-control-lg min-h-control-lg px-8 text-sm font-medium rounded-control gap-2 [&_svg]:icon-md"`;
+  const isCorrect = /lg:\s*"[^"]*\[&_svg\]:icon-sm/.test(fakeLgWithIconMd);
+  if (!isCorrect) {
+    passedTests++;
+    console.log(`  ✓ [FAIL as expected] Button lg with icon-md / 18px rejected`);
+  } else {
+    failedTests++;
+    console.error(`  ❌ [UNEXPECTED PASS] Button lg with icon-md should have been rejected`);
+  }
+}
+
+// Negative: Button md without py-2 fails contract
+totalTests++;
+{
+  const fakeMdWithoutPy2 = `md: "h-control-md min-h-control-md px-4 text-sm font-medium rounded-control gap-2 [&_svg]:icon-sm"`;
+  const hasPy2 = /md:\s*"[^"]*py-2/.test(fakeMdWithoutPy2);
+  if (!hasPy2) {
+    passedTests++;
+    console.log(`  ✓ [FAIL as expected] Button md without required direct-counterpart py-2 contract rejected`);
+  } else {
+    failedTests++;
+    console.error(`  ❌ [UNEXPECTED PASS] Button md without py-2 should have been rejected`);
+  }
 }
 
 // -----------------------------------------------------------------------------

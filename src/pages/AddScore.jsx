@@ -272,14 +272,14 @@ export default function AddScore() {
 
             {/* Quota Indicators */}
             <div className="grid gap-2 sm:grid-cols-2">
-              <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-4 py-3 type-metadata text-ink-secondary">
-                <span>Monthly imports</span>
+              <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-4 py-3 type-metadata">
+                <span className="text-ink-secondary">Monthly imports</span>
                 <span className="font-medium text-ink-primary">
                   {importsCount} of {importQuota.label}
                 </span>
               </div>
-              <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-4 py-3 type-metadata text-ink-secondary">
-                <span>Cloud storage</span>
+              <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-4 py-3 type-metadata">
+                <span className="text-ink-secondary">Cloud storage</span>
                 <span className="font-medium text-ink-primary">
                   {subscription?.usage?.storage || '1.2 GB'} of {storageQuota.limit}
                 </span>
@@ -312,7 +312,7 @@ export default function AddScore() {
             {fileError && (
               <div
                 role="alert"
-                className="flex items-start gap-2.5 rounded-container border border-danger/30 bg-danger/10 p-4"
+                className="flex items-start gap-2.5 rounded-container border border-line-subtle bg-surface-panel p-4"
               >
                 <AlertCircle className="mt-0.5 icon-sm shrink-0 text-danger" />
                 <div className="flex-1">

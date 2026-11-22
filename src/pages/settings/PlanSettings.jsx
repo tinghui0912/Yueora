@@ -139,9 +139,9 @@ export default function PlanSettings() {
         </Surface>
 
         {isPaid && isCancelling && (
-          <div className="mt-3 flex items-start gap-2 rounded-container border border-line-subtle bg-surface-panel p-3 type-body-small text-ink-secondary">
+          <div className="mt-3 flex items-start gap-2 rounded-container border border-line-subtle bg-surface-panel p-3 type-body-small">
             <AlertCircle className="mt-0.5 icon-xs shrink-0 text-ink-tertiary" />
-            <span>
+            <span className="text-ink-secondary">
               Your {currentPlan.name} plan stays active until {subscription.cancelAt}. Nothing changes before then, and you can resume
               at any time.
             </span>
@@ -169,7 +169,7 @@ export default function PlanSettings() {
               Storage limit reached. Free up space or upgrade your plan.
             </p>
           ) : storageState.isNearLimit ? (
-            <p className="type-metadata text-ink-secondary bg-neutral-muted p-2.5 rounded-control border border-line-subtle">
+            <p className="type-metadata text-ink-primary bg-neutral-muted p-2.5 rounded-control border border-line-subtle">
               Storage is nearly full. New recordings may require additional space.
             </p>
           ) : null}

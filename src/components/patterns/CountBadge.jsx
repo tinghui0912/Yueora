@@ -7,11 +7,11 @@ const countBadgeVariants = cva(
   {
     variants: {
       tone: {
-        informational: 'bg-brand-soft text-brand-soft-foreground',
-        attention: 'bg-brand text-brand-foreground',
-        neutral: 'bg-neutral-muted text-ink-secondary',
-        warning: 'border border-line-subtle bg-neutral-muted text-ink-secondary',
-        danger: 'bg-danger text-danger-foreground',
+        informational: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        attention: 'border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80',
+        neutral: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        warning: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        danger: 'border-transparent bg-danger text-danger-foreground shadow hover:bg-danger/80',
       },
     },
     defaultVariants: {

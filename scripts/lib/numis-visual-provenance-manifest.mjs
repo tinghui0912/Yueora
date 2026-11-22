@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 /**
  * Single Authoritative Visual Provenance & Reference Manifest
  *
@@ -9,6 +11,7 @@
 export const NUMIS_REFERENCE_META = {
   repository: 'tinghui0912/NumisCollection',
   commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+  treeSha: '9602c27dce5c2625c0e7251acfae8c1be6b5c725',
 };
 
 // 2. 32 Frozen Numis Physical Root Color Tokens (Exact Values in src/index.css)
@@ -128,72 +131,235 @@ export const COLOR_UTILITY_PREFIXES = [
   'fill',
 ];
 
-// 7. Active Status Recipe Provenance Manifest
-// Coin condition grades from ItemCard.jsx are excluded because Yueora does not have coin grades.
-// Every active status recipe must record source semantic role, approved Yueora role, and have >= 1 approved owner.
-export const NUMIS_STATUS_RECIPES = [
+// 7. Reference Status Recipe Inventory (Frozen Numis Source of Truth)
+// Records verified recipes in tinghui0912/NumisCollection (efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c).
+// Frozen reference inventory != Yueora active permission table.
+export const NUMIS_REFERENCE_STATUS_RECIPES = [
   {
     id: 'toast-destructive-close',
     source: {
       repository: 'tinghui0912/NumisCollection',
       commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
-      file: 'src/components/ui/toast.jsx:62',
+      file: 'src/components/ui/toast.jsx',
+      line: 67,
     },
     sourceSemanticRole: 'destructive toast close button hover & focus states',
-    approvedYueoraRole: 'destructive toast close button interactive states',
     sourceClasses: ['text-red-300', 'hover:text-red-50', 'focus:ring-red-400', 'focus:ring-offset-red-600'],
-    yueoraClasses: ['text-red-300', 'hover:text-red-50', 'focus:ring-red-400', 'focus:ring-offset-red-600'],
-    allowedOwners: ['src/components/ui/toast.jsx'],
   },
   {
     id: 'positive-metric',
     source: {
       repository: 'tinghui0912/NumisCollection',
       commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
-      file: 'src/pages/UserProfile.jsx:114',
+      file: 'src/pages/UserProfile.jsx',
+      line: 114,
     },
     sourceSemanticRole: 'positive portfolio financial gain metric',
-    approvedYueoraRole: 'positive financial gain percentage metric',
     sourceClasses: ['text-emerald-600'],
-    yueoraClasses: ['text-emerald-600'],
-    allowedOwners: ['src/pages/UserProfile.jsx'],
   },
   {
     id: 'negative-metric',
     source: {
       repository: 'tinghui0912/NumisCollection',
       commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
-      file: 'src/pages/UserProfile.jsx:119',
+      file: 'src/pages/UserProfile.jsx',
+      line: 114,
     },
     sourceSemanticRole: 'negative portfolio financial loss metric',
-    approvedYueoraRole: 'negative financial loss percentage metric',
-    sourceClasses: ['text-red-600'],
-    yueoraClasses: ['text-red-600'],
-    allowedOwners: ['src/pages/UserProfile.jsx'],
+    sourceClasses: ['text-red-500'],
   },
   {
     id: 'warning-callout',
     source: {
       repository: 'tinghui0912/NumisCollection',
       commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
-      file: 'src/components/collection/BulkEstimateButton.jsx:114',
+      file: 'src/components/collection/BulkEstimateButton.jsx',
+      line: 44,
     },
     sourceSemanticRole: 'ai estimate credit quota warning callout',
-    approvedYueoraRole: 'ai estimate credit quota warning callout',
     sourceClasses: ['text-amber-600', 'bg-amber-50'],
-    yueoraClasses: ['text-amber-600', 'bg-amber-50'],
-    allowedOwners: ['src/components/collection/BulkEstimateButton.jsx'],
+  },
+  {
+    id: 'badge-default',
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/ui/badge.jsx',
+      line: 12,
+    },
+    sourceSemanticRole: 'default badge primary visual',
+    sourceClasses: ['border-transparent', 'bg-primary', 'text-primary-foreground', 'shadow', 'hover:bg-primary/80'],
+  },
+  {
+    id: 'badge-secondary',
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/ui/badge.jsx',
+      line: 14,
+    },
+    sourceSemanticRole: 'secondary badge visual',
+    sourceClasses: ['border-transparent', 'bg-secondary', 'text-secondary-foreground', 'hover:bg-secondary/80'],
+  },
+  {
+    id: 'badge-destructive',
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/ui/badge.jsx',
+      line: 16,
+    },
+    sourceSemanticRole: 'destructive badge visual',
+    sourceClasses: ['border-transparent', 'bg-destructive', 'text-destructive-foreground', 'shadow', 'hover:bg-destructive/80'],
+  },
+  {
+    id: 'badge-outline',
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/ui/badge.jsx',
+      line: 17,
+    },
+    sourceSemanticRole: 'outline badge visual',
+    sourceClasses: ['text-foreground'],
   },
 ];
 
-// Manifest Self-Validation Assert: Every active recipe must have >= 1 approved owner
-for (const recipe of NUMIS_STATUS_RECIPES) {
-  if (!Array.isArray(recipe.allowedOwners) || recipe.allowedOwners.length === 0) {
-    throw new Error(`Invalid status recipe manifest: recipe '${recipe.id}' has empty allowedOwners. Empty allowedOwners is strictly forbidden (must fail closed).`);
+// 8. Active Yueora Authorized Visual Recipes
+// Every active recipe must reference a verified frozen source, have >= 1 approved owner,
+// and EVERY owner path must physically exist in the current Yueora HEAD (fs.existsSync).
+// Speculative future visual permissions for nonexistent files are strictly forbidden (fail closed).
+export const YUEORA_AUTHORIZED_STATUS_RECIPES = [
+  {
+    id: 'toast-destructive-close',
+    sourceReferenceId: 'toast-destructive-close',
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/ui/toast.jsx:67',
+    },
+    sourceSemanticRole: 'destructive toast close button hover & focus states',
+    approvedYueoraRole: 'destructive toast close button interactive states',
+    sourceClasses: ['text-red-300', 'hover:text-red-50', 'focus:ring-red-400', 'focus:ring-offset-red-600'],
+    yueoraClasses: ['text-red-300', 'hover:text-red-50', 'focus:ring-red-400', 'focus:ring-offset-red-600'],
+    yueoraColorRecipe: ['text-red-300', 'hover:text-red-50', 'focus:ring-red-400', 'focus:ring-offset-red-600'],
+    allowedOwners: ['src/components/ui/toast.jsx'],
+    approvedYueoraRoles: ['destructive-toast-close'],
+  },
+  {
+    id: 'badge-default',
+    sourceReferenceId: 'badge-default',
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/ui/badge.jsx:12',
+    },
+    sourceSemanticRole: 'default badge primary visual',
+    approvedYueoraRole: 'default / brand / success status badge visual',
+    sourceClasses: ['border-transparent', 'bg-primary', 'text-primary-foreground', 'shadow', 'hover:bg-primary/80'],
+    yueoraClasses: ['border-transparent', 'bg-brand', 'text-brand-foreground', 'shadow', 'hover:bg-brand/80'],
+    yueoraColorRecipe: ['border-transparent', 'bg-brand', 'text-brand-foreground', 'shadow', 'hover:bg-brand/80'],
+    allowedOwners: [
+      'src/components/ui/badge.jsx',
+      'src/components/patterns/StatusIndicator.jsx',
+      'src/components/patterns/CountBadge.jsx',
+    ],
+    approvedYueoraRoles: ['default', 'brand', 'success', 'practice', 'attention'],
+  },
+  {
+    id: 'badge-secondary',
+    sourceReferenceId: 'badge-secondary',
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/ui/badge.jsx:14',
+    },
+    sourceSemanticRole: 'secondary badge visual',
+    approvedYueoraRole: 'secondary / neutral / warning / informational status badge visual',
+    sourceClasses: ['border-transparent', 'bg-secondary', 'text-secondary-foreground', 'hover:bg-secondary/80'],
+    yueoraClasses: ['border-transparent', 'bg-secondary', 'text-secondary-foreground', 'hover:bg-secondary/80'],
+    yueoraColorRecipe: ['border-transparent', 'bg-secondary', 'text-secondary-foreground', 'hover:bg-secondary/80'],
+    allowedOwners: [
+      'src/components/ui/badge.jsx',
+      'src/components/patterns/StatusIndicator.jsx',
+      'src/components/patterns/CountBadge.jsx',
+    ],
+    approvedYueoraRoles: ['secondary', 'neutral', 'warning', 'informational'],
+  },
+  {
+    id: 'badge-destructive',
+    sourceReferenceId: 'badge-destructive',
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/ui/badge.jsx:16',
+    },
+    sourceSemanticRole: 'destructive badge visual',
+    approvedYueoraRole: 'destructive / danger status badge visual',
+    sourceClasses: ['border-transparent', 'bg-destructive', 'text-destructive-foreground', 'shadow', 'hover:bg-destructive/80'],
+    yueoraClasses: ['border-transparent', 'bg-danger', 'text-danger-foreground', 'shadow', 'hover:bg-danger/80'],
+    yueoraColorRecipe: ['border-transparent', 'bg-danger', 'text-danger-foreground', 'shadow', 'hover:bg-danger/80'],
+    allowedOwners: [
+      'src/components/ui/badge.jsx',
+      'src/components/patterns/StatusIndicator.jsx',
+      'src/components/patterns/CountBadge.jsx',
+    ],
+    approvedYueoraRoles: ['destructive', 'danger'],
+  },
+  {
+    id: 'badge-outline',
+    sourceReferenceId: 'badge-outline',
+    source: {
+      repository: 'tinghui0912/NumisCollection',
+      commit: 'efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c',
+      file: 'src/components/ui/badge.jsx:17',
+    },
+    sourceSemanticRole: 'outline badge visual',
+    approvedYueoraRole: 'outline status badge visual',
+    sourceClasses: ['text-foreground'],
+    yueoraClasses: ['border-line-subtle', 'text-ink-primary'],
+    yueoraColorRecipe: ['border-line-subtle', 'text-ink-primary'],
+    allowedOwners: [
+      'src/components/ui/badge.jsx',
+    ],
+    approvedYueoraRoles: ['outline'],
+  },
+];
+
+// Backward-compatible alias
+export const NUMIS_STATUS_RECIPES = YUEORA_AUTHORIZED_STATUS_RECIPES;
+export const YUEORA_VISUAL_RECIPE_MANIFEST = YUEORA_AUTHORIZED_STATUS_RECIPES;
+
+// Manifest Self-Validation Asserts:
+// 1. Reference recipes must have non-empty source file, line (> 0), sourceSemanticRole, and sourceClasses.
+for (const recipe of NUMIS_REFERENCE_STATUS_RECIPES) {
+  if (!recipe.source?.file || typeof recipe.source?.line !== 'number' || recipe.source.line <= 0) {
+    throw new Error(`Invalid reference status recipe '${recipe.id}': missing or invalid source file/line metadata.`);
+  }
+  if (!recipe.sourceSemanticRole || typeof recipe.sourceSemanticRole !== 'string') {
+    throw new Error(`Invalid reference status recipe '${recipe.id}': missing sourceSemanticRole.`);
+  }
+  if (!Array.isArray(recipe.sourceClasses) || recipe.sourceClasses.length === 0) {
+    throw new Error(`Invalid reference status recipe '${recipe.id}': empty sourceClasses.`);
   }
 }
 
-// 8. Numis Dialog / Drawer Overlay Recipes (Verbatim Numis alert-dialog, dialog, drawer, sheet: ALL /80)
+// 2. Active authorized recipes must have allowedOwners with every owner file physically existing in Yueora.
+for (const recipe of YUEORA_AUTHORIZED_STATUS_RECIPES) {
+  if (!Array.isArray(recipe.allowedOwners) || recipe.allowedOwners.length === 0) {
+    throw new Error(`Invalid status recipe manifest: recipe '${recipe.id}' has empty allowedOwners. Empty allowedOwners is strictly forbidden (must fail closed).`);
+  }
+  for (const owner of recipe.allowedOwners) {
+    if (!fs.existsSync(owner)) {
+      throw new Error(`Invalid status recipe manifest: recipe '${recipe.id}' specifies nonexistent owner '${owner}'. No speculative future visual permission allowed.`);
+    }
+  }
+  if (!Array.isArray(recipe.approvedYueoraRoles) || recipe.approvedYueoraRoles.length === 0) {
+    throw new Error(`Invalid status recipe manifest: recipe '${recipe.id}' has empty approvedYueoraRoles.`);
+  }
+}
+
+// 9. Numis Dialog / Drawer Overlay Recipes (Verbatim Numis alert-dialog, dialog, drawer, sheet: ALL /80)
 export const NUMIS_OVERLAY_RECIPES = {
   'src/components/ui/alert-dialog.jsx': new Set(['bg-black/80']),
   'src/components/ui/dialog.jsx': new Set(['bg-black/80']),
@@ -201,7 +367,7 @@ export const NUMIS_OVERLAY_RECIPES = {
   'src/components/ui/sheet.jsx': new Set(['bg-black/80']),
 };
 
-// 9. Exact Utility + Color + Opacity Manifest (Verified from NumisCollection efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c)
+// 10. Exact Utility + Color + Opacity Manifest (Verified from NumisCollection efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c)
 export const NUMIS_EXACT_COLOR_UTILITIES = new Set([
   // Primary (Brand) opacities
   'bg-brand/5',
@@ -311,7 +477,7 @@ export const NUMIS_EXACT_COLOR_UTILITIES = new Set([
   'bg-black/80',
 ]);
 
-// 10. External Brand Asset Exceptions (Strictly scoped by file and values)
+// 11. External Brand Asset Exceptions (Strictly scoped by file and values)
 export const EXTERNAL_BRAND_EXCEPTIONS = {
   'src/components/GoogleIcon.jsx': new Set([
     '#4285f4', // Google Blue
@@ -321,7 +487,7 @@ export const EXTERNAL_BRAND_EXCEPTIONS = {
   ]),
 };
 
-// 11. Framework / Library Selector Exceptions (Direct Numis source provenance)
+// 12. Framework / Library Selector Exceptions (Direct Numis source provenance)
 export const FRAMEWORK_SELECTOR_EXCEPTIONS = {
   'src/components/ui/chart.jsx': new Set([
     '#ccc', // Recharts grid stroke selector [stroke='#ccc']
@@ -329,7 +495,7 @@ export const FRAMEWORK_SELECTOR_EXCEPTIONS = {
   ]),
 };
 
-// 12. Retired Yueora Physical Colors & Tokens (Zero Tolerance Blacklist)
+// 13. Retired Yueora Physical Colors & Tokens (Zero Tolerance Blacklist)
 export const RETIRED_YUEORA_PATTERNS = [
   /#98661B/i,
   /#895814/i,

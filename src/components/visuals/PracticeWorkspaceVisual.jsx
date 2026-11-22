@@ -5,6 +5,7 @@
  */
 import { Play, RotateCcw, Volume2, Music } from 'lucide-react';
 import ScorePreview from '@/components/library/ScorePreview';
+import StatusIndicator from '@/components/patterns/StatusIndicator';
 
 export default function PracticeWorkspaceVisual() {
   return (
@@ -22,11 +23,7 @@ export default function PracticeWorkspaceVisual() {
         </div>
 
         {/* Calm following state pill */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand-soft px-3 py-1 text-brand-soft-foreground">
-          <span className="type-metadata font-medium">
-            Following your phrasing · mm. 14–22
-          </span>
-        </div>
+        <StatusIndicator tone="brand" label="Following your phrasing · mm. 14–22" />
       </div>
 
       {/* Interactive Sheet Music Stand */}
@@ -39,7 +36,7 @@ export default function PracticeWorkspaceVisual() {
         <div 
           className="absolute left-[42%] top-[18%] h-[64%] w-[26%] rounded border border-practice-current/40 bg-practice-current/10 transition-all"
         >
-          <div className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-surface-panel px-2 py-0.5 text-xs font-medium text-ink-secondary shadow-sm border border-line-subtle">
+          <div className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-surface-panel px-2 py-0.5 text-xs font-medium text-ink-primary shadow-sm border border-line-subtle">
             Bar 14 · Andante très expressif
           </div>
         </div>

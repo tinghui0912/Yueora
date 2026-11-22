@@ -652,7 +652,7 @@ export default function PracticeSession() {
                 onClick={() => setLoop((l) => !l)}
                 aria-pressed={loop}
                 className={`hidden h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium sm:flex transition-colors ${
-                  loop ? 'border-brand bg-neutral-muted font-semibold text-ink-primary' : 'border-line-subtle text-ink-secondary hover:bg-neutral-hover'
+                  loop ? 'border-brand bg-neutral-muted font-semibold text-ink-primary' : 'border-line-subtle text-ink-primary hover:bg-neutral-hover'
                 }`}
               >
                 <Repeat className={`h-4 w-4 ${loop ? 'text-brand' : ''}`} />

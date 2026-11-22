@@ -93,7 +93,7 @@ export default function SharedScore() {
           <button
             type="button"
             onClick={() => setReportOpen(true)}
-            className="flex items-center gap-1.5 rounded-control border border-line-subtle bg-surface-panel px-3 py-1.5 type-body-small text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors"
+            className="flex items-center gap-1.5 rounded-control border border-line-subtle bg-transparent px-3 py-1.5 type-body-small text-ink-primary hover:bg-neutral-hover transition-colors"
           >
             <Flag className="icon-sm" aria-hidden="true" /> Report
           </button>
@@ -107,7 +107,7 @@ export default function SharedScore() {
               <button
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors"
+                className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-transparent text-ink-primary hover:bg-neutral-hover transition-colors"
                 aria-label="Previous page"
               >
                 <ChevronLeft className="icon-sm" aria-hidden="true" />
@@ -115,7 +115,7 @@ export default function SharedScore() {
               <button
                 type="button"
                 onClick={() => setPlaying((p) => !p)}
-                className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors"
+                className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-transparent text-ink-primary hover:bg-neutral-hover transition-colors"
                 aria-label={playing ? "Pause" : "Play"}
               >
                 {playing ? <Pause className="icon-sm" aria-hidden="true" /> : <Play className="icon-sm" aria-hidden="true" />}
@@ -123,7 +123,7 @@ export default function SharedScore() {
               <button
                 type="button"
                 onClick={() => setPage((p) => Math.min(score.pages, p + 1))}
-                className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors"
+                className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-transparent text-ink-primary hover:bg-neutral-hover transition-colors"
                 aria-label="Next page"
               >
                 <ChevronRight className="icon-sm" aria-hidden="true" />

@@ -400,7 +400,7 @@ export default function Library() {
         ) : isTrash ? (
           <div className="space-y-3">
             {isAtScoreLimit && (
-              <p className="type-metadata text-ink-secondary bg-neutral-muted px-4 py-2.5 rounded-control border border-line-subtle">
+              <p className="type-metadata text-ink-primary bg-surface-panel px-4 py-2.5 rounded-control border border-line-subtle">
                 Your repertoire is full ({effectiveCount} of {scoreQuota.limit} scores). Delete a score permanently or upgrade to restore music from Trash.
               </p>
             )}

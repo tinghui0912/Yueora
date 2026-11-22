@@ -6,12 +6,12 @@ import { cn } from '@/lib/utils';
  * Sourced from canonical Numis brand, neutral, and destructive alert primitives.
  */
 const toneStyles = {
-  neutral: 'border border-line-subtle bg-surface-panel text-ink-secondary',
-  brand: 'border border-brand/20 bg-brand-soft text-brand-soft-foreground',
-  success: 'border border-brand/20 bg-brand-soft text-brand-soft-foreground',
-  warning: 'border border-line-subtle bg-neutral-muted text-ink-secondary',
-  danger: 'border border-danger/30 bg-danger/10 text-danger',
-  practice: 'border border-brand/20 bg-brand-soft text-brand-soft-foreground',
+  neutral: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+  brand: 'border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80',
+  success: 'border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80',
+  warning: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+  danger: 'border-transparent bg-danger text-danger-foreground shadow hover:bg-danger/80',
+  practice: 'border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80',
 };
 
 export default function StatusIndicator({ tone = 'neutral', label, className = '', pulse = false }) {

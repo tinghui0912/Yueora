@@ -25,8 +25,8 @@ const buttonVariants = cva(
       size: {
         xs: "h-control-xs min-h-control-xs px-2.5 text-xs font-medium rounded-control gap-1.5 [&_svg]:icon-xs",
         sm: "h-control-sm min-h-control-sm px-3 text-xs font-medium rounded-control gap-2 [&_svg]:icon-sm",
-        md: "h-control-md min-h-control-md px-4 text-sm font-medium rounded-control gap-2 [&_svg]:icon-sm",
-        lg: "h-control-lg min-h-control-lg px-8 text-sm font-medium rounded-control gap-2 [&_svg]:icon-md",
+        md: "h-control-md min-h-control-md px-4 py-2 text-sm font-medium rounded-control gap-2 [&_svg]:icon-sm",
+        lg: "h-control-lg min-h-control-lg px-8 text-sm font-medium rounded-control gap-2 [&_svg]:icon-sm",
         xl: "h-control-xl min-h-control-xl px-8 text-sm font-medium rounded-control gap-2.5 [&_svg]:icon-md",
       },
     },

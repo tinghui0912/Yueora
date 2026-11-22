@@ -909,7 +909,10 @@ function verifyLegacyColorRetirement(issues = []) {
           if (matches) {
             matches.forEach((m) => {
               if (
-                (norm.endsWith('src/components/ui/button.jsx') || norm.endsWith('src/components/ui/badge.jsx')) &&
+                (norm.endsWith('src/components/ui/button.jsx') ||
+                  norm.endsWith('src/components/ui/badge.jsx') ||
+                  norm.endsWith('src/components/patterns/StatusIndicator.jsx') ||
+                  norm.endsWith('src/components/patterns/CountBadge.jsx')) &&
                 (m === 'bg-secondary' || m === 'text-secondary-foreground')
               ) {
                 // Approved Numis secondary primitive recipe

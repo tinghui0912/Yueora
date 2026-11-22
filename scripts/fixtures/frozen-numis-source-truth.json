@@ -1,0 +1,128 @@
+{
+  "repository": "tinghui0912/NumisCollection",
+  "commit": "efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c",
+  "treeSha": "9602c27dce5c2625c0e7251acfae8c1be6b5c725",
+  "sourceFacts": {
+    "positive-metric": {
+      "file": "src/pages/UserProfile.jsx",
+      "line": 114,
+      "exactSnippet": "color: gain >= 0 ? \"text-emerald-600\" : \"text-red-500\"",
+      "classes": [
+        "text-emerald-600"
+      ]
+    },
+    "negative-metric": {
+      "file": "src/pages/UserProfile.jsx",
+      "line": 114,
+      "exactSnippet": "color: gain >= 0 ? \"text-emerald-600\" : \"text-red-500\"",
+      "classes": [
+        "text-red-500"
+      ],
+      "forbiddenClasses": [
+        "text-red-600"
+      ]
+    },
+    "warning-callout": {
+      "file": "src/components/collection/BulkEstimateButton.jsx",
+      "line": 44,
+      "exactSnippet": "<div className=\"p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-600 text-sm\">",
+      "classes": [
+        "text-amber-600",
+        "bg-amber-50"
+      ]
+    },
+    "toast-destructive-close": {
+      "file": "src/components/ui/toast.jsx",
+      "line": 67,
+      "exactSnippet": "group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
+      "classes": [
+        "text-red-300",
+        "hover:text-red-50",
+        "focus:ring-red-400",
+        "focus:ring-offset-red-600"
+      ]
+    },
+    "badge-default": {
+      "file": "src/components/ui/badge.jsx",
+      "line": 12,
+      "exactSnippet": "default: \"border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80\",",
+      "classes": [
+        "border-transparent",
+        "bg-primary",
+        "text-primary-foreground",
+        "shadow",
+        "hover:bg-primary/80"
+      ]
+    },
+    "badge-secondary": {
+      "file": "src/components/ui/badge.jsx",
+      "line": 14,
+      "exactSnippet": "secondary: \"border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80\",",
+      "classes": [
+        "border-transparent",
+        "bg-secondary",
+        "text-secondary-foreground",
+        "hover:bg-secondary/80"
+      ]
+    },
+    "badge-destructive": {
+      "file": "src/components/ui/badge.jsx",
+      "line": 16,
+      "exactSnippet": "destructive: \"border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80\",",
+      "classes": [
+        "border-transparent",
+        "bg-destructive",
+        "text-destructive-foreground",
+        "shadow",
+        "hover:bg-destructive/80"
+      ]
+    },
+    "badge-outline": {
+      "file": "src/components/ui/badge.jsx",
+      "line": 17,
+      "exactSnippet": "outline: \"text-foreground\",",
+      "classes": [
+        "text-foreground"
+      ]
+    },
+    "button-default": {
+      "file": "src/components/ui/button.jsx",
+      "line": 32,
+      "exactSnippet": "default: \"h-9 px-4 py-2\",",
+      "classes": [
+        "h-9",
+        "px-4",
+        "py-2"
+      ]
+    },
+    "button-sm": {
+      "file": "src/components/ui/button.jsx",
+      "line": 33,
+      "exactSnippet": "sm: \"h-8 rounded-md px-3 text-xs\",",
+      "classes": [
+        "h-8",
+        "rounded-md",
+        "px-3",
+        "text-xs"
+      ]
+    },
+    "button-lg": {
+      "file": "src/components/ui/button.jsx",
+      "line": 34,
+      "exactSnippet": "lg: \"h-10 rounded-md px-8\",",
+      "classes": [
+        "h-10",
+        "rounded-md",
+        "px-8"
+      ]
+    },
+    "button-svg": {
+      "file": "src/components/ui/button.jsx",
+      "line": 9,
+      "exactSnippet": "[&_svg]:size-4",
+      "classes": [
+        "[&_svg]:size-4"
+      ]
+    }
+  }
+}

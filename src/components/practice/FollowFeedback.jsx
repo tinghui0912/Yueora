@@ -83,7 +83,7 @@ export default function FollowFeedback({
             type="button"
             onClick={() => onResolve('wrong')}
             disabled={paused}
-            className="rounded-control border border-line-subtle bg-surface-panel px-2 py-1 text-xs text-ink-secondary transition-colors hover:bg-neutral-hover disabled:opacity-40"
+            className="rounded-control border border-line-subtle bg-surface-panel px-2 py-1 text-xs text-ink-primary transition-colors hover:bg-neutral-hover disabled:opacity-40"
           >
             Different pitch
           </button>

@@ -527,6 +527,101 @@ async function verifyComputedStyles(client, baseUrl) {
     throw new Error(`Standard input border radius is not 10px: ${componentStyles.input.borderRadius}`);
   }
 
+  // 2a. Button Direct Counterpart Computed Parity Assertions (sm, md, lg)
+  const buttonMetrics = await ev(`(() => {
+    function getMetrics(sel) {
+      const btn = document.querySelector(sel);
+      if (!btn) return null;
+      const cs = window.getComputedStyle(btn);
+      const rect = btn.getBoundingClientRect();
+      const svg = btn.querySelector('svg');
+      const svgRect = svg ? svg.getBoundingClientRect() : null;
+      const svgCs = svg ? window.getComputedStyle(svg) : null;
+      return {
+        height: Math.round(rect.height),
+        fontSize: Math.round(parseFloat(cs.fontSize)),
+        fontWeight: parseInt(cs.fontWeight, 10),
+        columnGap: Math.round(parseFloat(cs.columnGap || cs.gap || 0)),
+        paddingLeft: Math.round(parseFloat(cs.paddingLeft)),
+        paddingRight: Math.round(parseFloat(cs.paddingRight)),
+        paddingTop: Math.round(parseFloat(cs.paddingTop)),
+        paddingBottom: Math.round(parseFloat(cs.paddingBottom)),
+        borderRadius: Math.round(parseFloat(cs.borderRadius)),
+        transitionDuration: cs.transitionDuration,
+        transitionProperty: cs.transitionProperty,
+        svgWidth: svgRect ? Math.round(svgRect.width) : (svgCs ? Math.round(parseFloat(svgCs.width)) : null),
+        svgHeight: svgRect ? Math.round(svgRect.height) : (svgCs ? Math.round(parseFloat(svgCs.height)) : null),
+      };
+    }
+    return {
+      sm: getMetrics('[data-qa="button-sm"]'),
+      md: getMetrics('[data-qa="button-md"]'),
+      lg: getMetrics('[data-qa="button-lg"]'),
+    };
+  })()`);
+
+  if (!buttonMetrics?.sm) throw new Error('Button sm [data-qa="button-sm"] not found on /design-system');
+  if (!buttonMetrics?.md) throw new Error('Button md [data-qa="button-md"] not found on /design-system');
+  if (!buttonMetrics?.lg) throw new Error('Button lg [data-qa="button-lg"] not found on /design-system');
+
+  // sm: height=32, fontSize=12, fontWeight=500, columnGap=8, paddingLeft=12, paddingRight=12, borderRadius=10, svg=16x16
+  if (buttonMetrics.sm.height !== 32) throw new Error(`Button sm height mismatch: ${buttonMetrics.sm.height}px (expected 32px)`);
+  if (buttonMetrics.sm.fontSize !== 12) throw new Error(`Button sm fontSize mismatch: ${buttonMetrics.sm.fontSize}px (expected 12px)`);
+  if (buttonMetrics.sm.fontWeight !== 500) throw new Error(`Button sm fontWeight mismatch: ${buttonMetrics.sm.fontWeight} (expected 500)`);
+  if (buttonMetrics.sm.columnGap !== 8) throw new Error(`Button sm columnGap mismatch: ${buttonMetrics.sm.columnGap}px (expected 8px)`);
+  if (buttonMetrics.sm.paddingLeft !== 12 || buttonMetrics.sm.paddingRight !== 12) {
+    throw new Error(`Button sm padding mismatch: px=[${buttonMetrics.sm.paddingLeft}, ${buttonMetrics.sm.paddingRight}] (expected 12px)`);
+  }
+  if (buttonMetrics.sm.borderRadius !== 10) throw new Error(`Button sm borderRadius mismatch: ${buttonMetrics.sm.borderRadius}px (expected 10px)`);
+  if (buttonMetrics.sm.svgWidth !== 16 || buttonMetrics.sm.svgHeight !== 16) {
+    throw new Error(`Button sm icon mismatch: ${buttonMetrics.sm.svgWidth}x${buttonMetrics.sm.svgHeight}px (expected 16x16px)`);
+  }
+
+  // md: height=36, fontSize=14, fontWeight=500, columnGap=8, paddingLeft=16, paddingRight=16, paddingTop=8, paddingBottom=8, borderRadius=10, svg=16x16
+  if (buttonMetrics.md.height !== 36) throw new Error(`Button md height mismatch: ${buttonMetrics.md.height}px (expected 36px)`);
+  if (buttonMetrics.md.fontSize !== 14) throw new Error(`Button md fontSize mismatch: ${buttonMetrics.md.fontSize}px (expected 14px)`);
+  if (buttonMetrics.md.fontWeight !== 500) throw new Error(`Button md fontWeight mismatch: ${buttonMetrics.md.fontWeight} (expected 500)`);
+  if (buttonMetrics.md.columnGap !== 8) throw new Error(`Button md columnGap mismatch: ${buttonMetrics.md.columnGap}px (expected 8px)`);
+  if (buttonMetrics.md.paddingLeft !== 16 || buttonMetrics.md.paddingRight !== 16) {
+    throw new Error(`Button md padding mismatch: px=[${buttonMetrics.md.paddingLeft}, ${buttonMetrics.md.paddingRight}] (expected 16px)`);
+  }
+  if (buttonMetrics.md.paddingTop !== 8 || buttonMetrics.md.paddingBottom !== 8) {
+    throw new Error(`Button md py mismatch: py=[${buttonMetrics.md.paddingTop}, ${buttonMetrics.md.paddingBottom}] (expected 8px / py-2)`);
+  }
+  if (buttonMetrics.md.borderRadius !== 10) throw new Error(`Button md borderRadius mismatch: ${buttonMetrics.md.borderRadius}px (expected 10px)`);
+  if (buttonMetrics.md.svgWidth !== 16 || buttonMetrics.md.svgHeight !== 16) {
+    throw new Error(`Button md icon mismatch: ${buttonMetrics.md.svgWidth}x${buttonMetrics.md.svgHeight}px (expected 16x16px)`);
+  }
+
+  // lg: height=40, fontSize=14, fontWeight=500, columnGap=8, paddingLeft=32, paddingRight=32, borderRadius=10, svg=16x16
+  if (buttonMetrics.lg.height !== 40) throw new Error(`Button lg height mismatch: ${buttonMetrics.lg.height}px (expected 40px)`);
+  if (buttonMetrics.lg.fontSize !== 14) throw new Error(`Button lg fontSize mismatch: ${buttonMetrics.lg.fontSize}px (expected 14px)`);
+  if (buttonMetrics.lg.fontWeight !== 500) throw new Error(`Button lg fontWeight mismatch: ${buttonMetrics.lg.fontWeight} (expected 500)`);
+  if (buttonMetrics.lg.columnGap !== 8) throw new Error(`Button lg columnGap mismatch: ${buttonMetrics.lg.columnGap}px (expected 8px)`);
+  if (buttonMetrics.lg.paddingLeft !== 32 || buttonMetrics.lg.paddingRight !== 32) {
+    throw new Error(`Button lg padding mismatch: px=[${buttonMetrics.lg.paddingLeft}, ${buttonMetrics.lg.paddingRight}] (expected 32px)`);
+  }
+  if (buttonMetrics.lg.borderRadius !== 10) throw new Error(`Button lg borderRadius mismatch: ${buttonMetrics.lg.borderRadius}px (expected 10px)`);
+  if (buttonMetrics.lg.svgWidth !== 16 || buttonMetrics.lg.svgHeight !== 16) {
+    throw new Error(`Button lg icon mismatch: ${buttonMetrics.lg.svgWidth}x${buttonMetrics.lg.svgHeight}px (expected 16x16px)`);
+  }
+
+  // transition duration & timing (150ms / transition-colors)
+  const durationMs = Math.round(parseFloat(buttonMetrics.md.transitionDuration) * 1000);
+  if (durationMs !== 150) {
+    throw new Error(`Button transitionDuration mismatch: ${buttonMetrics.md.transitionDuration} (expected 0.15s / 150ms)`);
+  }
+
+  console.log(`  Button sm:`);
+  console.log(`    ${buttonMetrics.sm.height}px / ${buttonMetrics.sm.fontSize}px / ${buttonMetrics.sm.fontWeight} / gap ${buttonMetrics.sm.columnGap}px / icon ${buttonMetrics.sm.svgWidth}px`);
+  console.log(`  Button md:`);
+  console.log(`    ${buttonMetrics.md.height}px / ${buttonMetrics.md.fontSize}px / ${buttonMetrics.md.fontWeight} / gap ${buttonMetrics.md.columnGap}px / px${buttonMetrics.md.paddingLeft} / py${buttonMetrics.md.paddingTop} / icon ${buttonMetrics.md.svgWidth}px`);
+  console.log(`  Button lg:`);
+  console.log(`    ${buttonMetrics.lg.height}px / ${buttonMetrics.lg.fontSize}px / ${buttonMetrics.lg.fontWeight} / gap ${buttonMetrics.lg.columnGap}px / px${buttonMetrics.lg.paddingLeft} / icon ${buttonMetrics.lg.svgWidth}px`);
+  console.log(`  transition duration:`);
+  console.log(`    ${durationMs}ms`);
+  console.log(`  ✓ Button computed physical parity verified`);
+
   // 2b. Secondary Button & Input Interaction Assertions (Section 63 & 64)
   const secBtnInfo = await ev(`(() => {
     const btn = Array.from(document.querySelectorAll('button')).find(b => b.textContent.trim() === 'Secondary Action');
@@ -795,9 +890,9 @@ async function verifyComputedStyles(client, baseUrl) {
     const infoBadge = badgeStyles.find(b => b.tone === 'informational');
     const attBadge = badgeStyles.find(b => b.tone === 'attention');
     if (infoBadge) {
-      const isInfoSoft = infoBadge.backgroundColor.includes('242, 232') || infoBadge.backgroundColor.includes('241, 232');
-      if (!isInfoSoft) {
-        throw new Error(`Informational CountBadge background mismatch: ${infoBadge.backgroundColor} (expected bg-brand-soft)`);
+      const isInfoSecondary = infoBadge.backgroundColor.includes('240, 238') || infoBadge.backgroundColor.includes('239, 237') || infoBadge.backgroundColor.includes('238, 236') || infoBadge.backgroundColor.includes('240, 238, 234');
+      if (!isInfoSecondary) {
+        throw new Error(`Informational CountBadge background mismatch: ${infoBadge.backgroundColor} (expected bg-secondary / rgb(240, 238, 234))`);
       }
     }
     if (attBadge) {
@@ -805,7 +900,7 @@ async function verifyComputedStyles(client, baseUrl) {
         throw new Error(`Attention CountBadge background mismatch: ${attBadge.backgroundColor} (expected bg-brand rgb(195, 131, 34))`);
       }
     }
-    console.log(`  ✓ CountBadge: 20px height, 11px font, informational (bg-brand-soft) vs attention (bg-brand) verified.`);
+    console.log(`  ✓ CountBadge: 20px height, 11px font, informational (bg-secondary) vs attention (bg-brand) verified.`);
   }
 
   // 3b. Sidebar Inactive Hover (Section 62)

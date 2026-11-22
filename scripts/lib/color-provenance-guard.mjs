@@ -6,6 +6,9 @@ import {
   YUEORA_COMPATIBILITY_COLOR_ALIASES,
   ELEVATION_SHADOW_TOKENS,
   COLOR_UTILITY_PREFIXES,
+  NUMIS_REFERENCE_STATUS_RECIPES,
+  YUEORA_AUTHORIZED_STATUS_RECIPES,
+  YUEORA_VISUAL_RECIPE_MANIFEST,
   NUMIS_STATUS_RECIPES,
   NUMIS_OVERLAY_RECIPES,
   NUMIS_EXACT_COLOR_UTILITIES,
@@ -21,6 +24,9 @@ export {
   YUEORA_COMPATIBILITY_COLOR_ALIASES,
   ELEVATION_SHADOW_TOKENS,
   COLOR_UTILITY_PREFIXES,
+  NUMIS_REFERENCE_STATUS_RECIPES,
+  YUEORA_AUTHORIZED_STATUS_RECIPES,
+  YUEORA_VISUAL_RECIPE_MANIFEST,
   NUMIS_STATUS_RECIPES,
   NUMIS_OVERLAY_RECIPES,
   NUMIS_EXACT_COLOR_UTILITIES,
@@ -230,6 +236,85 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
             line: lineNum,
             matched: namedUtilsOnLine.join(' + '),
             message: `Status recipe '${matchedRecipe.id}' (${matchedRecipe.yueoraClasses.join(' ')}) is not approved for owner '${normPath}'.`,
+          });
+        }
+      }
+    }
+
+    // 5b. Semantic Recipe Guard (Prevent Recombining Semantic Tokens into Unproven Visual Recipes)
+    // Frozen Numis source verification proves that generic status recipes were invented by recombining tokens.
+    // Every complete semantic status/badge recipe must match an authorized Numis recipe in YUEORA_VISUAL_RECIPE_MANIFEST.
+    const unapprovedSemanticCombinations = [
+      {
+        tokens: ['border-brand/20', 'bg-brand-soft', 'text-brand-soft-foreground'],
+        name: 'border-brand/20 + bg-brand-soft + text-brand-soft-foreground',
+      },
+      {
+        tokens: ['border-danger/30', 'bg-danger/10', 'text-danger'],
+        name: 'border-danger/30 + bg-danger/10 + text-danger',
+      },
+      {
+        tokens: ['border-line-subtle', 'bg-neutral-muted', 'text-ink-secondary'],
+        name: 'border-line-subtle + bg-neutral-muted + text-ink-secondary',
+      },
+      {
+        tokens: ['border-line-subtle', 'bg-surface-panel', 'text-ink-secondary'],
+        name: 'border-line-subtle + bg-surface-panel + text-ink-secondary',
+      },
+      {
+        tokens: ['border-transparent', 'bg-brand-soft', 'text-brand-soft-foreground'],
+        name: 'border-transparent + bg-brand-soft + text-brand-soft-foreground',
+      },
+      {
+        tokens: ['border-transparent', 'bg-neutral-muted', 'text-ink-secondary'],
+        name: 'border-transparent + bg-neutral-muted + text-ink-secondary',
+      },
+    ];
+
+    for (const combo of unapprovedSemanticCombinations) {
+      const allPresent = combo.tokens.every((t) => {
+        const regex = new RegExp(`(?<![\\w-])${t.replace(/[/]/g, '\\/')}(?![/\\w-])`);
+        return regex.test(line);
+      });
+      if (allPresent) {
+        issues.push({
+          file: filePath,
+          line: lineNum,
+          matched: combo.name,
+          message: `Unapproved semantic visual recipe combination '${combo.name}' found. Using individual Numis tokens to construct an unproven combination is visual invention. Status/badge components must consume exact Numis canonical recipes.`,
+        });
+      }
+    }
+
+    // Check canonical badge recipes owner authorization
+    const canonicalBadgeRecipes = [
+      {
+        id: 'badge-default',
+        tokens: ['border-transparent', 'bg-brand', 'text-brand-foreground', 'shadow', 'hover:bg-brand/80'],
+      },
+      {
+        id: 'badge-secondary',
+        tokens: ['border-transparent', 'bg-secondary', 'text-secondary-foreground', 'hover:bg-secondary/80'],
+      },
+      {
+        id: 'badge-destructive',
+        tokens: ['border-transparent', 'bg-danger', 'text-danger-foreground', 'shadow', 'hover:bg-danger/80'],
+      },
+    ];
+
+    for (const badgeRecipe of canonicalBadgeRecipes) {
+      const allPresent = badgeRecipe.tokens.every((t) => {
+        const regex = new RegExp(`(?<![\\w-])${t.replace(/[/]/g, '\\/')}(?![/\\w-])`);
+        return regex.test(line);
+      });
+      if (allPresent) {
+        const manifestRecipe = YUEORA_VISUAL_RECIPE_MANIFEST.find((r) => r.id === badgeRecipe.id);
+        if (manifestRecipe && (!manifestRecipe.allowedOwners.includes(normPath))) {
+          issues.push({
+            file: filePath,
+            line: lineNum,
+            matched: badgeRecipe.tokens.join(' + '),
+            message: `Canonical Numis badge recipe '${badgeRecipe.id}' (${badgeRecipe.tokens.join(' ')}) is not approved for owner '${normPath}'.`,
           });
         }
       }

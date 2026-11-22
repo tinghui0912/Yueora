@@ -50,7 +50,7 @@ export default function PerformanceRow({
           {scoreExists && (
             <Link
               to={`/score/${performance.scoreId}`}
-              className="hidden rounded-control border border-line-subtle bg-surface-panel px-2.5 py-1 text-xs font-medium text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover sm:inline-block transition-colors"
+              className="hidden rounded-control border border-line-subtle bg-transparent px-2.5 py-1 text-xs font-medium text-ink-primary hover:bg-neutral-hover sm:inline-block transition-colors"
             >
               View score
             </Link>

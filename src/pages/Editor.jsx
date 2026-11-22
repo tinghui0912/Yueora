@@ -352,7 +352,7 @@ export default function Editor() {
       )}
 
       {/* Playback bar */}
-      <div className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 type-body-small text-ink-secondary">
+      <div className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 type-body-small">
         <div className="flex items-center gap-2">
           <IconButton icon={Play} label="Play" tone="primary" size="sm" />
           <span className="font-medium text-ink-primary">Playback</span>
