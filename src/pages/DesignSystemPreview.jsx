@@ -181,7 +181,7 @@ export default function DesignSystemPreview() {
                 <span className="type-caption text-ink-primary">Raised</span>
                 <p className="type-metadata text-ink-tertiary">Overlay / Menu</p>
               </Surface>
-              <div className="rounded-control border border-transparent bg-brand p-3 text-center text-brand-foreground">
+              <div className="rounded-control border border-brand bg-brand p-3 text-center text-brand-foreground">
                 <span className="type-caption text-brand-foreground">Brand Primary</span>
                 <p className="type-metadata text-brand-foreground">Primary Gold</p>
               </div>

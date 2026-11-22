@@ -171,7 +171,7 @@ export const WCAG_AA_PASSING_PAIRS = [
 ];
 
 export const FROZEN_REFERENCE_PRESERVED_PAIRS = [
-  { name: 'brand-foreground on brand', fg: '--brand-foreground', bg: '--brand', min: 3.0, expectedRatio: 3.06, role: 'large buttons and primary controls (satisfies 3:1 large-scale AA)' },
+  { name: 'brand-foreground on brand', fg: '--brand-foreground', bg: '--brand', min: 3.0, expectedRatio: 3.06, role: 'Frozen Numis reference-preserved contrast pair. Known contrast limitation for ordinary small text (~3.06:1). Preserved intentionally to maintain visual truth; accessibility improvements must not recolor the frozen Numis palette.' },
   { name: 'ink-tertiary on panel', fg: '--ink-tertiary', bg: '--surface-panel', min: 4.0, expectedRatio: 4.44, role: 'incidental metadata and secondary captions (Numis card / muted-foreground)' },
   { name: 'ink-tertiary on canvas', fg: '--ink-tertiary', bg: '--surface-canvas', min: 4.0, expectedRatio: 4.26, role: 'incidental metadata and canvas annotations (Numis background / muted-foreground)' },
 ];

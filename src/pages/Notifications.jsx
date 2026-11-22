@@ -9,37 +9,48 @@ import EmptyState from '@/components/patterns/EmptyState';
 import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
 import NotificationRow from '@/components/notifications/NotificationRow';
 
-const tabs = [
+const filters = [
   { key: 'all', label: 'All' },
   { key: 'unread', label: 'Unread' },
-  { key: 'practice', label: 'Practice' },
-  { key: 'sharing', label: 'Sharing' },
+  { key: 'sharing', label: 'Scores' },
+  { key: 'performances', label: 'Performances' },
+  { key: 'comments', label: 'Comments' },
+  { key: 'imports', label: 'Imports' },
+  { key: 'system', label: 'System' },
 ];
+
+function isRecentNotificationTime(time) {
+  if (!time) return false;
+  return /^(just now|\d+[mh]|\d+\s*[mh]\s*ago)$/i.test(time.trim());
+}
 
 export default function Notifications() {
   const navigate = useNavigate();
-  const notifications = usePrototypeStore((s) => s.notifications);
+  const items = usePrototypeStore((s) => s.notifications);
   const markRead = usePrototypeStore((s) => s.markNotificationRead);
   const markAllRead = usePrototypeStore((s) => s.markAllNotificationsRead);
 
   const [tab, setTab] = useState('all');
 
-  const filtered = useMemo(() => {
-    return notifications.filter((n) => {
-      if (tab === 'unread') return n.unread;
-      if (tab === 'practice') return n.category === 'practice';
-      if (tab === 'sharing') return n.category === 'sharing';
-      return true;
-    });
-  }, [notifications, tab]);
+  // Notifications can be addressed to a specific person; only yours are listed.
+  const mine = useMemo(() => items.filter((n) => !n.recipientId || n.recipientId === 'you'), [items]);
 
-  const unreadCount = useMemo(() => notifications.filter((n) => n.unread).length, [notifications]);
+  const filtered = useMemo(() => {
+    if (tab === 'all') return mine;
+    if (tab === 'unread') return mine.filter((n) => n.unread);
+    if (tab === 'system') {
+      return mine.filter((n) => n.category === 'system' || n.category === 'security' || n.category === 'billing');
+    }
+    return mine.filter((n) => n.category === tab);
+  }, [mine, tab]);
+
+  const unreadCount = useMemo(() => mine.filter((n) => n.unread).length, [mine]);
 
   const groups = useMemo(() => {
     const today = [];
     const earlier = [];
     filtered.forEach((n) => {
-      if (n.time.includes('m ago') || n.time.includes('h ago') || n.time === 'Just now') {
+      if (isRecentNotificationTime(n.time)) {
         today.push(n);
       } else {
         earlier.push(n);
@@ -49,21 +60,21 @@ export default function Notifications() {
   }, [filtered]);
 
   return (
-    <AppPage size="compact" className="space-y-6">
+    <AppPage size="standard">
       <PageHeader
         title="Notifications"
-        description="Updates on shared scores, practice goals, and activity."
+        description={`${unreadCount} unread`}
         primaryAction={
-          unreadCount > 0 && (
+          unreadCount > 0 ? (
             <Button intent="secondary" size="sm" onClick={markAllRead}>
               <CheckCheck className="mr-1.5 icon-xs" /> Mark all read
             </Button>
-          )
+          ) : undefined
         }
       />
 
-      <FilterTabs aria-label="Notification filters">
-        {tabs.map((t) => (
+      <FilterTabs aria-label="Notification filters" className="mt-5">
+        {filters.map((t) => (
           <FilterTab
             key={t.key}
             active={tab === t.key}
@@ -107,7 +118,7 @@ export default function Notifications() {
 function Group({ label, items, onOpen, navigate }) {
   return (
     <div>
-      <h2 className="mb-2 type-body-small font-medium text-ink-tertiary">{label}</h2>
+      <h2 className="mb-2 type-caption text-ink-tertiary">{label}</h2>
       <ul className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel overflow-hidden">
         {items.map((n) => (
           <li key={n.id}>

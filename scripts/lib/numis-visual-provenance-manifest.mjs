@@ -1345,6 +1345,7 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "border",
       "border-line-subtle",
       "bg-transparent",
+      "text-ink-primary",
       "shadow-control",
       "hover:bg-brand-soft",
       "hover:text-brand-soft-foreground"
@@ -1376,10 +1377,10 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "hover:bg-secondary/80"
     ],
     "yueoraClasses": [
-      "bg-neutral-muted",
-      "text-neutral-muted-foreground",
+      "bg-secondary",
+      "text-secondary-foreground",
       "shadow-control",
-      "hover:bg-neutral-muted/80"
+      "hover:bg-secondary/80"
     ],
     "allowedOwners": [
       "src/components/ui/button.jsx"
@@ -1565,7 +1566,7 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "border-line-subtle",
       "bg-transparent",
       "px-3",
-      "py-2",
+      "py-1.5",
       "shadow-control",
       "data-[placeholder]:text-ink-tertiary",
       "focus:ring-1",
@@ -1609,12 +1610,12 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "max-h-96",
       "min-w-[8rem]",
       "overflow-hidden",
-      "rounded-overlay",
+      "rounded-menu",
       "border",
-      "border-line-subtle",
-      "bg-surface-raised",
+      "border-line-subtle/50",
+      "bg-surface-panel",
       "text-ink-primary",
-      "shadow-overlay"
+      "shadow-md"
     ],
     "allowedOwners": [
       "src/components/ui/select.jsx"
@@ -1705,12 +1706,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "h-4",
       "w-4",
       "shrink-0",
-      "rounded-control",
+      "rounded-sm",
       "border",
       "border-brand",
-      "shadow-control",
+      "shadow",
       "focus-visible:ring-1",
       "focus-visible:ring-brand",
+      "data-[state=checked]:border-brand",
       "data-[state=checked]:bg-brand",
       "data-[state=checked]:text-brand-foreground"
     ],
@@ -1754,7 +1756,7 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "border",
       "border-brand",
       "text-brand",
-      "shadow-control",
+      "shadow",
       "focus-visible:ring-1",
       "focus-visible:ring-brand"
     ],
@@ -1804,9 +1806,9 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "rounded-full",
       "border-2",
       "border-transparent",
-      "shadow-control",
+      "shadow-sm",
       "data-[state=checked]:bg-brand",
-      "data-[state=unchecked]:bg-neutral-muted"
+      "data-[state=unchecked]:bg-input"
     ],
     "allowedOwners": [
       "src/components/ui/switch.jsx"
@@ -1847,8 +1849,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "h-4",
       "w-4",
       "rounded-full",
-      "bg-surface-panel",
-      "shadow-raised",
+      "bg-surface-canvas",
+      "shadow-lg",
       "ring-0",
       "transition-transform",
       "data-[state=checked]:translate-x-4",
@@ -1936,10 +1938,11 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "gap-4",
       "border",
       "border-line-subtle",
-      "bg-surface-raised",
+      "bg-surface-canvas",
       "p-6",
-      "shadow-overlay",
-      "duration-200"
+      "shadow-lg",
+      "duration-200",
+      "sm:rounded-dialog"
     ],
     "allowedOwners": [
       "src/components/ui/dialog.jsx"
@@ -1974,13 +1977,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "yueoraClasses": [
       "z-50",
       "w-72",
-      "rounded-overlay",
+      "rounded-md",
       "border",
       "border-line-subtle",
       "bg-surface-raised",
       "p-4",
       "text-ink-primary",
-      "shadow-overlay"
+      "shadow-md"
     ],
     "allowedOwners": [
       "src/components/ui/popover.jsx"
@@ -2017,13 +2020,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "z-50",
       "min-w-[8rem]",
       "overflow-hidden",
-      "rounded-overlay",
+      "rounded-menu",
       "border",
-      "border-line-subtle",
-      "bg-surface-raised",
+      "border-line-subtle/50",
+      "bg-surface-panel",
       "p-1",
       "text-ink-primary",
-      "shadow-overlay"
+      "shadow-md"
     ],
     "allowedOwners": [
       "src/components/ui/dropdown-menu.jsx"
@@ -2068,10 +2071,11 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "select-none",
       "items-center",
       "gap-2",
-      "rounded-control",
+      "rounded-sm",
       "px-2",
       "py-1.5",
-      "text-sm",
+      "type-body-small",
+      "text-ink-primary",
       "outline-none",
       "transition-colors",
       "focus:bg-brand-soft",
@@ -2110,7 +2114,7 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "yueoraClasses": [
       "z-50",
       "overflow-hidden",
-      "rounded-control",
+      "rounded-md",
       "bg-brand",
       "px-3",
       "py-1.5",
@@ -2149,13 +2153,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     ],
     "yueoraClasses": [
       "inline-flex",
-      "h-control-md",
+      "h-9",
       "items-center",
       "justify-center",
-      "rounded-control",
+      "rounded-nav",
       "bg-neutral-muted",
       "p-1",
-      "text-ink-secondary"
+      "text-ink-tertiary"
     ],
     "allowedOwners": [
       "src/components/ui/tabs.jsx"
@@ -2199,11 +2203,12 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "rounded-control",
       "px-3",
       "py-1",
-      "text-sm",
+      "type-body-small",
       "font-medium",
-      "data-[state=active]:bg-surface-panel",
+      "text-ink-tertiary",
+      "data-[state=active]:bg-surface-canvas",
       "data-[state=active]:text-ink-primary",
-      "data-[state=active]:shadow-control"
+      "data-[state=active]:shadow"
     ],
     "allowedOwners": [
       "src/components/ui/tabs.jsx"
@@ -2312,18 +2317,16 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "flex-col",
       "items-center",
       "justify-center",
-      "py-16",
+      "py-20",
       "text-center",
-      "p-6",
-      "rounded-full",
       "bg-brand/5",
-      "w-12",
-      "h-12",
       "text-brand/40",
-      "type-section-title",
+      "font-heading",
+      "text-xl",
+      "font-semibold",
       "text-ink-primary",
-      "type-body-small",
-      "text-ink-secondary"
+      "type-body",
+      "text-ink-tertiary"
     ],
     "allowedOwners": [
       "src/components/patterns/EmptyState.jsx"
@@ -2365,22 +2368,22 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "hover:text-foreground"
     ],
     "yueoraClasses": [
-      "flex",
+      "inline-flex",
       "items-center",
       "gap-1",
+      "rounded-overlay",
       "bg-neutral-muted",
       "p-1",
       "rounded-control",
       "px-3",
       "py-1",
-      "rounded-control",
       "text-xs",
       "font-medium",
       "transition-colors",
       "bg-surface-panel",
-      "shadow-control",
+      "shadow",
       "text-ink-primary",
-      "text-ink-secondary",
+      "text-ink-tertiary",
       "hover:text-ink-primary"
     ],
     "allowedOwners": [
@@ -2413,9 +2416,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "yueoraClasses": [
       "rounded-container",
       "border",
-      "border-line-subtle",
-      "bg-surface-panel",
-      "text-ink-primary"
+      "border-line-subtle/50",
+      "bg-surface-panel"
     ],
     "allowedOwners": [
       "src/components/patterns/Surface.jsx"
@@ -2453,11 +2455,12 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "bg-surface-panel",
       "rounded-container",
       "border",
-      "border-line-subtle",
-      "hover:border-brand/40",
+      "border-line-subtle/50",
+      "hover:border-brand/30",
       "transition-all",
       "duration-300",
-      "hover:shadow-raised"
+      "hover:shadow-lg",
+      "hover:shadow-brand/5"
     ],
     "allowedOwners": [
       "src/components/patterns/Surface.jsx"
@@ -2499,13 +2502,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "bg-surface-panel",
       "rounded-container",
       "border",
-      "border-line-subtle",
+      "border-line-subtle/50",
       "overflow-hidden",
-      "cursor-pointer",
       "hover:border-brand/40",
       "transition-all",
       "duration-300",
-      "hover:shadow-raised",
+      "hover:shadow-xl",
+      "hover:shadow-brand/5",
       "hover:-translate-y-1"
     ],
     "allowedOwners": [
@@ -2542,7 +2545,7 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "bg-nav-active",
       "text-brand",
       "font-medium",
-      "text-ink-secondary",
+      "text-ink-tertiary",
       "hover:text-ink-primary"
     ],
     "allowedOwners": [

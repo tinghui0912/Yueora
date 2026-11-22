@@ -1,12 +1,14 @@
 import fs from 'node:fs';
 import { scanPageAppearanceContent } from './lib/appearance-guard.mjs';
 import { scanColorProvenanceContent } from './lib/color-provenance-guard.mjs';
+import { verifyVisualRecipes } from './lib/visual-recipe-guard.mjs';
 import {
   YUEORA_SEMANTIC_COLOR_ALIASES,
   YUEORA_COMPATIBILITY_COLOR_ALIASES,
   NUMIS_REFERENCE_STATUS_RECIPES,
   YUEORA_AUTHORIZED_STATUS_RECIPES,
   YUEORA_VISUAL_RECIPE_MANIFEST,
+  YUEORA_AUTHORIZED_RECIPES,
 } from './lib/numis-visual-provenance-manifest.mjs';
 
 console.log('🧪 Running Design System Guardrail Regression Tests...\n');
@@ -2205,6 +2207,127 @@ assertPositive(
     );
   }`,
   'src/pages/AddScore.jsx'
+);
+
+// -----------------------------------------------------------------------------
+// 10. FAIL-CLOSED MALICIOUS MUTATIONS & POSITIVE CONTROLS (PHASE 7)
+// -----------------------------------------------------------------------------
+console.log('--- Fail-Closed Malicious Mutations & Positive Controls (Phase 7) ---');
+
+// Mutation 1: Canonical badge default without shadow -> FAILS
+assertColorNegative(
+  'Mutation 1: Badge default without shadow rejected',
+  `<div className="border-transparent bg-brand text-brand-foreground hover:bg-brand/80">Default / Brand</div>`,
+  'shadow',
+  'src/components/ui/badge.jsx'
+);
+
+// Mutation 2: Canonical badge default without hover:bg-brand/80 -> FAILS
+assertColorNegative(
+  'Mutation 2: Badge default without hover:bg-brand/80 rejected',
+  `<div className="border-transparent bg-brand text-brand-foreground shadow">Default / Brand</div>`,
+  'hover:bg-brand/80',
+  'src/components/ui/badge.jsx'
+);
+
+// Mutation 3: Badge default with border-brand/30 instead of border-transparent -> FAILS
+assertColorNegative(
+  'Mutation 3: Badge default with border-brand/30 rejected',
+  `<div className="border-brand/30 bg-brand text-brand-foreground shadow hover:bg-brand/80">Default / Brand</div>`,
+  'border-brand/30',
+  'src/components/ui/badge.jsx'
+);
+
+// Mutation 4: Badge default with bg-brand-soft instead of bg-brand -> FAILS
+assertColorNegative(
+  'Mutation 4: Badge default with bg-brand-soft rejected',
+  `<div className="border-transparent bg-brand-soft text-brand-foreground shadow hover:bg-brand/80">Default / Brand</div>`,
+  'bg-brand-soft',
+  'src/components/ui/badge.jsx'
+);
+
+// Mutation 5: Badge default with text-ink-primary instead of text-brand-foreground -> FAILS
+assertColorNegative(
+  'Mutation 5: Badge default with text-ink-primary rejected',
+  `<div className="border-transparent bg-brand text-ink-primary shadow hover:bg-brand/80">Default / Brand</div>`,
+  'text-ink-primary',
+  'src/components/ui/badge.jsx'
+);
+
+// Mutation 6: Canonical recipe in unauthorized owner -> FAILS
+assertColorNegative(
+  'Mutation 6: Canonical recipe in unauthorized owner rejected',
+  `<div className="border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80">Default / Brand</div>`,
+  'badge-default',
+  'src/pages/UserProfile.jsx'
+);
+
+// Mutation 7: Change frozen Numis source fact line by +1 -> FAILS
+totalTests++;
+try {
+  const baseRecipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === 'badge-default');
+  const mutated = {
+    ...baseRecipe,
+    source: {
+      ...baseRecipe.source,
+      line: baseRecipe.source.line + 1,
+    },
+  };
+  const issues = verifyVisualRecipes([mutated]);
+  const hasMismatch = issues.some(
+    (i) => i.message && (i.message.includes('line mismatch') || i.message.includes('snippet mismatch'))
+  );
+  if (issues.length > 0 && hasMismatch) {
+    console.log('  ✓ [FAIL as expected] Mutation 7: Change frozen Numis source fact line by +1 rejected');
+    passedTests++;
+  } else {
+    console.error('  ❌ [UNEXPECTED PASS] Mutation 7 did not fail with line/snippet mismatch');
+    failedTests++;
+  }
+} catch (e) {
+  console.error(`  ❌ [ERROR] Mutation 7 threw: ${e.message}`);
+  failedTests++;
+}
+
+// Mutation 8: Change token in frozen exactSnippet -> FAILS
+totalTests++;
+try {
+  const baseRecipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === 'badge-default');
+  const mutated = {
+    ...baseRecipe,
+    source: {
+      ...baseRecipe.source,
+      exactSnippet: baseRecipe.source.exactSnippet.replace('bg-primary', 'bg-secondary'),
+    },
+  };
+  const issues = verifyVisualRecipes([mutated]);
+  const hasMismatch = issues.some(
+    (i) => i.message && i.message.includes('snippet mismatch')
+  );
+  if (issues.length > 0 && hasMismatch) {
+    console.log('  ✓ [FAIL as expected] Mutation 8: Change token in frozen exactSnippet rejected');
+    passedTests++;
+  } else {
+    console.error('  ❌ [UNEXPECTED PASS] Mutation 8 did not fail with snippet mismatch');
+    failedTests++;
+  }
+} catch (e) {
+  console.error(`  ❌ [ERROR] Mutation 8 threw: ${e.message}`);
+  failedTests++;
+}
+
+// Positive control 1: Exact authorized recipe -> PASSES
+assertColorPositive(
+  'Positive control 1: Exact authorized badge recipe accepted',
+  `<div className="border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80">Default / Brand</div>`,
+  'src/components/ui/badge.jsx'
+);
+
+// Positive control 2: Authorized recipe with Yueora-owned geometry -> PASSES
+assertColorPositive(
+  'Positive control 2: Authorized recipe with Yueora-owned geometry accepted',
+  `<div className="rounded-full h-5 px-2 font-medium border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80">Default / Brand</div>`,
+  'src/components/ui/badge.jsx'
 );
 
 // -----------------------------------------------------------------------------

@@ -1173,6 +1173,38 @@ async function verifyComputedStyles(client, baseUrl) {
     console.log(`  ✓ FilterTabs Consistency: 10px radius, bg-brand-soft active state verified across Library and Notifications.`);
   }
 
+  // 5b. Notifications Desktop Layout & Product Taxonomy Verification (Phase 10)
+  const notifDesktopData = await ev(`(() => {
+    const mainEl = document.querySelector('main') || document.querySelector('[class*="page-"]');
+    const containerWidth = mainEl ? mainEl.getBoundingClientRect().width : 0;
+    
+    // Filter tabs
+    const tabEls = Array.from(document.querySelectorAll('[data-qa="filter-tab"]'));
+    const tabTexts = tabEls.map((t) => t.textContent.trim());
+
+    // Section headings (Today / Earlier)
+    const headings = Array.from(document.querySelectorAll('h2, h3, [class*="type-section-title"], [class*="type-subsection"]')).map((h) => h.textContent.trim());
+
+    return {
+      containerWidth,
+      tabTexts,
+      headings,
+    };
+  })()`);
+
+  if (notifDesktopData.containerWidth <= 416) {
+    throw new Error(`Notifications desktop container width (${notifDesktopData.containerWidth}px) is too narrow (expected standard width > 416px)`);
+  }
+
+  const expectedFilterLabels = ['All', 'Unread', 'Scores', 'Performances', 'Comments', 'Imports', 'System'];
+  for (const label of expectedFilterLabels) {
+    if (!notifDesktopData.tabTexts.some((t) => t.includes(label))) {
+      throw new Error(`Notifications filter tab missing '${label}', found: ${notifDesktopData.tabTexts.join(', ')}`);
+    }
+  }
+
+  console.log(`  ✓ Notifications Desktop Product Preservation: width ${Math.round(notifDesktopData.containerWidth)}px > 416px, all 7 filter tabs verified.`);
+
   // 6. Primitive Pixel-Parity Specimen Assertions (/design-system?demo=true)
   await navigateAndWait(`${baseUrl}/design-system?demo=true`);
   for (let i = 0; i < 60; i++) {

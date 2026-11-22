@@ -226,7 +226,7 @@ export default function Performances() {
             action={
               tab === 'mine' ? (
                 <Button intent="primary" size="md" asChild>
-                  <Link to="/library">Choose a piece to play</Link>
+                  <Link to="/practice">Choose a piece to play</Link>
                 </Button>
               ) : undefined
             }

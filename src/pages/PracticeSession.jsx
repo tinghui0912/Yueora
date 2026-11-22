@@ -14,6 +14,7 @@ import TempoPopover from '@/components/practice/TempoPopover';
 import FollowFeedback from '@/components/practice/FollowFeedback';
 import VirtualKeyboard from '@/components/practice/VirtualKeyboard';
 import PracticeSettingsDialog from '@/components/practice/PracticeSettingsDialog';
+import { PracticeControlButton } from '@/components/practice/PracticeControlButton';
 import { Surface } from '@/components/patterns/Surface';
 import BackLink from '@/components/patterns/BackLink';
 import { Button } from '@/components/ui/button';
@@ -631,25 +632,25 @@ export default function PracticeSession() {
               onMetronome={setMetronome}
             />
 
-            <Button
-              intent={selectedRange.kind === 'section' ? 'primary' : 'secondary'}
-              size="md"
+            <PracticeControlButton
+              active={selectedRange.kind === 'section'}
               onClick={selecting ? () => { setSectionPhase('idle'); setPendingStart(null); } : startSectionPick}
+              aria-label="Select practice section"
             >
               <span>Section{selectedRange.kind === 'section' ? ` ${selectedRange.startMeasure}–${selectedRange.endMeasure}` : ''}</span>
-            </Button>
+            </PracticeControlButton>
 
             {loopAllowed && (
               <span className="hidden sm:inline-flex">
-                <Button
-                  intent={loop ? 'primary' : 'secondary'}
-                  size="md"
+                <PracticeControlButton
+                  active={loop}
+                  icon={Repeat}
                   onClick={() => setLoop((l) => !l)}
                   aria-pressed={loop}
+                  aria-label="Loop playback"
                 >
-                  <Repeat className="icon-xs" />
                   <span>Loop</span>
-                </Button>
+                </PracticeControlButton>
               </span>
             )}
           </div>

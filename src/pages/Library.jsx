@@ -2,30 +2,29 @@ import { useMemo, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   LayoutGrid, List, Plus, SlidersHorizontal, ArrowUpDown, Play, Star,
-  FolderInput, Trash2, Heart, X, Check, LogOut, BookmarkMinus,
-  Folder, Pencil, Search,
+  FolderInput, Trash2, Heart, X, Check, LogOut, BookmarkMinus, Settings,
+  Folder, Pencil, Sparkles,
 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { getScoreQuota, getEffectiveScoreUsage } from '@/lib/commercialEntitlements';
 import ScoreCard from '@/components/library/ScoreCard';
 import ScorePreview from '@/components/library/ScorePreview';
+import LibrarySubRail from '@/components/library/LibrarySubRail';
 import RepertoireGrid from '@/components/library/RepertoireGrid';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { IconButton } from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
-import { NativeSelect } from '@/components/ui/select';
 import Surface from '@/components/patterns/Surface';
-import EmptyState from '@/components/patterns/EmptyState';
 import { SegmentedControl, SegmentedControlItem } from '@/components/patterns/SegmentedControl';
 import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
+import { FolderOptionRow } from '@/components/library/FolderOptionRow';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
-import { FolderOptionRow } from '@/components/library/FolderOptionRow';
 
 const librarySections = [
   { key: 'all', label: 'All music' },
@@ -128,6 +127,15 @@ export default function Library() {
 
   const liveCount = scores.filter((s) => s.ownership !== 'trash').length;
 
+  // Derive "continue practicing" from store
+  const playedScores = scores.filter((s) => s.ownership !== 'trash' && s.lastPlayed && s.lastPlayed !== 'never');
+  const continueScore = playedScores.length > 0
+    ? [...playedScores].sort((a, b) => {
+        const order = { today: -1, yesterday: 0, '2 days ago': 1, '3 days ago': 2, '4 days ago': 3, '5 days ago': 4, 'last week': 5 };
+        return (order[a.lastPlayed] ?? 50) - (order[b.lastPlayed] ?? 50);
+      })[0]
+    : null;
+
   // Selection ops
   const toggleSelect = (id) => setSelected((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
   const clearSelect = () => setSelected([]);
@@ -152,6 +160,7 @@ export default function Library() {
 
   const moveSelected = (folderId) => { moveScoresToFolder(selected, folderId); clearSelect(); setMoveOpen(false); };
 
+  const handleDeleteFolder = (id) => setFolderDelete(id);
   const confirmDeleteFolder = () => {
     deleteFolder(folderDelete);
     if (activeFolderId === folderDelete) setParam('view', 'all');
@@ -164,334 +173,365 @@ export default function Library() {
   const RemoveIcon = allMine ? Trash2 : allShared ? LogOut : BookmarkMinus;
 
   return (
-    <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-6" data-qa="library-collection-page">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="type-workspace-title text-ink-primary">
-            {isTrash ? 'Trash' : activeFolderId ? (folders.find((f) => f.id === activeFolderId)?.name || 'Folder') : 'Repertoire'}
-          </h1>
-          <p className="mt-1 type-page-subtitle text-ink-tertiary">
-            {isTrash
-              ? `${filtered.length} in trash`
-              : `${liveCount} ${liveCount === 1 ? 'piece' : 'pieces'} in your personal collection`}
-            {!isTrash && !scoreQuota.isUnlimited && (
-              <span className="ml-2 text-ink-tertiary">
-                ({effectiveCount}/{scoreQuota.limit} limit)
-              </span>
-            )}
-            {!isTrash && !scoreQuota.isUnlimited && liveCount >= scoreQuota.limit && (
-              <Link to="/pricing" className="ml-2 font-medium text-brand hover:underline">
-                Upgrade to expand
-              </Link>
-            )}
-          </p>
-        </div>
+    <div className="flex min-h-[calc(100vh-3.5rem)]" data-qa="library-collection-page">
+      <LibrarySubRail
+        active={active}
+        onSelect={(k) => { setParam('view', k); clearSelect(); }}
+        folders={folders}
+        onCreateFolder={createFolder}
+        onRenameFolder={renameFolder}
+        onDeleteFolder={handleDeleteFolder}
+      />
 
-        <div className="flex items-center gap-2">
-          <Button intent="primary" size="md" asChild>
-            <Link to="/add-score">
-              <Plus className="mr-1.5 icon-sm" />
-              <span>Add score</span>
-            </Link>
-          </Button>
-        </div>
-      </div>
-
-      {/* Unified Collection Toolbar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        {/* Category pills */}
-        <FilterTabs>
-          {librarySections.map((item) => (
-            <FilterTab
-              key={item.key}
-              active={active === item.key}
-              onClick={() => { setParam('view', item.key); clearSelect(); }}
-            >
-              {item.label}
-            </FilterTab>
-          ))}
-          <FilterTab
-            active={active === 'trash'}
-            onClick={() => { setParam('view', 'trash'); clearSelect(); }}
-            icon={Trash2}
-          >
-            Trash
-          </FilterTab>
-        </FilterTabs>
-
-        {/* Secondary controls: Search, Folder select, Filter, Sort, View switch */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="relative min-w-[200px] flex-1 sm:w-56 sm:flex-initial">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 icon-sm text-ink-tertiary pointer-events-none" />
-            <Input
-              value={searchInput}
-              onChange={(e) => {
-                setSearchInput(e.target.value);
-                setParam('search', e.target.value.trim());
-              }}
-              placeholder="Filter by title, composer…"
-              className="pl-9 w-full"
-            />
-          </div>
-
-          {/* Folder select dropdown */}
-          <NativeSelect
-            value={activeFolderId ? `folder:${activeFolderId}` : ''}
-            onChange={(e) => {
-              const val = e.target.value;
-              if (val === '__manage__') {
-                setManageFoldersOpen(true);
-              } else if (val) {
-                setParam('view', val);
-                clearSelect();
-              } else if (activeFolderId) {
-                setParam('view', 'all');
-                clearSelect();
-              }
-            }}
-            className="w-36"
-            aria-label="Filter by folder"
-          >
-            <option value="">All folders</option>
+      <div className="min-w-0 flex-1">
+        {/* Mobile folio filter rail */}
+        <div className="border-b border-line-subrail bg-surface-subrail px-4 py-2.5 lg:hidden">
+          <FilterTabs aria-label="Collections and folders" className="overflow-x-auto no-scrollbar flex-nowrap">
+            {librarySections.map((item) => (
+              <FilterTab
+                key={item.key}
+                active={active === item.key}
+                onClick={() => { setParam('view', item.key); clearSelect(); }}
+              >
+                {item.label}
+              </FilterTab>
+            ))}
             {folders.map((f) => (
-              <option key={f.id} value={`folder:${f.id}`}>{f.name}</option>
-            ))}
-            <option value="__manage__">Manage folders…</option>
-          </NativeSelect>
-
-          {/* Filter dropdown */}
-          <div className="relative">
-            <Button
-              intent={filterFav || filterInstrument !== 'all' || filterPlayed !== 'any' ? 'subtle' : 'secondary'}
-              size="md"
-              onClick={() => { setShowFilters((s) => !s); setShowSort(false); }}
-              aria-label="Filter repertoire"
-            >
-              <SlidersHorizontal className="icon-sm" />
-              <span className="hidden sm:inline">Filter</span>
-              {(filterFav || filterInstrument !== 'all' || filterPlayed !== 'any') && (
-                <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-              )}
-            </Button>
-            {showFilters && (
-              <Surface tone="raised" elevation="overlay" padding="sm" className="absolute right-0 z-20 mt-1 w-56">
-                <p className="type-menu-label text-ink-primary">Instrument</p>
-                <div className="mt-1.5 flex flex-wrap gap-1">
-                  {instruments.map((ins) => (
-                    <FilterTab
-                      key={ins}
-                      active={filterInstrument === ins}
-                      onClick={() => setFilterInstrument(ins)}
-                    >
-                      {ins === 'all' ? 'All' : ins}
-                    </FilterTab>
-                  ))}
-                </div>
-                <p className="mt-3 type-menu-label text-ink-primary">Practice history</p>
-                <div className="mt-1.5 flex flex-wrap gap-1">
-                  {[['any', 'Any'], ['recent', 'Played recently'], ['notplayed', 'Not played yet']].map(([k, l]) => (
-                    <FilterTab
-                      key={k}
-                      active={filterPlayed === k}
-                      onClick={() => setFilterPlayed(k)}
-                    >
-                      {l}
-                    </FilterTab>
-                  ))}
-                </div>
-                <label className="mt-3 flex items-center gap-2 type-label text-ink-primary cursor-pointer select-none">
-                  <Checkbox
-                    checked={filterFav}
-                    onCheckedChange={(checked) => setFilterFav(Boolean(checked))}
-                    aria-label="Favorites only"
-                  />
-                  <span>Favorites only</span>
-                </label>
-              </Surface>
-            )}
-          </div>
-
-          {/* Sort dropdown */}
-          <DropdownMenu open={showSort} onOpenChange={setShowSort}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                intent="secondary"
-                size="md"
-                aria-label="Sort repertoire"
+              <FilterTab
+                key={f.id}
+                active={active === `folder:${f.id}`}
+                onClick={() => { setParam('view', `folder:${f.id}`); clearSelect(); }}
               >
-                <ArrowUpDown className="icon-sm" />
-                <span className="hidden sm:inline">Sort</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44">
-              {sortOptions.map((o) => (
-                <DropdownMenuItem
-                  key={o.key}
-                  onClick={() => setParam('sort', o.key)}
-                  className="flex items-center justify-between"
-                >
-                  <span>{o.label}</span>
-                  {sort === o.key && <Check className="h-3 w-3" />}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Grid / List switch (canonical SegmentedControl) */}
-          <SegmentedControl value={view} onValueChange={(v) => setParam('layout', v)} aria-label="View layout">
-            <SegmentedControlItem value="grid" aria-label="Grid view">
-              <LayoutGrid className="icon-xs" />
-            </SegmentedControlItem>
-            <SegmentedControlItem value="list" aria-label="List view">
-              <List className="icon-xs" />
-            </SegmentedControlItem>
-          </SegmentedControl>
-        </div>
-      </div>
-
-      {/* Multi-select bar */}
-      {selected.length > 0 && !isTrash && (
-        <div className="flex flex-wrap items-center gap-2 rounded-control border border-line-subtle bg-neutral-muted px-3 py-2">
-          <span className="type-body-small font-semibold text-ink-primary">
-            <span className="text-brand font-bold mr-1.5">●</span>
-            {selected.length} piece{selected.length > 1 ? 's' : ''} selected
-          </span>
-          <div className="ml-auto flex flex-wrap items-center gap-1.5">
-            <Button
-              intent="secondary"
-              size="sm"
-              onClick={favSelected}
-            >
-              <Heart className="h-3.5 w-3.5" /> Favorite
-            </Button>
-            <Button
-              intent="secondary"
-              size="sm"
-              onClick={() => setMoveOpen(true)}
-            >
-              <FolderInput className="h-3.5 w-3.5" /> Move to folder
-            </Button>
-            <Button
-              intent="danger"
-              size="sm"
-              onClick={() => setTrashConfirm({ selected: [...selected] })}
-            >
-              <RemoveIcon className="h-3.5 w-3.5" /> {removeLabel}
-            </Button>
-            <IconButton
-              icon={X}
-              size="xs"
-              tone="quiet"
-              label="Clear selection"
-              onClick={clearSelect}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Collection Content Grid / List */}
-      <div onClick={() => { setShowFilters(false); setShowSort(false); }}>
-        {isEmpty ? (
-          <LibraryEmptyState active={active} isTrash={isTrash} />
-        ) : isTrash ? (
-          <div className="space-y-3">
-            {isAtScoreLimit && (
-              <p className="type-metadata text-ink-primary bg-surface-panel px-4 py-2.5 rounded-control border border-line-subtle">
-                Your repertoire is full ({effectiveCount} of {scoreQuota.limit} scores). Delete a score permanently or upgrade to restore music from Trash.
-              </p>
-            )}
-            <div className="flex justify-end">
-              <Button intent="secondary" size="sm" onClick={emptyTrash}>
-                <Trash2 className="mr-1.5" /> Empty trash
-              </Button>
-            </div>
-            <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
-              {filtered.map((s) => (
-                <div key={s.id} className="flex items-center gap-4 p-3.5">
-                  <div className="h-12 w-16 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
-                    <ScorePreview id={s.id} className="h-full w-full object-cover" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate type-subsection text-ink-primary">{s.title}</p>
-                    <p className="truncate type-metadata text-ink-secondary">{s.composer} · deleted {s.deletedAt}</p>
-                  </div>
-                  <Button
-                    intent="secondary"
-                    size="xs"
-                    disabled={isAtScoreLimit}
-                    title={isAtScoreLimit ? `Repertoire limit reached (${effectiveCount}/${scoreQuota.limit}). Upgrade or delete another score first.` : 'Restore score'}
-                    onClick={() => restoreScore(s.id)}
-                  >
-                    Restore
-                  </Button>
-                  <Button
-                    intent="danger"
-                    size="xs"
-                    onClick={() => deleteScoreForever(s.id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : view === 'grid' ? (
-          <RepertoireGrid>
-            {filtered.map((s) => (
-              <ScoreCard
-                key={s.id}
-                score={s}
-                selected={selected.includes(s.id)}
-                onToggleSelect={toggleSelect}
-              />
+                {f.name}
+              </FilterTab>
             ))}
-          </RepertoireGrid>
-        ) : (
-          <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
-            {filtered.map((s) => (
-              <div
-                key={s.id}
-                className={`flex items-center gap-4 p-3.5 transition-colors hover:bg-neutral-hover ${
-                  selected.includes(s.id) ? 'bg-neutral-muted/50' : ''
-                }`}
-              >
-                <Checkbox
-                  checked={selected.includes(s.id)}
-                  onCheckedChange={() => toggleSelect(s.id)}
-                  aria-label={`Select ${s.title}`}
-                  className="shrink-0"
-                />
+            <FilterTab
+              active={false}
+              icon={Settings}
+              onClick={() => setManageFoldersOpen(true)}
+            >
+              Manage
+            </FilterTab>
+            <FilterTab
+              active={active === 'trash'}
+              icon={Trash2}
+              onClick={() => { setParam('view', 'trash'); clearSelect(); }}
+            >
+              Trash
+            </FilterTab>
+          </FilterTabs>
+        </div>
 
-                <Link to={`/score/${s.id}`} className="flex min-w-0 flex-1 items-center gap-4">
-                  <div className="h-11 w-14 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
-                    <ScorePreview id={s.id} className="h-full w-full object-cover" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate type-subsection text-ink-primary">{s.title}</p>
-                    <p className="truncate type-metadata text-ink-secondary">{s.composer} · {s.instrument}</p>
-                  </div>
-                  {s.favorite && <Star className="h-3.5 w-3.5 fill-brand text-brand shrink-0" />}
-                  <span className="hidden type-metadata text-ink-tertiary sm:block">
-                    {s.lastPlayed === 'never' || !s.lastPlayed ? 'Awaiting practice' : `Played ${s.lastPlayed}`}
+        {/* Hero: "Pick up where you left off" - Resume Playing Card */}
+        {!isTrash && !search && active === 'all' && continueScore && (
+          <div className="mx-4 mt-6 md:mx-8">
+            <Surface interactive padding="none" className="p-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4 min-w-0">
+                <div className="hidden h-14 w-20 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel/90 sm:block">
+                  <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
+                </div>
+                <div className="min-w-0">
+                  <span className="inline-flex items-center gap-1.5 type-caption text-brand">
+                    <Sparkles className="icon-xs" />
+                    <span>Pick up where you left off</span>
                   </span>
-                </Link>
+                  <h2 className="truncate type-section-title text-ink-primary mt-0.5">
+                    {continueScore.title}
+                  </h2>
+                  <p className="truncate type-metadata text-ink-secondary mt-0.5">
+                    {continueScore.composer} · Continue from bar {continueScore.lastMeasure} · Played {continueScore.lastPlayed}
+                  </p>
+                </div>
+              </div>
 
-                <Button
-                  intent="subtle"
-                  size="xs"
-                  asChild
-                  className="shrink-0"
-                >
-                  <Link to={`/score/${s.id}/setup`}>
-                    <Play className="icon-xs fill-current" />
-                    <span>Practice</span>
+              <div className="flex shrink-0 items-center gap-2">
+                <Button intent="primary" size="md" asChild>
+                  <Link to={`/score/${continueScore.id}/setup`}>
+                    <Play className="icon-sm fill-current" />
+                    <span>Resume playing</span>
+                  </Link>
+                </Button>
+                <Button intent="secondary" size="md" asChild>
+                  <Link to={`/score/${continueScore.id}`}>
+                    Score details
                   </Link>
                 </Button>
               </div>
-            ))}
+            </Surface>
           </div>
         )}
+
+        {/* Repertoire Header & Toolbars */}
+        <div className="border-b border-line-subtle px-4 py-5 md:px-8">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h1 className="type-workspace-title text-ink-primary">
+                {isTrash ? 'Trash' : activeFolderId ? folders.find((f) => f.id === activeFolderId)?.name : 'Repertoire'}
+              </h1>
+              <p className="mt-0.5 type-body-small text-ink-secondary">
+                {isTrash
+                  ? `${filtered.length} in trash`
+                  : `${liveCount} of ${scoreQuota.isUnlimited ? 'Unlimited' : `${scoreQuota.limit} scores`} in your personal collection`}
+                {!isTrash && !scoreQuota.isUnlimited && (
+                  <span className="ml-2 text-ink-tertiary">
+                    ({effectiveCount}/{scoreQuota.limit} limit)
+                  </span>
+                )}
+                {!isTrash && !scoreQuota.isUnlimited && liveCount >= scoreQuota.limit && (
+                  <Link to="/pricing" className="ml-2 font-medium text-brand hover:underline">
+                    Upgrade to expand
+                  </Link>
+                )}
+              </p>
+            </div>
+
+            {/* Filter, sort, view toggles */}
+            <div className="flex items-center gap-2">
+              <Input
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && setParam('search', searchInput.trim())}
+                placeholder="Filter by title, composer…"
+                className="w-44 md:w-56"
+              />
+
+              {/* Filter dropdown */}
+              <div className="relative">
+                <Button
+                  intent={filterFav || filterInstrument !== 'all' || filterPlayed !== 'any' ? 'subtle' : 'secondary'}
+                  size="md"
+                  onClick={() => { setShowFilters((s) => !s); setShowSort(false); }}
+                  aria-label="Filter repertoire"
+                >
+                  <SlidersHorizontal className="icon-sm" />
+                  <span className="hidden sm:inline">Filter</span>
+                  {(filterFav || filterInstrument !== 'all' || filterPlayed !== 'any') && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+                  )}
+                </Button>
+                {showFilters && (
+                  <Surface tone="raised" elevation="overlay" padding="sm" className="absolute right-0 z-20 mt-1 w-56">
+                    <p className="type-caption text-ink-tertiary">Instrument</p>
+                    <div className="mt-1.5 flex flex-wrap gap-1">
+                      {instruments.map((ins) => (
+                        <FilterTab
+                          key={ins}
+                          active={filterInstrument === ins}
+                          onClick={() => setFilterInstrument(ins)}
+                        >
+                          {ins === 'all' ? 'All' : ins}
+                        </FilterTab>
+                      ))}
+                    </div>
+                    <p className="mt-3 type-caption text-ink-tertiary">Practice history</p>
+                    <div className="mt-1.5 flex flex-wrap gap-1">
+                      {[['any', 'Any'], ['recent', 'Played recently'], ['notplayed', 'Not played yet']].map(([k, l]) => (
+                        <FilterTab
+                          key={k}
+                          active={filterPlayed === k}
+                          onClick={() => setFilterPlayed(k)}
+                        >
+                          {l}
+                        </FilterTab>
+                      ))}
+                    </div>
+                    <label className="mt-3 flex items-center gap-2 type-label text-ink-primary cursor-pointer select-none">
+                      <Checkbox
+                        checked={filterFav}
+                        onCheckedChange={(checked) => setFilterFav(Boolean(checked))}
+                        aria-label="Favorites only"
+                      />
+                      <span>Favorites only</span>
+                    </label>
+                  </Surface>
+                )}
+              </div>
+
+              {/* Sort dropdown */}
+              <DropdownMenu open={showSort} onOpenChange={setShowSort}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    intent="secondary"
+                    size="md"
+                    aria-label="Sort repertoire"
+                  >
+                    <ArrowUpDown className="icon-sm" />
+                    <span className="hidden sm:inline">Sort</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-44">
+                  {sortOptions.map((o) => (
+                    <DropdownMenuItem
+                      key={o.key}
+                      onClick={() => setParam('sort', o.key)}
+                      className="flex items-center justify-between"
+                    >
+                      <span>{o.label}</span>
+                      {sort === o.key && <Check className="h-3 w-3" />}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Grid / List switch (canonical SegmentedControl) */}
+              <SegmentedControl value={view} onValueChange={(v) => setParam('layout', v)} aria-label="View layout">
+                <SegmentedControlItem value="grid" aria-label="Grid view">
+                  <LayoutGrid className="icon-xs" />
+                </SegmentedControlItem>
+                <SegmentedControlItem value="list" aria-label="List view">
+                  <List className="icon-xs" />
+                </SegmentedControlItem>
+              </SegmentedControl>
+            </div>
+          </div>
+
+          {/* Multi-select bar */}
+          {selected.length > 0 && !isTrash && (
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-control border border-line-subtle bg-neutral-muted px-3 py-2">
+              <span className="type-body-small font-semibold text-ink-primary">
+                <span className="text-brand font-bold mr-1.5">●</span>
+                {selected.length} piece{selected.length > 1 ? 's' : ''} selected
+              </span>
+              <div className="ml-auto flex flex-wrap items-center gap-1.5">
+                <Button
+                  intent="secondary"
+                  size="sm"
+                  onClick={favSelected}
+                >
+                  <Heart className="h-3.5 w-3.5" /> Favorite
+                </Button>
+                <Button
+                  intent="secondary"
+                  size="sm"
+                  onClick={() => setMoveOpen(true)}
+                >
+                  <FolderInput className="h-3.5 w-3.5" /> Move to folder
+                </Button>
+                <Button
+                  intent="danger"
+                  size="sm"
+                  onClick={() => setTrashConfirm({ selected: [...selected] })}
+                >
+                  <RemoveIcon className="h-3.5 w-3.5" /> {removeLabel}
+                </Button>
+                <IconButton
+                  icon={X}
+                  size="xs"
+                  tone="quiet"
+                  label="Clear selection"
+                  onClick={clearSelect}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Repertoire Content Grid / List */}
+        <div
+          className="px-4 py-6 md:px-8"
+          onClick={() => { setShowFilters(false); setShowSort(false); }}
+        >
+          {isEmpty ? (
+            <EmptyState active={active} isTrash={isTrash} />
+          ) : isTrash ? (
+            <div className="space-y-3">
+              {isAtScoreLimit && (
+                <p className="type-metadata text-ink-primary bg-surface-panel px-4 py-2.5 rounded-control border border-line-subtle">
+                  Your repertoire is full ({effectiveCount} of {scoreQuota.limit} scores). Delete a score permanently or upgrade to restore music from Trash.
+                </p>
+              )}
+              <div className="flex justify-end">
+                <Button intent="secondary" size="sm" onClick={emptyTrash}>
+                  <Trash2 className="mr-1.5" /> Empty trash
+                </Button>
+              </div>
+              <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
+                {filtered.map((s) => (
+                  <div key={s.id} className="flex items-center gap-4 p-3.5">
+                    <div className="h-12 w-16 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
+                      <ScorePreview id={s.id} className="h-full w-full object-cover" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate type-subsection text-ink-primary">{s.title}</p>
+                      <p className="truncate type-metadata text-ink-secondary">{s.composer} · deleted {s.deletedAt}</p>
+                    </div>
+                    <Button
+                      intent="secondary"
+                      size="xs"
+                      disabled={isAtScoreLimit}
+                      title={isAtScoreLimit ? `Repertoire limit reached (${effectiveCount}/${scoreQuota.limit}). Upgrade or delete another score first.` : 'Restore score'}
+                      onClick={() => restoreScore(s.id)}
+                    >
+                      Restore
+                    </Button>
+                    <Button
+                      intent="danger"
+                      size="xs"
+                      onClick={() => deleteScoreForever(s.id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : view === 'grid' ? (
+            <RepertoireGrid>
+              {filtered.map((s) => (
+                <ScoreCard
+                  key={s.id}
+                  score={s}
+                  selected={selected.includes(s.id)}
+                  onToggleSelect={toggleSelect}
+                />
+              ))}
+            </RepertoireGrid>
+          ) : (
+            <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel">
+              {filtered.map((s) => (
+                <div
+                  key={s.id}
+                  className={`flex items-center gap-4 p-3.5 transition-colors hover:bg-neutral-hover ${
+                    selected.includes(s.id) ? 'bg-neutral-muted/50' : ''
+                  }`}
+                >
+                  <Checkbox
+                    checked={selected.includes(s.id)}
+                    onCheckedChange={() => toggleSelect(s.id)}
+                    aria-label={`Select ${s.title}`}
+                    className="shrink-0"
+                  />
+
+                  <Link to={`/score/${s.id}`} className="flex min-w-0 flex-1 items-center gap-4">
+                    <div className="h-11 w-14 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
+                      <ScorePreview id={s.id} className="h-full w-full object-cover" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate type-subsection text-ink-primary">{s.title}</p>
+                      <p className="truncate type-metadata text-ink-secondary">{s.composer} · {s.instrument}</p>
+                    </div>
+                    {s.favorite && <Star className="h-3.5 w-3.5 fill-brand text-brand shrink-0" />}
+                    <span className="hidden type-metadata text-ink-tertiary sm:block">
+                      {s.lastPlayed === 'never' || !s.lastPlayed ? 'Awaiting practice' : `Played ${s.lastPlayed}`}
+                    </span>
+                  </Link>
+
+                  <Button
+                    intent="subtle"
+                    size="xs"
+                    asChild
+                    className="shrink-0"
+                  >
+                    <Link to={`/score/${s.id}/setup`}>
+                      <Play className="icon-xs fill-current" />
+                      <span>Practice</span>
+                    </Link>
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Move to folder dialog */}
@@ -543,7 +583,7 @@ export default function Library() {
         </DialogContent>
       </Dialog>
 
-      {/* Manage folders dialog */}
+      {/* Manage folders dialog (mobile) */}
       <Dialog open={manageFoldersOpen} onOpenChange={setManageFoldersOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Manage folders</DialogTitle></DialogHeader>
@@ -616,7 +656,7 @@ export default function Library() {
         </DialogContent>
       </Dialog>
 
-      {/* Folder delete confirmation (manage) */}
+      {/* Folder delete confirmation (mobile) */}
       <Dialog open={!!folderToDelete} onOpenChange={(o) => !o && setFolderToDelete(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader><DialogTitle>Delete folder?</DialogTitle></DialogHeader>
@@ -631,59 +671,51 @@ export default function Library() {
   );
 }
 
-function LibraryEmptyState({ active, isTrash }) {
+function EmptyState({ active, isTrash }) {
   if (isTrash) {
     return (
-      <Surface tone="panel" padding="none">
-        <EmptyState
-          icon={Trash2}
-          title="Trash is empty"
-          description="Scores you remove go here first. You can restore them anytime within 30 days."
-        />
-      </Surface>
+      <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
+        <Trash2 className="h-8 w-8 text-ink-tertiary" />
+        <h2 className="mt-3 type-section-title text-ink-primary">Trash is empty</h2>
+        <p className="mt-1.5 max-w-sm type-body-small text-ink-secondary">Scores you remove go here first. You can restore them anytime within 30 days.</p>
+      </div>
     );
   }
   if (active === 'all') {
     return (
-      <Surface tone="panel" padding="none">
-        <EmptyState
-          title="Start with something you love."
-          description="Add sheet music you have always wanted to play — whether scan, photo, or MusicXML."
-          action={
-            <div className="flex flex-col items-center gap-3 sm:flex-row">
-              <Button intent="primary" size="md" asChild>
-                <Link to="/add-score">
-                  <Plus className="icon-sm" />
-                  <span>Add sheet music</span>
-                </Link>
-              </Button>
-              <span className="type-caption text-ink-tertiary">or</span>
-              <Button intent="secondary" size="md" asChild>
-                <Link to="/score/moonlight">
-                  Explore Moonlight Sonata
-                </Link>
-              </Button>
-            </div>
-          }
-        />
-      </Surface>
+      <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
+        <h2 className="type-section-title text-ink-primary">Start with something you love.</h2>
+        <p className="mt-2 max-w-sm type-body-small text-ink-secondary">
+          Add sheet music you have always wanted to play — whether scan, photo, or MusicXML.
+        </p>
+        <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">
+          <Button intent="primary" size="md" asChild>
+            <Link to="/add-score">
+              <Plus className="icon-sm" />
+              <span>Add sheet music</span>
+            </Link>
+          </Button>
+          <span className="type-caption text-ink-tertiary">or</span>
+          <Button intent="secondary" size="md" asChild>
+            <Link to="/score/moonlight">
+              Explore Moonlight Sonata
+            </Link>
+          </Button>
+        </div>
+      </div>
     );
   }
   const labels = { mine: 'your own scores', shared: 'scores shared with you', saved: 'saved scores', favorites: 'favorites' };
   return (
-    <Surface tone="panel" padding="none">
-      <EmptyState
-        title="Nothing here yet"
-        description={`This is where ${labels[active] || 'these scores'} will appear.`}
-        action={
-          <Button intent="primary" size="md" className="mt-5" asChild>
-            <Link to="/add-score">
-              <Plus className="icon-sm" />
-              <span>Add a score</span>
-            </Link>
-          </Button>
-        }
-      />
-    </Surface>
+    <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
+      <h2 className="type-section-title text-ink-primary">Nothing here yet</h2>
+      <p className="mt-1.5 max-w-sm type-body-small text-ink-secondary">This is where {labels[active] || 'these scores'} will appear.</p>
+      <Button intent="primary" size="md" className="mt-5" asChild>
+        <Link to="/add-score">
+          <Plus className="icon-sm" />
+          <span>Add a score</span>
+        </Link>
+      </Button>
+    </div>
   );
 }

@@ -241,80 +241,134 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
       }
     }
 
-    // 5b. Semantic Recipe Guard (Prevent Recombining Semantic Tokens into Unproven Visual Recipes)
-    // Frozen Numis source verification proves that generic status recipes were invented by recombining tokens.
-    // Every complete semantic status/badge recipe must match an authorized Numis recipe in YUEORA_VISUAL_RECIPE_MANIFEST.
-    const unapprovedSemanticCombinations = [
-      {
-        tokens: ['border-brand/20', 'bg-brand-soft', 'text-brand-soft-foreground'],
-        name: 'border-brand/20 + bg-brand-soft + text-brand-soft-foreground',
-      },
-      {
-        tokens: ['border-danger/30', 'bg-danger/10', 'text-danger'],
-        name: 'border-danger/30 + bg-danger/10 + text-danger',
-      },
-      {
-        tokens: ['border-line-subtle', 'bg-neutral-muted', 'text-ink-secondary'],
-        name: 'border-line-subtle + bg-neutral-muted + text-ink-secondary',
-      },
-      {
-        tokens: ['border-line-subtle', 'bg-surface-panel', 'text-ink-secondary'],
-        name: 'border-line-subtle + bg-surface-panel + text-ink-secondary',
-      },
-      {
-        tokens: ['border-transparent', 'bg-brand-soft', 'text-brand-soft-foreground'],
-        name: 'border-transparent + bg-brand-soft + text-brand-soft-foreground',
-      },
-      {
-        tokens: ['border-transparent', 'bg-neutral-muted', 'text-ink-secondary'],
-        name: 'border-transparent + bg-neutral-muted + text-ink-secondary',
-      },
-    ];
+    // 5b. Semantic Recipe Guard (Fail Closed: Exact Matching for Status/Badge Recipes)
+    // Every semantic status/badge recipe must match an authorized Numis recipe in YUEORA_VISUAL_RECIPE_MANIFEST.
+    // Unknown semantic recombinations and incomplete canonical recipes fail closed.
+    const isBadgeOwner = [
+      'src/components/ui/badge.jsx',
+      'src/components/patterns/StatusIndicator.jsx',
+      'src/components/patterns/CountBadge.jsx',
+    ].some((o) => normPath.includes(o));
 
-    for (const combo of unapprovedSemanticCombinations) {
-      const allPresent = combo.tokens.every((t) => {
-        const regex = new RegExp(`(?<![\\w-])${t.replace(/[/]/g, '\\/')}(?![/\\w-])`);
-        return regex.test(line);
-      });
-      if (allPresent) {
-        issues.push({
-          file: filePath,
-          line: lineNum,
-          matched: combo.name,
-          message: `Unapproved semantic visual recipe combination '${combo.name}' found. Using individual Numis tokens to construct an unproven combination is visual invention. Status/badge components must consume exact Numis canonical recipes.`,
-        });
+    const hasBorderTransparent = /(?<![\w-:])border-transparent(?![\/\w-])/.test(line);
+    const hasStatusBorder = /(?<![\w-:])border-(?:brand\/\d+|danger\/\d+)(?![\/\w-])/.test(line);
+    const hasLineSubtle = /(?<![\w-:])border-line-subtle(?![\/\w-])/.test(line);
+
+    const hasBrand = /(?<![\w-:])bg-brand(?![\/\w-])/.test(line);
+    const hasBrandSoft = /(?<![\w-:])bg-brand-soft(?![\/\w-])/.test(line);
+    const hasSecondary = /(?<![\w-:])bg-secondary(?![\/\w-])/.test(line);
+    const hasDanger = /(?<![\w-:])bg-danger(?![\/\w-])/.test(line);
+    const hasDanger10 = /(?<![\w-:])bg-danger\/10(?![\/\w-])/.test(line);
+    const hasNeutralMuted = /(?<![\w-:])bg-neutral-muted(?![\/\w-])/.test(line);
+    const hasSurfacePanel = /(?<![\w-:])bg-surface-panel(?![\/\w-])/.test(line);
+
+    const hasBrandFg = /(?<![\w-:])text-brand-foreground(?![\/\w-])/.test(line);
+    const hasBrandSoftFg = /(?<![\w-:])text-brand-soft-foreground(?![\/\w-])/.test(line);
+    const hasSecondaryFg = /(?<![\w-:])text-secondary-foreground(?![\/\w-])/.test(line);
+    const hasDangerFg = /(?<![\w-:])text-danger-foreground(?![\/\w-])/.test(line);
+    const hasDangerText = /(?<![\w-:])text-danger(?![\/\w-])/.test(line);
+    const hasInkSec = /(?<![\w-:])text-ink-secondary(?![\/\w-])/.test(line);
+    const hasInkPri = /(?<![\w-:])text-ink-primary(?![\/\w-])/.test(line);
+
+    const hasShadow = /(?<![\w-:])shadow(?![\w-])/.test(line);
+    const hasHoverBrand = /(?<![\w-:])hover:bg-brand\/80(?![\/\w-])/.test(line);
+    const hasHoverSec = /(?<![\w-:])hover:bg-secondary\/80(?![\/\w-])/.test(line);
+    const hasHoverDanger = /(?<![\w-:])hover:bg-danger\/80(?![\/\w-])/.test(line);
+
+    const hasBadgeBorder =
+      hasBorderTransparent ||
+      hasStatusBorder ||
+      (isBadgeOwner && hasLineSubtle);
+
+    const hasBadgeBg =
+      hasBrand ||
+      hasBrandSoft ||
+      hasSecondary ||
+      hasDanger ||
+      hasDanger10 ||
+      hasNeutralMuted ||
+      (isBadgeOwner && hasSurfacePanel);
+
+    const hasBadgeText =
+      hasBrandFg ||
+      hasBrandSoftFg ||
+      hasSecondaryFg ||
+      hasDangerFg ||
+      hasDangerText ||
+      hasInkSec ||
+      (isBadgeOwner && hasInkPri) ||
+      (hasBorderTransparent && hasInkPri);
+
+    const isBadgeCandidate = hasBadgeBorder && hasBadgeBg && hasBadgeText;
+
+    if (isBadgeCandidate) {
+      let matchedBadgeRecipe = null;
+
+      if (hasBorderTransparent && hasBrand && hasBrandFg && hasShadow && hasHoverBrand && !hasBrandSoft && !hasStatusBorder && !hasInkPri) {
+        matchedBadgeRecipe = YUEORA_VISUAL_RECIPE_MANIFEST.find((r) => r.id === 'badge-default');
+      } else if (hasBorderTransparent && hasSecondary && hasSecondaryFg && hasHoverSec && !hasBrand && !hasStatusBorder && !hasInkPri) {
+        matchedBadgeRecipe = YUEORA_VISUAL_RECIPE_MANIFEST.find((r) => r.id === 'badge-secondary');
+      } else if (hasBorderTransparent && hasDanger && hasDangerFg && hasShadow && hasHoverDanger && !hasBrand && !hasStatusBorder) {
+        matchedBadgeRecipe = YUEORA_VISUAL_RECIPE_MANIFEST.find((r) => r.id === 'badge-destructive');
       }
-    }
 
-    // Check canonical badge recipes owner authorization
-    const canonicalBadgeRecipes = [
-      {
-        id: 'badge-default',
-        tokens: ['border-transparent', 'bg-brand', 'text-brand-foreground', 'shadow', 'hover:bg-brand/80'],
-      },
-      {
-        id: 'badge-secondary',
-        tokens: ['border-transparent', 'bg-secondary', 'text-secondary-foreground', 'hover:bg-secondary/80'],
-      },
-      {
-        id: 'badge-destructive',
-        tokens: ['border-transparent', 'bg-danger', 'text-danger-foreground', 'shadow', 'hover:bg-danger/80'],
-      },
-    ];
-
-    for (const badgeRecipe of canonicalBadgeRecipes) {
-      const allPresent = badgeRecipe.tokens.every((t) => {
-        const regex = new RegExp(`(?<![\\w-])${t.replace(/[/]/g, '\\/')}(?![/\\w-])`);
-        return regex.test(line);
-      });
-      if (allPresent) {
-        const manifestRecipe = YUEORA_VISUAL_RECIPE_MANIFEST.find((r) => r.id === badgeRecipe.id);
-        if (manifestRecipe && (!manifestRecipe.allowedOwners.includes(normPath))) {
+      if (matchedBadgeRecipe) {
+        if (!Array.isArray(matchedBadgeRecipe.allowedOwners) || !matchedBadgeRecipe.allowedOwners.includes(normPath)) {
           issues.push({
             file: filePath,
             line: lineNum,
-            matched: badgeRecipe.tokens.join(' + '),
-            message: `Canonical Numis badge recipe '${badgeRecipe.id}' (${badgeRecipe.tokens.join(' ')}) is not approved for owner '${normPath}'.`,
+            matched: matchedBadgeRecipe.id,
+            message: `Canonical Numis badge recipe '${matchedBadgeRecipe.id}' is not approved for owner '${normPath}'.`,
+          });
+        }
+      } else {
+        // Incomplete canonical mutation checks
+        if (hasBorderTransparent && hasBrand && hasBrandFg && !hasBrandSoft && !hasInkPri && !hasStatusBorder) {
+          if (!hasShadow) {
+            issues.push({
+              file: filePath,
+              line: lineNum,
+              matched: 'shadow',
+              message: `Incomplete canonical Numis badge recipe 'badge-default': missing required token 'shadow'. Status/badge components must consume exact Numis canonical recipes.`,
+            });
+          } else if (!hasHoverBrand) {
+            issues.push({
+              file: filePath,
+              line: lineNum,
+              matched: 'hover:bg-brand/80',
+              message: `Incomplete canonical Numis badge recipe 'badge-default': missing required token 'hover:bg-brand/80'. Status/badge components must consume exact Numis canonical recipes.`,
+            });
+          }
+        } else {
+          const tokens = [];
+          if (hasStatusBorder) {
+            const m = line.match(/(?<![\w-])border-(?:brand\/\d+|danger\/\d+)(?![\/\w-])/);
+            if (m) tokens.push(m[0]);
+          } else if (hasBorderTransparent) tokens.push('border-transparent');
+          else if (hasLineSubtle) tokens.push('border-line-subtle');
+
+          if (hasBrand) tokens.push('bg-brand');
+          else if (hasBrandSoft) tokens.push('bg-brand-soft');
+          else if (hasSecondary) tokens.push('bg-secondary');
+          else if (hasDanger) tokens.push('bg-danger');
+          else if (hasDanger10) tokens.push('bg-danger/10');
+          else if (hasNeutralMuted) tokens.push('bg-neutral-muted');
+          else if (hasSurfacePanel) tokens.push('bg-surface-panel');
+
+          if (hasBrandFg) tokens.push('text-brand-foreground');
+          else if (hasBrandSoftFg) tokens.push('text-brand-soft-foreground');
+          else if (hasSecondaryFg) tokens.push('text-secondary-foreground');
+          else if (hasDangerFg) tokens.push('text-danger-foreground');
+          else if (hasDangerText) tokens.push('text-danger');
+          else if (hasInkSec) tokens.push('text-ink-secondary');
+          else if (hasInkPri) tokens.push('text-ink-primary');
+
+          const name = tokens.join(' + ');
+          issues.push({
+            file: filePath,
+            line: lineNum,
+            matched: name,
+            message: `Unapproved semantic visual recipe combination '${name}' found. Using individual Numis tokens to construct an unproven combination is visual invention. Status/badge components must consume exact Numis canonical recipes.`,
           });
         }
       }

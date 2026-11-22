@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import {
   NUMIS_REFERENCE_META,
   YUEORA_AUTHORIZED_RECIPES,
@@ -8,17 +9,35 @@ import {
 
 const VALID_MAPPING_TYPES = new Set(['exact', 'semantic-alias', 'structural-adaptation']);
 
+const FROZEN_FIXTURES_DIR = path.resolve('scripts/fixtures/numis-frozen');
+const FROZEN_METADATA_PATH = path.join(FROZEN_FIXTURES_DIR, 'metadata.json');
+
 /**
  * Visual Recipe Guard
  *
  * Verifies that protected primitives and domain patterns adhere strictly
- * to authorized NumisCollection visual recipes and owner permissions.
+ * to authorized NumisCollection visual recipes and owner permissions,
+ * and verifies source facts against checked-in frozen Numis source fixtures.
  *
  * @param {Array<Object>} [recipes=YUEORA_AUTHORIZED_RECIPES] - Recipes to verify
  * @returns {Array<{ file: string, line: number, matched: string, message: string }>}
  */
 export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES) {
   const issues = [];
+
+  let frozenMetadata = null;
+  if (fs.existsSync(FROZEN_METADATA_PATH)) {
+    try {
+      frozenMetadata = JSON.parse(fs.readFileSync(FROZEN_METADATA_PATH, 'utf8'));
+    } catch (e) {
+      issues.push({
+        file: FROZEN_METADATA_PATH,
+        line: 1,
+        matched: 'metadata.json',
+        message: `Failed to parse frozen Numis metadata: ${e.message}`,
+      });
+    }
+  }
 
   for (const recipe of recipes) {
     // 1. Manifest structural validation
@@ -58,6 +77,44 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES) {
       });
     }
 
+    // 2b. Frozen Numis snapshot content and hash verification
+    if (frozenMetadata && recipe.source?.file) {
+      const fixtureFilePath = path.join(FROZEN_FIXTURES_DIR, recipe.source.file);
+      if (!fs.existsSync(fixtureFilePath)) {
+        issues.push({
+          file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
+          line: 1,
+          matched: recipe.id,
+          message: `Frozen source fixture '${fixtureFilePath}' for recipe '${recipe.id}' does not exist.`,
+        });
+      } else {
+        const fixtureContent = fs.readFileSync(fixtureFilePath, 'utf8');
+        const hash = crypto.createHash('sha256').update(fixtureContent, 'utf8').digest('hex');
+        const expectedHash = frozenMetadata?.files?.[recipe.source.file]?.sha256;
+        if (expectedHash && hash !== expectedHash) {
+          issues.push({
+            file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
+            line: 1,
+            matched: recipe.id,
+            message: `Frozen source fixture '${recipe.source.file}' hash mismatch for recipe '${recipe.id}' (expected ${expectedHash}, got ${hash}).`,
+          });
+        }
+
+        const lines = fixtureContent.split(/\r?\n/);
+        const sourceLineText = lines[recipe.source.line - 1] || '';
+        const exact = recipe.source.exactSnippet || '';
+        const unquoted = exact.replace(/^["']|["'],?$/g, '').trim();
+        if (!sourceLineText.includes(exact) && (!unquoted || !sourceLineText.includes(unquoted))) {
+          issues.push({
+            file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
+            line: 1,
+            matched: recipe.id,
+            message: `Frozen source snippet mismatch for recipe '${recipe.id}': line ${recipe.source.line} in '${recipe.source.file}' does not contain expected snippet: ${exact}`,
+          });
+        }
+      }
+    }
+
     // 3. Allowed owners verification (Fail closed: every owner must exist)
     if (!Array.isArray(recipe.allowedOwners) || recipe.allowedOwners.length === 0) {
       issues.push({
@@ -81,8 +138,7 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES) {
         continue;
       }
 
-      // 4. Owner source code verification
-      // Check that the declared yueoraClasses actually exist in the owner file
+      // 4. Owner source code verification (Fail closed: every declared class must exist)
       try {
         const ownerContent = fs.readFileSync(normPath, 'utf8');
         if (Array.isArray(recipe.yueoraClasses) && recipe.yueoraClasses.length > 0) {
@@ -92,12 +148,12 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES) {
             return !ownerContent.includes(bare);
           });
 
-          if (missingClasses.length === recipe.yueoraClasses.length) {
+          if (missingClasses.length > 0) {
             issues.push({
               file: normPath,
               line: 1,
               matched: recipe.id,
-              message: `Owner file '${normPath}' does not contain authorized visual recipe '${recipe.id}' classes (${recipe.yueoraClasses.join(' ')}).`,
+              message: `Owner file '${normPath}' does not contain authorized visual recipe '${recipe.id}' classes (${missingClasses.join(' ')}).`,
             });
           }
         }
