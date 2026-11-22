@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
-import { Play, ChevronRight, Clock, BarChart2 } from 'lucide-react';
+import { Play, Clock, Sparkles, Music, BarChart2 } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { practiceWeek } from '@/lib/practiceStats';
 import ScorePreview from '@/components/library/ScorePreview';
-import AppPage from '@/components/patterns/AppPage';
 import { Surface } from '@/components/patterns/Surface';
+import PracticeStatCard from '@/components/practice/PracticeStatCard';
+import PracticeQuickLink from '@/components/practice/PracticeQuickLink';
 import { Button } from '@/components/ui/button';
 import { PracticeGlyph } from '@/components/brand/MusicalGlyphs';
 
@@ -22,17 +23,10 @@ export default function PracticeHub() {
       })[0]
     : null;
 
-  // Recently loved — favorites
-  const recentlyLoved = activeScores.filter((s) => s.favorite).slice(0, 3).map((s) => ({
-    scoreId: s.id, title: s.title, composer: s.composer, reason: 'Favorited score',
-  }));
+  // Recent active pieces for quick dashboard access
+  const recentPieces = activeScores.slice(0, 4);
 
-  // Haven't played in a while
-  const havenPlayed = activeScores.filter((s) => (!s.lastPlayed || s.lastPlayed === 'never' || s.lastPlayed === 'last week')).slice(0, 2).map((s) => ({
-    scoreId: s.id, title: s.title, composer: s.composer, lastPlayed: s.lastPlayed || 'never',
-  }));
-
-  // This week — reflective calendar reflection without streak judgment
+  // This week — reflective practice stats
   const week = practiceWeek(activities);
   const thisWeekMinutes = week.totalMinutes;
   const thisWeekSessions = week.sessions;
@@ -40,227 +34,218 @@ export default function PracticeHub() {
   const thisWeekMarks = week.days.map((d) => d.sessions > 0);
 
   return (
-    <AppPage size="standard" className="py-8">
-      {/* Title */}
-      <div>
-        <h1 className="type-experience-title text-ink-primary">
-          What do you feel like playing?
-        </h1>
-        <p className="mt-1 type-body-small text-ink-secondary">
-          A quiet space to play. No streaks, no assignments, no pressure.
-        </p>
+    <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-8" data-qa="practice-dashboard">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="type-dashboard-title text-ink-primary">Practice Dashboard</h1>
+          <p className="mt-1 type-page-subtitle text-ink-tertiary">
+            A calm space to play, reflect, and maintain your repertoire
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button intent="secondary" size="md" asChild>
+            <Link to="/library">
+              <span>Browse Repertoire</span>
+            </Link>
+          </Button>
+          <Button intent="primary" size="md" asChild>
+            <Link to="/add-score">
+              <span>Add score</span>
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      {/* Pick up where you left off */}
+      {/* 4-column StatCards row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-qa="practice-stat-cards">
+        <PracticeStatCard
+          title="Minutes Played"
+          value={thisWeekMinutes}
+          unit="min"
+          subtitle="This week in music"
+          icon={Clock}
+        />
+        <PracticeStatCard
+          title="Calm Sessions"
+          value={thisWeekSessions}
+          subtitle="Across 7 days"
+          icon={Play}
+          iconClassName="fill-current"
+        />
+        <PracticeStatCard
+          title="Active Pieces"
+          value={thisWeekPieces}
+          subtitle={`${activeScores.length} total in repertoire`}
+          icon={Music}
+        />
+        <PracticeStatCard
+          title="Days Active"
+          value={thisWeekMarks.filter(Boolean).length}
+          unit="/ 7"
+          subtitle="Weekly playing rhythm"
+          icon={Sparkles}
+        />
+      </div>
+
+      {/* Hero Resume Module */}
       {continueScore && (
-        <section className="mt-8">
-          <p className="type-caption text-ink-secondary/70">
-            Pick up where you left off
-          </p>
-          <div className="mt-3">
-            <Surface
-              interactive
-              padding="none"
-              className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div className="flex items-center gap-4 min-w-0">
-                <div className="h-16 w-24 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel/95">
-                  <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
-                </div>
-                <div className="min-w-0">
-                  <h2 className="truncate type-section-title text-ink-primary">
-                    {continueScore.title}
-                  </h2>
-                  <p className="type-metadata text-ink-secondary mt-0.5">
-                    {continueScore.composer} · played {continueScore.lastPlayed}
-                  </p>
-                  <p className="mt-1 type-metadata font-medium text-brand">
-                    Continue from bar {continueScore.lastMeasure}
-                  </p>
-                </div>
+        <section className="space-y-3" data-qa="practice-resume-section">
+          <p className="type-card-metadata text-ink-secondary">Pick up where you left off</p>
+          <Surface
+            interactive
+            padding="md"
+            className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            data-qa="practice-resume-module"
+          >
+            {/* Semantic Stretched Link so clicking the resume module anywhere launches practice setup */}
+            <Link
+              to={`/score/${continueScore.id}/setup`}
+              data-qa="practice-resume-link"
+              className="absolute inset-0 z-0 rounded-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+              aria-label={`Resume playing ${continueScore.title} by ${continueScore.composer}`}
+            />
+
+            <div className="flex items-center gap-4 min-w-0 pointer-events-none">
+              <div className="hidden h-16 w-24 shrink-0 overflow-hidden rounded-control border border-line-subtle/50 bg-surface-panel/95 sm:block">
+                <ScorePreview id={continueScore.id} className="h-full w-full object-cover" />
               </div>
-              <Button intent="primary" size="md" className="shrink-0 self-start sm:self-center" asChild>
-                <Link to={`/score/${continueScore.id}/setup`}>
-                  <Play className="fill-current" />
-                  <span>Continue playing</span>
-                </Link>
-              </Button>
-            </Surface>
-          </div>
+              <div className="min-w-0">
+                <span className="inline-flex items-center gap-1.5 type-card-value-label text-brand">
+                  <Sparkles className="icon-xs" />
+                  <span>Ready to play</span>
+                </span>
+                <h2 className="truncate type-panel-title text-ink-primary mt-0.5">
+                  {continueScore.title}
+                </h2>
+                <p className="truncate type-card-metadata text-ink-secondary mt-0.5">
+                  {continueScore.composer} · Continue from bar {continueScore.lastMeasure} · Played {continueScore.lastPlayed}
+                </p>
+              </div>
+            </div>
+
+            <div className="relative z-10 flex shrink-0 items-center gap-2 pointer-events-none">
+              <div className="pointer-events-none" aria-hidden="true">
+                <Button intent="primary" size="md" asChild tabIndex={-1}>
+                  <span className="select-none">
+                    <Play className="icon-sm fill-current" />
+                    <span>Resume playing</span>
+                  </span>
+                </Button>
+              </div>
+              <div className="pointer-events-auto">
+                <Button intent="secondary" size="md" asChild>
+                  <Link to={`/score/${continueScore.id}`}>
+                    <span>Score details</span>
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </Surface>
         </section>
       )}
 
-      {/* Recently loved */}
-      {recentlyLoved.length > 0 && (
-        <section className="mt-10">
-          <p className="type-caption text-ink-secondary/70">
-            Recently loved
-          </p>
-          <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {recentlyLoved.map((r) => (
-              <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="block">
-                <Surface
-                  interactive
-                  padding="none"
-                  className="flex items-center gap-3.5 p-3.5"
-                >
-                  <div className="h-14 w-20 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
-                    <ScorePreview id={r.scoreId} className="h-full w-full object-cover" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate type-subsection text-ink-primary">{r.title}</p>
-                    <p className="truncate type-metadata text-ink-secondary mt-0.5">{r.composer}</p>
-                    <span className="inline-block mt-1 type-metadata font-medium text-brand">Revisit piece →</span>
-                  </div>
-                </Surface>
-              </Link>
-            ))}
+      {/* 2-column Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Column: Recent Pieces */}
+        <Surface tone="panel" padding="md" className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="type-panel-title text-ink-primary" data-qa="practice-recent-heading">Recent Repertoire</h2>
+            <Link to="/library" className="type-body-small text-brand font-medium hover:underline">
+              View all ({activeScores.length})
+            </Link>
           </div>
-        </section>
-      )}
 
-      {/* Haven't played in a while */}
-      {havenPlayed.length > 0 && (
-        <section className="mt-10">
-          <p className="type-caption text-ink-secondary/70">
-            Haven't played in a while
-          </p>
-          <div className="mt-3 grid gap-4 sm:grid-cols-2">
-            {havenPlayed.map((r) => (
-              <Link key={r.scoreId} to={`/score/${r.scoreId}`} className="block">
-                <Surface
-                  interactive
-                  padding="none"
-                  className="flex items-center justify-between p-4"
-                >
-                  <div className="min-w-0">
-                    <p className="type-subsection text-ink-primary">{r.title}</p>
-                    <p className="type-metadata text-ink-secondary mt-0.5">{r.composer} · last played {r.lastPlayed}</p>
-                    <p className="mt-1 type-body-small text-brand font-medium">Feel like revisiting this one?</p>
-                  </div>
-                  <ChevronRight className="icon-sm text-ink-tertiary" />
-                </Surface>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* If scores exist but no continuation score, surface available pieces to play */}
-      {!continueScore && activeScores.length > 0 && (
-        <section className="mt-8">
-          <p className="type-caption text-ink-secondary/70">
-            Available from your Repertoire
-          </p>
-          <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {activeScores.slice(0, 3).map((s) => (
-              <Surface
-                key={s.id}
-                interactive
-                padding="none"
-                className="flex flex-col justify-between p-4"
-              >
-                <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="h-14 w-20 shrink-0 overflow-hidden rounded-control border border-line-subtle bg-surface-panel">
+          <div className="divide-y divide-line-subtle/50">
+            {recentPieces.map((s) => (
+              <div key={s.id} className="flex items-center justify-between py-3 gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-10 w-14 shrink-0 overflow-hidden rounded-control border border-line-subtle/50 bg-surface-panel">
                     <ScorePreview id={s.id} className="h-full w-full object-cover" />
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate type-subsection text-ink-primary">{s.title}</p>
-                    <p className="truncate type-metadata text-ink-secondary mt-0.5">{s.composer}</p>
+                    <Link to={`/score/${s.id}`} className="block truncate type-subsection text-ink-primary hover:text-brand transition-colors">
+                      {s.title}
+                    </Link>
+                    <p className="truncate type-card-metadata text-ink-secondary">{s.composer}</p>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center justify-between pt-3 border-t border-line-subtle">
-                  <span className="type-metadata text-ink-tertiary">Ready on stand</span>
-                  <Button intent="primary" size="sm" asChild>
-                    <Link to={`/score/${s.id}/setup`}>
-                      <Play className="h-3.5 w-3.5 fill-current mr-1.5" />
-                      <span>Start playing</span>
-                    </Link>
-                  </Button>
-                </div>
-              </Surface>
+
+                <Button intent="subtle" size="xs" asChild className="shrink-0">
+                  <Link to={`/score/${s.id}/setup`}>
+                    <Play className="icon-xs fill-current" />
+                    <span>Play</span>
+                  </Link>
+                </Button>
+              </div>
+            ))}
+            {recentPieces.length === 0 && (
+              <p className="py-6 text-center type-body-small text-ink-tertiary">
+                No scores in repertoire yet.
+              </p>
+            )}
+          </div>
+        </Surface>
+
+        {/* Right Column: Weekly Rhythm & Reflective Stats */}
+        <Surface tone="panel" padding="md" className="space-y-5">
+          <div className="flex items-center justify-between">
+            <h2 className="type-panel-title text-ink-primary">Weekly Rhythm</h2>
+            <span className="type-card-metadata text-ink-secondary">7-day view</span>
+          </div>
+
+          <div className="flex justify-between items-center rounded-control bg-neutral-muted/50 p-4 border border-line-subtle/50">
+            {week.days.map((d, i) => (
+              <div key={d.key} className="flex flex-col items-center gap-2">
+                <span
+                  className={`h-3 w-3 rounded-full transition-colors ${
+                    thisWeekMarks[i] ? 'bg-brand' : 'bg-line-strong'
+                  }`}
+                />
+                <span className="type-metadata font-medium text-ink-secondary">{d.label}</span>
+              </div>
             ))}
           </div>
-        </section>
-      )}
 
-      {/* 0-Score Empty State */}
+          <div className="space-y-2">
+            <p className="type-body-small text-ink-secondary">
+              Music is a sanctuary, not an assignment. You have spent <span className="font-semibold text-ink-primary">{thisWeekMinutes} calm minutes</span> with your instruments this week.
+            </p>
+          </div>
+        </Surface>
+      </div>
+
+      {/* 2-column Quick Links Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" data-qa="practice-quick-links">
+        <PracticeQuickLink
+          to="/practice/history"
+          icon={Clock}
+          title="Practice history"
+          description="Review past sessions and practice notes."
+        />
+        <PracticeQuickLink
+          to="/practice/progress"
+          icon={BarChart2}
+          title="Progress & insights"
+          description="See trends across your playing over time."
+        />
+      </div>
+
+      {/* 0-Score Welcome */}
       {activeScores.length === 0 && (
-        <section className="mt-8">
-          <Surface padding="none" className="flex flex-col items-center gap-3 p-12 text-center">
-            <PracticeGlyph className="h-8 w-8 text-brand" />
-            <h2 className="type-section-title text-ink-primary">Welcome to Practice</h2>
-            <p className="max-w-sm type-body-small text-ink-secondary">
-              Bring the sheet music you already care about. Add your first piece to begin playing without pressure.
-            </p>
-            <Button intent="primary" size="md" className="mt-3" asChild>
-              <Link to="/add-score">
-                Add your first score
-              </Link>
-            </Button>
-          </Surface>
-        </section>
+        <Surface tone="panel" padding="lg" className="flex flex-col items-center gap-3 text-center">
+          <PracticeGlyph className="h-8 w-8 text-brand" />
+          <h2 className="type-section-title text-ink-primary">Welcome to Practice</h2>
+          <p className="max-w-sm type-body-small text-ink-secondary">
+            Bring the sheet music you already care about. Add your first piece to begin playing without pressure.
+          </p>
+          <Button intent="primary" size="md" className="mt-3" asChild>
+            <Link to="/add-score">
+              <span>Add your first score</span>
+            </Link>
+          </Button>
+        </Surface>
       )}
-
-      {/* Reflective Time Spent Playing */}
-      <section className="mt-12 pt-8 border-t border-line-subtle">
-        <p className="type-caption text-ink-secondary/70">
-          This Week in Music
-        </p>
-        <div className="mt-3 grid gap-4 sm:grid-cols-3">
-          <Surface padding="md">
-            <p className="type-metric text-ink-primary">
-              {thisWeekMinutes} <span className="type-body-small font-normal text-ink-secondary">min</span>
-            </p>
-            <p className="type-metadata text-ink-secondary mt-1">across {thisWeekSessions} calm sessions</p>
-          </Surface>
-
-          <Surface padding="md">
-            <p className="type-metric text-ink-primary">
-              {thisWeekPieces}
-            </p>
-            <p className="type-metadata text-ink-secondary mt-1">pieces brought to life</p>
-          </Surface>
-
-          <Surface padding="md" className="flex flex-col justify-between">
-            <div className="flex justify-between items-center pt-1">
-              {week.days.map((d, i) => (
-                <div key={d.key} className="flex flex-col items-center gap-1.5">
-                  <span
-                    className={`h-2.5 w-2.5 rounded-full ${thisWeekMarks[i] ? 'bg-brand' : 'bg-neutral-muted'}`}
-                  />
-                  <span className="type-metadata font-medium text-ink-secondary">{d.label}</span>
-                </div>
-              ))}
-            </div>
-            <p className="type-metadata text-ink-secondary mt-2">
-              {thisWeekMarks.filter(Boolean).length} days of music
-            </p>
-          </Surface>
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Button intent="secondary" size="md" asChild>
-            <Link to="/practice/history">
-              <Clock />
-              <span>Practice history</span>
-            </Link>
-          </Button>
-          <Button intent="secondary" size="md" asChild>
-            <Link to="/practice/progress">
-              <BarChart2 />
-              <span>Progress &amp; insights</span>
-            </Link>
-          </Button>
-          {activeScores.length > 0 && (
-            <Button intent="quiet" size="md" asChild>
-              <Link to="/library">
-                <span>Browse Repertoire</span>
-              </Link>
-            </Button>
-          )}
-        </div>
-      </section>
-    </AppPage>
+    </div>
   );
 }

@@ -8,7 +8,7 @@ import AppPage from '@/components/patterns/AppPage';
 import PageHeader from '@/components/patterns/PageHeader';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import Metric from '@/components/patterns/Metric';
-import StateMessage from '@/components/patterns/StateMessage';
+import EmptyState from '@/components/patterns/EmptyState';
 import { Surface } from '@/components/patterns/Surface';
 import { Button } from '@/components/ui/button';
 import { Sparkles, BarChart2, Calendar, Music } from 'lucide-react';
@@ -127,11 +127,15 @@ export default function PracticeProgress() {
 
       {activities.length === 0 ? (
         <div className="mt-8">
-          <StateMessage
-            tone="neutral"
+          <EmptyState
+            icon={Sparkles}
             title="Nothing to look back on yet"
             description="Once you practise, this page shows how much time you've spent and which pieces you keep returning to."
-            primaryAction={<Link to="/practice" className="rounded-control bg-brand px-4 py-2 type-body-small font-semibold text-brand-foreground hover:bg-brand-hover">Go to Practice</Link>}
+            action={(
+              <Button asChild intent="primary" size="md">
+                <Link to="/practice">Go to Practice</Link>
+              </Button>
+            )}
           />
         </div>
       ) : (
@@ -153,7 +157,7 @@ export default function PracticeProgress() {
                       className={`w-full rounded-t-control transition-colors ${d.isToday ? 'bg-brand' : 'bg-neutral-muted hover:bg-neutral-hover'}`}
                       style={{ height: `${(d.minutes / max) * 100}%`, minHeight: d.minutes > 0 ? 3 : 0 }}
                     />
-                    <span className="type-metadata font-medium text-ink-secondary/80">{d.label}</span>
+                    <span className="type-metadata font-medium text-ink-secondary">{d.label}</span>
                   </div>
                 ))}
               </div>

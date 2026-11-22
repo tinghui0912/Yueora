@@ -29,7 +29,7 @@ export default function ProgressVisual() {
           </div>
         </div>
 
-        <div className="rounded-control border border-line-subtle bg-surface-canvas/60 px-2.5 py-1 text-left sm:text-right shrink-0">
+        <div className="rounded-control border border-line-subtle bg-surface-canvas px-2.5 py-1 text-left sm:text-right shrink-0">
           <p className="type-caption text-ink-tertiary">No Streaks</p>
           <p className="type-metadata font-medium text-brand">Play at your pace</p>
         </div>
@@ -48,11 +48,11 @@ export default function ProgressVisual() {
                 </span>
                 <div 
                   className={`w-full rounded-sm transition-all ${
-                    d.mins > 0 ? 'bg-neutral-muted border-t-2 border-brand group-hover:bg-brand' : 'bg-line-subtle/50'
+                    d.mins > 0 ? 'bg-neutral-muted border-t-2 border-brand group-hover:bg-brand' : 'bg-neutral-muted'
                   }`}
                   style={{ height: `${heightPercent}%` }}
                 />
-                <span className="text-xs font-medium text-ink-secondary/80 truncate">{d.label}</span>
+                <span className="text-xs font-medium text-ink-secondary truncate">{d.label}</span>
               </div>
             );
           })}
@@ -79,7 +79,7 @@ export default function ProgressVisual() {
           <span className="type-metadata font-medium text-ink-secondary shrink-0">2 hrs 30 min</span>
         </div>
 
-        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between rounded-control border border-line-subtle bg-surface-canvas/40 px-3 py-2 gap-2">
+        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between rounded-control border border-line-subtle bg-surface-canvas px-3 py-2 gap-2">
           <div className="flex items-center gap-2.5 min-w-0">
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-canvas text-ink-tertiary border border-line-subtle">
               <Clock className="h-3 w-3" />

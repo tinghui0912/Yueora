@@ -81,7 +81,7 @@ export default function TransportControl({
             className={`flex items-center gap-1.5 rounded-control border px-2.5 py-2 text-xs font-medium transition-colors ${
               loop
                 ? 'border-brand bg-neutral-muted font-semibold text-ink-primary'
-                : 'border-line-subtle bg-surface-panel text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover'
+                : 'border-line-subtle bg-transparent text-ink-primary hover:bg-neutral-hover'
             }`}
             title="Loop selected section"
           >

@@ -1,8 +1,10 @@
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
+import { NativeSelect } from '@/components/ui/select';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import SettingsSection from '@/components/patterns/SettingsSection';
+import { SegmentedControl, SegmentedControlItem } from '@/components/patterns/SegmentedControl';
 
 export default function PreferencesSettings() {
   const prefs = usePrototypeStore((s) => s.preferences);
@@ -30,34 +32,28 @@ export default function PreferencesSettings() {
           </div>
           <div className="space-y-2">
             <Label>Page fit</Label>
-            <div className="inline-flex rounded-control border border-line-subtle bg-neutral-muted p-0.5">
-              {[['width', 'Fit width'], ['page', 'Fit page']].map(([v, l]) => (
-                <button
-                  key={v}
-                  onClick={() => update({ pageFit: v })}
-                  className={`rounded-control px-3 py-1.5 type-body-small transition-all ${
-                    prefs.pageFit === v
-                      ? 'bg-surface-panel font-medium text-ink-primary'
-                      : 'text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover'
-                  }`}
-                >
-                  {l}
-                </button>
-              ))}
-            </div>
+            <SegmentedControl
+              value={prefs.pageFit}
+              onValueChange={(v) => update({ pageFit: v })}
+              aria-label="Page fit"
+            >
+              <SegmentedControlItem value="width">Fit width</SegmentedControlItem>
+              <SegmentedControlItem value="page">Fit page</SegmentedControlItem>
+            </SegmentedControl>
           </div>
         </div>
       </SettingsSection>
 
       <SettingsSection title="Language" desc="Interface language.">
-        <select
-          value={prefs.language}
-          onChange={(e) => update({ language: e.target.value })}
-          className="h-9 w-full max-w-sm rounded-control border border-line-subtle bg-surface-panel px-3 type-body-small text-ink-primary"
-        >
-          <option>English</option>
-          <option>中文</option>
-        </select>
+        <div className="max-w-sm">
+          <NativeSelect
+            value={prefs.language}
+            onChange={(e) => update({ language: e.target.value })}
+          >
+            <option>English</option>
+            <option>中文</option>
+          </NativeSelect>
+        </div>
       </SettingsSection>
     </div>
   );

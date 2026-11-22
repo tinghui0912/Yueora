@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/AuthContext';
 import ExternalShell from '@/components/external/ExternalShell';
 import ScorePreview from '@/components/library/ScorePreview';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
@@ -12,6 +13,7 @@ import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 import StateMessage from '@/components/patterns/StateMessage';
+import { ChoiceCard } from '@/components/patterns/ChoiceCard';
 
 export default function SharedScore() {
   const { shareToken } = useParams();
@@ -90,13 +92,14 @@ export default function SharedScore() {
             <h1 className="type-page-title text-ink-primary">{score.title}</h1>
             <p className="type-body-small text-ink-secondary mt-1">{score.composer} · {score.instrument}</p>
           </div>
-          <button
+          <Button
             type="button"
+            intent="secondary"
+            size="sm"
             onClick={() => setReportOpen(true)}
-            className="flex items-center gap-1.5 rounded-control border border-line-subtle bg-surface-panel px-3 py-1.5 type-body-small text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors"
           >
             <Flag className="icon-sm" aria-hidden="true" /> Report
-          </button>
+          </Button>
         </div>
 
         <div className="mt-6 rounded-container border border-line-subtle bg-surface-panel p-4">
@@ -104,30 +107,27 @@ export default function SharedScore() {
           <div className="mt-3 flex items-center justify-between border-t border-line-subtle pt-3 type-body-small text-ink-secondary">
             <span>Page {page} of {score.pages}</span>
             <div className="flex items-center gap-2">
-              <button
-                type="button"
+              <IconButton
+                icon={ChevronLeft}
+                label="Previous page"
+                tone="outline"
+                size="sm"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors"
-                aria-label="Previous page"
-              >
-                <ChevronLeft className="icon-sm" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
+              />
+              <IconButton
+                icon={playing ? Pause : Play}
+                label={playing ? "Pause" : "Play"}
+                tone="outline"
+                size="sm"
                 onClick={() => setPlaying((p) => !p)}
-                className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors"
-                aria-label={playing ? "Pause" : "Play"}
-              >
-                {playing ? <Pause className="icon-sm" aria-hidden="true" /> : <Play className="icon-sm" aria-hidden="true" />}
-              </button>
-              <button
-                type="button"
+              />
+              <IconButton
+                icon={ChevronRight}
+                label="Next page"
+                tone="outline"
+                size="sm"
                 onClick={() => setPage((p) => Math.min(score.pages, p + 1))}
-                className="flex h-control-sm w-control-sm items-center justify-center rounded-control border border-line-subtle bg-surface-panel text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary transition-colors"
-                aria-label="Next page"
-              >
-                <ChevronRight className="icon-sm" aria-hidden="true" />
-              </button>
+              />
             </div>
           </div>
         </div>
@@ -188,20 +188,15 @@ export default function SharedScore() {
             <div className="space-y-3">
               <div>
                 <p className="type-label text-ink-primary font-medium">Reason</p>
-                <div className="mt-2 space-y-1">
+                <div className="mt-2 space-y-1.5" role="radiogroup" aria-label="Report reason">
                   {['Copyright infringement', 'Inappropriate content', 'Privacy concern', 'Other'].map((r) => (
-                    <button
+                    <ChoiceCard
                       key={r}
-                      type="button"
+                      mode="radio"
+                      title={r}
+                      selected={reportReason === r}
                       onClick={() => setReportReason(r)}
-                      className={`flex w-full items-center rounded-control border px-3 py-2 text-left type-body-small transition-colors ${
-                        reportReason === r
-                          ? 'border-brand bg-neutral-hover text-ink-primary font-medium'
-                          : 'border-line-subtle bg-surface-panel hover:bg-neutral-hover text-ink-primary'
-                      }`}
-                    >
-                      {r}
-                    </button>
+                    />
                   ))}
                 </div>
               </div>

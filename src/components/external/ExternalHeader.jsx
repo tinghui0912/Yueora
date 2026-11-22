@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import Logo from '@/components/brand/Logo';
+import { Button } from '@/components/ui/button';
 
 /**
  * ExternalHeader — compact header for shared score / invite pages.
@@ -21,9 +22,13 @@ export default function ExternalHeader({ sharedBy }) {
           )}
         </div>
         {isAuthenticated ? (
-          <Link to="/library" className="rounded-control bg-brand px-4 py-2 type-body-small font-semibold text-brand-foreground shadow-raised hover:bg-brand-hover">Open library</Link>
+          <Button asChild intent="primary" size="sm">
+            <Link to="/library">Open library</Link>
+          </Button>
         ) : (
-          <Link to="/login" className="rounded-control border border-line-subtle px-4 py-2 type-body-small font-semibold text-ink-primary hover:bg-neutral-hover">Log in</Link>
+          <Button asChild intent="secondary" size="sm">
+            <Link to="/login">Log in</Link>
+          </Button>
         )}
       </div>
     </header>

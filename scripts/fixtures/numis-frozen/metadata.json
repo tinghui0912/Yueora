@@ -1,0 +1,118 @@
+{
+  "repository": "tinghui0912/NumisCollection",
+  "commit": "efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c",
+  "tree": "9602c27dce5c2625c0e7251acfae8c1be6b5c725",
+  "fileCount": 22,
+  "files": {
+    "src/components/collection/BulkEstimateButton.jsx": {
+      "sha256": "1cc0cfc0a745e6dc4ab453634c0293e5d1170603e6e908f7715777a7837596db",
+      "gitBlobSha": "e2ef8d0cde869ca35e8b734a8eb0843bf107713d",
+      "bytes": 4094
+    },
+    "src/components/collection/EmptyState.jsx": {
+      "sha256": "84382cb70b63509eae5f805346ff5122c812f3ae3ac232e66bfe668f75b0c05d",
+      "gitBlobSha": "f87d027ab4f09eba1f0b48a446bd5bfe60b220d6",
+      "bytes": 873
+    },
+    "src/components/collection/ItemCard.jsx": {
+      "sha256": "82ce6da0b3cdf137c3c6dae041870f2c912ed85cf539c3ebd4d4c03bbd85f5eb",
+      "gitBlobSha": "838a92bd6881f215451f0c2b738c3dcaf9ca83b2",
+      "bytes": 4028
+    },
+    "src/components/collection/StatCard.jsx": {
+      "sha256": "8a95d14ca1be080da8c5d750371791b543cbf067c0e8fba4c535286e335a29eb",
+      "gitBlobSha": "d8707b993152b3aab181b6f191b03f25878cb406",
+      "bytes": 1033
+    },
+    "src/components/layout/Sidebar.jsx": {
+      "sha256": "cc640b06b3c329a9b04c8b94ec898957c1f4f7e501119e9f1cef8032ce7247b1",
+      "gitBlobSha": "cd68b1d64fcd69b470d1f19ac6ab9f446ab21200",
+      "bytes": 2353
+    },
+    "src/components/ui/badge.jsx": {
+      "sha256": "380dcda78ff8fdd80c82b89cb7dd38ffd84c355735fc8f16300ff647e15988aa",
+      "gitBlobSha": "a687ebad024768896157580c5884e8c6c0c0f502",
+      "bytes": 990
+    },
+    "src/components/ui/button.jsx": {
+      "sha256": "6c28699c64ff8c36ec5a2baf835d6bfa141cedeaf472b97d64671dac6cf7cbf8",
+      "gitBlobSha": "7383248a80c7da8bf84784431e9a7e3d1a8cbaf5",
+      "bytes": 1679
+    },
+    "src/components/ui/card.jsx": {
+      "sha256": "8ab6f42e722e9c51752ce2f14aabb2696bddc0b6818041fb8f313f670955c2c4",
+      "gitBlobSha": "2985cca80f03eae3175a3ee94936204141e38b6f",
+      "bytes": 1440
+    },
+    "src/components/ui/checkbox.jsx": {
+      "sha256": "b0260cb7767493d8273f5def1b7d32e844d068db5f5760258d333ae6ad88f0d8",
+      "gitBlobSha": "5e0c96bf7bcb9878da9239772b3ff361a5e8a1c0",
+      "bytes": 880
+    },
+    "src/components/ui/dialog.jsx": {
+      "sha256": "50a7cc4ae5ce0f2527662ed9742d35b8c4933d1629a2740b26890793aee00742",
+      "gitBlobSha": "0d7981be135e34293afee34cae75a4703d146805",
+      "bytes": 3228
+    },
+    "src/components/ui/dropdown-menu.jsx": {
+      "sha256": "d36cd67e71781bbb03059b057b6f686445477a4275120359178729574398c465",
+      "gitBlobSha": "4ac6fd6c4cf59e544601b74fd0f5d7949b9ad39d",
+      "bytes": 6157
+    },
+    "src/components/ui/input.jsx": {
+      "sha256": "4455aea152904f128df0ecd82047bbceb23e06ffcc9ccc7cbb3bcc87df5bcc4f",
+      "gitBlobSha": "41ec05e41cc0da39f253ccc6a32a3fdb5e439ff9",
+      "bytes": 690
+    },
+    "src/components/ui/popover.jsx": {
+      "sha256": "199cc7b3d810013867ae91305f0966b8a66526a1c13d10248c38ee1797d169db",
+      "gitBlobSha": "b9f9d4cd0415ef14e188fb06dd125960a57a5056",
+      "bytes": 1166
+    },
+    "src/components/ui/radio-group.jsx": {
+      "sha256": "10ced1e6932e4fe53d6c18201f50b8bb4b334b4372f01ce5f0993aa2a6bb9110",
+      "gitBlobSha": "9d9b615d5c68f561819c076f631c4aeeb3641ac6",
+      "bytes": 1135
+    },
+    "src/components/ui/select.jsx": {
+      "sha256": "15c7a0e4c45b655ffa8d3f3be8bdaab727a19fd6baa95b34056bf02c7254243e",
+      "gitBlobSha": "2cb4519bf9edd3b4f995aec8a412fb7f297969f4",
+      "bytes": 4677
+    },
+    "src/components/ui/switch.jsx": {
+      "sha256": "880e95637cc1d90ef4476f79114afd2fa7b5f6e5da1f49a70e0efc1f84aa0c8a",
+      "gitBlobSha": "5ef3287b76983539c22e5d2d3c05d6b69347beec",
+      "bytes": 1025
+    },
+    "src/components/ui/tabs.jsx": {
+      "sha256": "57591bdfb3fa931b06edcf4168b6881a79785c674ad0618003d12cd656072350",
+      "gitBlobSha": "b674eb93009a3f5da27631ea28a99604fc6321cd",
+      "bytes": 1529
+    },
+    "src/components/ui/toast.jsx": {
+      "sha256": "8a98ef70908fd33627d09f6a5c715417b243502836539acda857843dd4817070",
+      "gitBlobSha": "c6866ca5bc8466e82e665106fba488374b6b06b3",
+      "bytes": 3804
+    },
+    "src/components/ui/toggle.jsx": {
+      "sha256": "e8fe6de52ef73d6fa868229ae7a21e681fb3088975847d6ee65a8387731c1c79",
+      "gitBlobSha": "49d072c2bc04281405a6c1c613ec4ed222e42bf3",
+      "bytes": 1310
+    },
+    "src/components/ui/tooltip.jsx": {
+      "sha256": "73e47a5dde6c55aca2e32e429ba95d8746ce2cca02cc718613f337b5bc9f5f19",
+      "gitBlobSha": "4cca6c16c89d36cfbd5015cc4a887d6865477296",
+      "bytes": 1091
+    },
+    "src/pages/Dashboard.jsx": {
+      "sha256": "eba5b49250466a20cf5976872b8fd158c153e26a3d1eb61ec8d52727c32111f8",
+      "gitBlobSha": "bcc97a097bf827a960886e0621e0096fa7e07805",
+      "bytes": 12046
+    },
+    "src/pages/UserProfile.jsx": {
+      "sha256": "0dbba3208962cf2e80d5b78f528b226b94bb70f7d778205b4370d9f3bc287e36",
+      "gitBlobSha": "b37a556dc7c99f0b6e89064c2a3b079f87ca607b",
+      "bytes": 5879
+    }
+  }
+}

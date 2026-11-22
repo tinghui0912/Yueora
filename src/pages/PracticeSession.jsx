@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
-  ArrowLeft, Play, Pause, Flag, Timer, RotateCcw, Repeat, Settings2,
+  Play, Pause, Flag, Timer, RotateCcw, Repeat, Settings2,
   MoreHorizontal, Video, ChevronLeft, ChevronRight, X,
 } from 'lucide-react';
 import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
@@ -14,7 +14,9 @@ import TempoPopover from '@/components/practice/TempoPopover';
 import FollowFeedback from '@/components/practice/FollowFeedback';
 import VirtualKeyboard from '@/components/practice/VirtualKeyboard';
 import PracticeSettingsDialog from '@/components/practice/PracticeSettingsDialog';
+import { Toggle } from '@/components/ui/toggle';
 import { Surface } from '@/components/patterns/Surface';
+import BackLink from '@/components/patterns/BackLink';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import {
@@ -364,24 +366,21 @@ export default function PracticeSession() {
           isPlaying ? 'opacity-40 hover:opacity-100' : 'opacity-100'
         }`}
       >
-        <button
+        <BackLink
           onClick={() => (phase === 'ready' ? navigate(`/score/${scoreId}`) : setExitOpen(true))}
-          className="flex min-w-0 items-center gap-2 type-label font-medium text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 rounded-control"
-        >
-          <ArrowLeft className="h-4 w-4 shrink-0" />
-          <span className="truncate type-subsection text-ink-primary">{score.title}</span>
-        </button>
+          label={score.title}
+        />
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {recording === 'video' && !selfViewHidden && (
             <div
               role="img"
               aria-label="Camera preview"
-              className="relative hidden h-9 w-14 items-center justify-center overflow-hidden rounded-control border border-line-subtle bg-ink-primary/10 sm:flex"
+              className="relative hidden h-9 w-14 items-center justify-center overflow-hidden rounded-control border border-line-subtle bg-neutral-muted sm:flex"
             >
               <Video className="h-3.5 w-3.5 text-ink-secondary" aria-hidden="true" />
               {isPlaying && (
-                <span className="absolute left-1 top-1 flex items-center gap-1 rounded-control bg-danger px-1 py-px text-[9px] font-bold uppercase tracking-wider text-white"> {/* ds-allow: miniature simulation badge */}
+                <span className="absolute left-1 top-1 flex items-center gap-1 rounded-control bg-danger px-1 py-px text-[9px] font-bold uppercase tracking-wider text-danger-foreground"> {/* ds-allow: miniature simulation badge */}
                   REC
                 </span>
               )}
@@ -480,12 +479,13 @@ export default function PracticeSession() {
               <span>Showing bars {canvasStart}–{Math.min(totalMeasures, canvasStart + 3)} of {totalMeasures}</span>
 
               {!selecting && phase === 'paused' && measureWindowStart(activeMeasure) !== visibleMeasureStart && (
-                <button
+                <Button
+                  intent="link"
+                  size="xs"
                   onClick={() => setVisibleMeasureStart(measureWindowStart(activeMeasure))}
-                  className="text-brand font-semibold hover:underline"
                 >
                   Return to current position (Bar {activeMeasure})
-                </button>
+                </Button>
               )}
 
               {!selecting && phase !== 'running' && (
@@ -520,7 +520,7 @@ export default function PracticeSession() {
 
         {/* Count-in Overlay */}
         {phase === 'countin' && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-surface-canvas/80 backdrop-blur-xs">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-surface-canvas backdrop-blur-xs">
             <div className="text-center">
               {/* ds-allow: oversized rehearsal count-in number */}
               <p className="font-display text-7xl font-medium text-ink-primary animate-pulse">
@@ -611,16 +611,14 @@ export default function PracticeSession() {
             <TempoPopover
               triggerLabel={tempoLocked ? 'Tempo is locked during play' : 'Tempo and metronome'}
               trigger={
-                <button
-                  type="button"
-                  className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
-                    metronome ? 'border-line-strong text-ink-primary' : 'border-line-subtle text-ink-secondary hover:text-ink-primary'
-                  }`}
+                <Button
+                  intent="secondary"
+                  size="md"
                 >
-                  <Timer className="h-4 w-4" />
+                  <Timer className="icon-xs" />
                   <span>♩ = {bpm}</span>
                   {metronome && <span className="h-1.5 w-1.5 rounded-full bg-brand" />}
-                </button>
+                </Button>
               }
               scoreTempo={score.tempo}
               hasTempoChanges={false}
@@ -634,30 +632,34 @@ export default function PracticeSession() {
               onMetronome={setMetronome}
             />
 
-            <button
-              type="button"
-              onClick={selecting ? () => { setSectionPhase('idle'); setPendingStart(null); } : startSectionPick}
-              className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
-                selectedRange.kind === 'section'
-                  ? 'border-brand bg-neutral-muted font-semibold text-ink-primary'
-                  : 'border-line-subtle text-ink-secondary hover:bg-neutral-hover'
-              }`}
+            <Toggle
+              pressed={selectedRange.kind === 'section'}
+              onPressedChange={() => {
+                if (selecting) {
+                  setSectionPhase('idle');
+                  setPendingStart(null);
+                } else {
+                  startSectionPick();
+                }
+              }}
+              variant="outline"
+              aria-label="Select practice section"
             >
               <span>Section{selectedRange.kind === 'section' ? ` ${selectedRange.startMeasure}–${selectedRange.endMeasure}` : ''}</span>
-            </button>
+            </Toggle>
 
             {loopAllowed && (
-              <button
-                type="button"
-                onClick={() => setLoop((l) => !l)}
-                aria-pressed={loop}
-                className={`hidden h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium sm:flex transition-colors ${
-                  loop ? 'border-brand bg-neutral-muted font-semibold text-ink-primary' : 'border-line-subtle text-ink-secondary hover:bg-neutral-hover'
-                }`}
-              >
-                <Repeat className={`h-4 w-4 ${loop ? 'text-brand' : ''}`} />
-                <span>Loop</span>
-              </button>
+              <span className="hidden sm:inline-flex">
+                <Toggle
+                  pressed={loop}
+                  onPressedChange={setLoop}
+                  variant="outline"
+                  aria-label="Loop playback"
+                >
+                  <Repeat className="icon-xs shrink-0" aria-hidden="true" />
+                  <span>Loop</span>
+                </Toggle>
+              </span>
             )}
           </div>
 

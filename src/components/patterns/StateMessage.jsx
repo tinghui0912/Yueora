@@ -4,14 +4,16 @@ import { cn } from '@/lib/utils';
 const toneStyles = {
   neutral: { icon: 'text-ink-tertiary', title: 'text-ink-primary', desc: 'text-ink-secondary' },
   brand: { icon: 'text-brand', title: 'text-ink-primary', desc: 'text-ink-secondary' },
-  success: { icon: 'text-success', title: 'text-ink-primary', desc: 'text-ink-secondary' },
-  warning: { icon: 'text-warning', title: 'text-ink-primary', desc: 'text-ink-secondary' },
+  success: { icon: 'text-brand', title: 'text-ink-primary', desc: 'text-ink-secondary' },
+  warning: { icon: 'text-brand', title: 'text-ink-primary', desc: 'text-ink-secondary' },
   danger: { icon: 'text-danger', title: 'text-ink-primary', desc: 'text-ink-secondary' },
 };
 
 /**
- * StateMessage — unified empty / error / access denied / expired / revoked / not found / processing.
- * One component replaces EmptyState, ErrorState, ExpiredState, RevokedState, etc.
+ * StateMessage — handles exceptional processing states: error, unavailable, revoked, expired, not-found.
+ * Distinct semantic ownership from EmptyState:
+ * - EmptyState: genuine empty-data / nothing-yet states (bound to Numis EmptyState specimen)
+ * - StateMessage: exceptional, revoked, error, expired, or access-denied processing states
  */
 export default function StateMessage({
   tone = 'neutral',
@@ -26,7 +28,7 @@ export default function StateMessage({
   return (
     <div className={cn('flex flex-col items-center px-6 py-16 text-center', className)}>
       {Icon && (
-        <div className={cn('mb-4 flex h-12 w-12 items-center justify-center rounded-container bg-surface-canvas/60', s.icon)}>
+        <div className={cn('mb-4 flex h-12 w-12 items-center justify-center rounded-container bg-surface-canvas', s.icon)}>
           <Icon className="icon-xl" aria-hidden="true" />
         </div>
       )}

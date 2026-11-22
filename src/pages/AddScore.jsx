@@ -52,7 +52,7 @@ export default function AddScore() {
   const imports = usePrototypeStore((s) => s.imports);
   const subscription = usePrototypeStore((s) => s.subscription);
 
-  const { liveCount, reservedCount, effectiveCount } = getEffectiveScoreUsage(scores, imports);
+  const { effectiveCount } = getEffectiveScoreUsage(scores, imports);
   const scoreQuota = getScoreQuota(subscription?.plan);
   const importQuota = getImportQuota(subscription?.plan);
   const storageQuota = getStorageQuota(subscription?.plan);
@@ -272,14 +272,14 @@ export default function AddScore() {
 
             {/* Quota Indicators */}
             <div className="grid gap-2 sm:grid-cols-2">
-              <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-4 py-3 type-metadata text-ink-secondary">
-                <span>Monthly imports</span>
+              <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-4 py-3 type-metadata">
+                <span className="text-ink-secondary">Monthly imports</span>
                 <span className="font-medium text-ink-primary">
                   {importsCount} of {importQuota.label}
                 </span>
               </div>
-              <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-4 py-3 type-metadata text-ink-secondary">
-                <span>Cloud storage</span>
+              <div className="flex items-center justify-between rounded-control border border-line-subtle bg-surface-panel px-4 py-3 type-metadata">
+                <span className="text-ink-secondary">Cloud storage</span>
                 <span className="font-medium text-ink-primary">
                   {subscription?.usage?.storage || '1.2 GB'} of {storageQuota.limit}
                 </span>
@@ -312,18 +312,20 @@ export default function AddScore() {
             {fileError && (
               <div
                 role="alert"
-                className="flex items-start gap-2.5 rounded-container border border-danger/30 bg-danger/10 p-4"
+                className="flex items-start gap-2.5 rounded-container border border-line-subtle bg-surface-panel p-4"
               >
                 <AlertCircle className="mt-0.5 icon-sm shrink-0 text-danger" />
                 <div className="flex-1">
                   <p className="type-body-small font-medium text-danger">{errorTypes[fileError].msg}</p>
-                  <button
+                  <Button
                     type="button"
+                    intent="link"
+                    size="xs"
                     onClick={clearFileError}
-                    className="mt-1 type-metadata font-semibold text-danger underline hover:opacity-85"
+                    className="mt-1"
                   >
                     {errorTypes[fileError].action}
-                  </button>
+                  </Button>
                 </div>
                 <IconButton
                   icon={X}
@@ -372,7 +374,7 @@ export default function AddScore() {
                 <div className="relative aspect-[4/3] rounded-container border border-line-subtle bg-surface-canvas overflow-hidden flex flex-col items-center justify-center p-6 text-center">
                   {/* Framing outline */}
                   <div className="absolute inset-6 rounded-control border-2 border-dashed border-line-strong pointer-events-none flex items-center justify-center">
-                    <span className="type-caption text-ink-tertiary bg-surface-canvas/90 px-3 py-1 rounded-full">
+                    <span className="type-caption text-ink-tertiary bg-surface-canvas px-3 py-1 rounded-full">
                       Align sheet within borders
                     </span>
                   </div>
@@ -397,14 +399,15 @@ export default function AddScore() {
                       <div key={f.id} className="relative flex-shrink-0 rounded-control border border-line-subtle bg-surface-panel p-2 flex flex-col items-center gap-1">
                         <FileThumbnail seed={f.id} className="h-16 w-12 rounded-control" />
                         <span className="type-caption text-ink-secondary">Page {i + 1}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeFile(f.id)}
-                          className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-surface-canvas border border-line-subtle text-ink-secondary hover:text-ink-primary flex items-center justify-center cursor-pointer"
-                          aria-label={`Remove page ${i + 1}`}
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
+                        <span className="absolute -top-1.5 -right-1.5">
+                          <IconButton
+                            icon={X}
+                            size="xs"
+                            tone="outline"
+                            onClick={() => removeFile(f.id)}
+                            label={`Remove page ${i + 1}`}
+                          />
+                        </span>
                       </div>
                     ))}
                     {files.length === 0 && (
@@ -489,7 +492,7 @@ export default function AddScore() {
 
             {/* QA Testing Triggers (development-only) */}
             {import.meta.env.DEV && (
-              <div className="flex flex-wrap items-center gap-2 rounded-control border border-line-subtle bg-surface-canvas/50 px-3 py-2">
+              <div className="flex flex-wrap items-center gap-2 rounded-control border border-line-subtle bg-surface-canvas px-3 py-2">
                 <span className="type-caption text-ink-secondary">DEV QA:</span>
                 {Object.entries(errorTypes).map(([k, v]) => (
                   <button

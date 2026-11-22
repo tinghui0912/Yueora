@@ -26,7 +26,7 @@ export default function Topbar() {
   const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line-subtle bg-surface-canvas/90 px-4 backdrop-blur-md md:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line-subtle bg-surface-canvas px-4 md:px-6">
       {/* Calm, standardized command trigger */}
       <div className="flex items-center gap-3">
         <SearchTrigger
@@ -91,7 +91,7 @@ export default function Topbar() {
         {/* User profile */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex h-control-md items-center gap-1.5 rounded-control px-1.5 transition-colors hover:bg-neutral-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40">
+            <button className="flex h-control-md items-center gap-1.5 rounded-control px-1.5 transition-colors hover:bg-neutral-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand">
               <Avatar className="h-8 w-8 border border-line-subtle">
                 <AvatarFallback className="bg-brand text-xs font-semibold text-brand-foreground">{initials}</AvatarFallback>
               </Avatar>

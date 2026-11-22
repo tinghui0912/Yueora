@@ -40,7 +40,7 @@ export function Stepper({ steps = [], current = 1, onStepClick = undefined, clas
                       'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-base',
                       isCompleted && 'bg-brand text-brand-foreground',
                       isCurrent && 'border-2 border-brand bg-surface-panel text-brand font-bold',
-                      isUpcoming && 'border border-line-subtle bg-surface-canvas/80 text-ink-tertiary'
+                      isUpcoming && 'border border-line-subtle bg-surface-canvas text-ink-tertiary'
                     )}
                   >
                     {isCompleted ? <Check className="icon-xs stroke-[2.5]" aria-hidden="true" /> : stepNum}
@@ -52,7 +52,7 @@ export function Stepper({ steps = [], current = 1, onStepClick = undefined, clas
                       'type-label whitespace-nowrap transition-colors duration-base',
                       isCurrent && 'font-semibold text-ink-primary',
                       isCompleted && 'font-medium text-ink-secondary',
-                      isUpcoming && 'text-ink-secondary/60'
+                      isUpcoming && 'text-ink-tertiary'
                     )}
                   >
                     {label}
@@ -66,7 +66,7 @@ export function Stepper({ steps = [], current = 1, onStepClick = undefined, clas
                       'flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-base',
                       isCompleted && 'bg-brand text-brand-foreground',
                       isCurrent && 'border-2 border-brand bg-surface-panel text-brand font-bold',
-                      isUpcoming && 'border border-line-subtle bg-surface-canvas/80 text-ink-tertiary'
+                      isUpcoming && 'border border-line-subtle bg-surface-canvas text-ink-tertiary'
                     )}
                   >
                     {isCompleted ? <Check className="icon-xs stroke-[2.5]" aria-hidden="true" /> : stepNum}
@@ -78,7 +78,7 @@ export function Stepper({ steps = [], current = 1, onStepClick = undefined, clas
                       'type-label whitespace-nowrap transition-colors duration-base',
                       isCurrent && 'font-semibold text-ink-primary',
                       isCompleted && 'font-medium text-ink-secondary',
-                      isUpcoming && 'text-ink-secondary/60'
+                      isUpcoming && 'text-ink-tertiary'
                     )}
                   >
                     {label}

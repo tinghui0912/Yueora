@@ -5,130 +5,136 @@
 @layer base {
   :root {
     /* ==========================================================================
-       1. PRIMITIVE PHYSICAL PALETTE (16 Core Primitives)
-       Restrained physical foundation. Pages compose semantic tokens;
-       semantic tokens reference these primitives.
-       Direct consumption of primitive-* in application code is strictly forbidden.
+       1. FROZEN NUMIS REFERENCE LAYER
+       Source:
+       tinghui0912/NumisCollection
+       commit: efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c
+
+       DO NOT invent colors here.
+       Any change requires an explicit Numis reference migration.
        ========================================================================== */
-    /* Neutral / Warm Paper */
-    --primitive-neutral-0: 40 25% 99%;       /* Warm White Card / Panels / Overlays (#FDFDFC) */
-    --primitive-neutral-25: 40 20% 97%;      /* Warm Archive Paper Canvas (#F9F8F6) */
-    --primitive-neutral-50: 40 18% 95%;      /* Warm Subrail, Passive Tracks (#F4F2EE) */
-    --primitive-neutral-75: 35 20% 92%;      /* Neutral Hover (#EBE7E0) */
-    --primitive-neutral-100: 35 15% 93%;     /* Neutral Muted Blocks (#F0EEEA) */
-    --primitive-neutral-200: 35 15% 88%;     /* Neutral Line Subtle: Card borders (#E5E1DC) */
-    --primitive-neutral-300: 35 12% 76%;     /* Neutral Line Strong: Control borders (#C6C1B9) */
+    --numis-background: 40 20% 97%;
+    --numis-foreground: 30 10% 12%;
 
-    /* Ink (Dark warm contrast hierarchy) */
-    --primitive-ink-500: 30 5% 44%;          /* Ink Tertiary: readable muted metadata (>=4.5:1 on white and canvas) (#76706B) */
-    --primitive-ink-700: 30 8% 32%;          /* Ink Secondary: readable secondary copy (>7:1 on white and canvas) (#58524B) */
-    --primitive-ink-800: 30 10% 18%;         /* Ink Strong / Dark Hover (#2E2A27) */
-    --primitive-ink-900: 30 10% 12%;         /* Ink Primary: warm near-black (#221F1C) */
+    --numis-card: 40 25% 99%;
+    --numis-card-foreground: 30 10% 12%;
 
-    /* Brand / Antique Bronze Gold */
-    --primitive-gold-100: 36 45% 90%;        /* Tinted Warm Gold Soft (#F2E8D9) */
-    --primitive-gold-500: 36 70% 45%;        /* Antique Bronze / Gold Brand (#C38322) */
-    --primitive-gold-600: 36 72% 49%;        /* Brighter Antique Gold Hover (#D39029) */
-    --primitive-gold-700: 36 70% 35%;        /* Deep Antique Bronze CTA Fill (#98661B) */
-    --primitive-gold-800: 36 72% 31%;        /* Deeper Antique Bronze Hover (#895814) */
+    --numis-popover: 40 25% 99%;
+    --numis-popover-foreground: 30 10% 12%;
 
-    /* Functional Status */
-    --primitive-success-500: 148 35% 36%;    /* Success confirmation & practice following (>=4.5:1 on white) */
-    --primitive-warning-500: 38 65% 45%;     /* Warning notice & practice resyncing */
-    --primitive-danger-500: 0 65% 45%;       /* Terracotta alert (>=4.5:1 on white) */
+    --numis-primary: 36 70% 45%;
+    --numis-primary-foreground: 40 20% 98%;
+
+    --numis-secondary: 35 15% 93%;
+    --numis-secondary-foreground: 30 10% 20%;
+
+    --numis-muted: 35 12% 93%;
+    --numis-muted-foreground: 30 5% 46%;
+
+    --numis-accent: 36 50% 90%;
+    --numis-accent-foreground: 30 10% 15%;
+
+    --numis-destructive: 0 72% 51%;
+    --numis-destructive-foreground: 0 0% 98%;
+
+    --numis-border: 35 15% 88%;
+    --numis-input: 35 15% 88%;
+    --numis-ring: 36 70% 45%;
+
+    --numis-sidebar-background: 35 20% 96%;
+    --numis-sidebar-foreground: 30 10% 20%;
+    --numis-sidebar-primary: 36 70% 45%;
+    --numis-sidebar-primary-foreground: 40 20% 98%;
+    --numis-sidebar-accent: 35 20% 92%;
+    --numis-sidebar-accent-foreground: 30 10% 15%;
+    --numis-sidebar-border: 35 15% 88%;
+    --numis-sidebar-ring: 36 70% 45%;
+
+    --numis-chart-1: 36 70% 45%;
+    --numis-chart-2: 160 45% 40%;
+    --numis-chart-3: 210 40% 45%;
+    --numis-chart-4: 280 40% 50%;
+    --numis-chart-5: 0 55% 50%;
 
     /* ==========================================================================
        2. SEMANTIC TOKENS (Product Meaning)
        Pages and domain components consume these semantic tokens.
+       All values map strictly to the Frozen Numis Reference Layer above.
        ========================================================================== */
-    /* ---- Surface semantic aliases ---- */
-    --surface-canvas: var(--primitive-neutral-25);
-    --surface-panel: var(--primitive-neutral-0);
-    --surface-raised: var(--primitive-neutral-0);
-    --surface-subrail: var(--primitive-neutral-50);
-    --surface-subrail-border: var(--primitive-neutral-200);
+    /* ---- Surface semantic aliases (3 Canonical Surfaces) ---- */
+    --surface-canvas: var(--numis-background);
+    --surface-panel: var(--numis-card);
+    --surface-raised: var(--numis-card);
+    --surface-subrail: var(--numis-sidebar-background);
+    --surface-subrail-border: var(--numis-sidebar-border);
 
     /* ---- Text hierarchy (ink) ---- */
-    --ink-primary: var(--primitive-ink-900);
-    --ink-secondary: var(--primitive-ink-700);
-    --ink-tertiary: var(--primitive-ink-500);
-    --ink-subtle: var(--primitive-neutral-300);
+    --ink-primary: var(--numis-foreground);
+    --ink-secondary: var(--numis-sidebar-foreground);
+    --ink-tertiary: var(--numis-muted-foreground);
+    --ink-subtle: var(--numis-border);
 
     /* ---- Border hierarchy (line) ---- */
-    --line-subtle: var(--primitive-neutral-200);
-    --line-strong: var(--primitive-neutral-300);
+    --line-subtle: var(--numis-border);
+    --line-strong: var(--numis-border);
 
-    /* ---- Brand (Antique Bronze Gold, warm-dark text, warm gold soft) ---- */
-    --brand: var(--primitive-gold-500);
-    --brand-hover: var(--primitive-gold-600);
-    --brand-fill: var(--primitive-gold-700);
-    --brand-fill-hover: var(--primitive-gold-800);
-    --brand-fill-foreground: var(--primitive-neutral-0);
-    --brand-soft: var(--primitive-gold-100);
-    --brand-soft-foreground: var(--primitive-ink-900);
-    --brand-foreground: var(--primitive-ink-900);
+    /* ---- Brand (Antique Bronze Gold, warm white text, warm gold soft) ---- */
+    --brand: var(--numis-primary);
+    --brand-foreground: var(--numis-primary-foreground);
+    --brand-soft: var(--numis-accent);
+    --brand-soft-foreground: var(--numis-accent-foreground);
+    --nav-active-bg: var(--numis-primary) / 0.1;
+    --control-hover-accent: var(--numis-accent);
 
-    /* ---- Neutral quiet & hover (Warm ivory-gray, NOT green) ---- */
-    --neutral-muted: var(--primitive-neutral-100);
-    --neutral-muted-foreground: var(--primitive-ink-700);
-    --neutral-hover: var(--primitive-neutral-75);
-    --neutral-hover-foreground: var(--primitive-ink-900);
+    /* ---- Neutral quiet & hover ---- */
+    --neutral-muted: var(--numis-muted);
+    --neutral-muted-foreground: var(--numis-muted-foreground);
+    --neutral-hover: var(--numis-sidebar-accent);
+    --neutral-hover-foreground: var(--numis-foreground);
 
-    /* ---- Semantic status ---- */
-    --success: var(--primitive-success-500);
-    --success-foreground: var(--primitive-neutral-0);
-    --warning: var(--primitive-warning-500);
-    --warning-foreground: var(--primitive-ink-900);
-    --danger: var(--primitive-danger-500);
-    --danger-foreground: var(--primitive-neutral-0);
-    --info: var(--primitive-neutral-75);
-    --info-foreground: var(--primitive-ink-900);
+    /* ---- Semantic status & brand aliases ---- */
+    --danger: var(--numis-destructive);
+    --danger-foreground: var(--numis-destructive-foreground);
+    --info: var(--numis-sidebar-accent);
+    --info-foreground: var(--numis-foreground);
 
     /* ---- Selection (Compact canvas selection alias) ---- */
-    --selection: var(--primitive-gold-100);
+    --selection: var(--numis-accent);
 
-    /* ---- Practice semantic colors (non-judgmental) ---- */
-    --practice-following: var(--primitive-success-500);
-    --practice-following-foreground: var(--primitive-neutral-0);
-    --practice-waiting: var(--primitive-ink-700);
-    --practice-waiting-foreground: var(--primitive-neutral-0);
-    --practice-resyncing: var(--primitive-warning-500);
-    --practice-resyncing-foreground: var(--primitive-ink-900);
-    --practice-current: var(--primitive-gold-500);
-    --practice-current-foreground: var(--primitive-ink-900);
-    --practice-correct: var(--primitive-success-500);
-    --practice-correct-foreground: var(--primitive-neutral-0);
-    --practice-error: var(--primitive-danger-500);
-    --practice-error-foreground: var(--primitive-neutral-0);
-
-    --gold: var(--primitive-gold-500);
+    /* ---- Practice semantic colors (domain roles mapped to approved Numis reference recipes) ---- */
+    --practice-waiting: var(--numis-sidebar-foreground);
+    --practice-waiting-foreground: var(--numis-primary-foreground);
+    --practice-current: var(--numis-primary);
+    --practice-current-foreground: var(--numis-primary-foreground);
+    --practice-error: var(--numis-destructive);
+    --practice-error-foreground: var(--numis-destructive-foreground);
 
     /* ==========================================================================
        3. INTERNAL COMPATIBILITY LAYER
        Implementation detail for Radix / legacy third-party components only.
        Forbidden in application code.
        ========================================================================== */
-    --background: var(--primitive-neutral-25);
-    --foreground: var(--primitive-ink-900);
-    --card: var(--primitive-neutral-0);
-    --card-foreground: var(--primitive-ink-900);
-    --popover: var(--primitive-neutral-0);
-    --popover-foreground: var(--primitive-ink-900);
-    --primary: var(--primitive-gold-500);
-    --primary-foreground: var(--primitive-ink-900);
-    --secondary: var(--primitive-neutral-75);
-    --secondary-foreground: var(--primitive-ink-900);
-    --muted: var(--primitive-neutral-100);
-    --muted-foreground: var(--primitive-ink-700);
-    --accent: var(--primitive-gold-100);
-    --accent-foreground: var(--primitive-ink-900);
-    --destructive: var(--primitive-danger-500);
-    --destructive-foreground: var(--primitive-neutral-0);
-    --border: var(--primitive-neutral-200);
-    --input: var(--primitive-neutral-200);
-    --ring: var(--primitive-gold-500);
+    --background: var(--numis-background);
+    --foreground: var(--numis-foreground);
+    --card: var(--numis-card);
+    --card-foreground: var(--numis-card-foreground);
+    --popover: var(--numis-popover);
+    --popover-foreground: var(--numis-popover-foreground);
+    --primary: var(--numis-primary);
+    --primary-foreground: var(--numis-primary-foreground);
+    --secondary: var(--numis-secondary);
+    --secondary-foreground: var(--numis-secondary-foreground);
+    --muted: var(--numis-muted);
+    --muted-foreground: var(--numis-muted-foreground);
+    --accent: var(--numis-accent);
+    --accent-foreground: var(--numis-accent-foreground);
+    --destructive: var(--numis-destructive);
+    --destructive-foreground: var(--numis-destructive-foreground);
+    --border: var(--numis-border);
+    --input: var(--numis-input);
+    --ring: var(--numis-ring);
 
-    --radius: 0.625rem;
+    --radius: 0.75rem; /* 12px baseline matching NumisCollection */
     --font-heading: "Playfair Display", ui-serif, Georgia, serif;
     --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
     --font-display: "Playfair Display", ui-serif, Georgia, serif;
@@ -136,18 +142,21 @@
 
     /* ---- Radius semantic ---- */
     --radius-control: 0.625rem;
+    --radius-nav: 0.75rem;
     --radius-container: 1rem;
+    --radius-dialog: 0.75rem;
+    --radius-menu: 0.625rem;
     --radius-overlay: 0.75rem;
 
-    /* ---- Motion ---- */
+    /* ---- Motion (Reconciled with frozen Numis reference) ---- */
     --motion-fast: 150ms;
-    --motion-base: 250ms;
-    --motion-slow: 350ms;
-    --motion-easing: cubic-bezier(0.22, 1, 0.36, 1);
+    --motion-base: 200ms;
+    --motion-slow: 300ms;
 
-    /* ---- Elevation ---- */
-    --shadow-raised: 0 2px 8px -1px rgb(34 31 28 / 0.08), 0 1px 3px 0 rgb(34 31 28 / 0.04);
-    --shadow-overlay: 0 10px 25px -4px rgb(34 31 28 / 0.14), 0 4px 10px -2px rgb(34 31 28 / 0.06);
+    /* ---- Elevation (Numis reference shadow recipes) ---- */
+    --shadow-control: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-raised: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 
     /* ---- Control Heights ---- */
     --control-height-xs: 1.75rem; /* 28px */
@@ -306,18 +315,114 @@
   }
   .type-metric {
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 1.75rem;
-    line-height: 1;
+    font-weight: 700;
+    font-size: 1.875rem; /* 30px */
+    line-height: 1.1;
     font-variant-numeric: tabular-nums;
   }
   @media (min-width: 768px) {
     .type-metric {
-      font-size: 2rem;
+      font-size: 2rem; /* 32px desktop */
     }
   }
 
+  /* ---- Micro-Visual Grammar Semantic Roles ---- */
+  .type-sidebar-descriptor {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.75rem; /* 12px */
+    line-height: 1.4;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+  .type-dashboard-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.875rem; /* 30px mobile */
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  @media (min-width: 768px) {
+    .type-dashboard-title {
+      font-size: 2.25rem; /* 36px desktop */
+    }
+  }
+  .type-workspace-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.875rem; /* 30px */
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+  .type-page-subtitle {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 1rem; /* 16px */
+    line-height: 1.5;
+  }
+  .type-stat-label {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .type-panel-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  .type-card-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  .type-card-metadata {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.4;
+  }
+  .type-card-value-label {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.75rem; /* 12px */
+    line-height: 1.4;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+  .type-card-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.2;
+  }
+  .type-mobile-nav {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.625rem; /* 10px */
+    line-height: 1.2;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+  .type-menu-label {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.4;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
   /* ---- Elevation ---- */
+  .elevation-control {
+    box-shadow: var(--shadow-control);
+  }
   .elevation-raised {
     box-shadow: var(--shadow-raised);
   }

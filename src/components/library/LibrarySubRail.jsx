@@ -40,7 +40,7 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
                 'flex w-full min-w-0 items-center rounded-control px-2.5 py-1.5 text-left type-body-small transition-colors',
                 active === item.key
                   ? 'bg-brand-soft font-semibold text-ink-primary'
-                  : 'text-ink-secondary hover:bg-brand-soft/50 hover:text-ink-primary'
+                  : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
               )}
             >
               <span className="truncate">{item.label}</span>
@@ -124,13 +124,13 @@ export default function LibrarySubRail({ active, onSelect, folders, onCreateFold
                       'flex w-full min-w-0 items-center gap-2 rounded-control px-2.5 py-1.5 pr-14 text-left type-body-small transition-colors',
                       active === `folder:${f.id}`
                         ? 'bg-brand-soft font-semibold text-ink-primary'
-                        : 'text-ink-secondary hover:bg-brand-soft/50 hover:text-ink-primary'
+                        : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
                     )}
                   >
                     <Folder className={cn('icon-sm shrink-0 transition-colors', active === `folder:${f.id}` ? 'text-brand' : 'opacity-70')} />
                     <span className="truncate min-w-0">{f.name}</span>
                   </button>
-                  <div className="absolute right-1 flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 bg-surface-subrail/90 backdrop-blur-xs rounded-control">
+                  <div className="absolute right-1 flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 bg-surface-subrail rounded-control">
                     <IconButton
                       icon={Pencil}
                       size="xs"

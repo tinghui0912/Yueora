@@ -17,7 +17,7 @@ export default function RecordedMedia({ blob, mediaType }) {
         src={url}
         controls
         playsInline
-        className="w-full rounded-container border border-line-subtle bg-black"
+        className="w-full rounded-container border border-line-subtle bg-ink-primary"
       />
     );
   }

@@ -95,7 +95,7 @@ export default function SecuritySettings() {
         desc="How you authenticate and access your Yueora workspace."
       >
         <div className="max-w-md space-y-4">
-          <div className="flex items-start gap-3 rounded-container border border-line-subtle bg-surface-panel p-4">
+          <div className="flex items-start gap-3 rounded-control border border-line-subtle bg-neutral-muted/40 p-3.5">
             <ShieldCheck className="icon-sm text-ink-primary shrink-0 mt-0.5" />
             <div className="min-w-0">
               <p className="type-body-small font-medium text-ink-primary">
@@ -118,7 +118,7 @@ export default function SecuritySettings() {
       >
         <div className="max-w-md space-y-4">
           {isGoogleUser ? (
-            <div className="rounded-container border border-line-subtle bg-surface-panel p-4">
+            <div className="rounded-control border border-line-subtle bg-neutral-muted/40 p-3.5">
               <div className="flex items-center gap-2">
                 <KeyRound className="icon-xs text-ink-secondary shrink-0" />
                 <span className="type-body-small font-medium text-ink-primary">External credential management</span>
@@ -136,7 +136,7 @@ export default function SecuritySettings() {
               </div>
             </div>
           ) : (
-            <form onSubmit={handleUpdatePassword} className="rounded-container border border-line-subtle bg-surface-panel p-4 space-y-4">
+            <form onSubmit={handleUpdatePassword} className="space-y-4">
               <div className="flex items-center gap-2">
                 <KeyRound className="icon-xs text-ink-secondary shrink-0" />
                 <span className="type-body-small font-medium text-ink-primary">Change password</span>
@@ -217,7 +217,7 @@ export default function SecuritySettings() {
         desc="Require a verification code when signing in from an unfamiliar device."
       >
         <div className="max-w-md space-y-4">
-          <div className="rounded-container border border-line-subtle bg-surface-panel p-4 space-y-3">
+          <div className="rounded-control border border-line-subtle bg-neutral-muted/30 p-4 space-y-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
                 <Smartphone className="icon-xs text-ink-secondary shrink-0" />

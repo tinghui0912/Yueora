@@ -9,17 +9,17 @@ const STATUS_PRESENTATION = {
   waiting: {
     label: 'Listening for note…',
     tone: 'text-ink-secondary',
-    dot: 'bg-practice-waiting',
+    dot: 'bg-ink-tertiary',
   },
   matched: {
     label: 'Following your phrasing',
-    tone: 'text-practice-following',
-    dot: 'bg-practice-following',
+    tone: 'text-brand',
+    dot: 'bg-brand',
   },
   wrong: {
     label: 'Take your time — Yueora is waiting here',
-    tone: 'text-practice-resyncing',
-    dot: 'bg-practice-resyncing',
+    tone: 'text-ink-secondary',
+    dot: 'bg-ink-tertiary',
   },
   skipped: {
     label: 'Advancing phrase',
@@ -83,7 +83,7 @@ export default function FollowFeedback({
             type="button"
             onClick={() => onResolve('wrong')}
             disabled={paused}
-            className="rounded-control border border-line-subtle bg-surface-panel px-2 py-1 text-xs text-ink-secondary transition-colors hover:bg-neutral-hover disabled:opacity-40"
+            className="rounded-control border border-line-subtle bg-surface-panel px-2 py-1 text-xs text-ink-primary transition-colors hover:bg-neutral-hover disabled:opacity-40"
           >
             Different pitch
           </button>

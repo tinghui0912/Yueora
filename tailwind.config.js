@@ -10,7 +10,10 @@ module.exports = {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)',
 				control: 'var(--radius-control)',
+				nav: 'var(--radius-nav)',
 				container: 'var(--radius-container)',
+				dialog: 'var(--radius-dialog)',
+				menu: 'var(--radius-menu)',
 				overlay: 'var(--radius-overlay)',
 			},
 			colors: {
@@ -47,7 +50,6 @@ module.exports = {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
-				gold: 'hsl(var(--gold))',
 				/* ---- Surface semantic (3 Canonical Surfaces) ---- */
 				surface: {
 					canvas: 'hsl(var(--surface-canvas))',
@@ -72,28 +74,18 @@ module.exports = {
 				/* ---- Brand ---- */
 				brand: {
 					DEFAULT: 'hsl(var(--brand))',
-					hover: 'hsl(var(--brand-hover))',
-					fill: 'hsl(var(--brand-fill))',
-					'fill-hover': 'hsl(var(--brand-fill-hover))',
-					'fill-foreground': 'hsl(var(--brand-fill-foreground))',
 					soft: 'hsl(var(--brand-soft))',
 					'soft-foreground': 'hsl(var(--brand-soft-foreground))',
 					foreground: 'hsl(var(--brand-foreground))',
 				},
+				'nav-active': 'hsl(var(--nav-active-bg))',
+				'control-hover-accent': 'hsl(var(--control-hover-accent))',
 				/* ---- Neutral quiet & hover ---- */
 				neutral: {
 					muted: 'hsl(var(--neutral-muted))',
 					hover: 'hsl(var(--neutral-hover))',
 				},
 				/* ---- Semantic status ---- */
-				success: {
-					DEFAULT: 'hsl(var(--success))',
-					foreground: 'hsl(var(--success-foreground))',
-				},
-				warning: {
-					DEFAULT: 'hsl(var(--warning))',
-					foreground: 'hsl(var(--warning-foreground))',
-				},
 				danger: {
 					DEFAULT: 'hsl(var(--danger))',
 					foreground: 'hsl(var(--danger-foreground))',
@@ -106,10 +98,7 @@ module.exports = {
 				/* ---- Practice semantic ---- */
 				practice: {
 					current: 'hsl(var(--practice-current))',
-					following: 'hsl(var(--practice-following))',
 					waiting: 'hsl(var(--practice-waiting))',
-					resyncing: 'hsl(var(--practice-resyncing))',
-					correct: 'hsl(var(--practice-correct))',
 					error: 'hsl(var(--practice-error))',
 				},
 			},
@@ -125,6 +114,7 @@ module.exports = {
 				slow: 'var(--motion-slow)',
 			},
 			boxShadow: {
+				control: 'var(--shadow-control)',
 				raised: 'var(--shadow-raised)',
 				overlay: 'var(--shadow-overlay)',
 			},

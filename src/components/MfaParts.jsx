@@ -40,7 +40,7 @@ export function MfaHeader({ title, description = undefined }) {
   return (
     <div className="flex flex-col items-center text-center mb-6">
       <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand mb-4">
-        <ShieldCheck className="w-7 h-7 text-white" aria-hidden="true" />
+        <ShieldCheck className="w-7 h-7 text-brand-foreground" aria-hidden="true" />
       </div>
       <h1 className="type-page-title font-bold text-ink-primary min-h-[2rem]">{title}</h1>
       {description && <p className="type-body-small text-ink-secondary mt-2">{description}</p>}

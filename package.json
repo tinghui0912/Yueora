@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --quiet",
+    "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "audit:typography": "node scripts/audit-typography.mjs",
     "check:design-system": "node scripts/check-design-system.mjs",
-    "test:design-system-guardrails": "node scripts/test-guardrails.mjs",
+    "test:design-system-guardrails": "node scripts/test-guardrails.mjs && node scripts/test-product-semantics.mjs",
     "verify:commercial": "node scripts/verify-commercial-flow.mjs",
     "verify:auth-boundary": "node --experimental-websocket scripts/verify-auth-boundary.mjs",
     "capture:shots": "node scripts/capture-visual-qa.mjs",

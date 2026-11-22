@@ -59,7 +59,7 @@ export default function SearchPalette({ open, onOpenChange }) {
             placeholder="Search scores, folders, or commands…"
             className="w-full bg-transparent type-body-small text-ink-primary outline-none placeholder:text-ink-tertiary"
           />
-          <kbd className="rounded-control border border-line-subtle bg-neutral-muted px-1.5 py-0.5 type-caption text-ink-secondary">esc</kbd>
+          <kbd className="rounded-control border border-line-subtle bg-neutral-muted px-1.5 py-0.5 type-caption text-ink-tertiary">esc</kbd>
         </div>
         <div className="max-h-96 overflow-y-auto p-2">
           {!q.trim() && (

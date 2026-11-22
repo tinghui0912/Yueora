@@ -4,7 +4,7 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const surfaceVariants = cva(
-  'rounded-container transition-[box-shadow,transform,background-color,border-color] duration-base',
+  'rounded-container',
   {
     variants: {
       tone: {
@@ -18,7 +18,7 @@ const surfaceVariants = cva(
         overlay: 'shadow-overlay',
       },
       border: {
-        true: 'border border-line-subtle',
+        true: 'border border-line-subtle/50',
         false: 'border-0',
       },
       padding: {
@@ -28,7 +28,8 @@ const surfaceVariants = cva(
         lg: 'p-6 sm:p-8',
       },
       interactive: {
-        true: 'hover:border-brand/40 hover:shadow-raised hover:-translate-y-1 cursor-pointer transition-all duration-300',
+        false: '',
+        true: 'hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300',
       },
     },
     defaultVariants: {
@@ -70,12 +71,13 @@ export const Surface = React.forwardRef(
     ref
   ) => {
     const Comp = asChild ? Slot : 'div';
+    const isInteractive = Boolean(interactive);
 
     return (
       <Comp
         ref={ref}
         className={cn(
-          surfaceVariants({ tone, elevation, border, padding, interactive, className })
+          surfaceVariants({ tone, elevation, border, padding, interactive: isInteractive, className })
         )}
         {...props}
       >

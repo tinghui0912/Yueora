@@ -13,7 +13,7 @@ export default function OptionGroup({ value, onChange, options, ariaLabel }) {
             onClick={() => onChange(o.value)}
             className={`flex w-full items-start gap-3 py-3 px-3 rounded-control text-left transition-colors ${
               i > 0 ? 'border-t border-line-subtle' : ''
-            } ${active ? 'bg-neutral-hover' : 'hover:bg-neutral-hover/60'}`}
+            } ${active ? 'bg-neutral-hover' : 'hover:bg-neutral-hover'}`}
           >
             <span
               aria-hidden="true"

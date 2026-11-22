@@ -19,7 +19,7 @@ export default function PerformanceMemoryVisual() {
             Kept Performance · Repertoire Archive
           </p>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-line-subtle bg-surface-canvas/80 px-2.5 py-0.5 type-metadata text-ink-secondary">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-line-subtle bg-surface-canvas px-2.5 py-0.5 type-metadata text-ink-secondary">
           <Lock className="h-3 w-3 text-brand" /> Private to you
         </span>
       </div>
@@ -44,7 +44,7 @@ export default function PerformanceMemoryVisual() {
         </div>
 
         {/* Tactile Play Trigger */}
-        <div className="flex flex-col items-center justify-center rounded-control border border-line-subtle bg-surface-canvas/60 px-4 py-3">
+        <div className="flex flex-col items-center justify-center rounded-control border border-line-subtle bg-surface-canvas px-4 py-3">
           <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand text-brand-foreground shadow-raised transition hover:scale-105">
             <Play className="h-5 w-5 fill-current pl-0.5" />
           </span>
@@ -53,18 +53,18 @@ export default function PerformanceMemoryVisual() {
       </div>
 
       {/* Synchronized Score Slice */}
-      <div className="mt-4 overflow-hidden rounded border border-line-subtle bg-surface-canvas/40">
+      <div className="mt-4 overflow-hidden rounded border border-line-subtle bg-surface-canvas">
         <div className="aspect-[21/9] w-full">
           <ScorePreview id="clair-de-lune-memory" className="h-full w-full" />
         </div>
       </div>
 
       {/* Personal Reflection Note */}
-      <div className="mt-4 rounded-control border border-line-subtle bg-surface-canvas/40 p-3.5">
+      <div className="mt-4 rounded-control border border-line-subtle bg-surface-canvas p-3.5">
         <div className="flex items-center justify-between text-xs text-ink-tertiary mb-1">
           <span className="font-medium text-ink-secondary">Personal Note</span>
           <span className="flex items-center gap-1 text-brand">
-            <Heart className="h-3 w-3 fill-brand/20" /> Favorited moment
+            <Heart className="h-3 w-3 fill-current" /> Favorited moment
           </span>
         </div>
         <p className="font-serif italic text-sm leading-relaxed text-ink-primary">

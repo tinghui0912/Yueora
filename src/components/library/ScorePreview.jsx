@@ -77,8 +77,8 @@ export default function ScorePreview({ id, className = '' }) {
         );
       })}
 
-      {/* Decorative marker — gold dot for some scores */}
-      {seed % 3 === 0 && <circle cx={w - 22} cy={h - 14} r="2" fill="hsl(var(--gold))" opacity="0.6" />}
+      {/* Decorative marker — brand soft dot for some scores */}
+      {seed % 3 === 0 && <circle cx={w - 22} cy={h - 14} r="2" fill="hsl(var(--brand-soft))" />}
     </svg>
   );
 }

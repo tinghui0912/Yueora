@@ -56,7 +56,6 @@ export default function PracticeSetup() {
   const [midiStatus, setMidiStatus] = useState(preflight.midiConnected ? 'connected' : 'no-device');
   const [cameraStatus, setCameraStatus] = useState(preflight.cameraGranted ? 'ready' : 'not-tested');
   const [modelStatus, setModelStatus] = useState(preflight.modelReady ? 'ready' : 'idle');
-  const [modelProgress, setModelProgress] = useState(preflight.modelReady ? 100 : 0);
   const [cameraStream, setCameraStream] = useState(null);
   const cameraRef = useRef(null);
 
@@ -77,7 +76,6 @@ export default function PracticeSetup() {
   useEffect(() => {
     if (!needsRecognition) return undefined;
     setModelStatus('ready');
-    setModelProgress(100);
     setPreflight({ modelReady: true });
     return undefined;
   }, [needsRecognition, setPreflight]);
@@ -332,7 +330,7 @@ export default function PracticeSetup() {
                     muted
                     playsInline
                     aria-label="Camera preview"
-                    className="h-16 w-24 rounded-control border border-line-subtle bg-ink-primary/10 object-cover"
+                    className="h-16 w-24 rounded-control border border-line-subtle bg-neutral-muted object-cover"
                   />
                   <p className="type-metadata text-ink-tertiary">This is the camera Yueora will record from.</p>
                 </div>

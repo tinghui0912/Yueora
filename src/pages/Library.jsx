@@ -16,9 +16,16 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { IconButton } from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import Surface from '@/components/patterns/Surface';
+import EmptyState from '@/components/patterns/EmptyState';
+import { SegmentedControl, SegmentedControlItem } from '@/components/patterns/SegmentedControl';
+import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
+import { FolderOptionRow } from '@/components/library/FolderOptionRow';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
 
 const librarySections = [
   { key: 'all', label: 'All music' },
@@ -167,7 +174,7 @@ export default function Library() {
   const RemoveIcon = allMine ? Trash2 : allShared ? LogOut : BookmarkMinus;
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)]">
+    <div className="flex min-h-[calc(100vh-3.5rem)]" data-qa="library-collection-page">
       <LibrarySubRail
         active={active}
         onSelect={(k) => { setParam('view', k); clearSelect(); }}
@@ -179,49 +186,41 @@ export default function Library() {
 
       <div className="min-w-0 flex-1">
         {/* Mobile folio filter rail */}
-        <div className="flex gap-1.5 overflow-x-auto border-b border-line-subrail bg-surface-subrail px-4 py-2.5 lg:hidden no-scrollbar">
-          {librarySections.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => { setParam('view', item.key); clearSelect(); }}
-              className={`whitespace-nowrap rounded-control px-3 py-1.5 type-body-small transition-colors ${
-                active === item.key
-                  ? 'bg-brand-soft font-semibold text-brand-soft-foreground'
-                  : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
-              }`}
+        <div className="border-b border-line-subrail bg-surface-subrail px-4 py-2.5 lg:hidden">
+          <FilterTabs aria-label="Collections and folders" className="overflow-x-auto no-scrollbar flex-nowrap">
+            {librarySections.map((item) => (
+              <FilterTab
+                key={item.key}
+                active={active === item.key}
+                onClick={() => { setParam('view', item.key); clearSelect(); }}
+              >
+                {item.label}
+              </FilterTab>
+            ))}
+            {folders.map((f) => (
+              <FilterTab
+                key={f.id}
+                active={active === `folder:${f.id}`}
+                onClick={() => { setParam('view', `folder:${f.id}`); clearSelect(); }}
+              >
+                {f.name}
+              </FilterTab>
+            ))}
+            <FilterTab
+              active={false}
+              icon={Settings}
+              onClick={() => setManageFoldersOpen(true)}
             >
-              {item.label}
-            </button>
-          ))}
-          {folders.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => { setParam('view', `folder:${f.id}`); clearSelect(); }}
-              className={`whitespace-nowrap rounded-control px-3 py-1.5 type-body-small transition-colors ${
-                active === `folder:${f.id}`
-                  ? 'bg-brand-soft font-semibold text-brand-soft-foreground'
-                  : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
-              }`}
+              Manage
+            </FilterTab>
+            <FilterTab
+              active={active === 'trash'}
+              icon={Trash2}
+              onClick={() => { setParam('view', 'trash'); clearSelect(); }}
             >
-              {f.name}
-            </button>
-          ))}
-          <button
-            onClick={() => setManageFoldersOpen(true)}
-            className="flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 type-body-small text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary"
-          >
-            <Settings className="icon-xs" /> Manage
-          </button>
-          <button
-            onClick={() => { setParam('view', 'trash'); clearSelect(); }}
-            className={`flex items-center gap-1 whitespace-nowrap rounded-control px-3 py-1.5 type-body-small transition-colors ${
-              active === 'trash'
-                ? 'bg-brand-soft font-semibold text-brand-soft-foreground'
-                : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
-            }`}
-          >
-            <Trash2 className="icon-xs" /> Trash
-          </button>
+              Trash
+            </FilterTab>
+          </FilterTabs>
         </div>
 
         {/* Hero: "Pick up where you left off" - Resume Playing Card */}
@@ -267,13 +266,18 @@ export default function Library() {
         <div className="border-b border-line-subtle px-4 py-5 md:px-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h1 className="type-experience-title text-ink-primary">
+              <h1 className="type-workspace-title text-ink-primary">
                 {isTrash ? 'Trash' : activeFolderId ? folders.find((f) => f.id === activeFolderId)?.name : 'Repertoire'}
               </h1>
               <p className="mt-0.5 type-body-small text-ink-secondary">
                 {isTrash
                   ? `${filtered.length} in trash`
                   : `${liveCount} of ${scoreQuota.isUnlimited ? 'Unlimited' : `${scoreQuota.limit} scores`} in your personal collection`}
+                {!isTrash && !scoreQuota.isUnlimited && (
+                  <span className="ml-2 text-ink-tertiary">
+                    ({effectiveCount}/{scoreQuota.limit} limit)
+                  </span>
+                )}
                 {!isTrash && !scoreQuota.isUnlimited && liveCount >= scoreQuota.limit && (
                   <Link to="/pricing" className="ml-2 font-medium text-brand hover:underline">
                     Upgrade to expand
@@ -311,29 +315,25 @@ export default function Library() {
                     <p className="type-caption text-ink-tertiary">Instrument</p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {instruments.map((ins) => (
-                        <button
+                        <FilterTab
                           key={ins}
+                          active={filterInstrument === ins}
                           onClick={() => setFilterInstrument(ins)}
-                          className={`rounded-control px-2 py-1 type-body-small ${
-                            filterInstrument === ins ? 'bg-brand-soft font-semibold text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover'
-                          }`}
                         >
                           {ins === 'all' ? 'All' : ins}
-                        </button>
+                        </FilterTab>
                       ))}
                     </div>
                     <p className="mt-3 type-caption text-ink-tertiary">Practice history</p>
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {[['any', 'Any'], ['recent', 'Played recently'], ['notplayed', 'Not played yet']].map(([k, l]) => (
-                        <button
+                        <FilterTab
                           key={k}
+                          active={filterPlayed === k}
                           onClick={() => setFilterPlayed(k)}
-                          className={`rounded-control px-2 py-1 type-body-small ${
-                            filterPlayed === k ? 'bg-brand-soft font-semibold text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover'
-                          }`}
                         >
                           {l}
-                        </button>
+                        </FilterTab>
                       ))}
                     </div>
                     <label className="mt-3 flex items-center gap-2 type-label text-ink-primary cursor-pointer select-none">
@@ -349,51 +349,40 @@ export default function Library() {
               </div>
 
               {/* Sort dropdown */}
-              <div className="relative">
-                <Button
-                  intent="secondary"
-                  size="md"
-                  onClick={() => { setShowSort((s) => !s); setShowFilters(false); }}
-                  aria-label="Sort repertoire"
-                >
-                  <ArrowUpDown className="icon-sm" />
-                  <span className="hidden sm:inline">Sort</span>
-                </Button>
-                {showSort && (
-                  <Surface tone="raised" elevation="overlay" padding="none" className="absolute right-0 z-20 mt-1 w-44 p-1">
-                    {sortOptions.map((o) => (
-                      <button
-                        key={o.key}
-                        onClick={() => { setParam('sort', o.key); setShowSort(false); }}
-                        className={`flex w-full items-center justify-between rounded-control px-2.5 py-2 text-left type-body-small ${
-                          sort === o.key ? 'bg-brand-soft font-semibold text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover'
-                        }`}
-                      >
-                        <span>{o.label}</span>
-                        {sort === o.key && <Check className="h-3 w-3" />}
-                      </button>
-                    ))}
-                  </Surface>
-                )}
-              </div>
+              <DropdownMenu open={showSort} onOpenChange={setShowSort}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    intent="secondary"
+                    size="md"
+                    aria-label="Sort repertoire"
+                  >
+                    <ArrowUpDown className="icon-sm" />
+                    <span className="hidden sm:inline">Sort</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-44">
+                  {sortOptions.map((o) => (
+                    <DropdownMenuItem
+                      key={o.key}
+                      onClick={() => setParam('sort', o.key)}
+                      className="flex items-center justify-between"
+                    >
+                      <span>{o.label}</span>
+                      {sort === o.key && <Check className="h-3 w-3" />}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-              {/* Grid / List switch */}
-              <div className="flex h-control-md items-center rounded-control border border-line-subtle bg-neutral-muted p-0.5">
-                <IconButton
-                  icon={LayoutGrid}
-                  size="xs"
-                  tone={view === 'grid' ? 'outline' : 'quiet'}
-                  label="Grid view"
-                  onClick={() => setParam('layout', 'grid')}
-                />
-                <IconButton
-                  icon={List}
-                  size="xs"
-                  tone={view === 'list' ? 'outline' : 'quiet'}
-                  label="List view"
-                  onClick={() => setParam('layout', 'list')}
-                />
-              </div>
+              {/* Grid / List switch (canonical SegmentedControl) */}
+              <SegmentedControl value={view} onValueChange={(v) => setParam('layout', v)} aria-label="View layout">
+                <SegmentedControlItem value="grid" aria-label="Grid view">
+                  <LayoutGrid className="icon-xs" />
+                </SegmentedControlItem>
+                <SegmentedControlItem value="list" aria-label="List view">
+                  <List className="icon-xs" />
+                </SegmentedControlItem>
+              </SegmentedControl>
             </div>
           </div>
 
@@ -444,11 +433,11 @@ export default function Library() {
           onClick={() => { setShowFilters(false); setShowSort(false); }}
         >
           {isEmpty ? (
-            <EmptyState active={active} isTrash={isTrash} />
+            <LibraryEmptyState active={active} isTrash={isTrash} />
           ) : isTrash ? (
             <div className="space-y-3">
               {isAtScoreLimit && (
-                <p className="type-metadata text-ink-secondary bg-neutral-muted px-4 py-2.5 rounded-control border border-line-subtle">
+                <p className="type-metadata text-ink-primary bg-surface-panel px-4 py-2.5 rounded-control border border-line-subtle">
                   Your repertoire is full ({effectiveCount} of {scoreQuota.limit} scores). Delete a score permanently or upgrade to restore music from Trash.
                 </p>
               )}
@@ -504,7 +493,7 @@ export default function Library() {
                 <div
                   key={s.id}
                   className={`flex items-center gap-4 p-3.5 transition-colors hover:bg-neutral-hover ${
-                    selected.includes(s.id) ? 'bg-neutral-muted/70' : ''
+                    selected.includes(s.id) ? 'bg-neutral-muted/50' : ''
                   }`}
                 >
                   <Checkbox
@@ -522,7 +511,7 @@ export default function Library() {
                       <p className="truncate type-subsection text-ink-primary">{s.title}</p>
                       <p className="truncate type-metadata text-ink-secondary">{s.composer} · {s.instrument}</p>
                     </div>
-                    {s.favorite && <Star className="h-3.5 w-3.5 fill-gold text-gold shrink-0" />}
+                    {s.favorite && <Star className="h-3.5 w-3.5 fill-brand text-brand shrink-0" />}
                     <span className="hidden type-metadata text-ink-tertiary sm:block">
                       {s.lastPlayed === 'never' || !s.lastPlayed ? 'Awaiting practice' : `Played ${s.lastPlayed}`}
                     </span>
@@ -552,14 +541,11 @@ export default function Library() {
           <DialogHeader><DialogTitle>Move to folder</DialogTitle></DialogHeader>
           <div className="space-y-1 mt-2">
             {folders.map((f) => (
-              <button
+              <FolderOptionRow
                 key={f.id}
+                name={f.name}
                 onClick={() => moveSelected(f.id)}
-                className="flex w-full items-center gap-2 rounded-control border border-line-subtle px-3 py-2 text-left type-body-small hover:bg-neutral-hover"
-              >
-                <FolderInput className="h-3.5 w-3.5 text-ink-secondary" />
-                <span className="font-medium text-ink-primary">{f.name}</span>
-              </button>
+              />
             ))}
             {folders.length === 0 && <p className="py-4 text-center type-metadata text-ink-tertiary">No folders yet.</p>}
           </div>
@@ -660,7 +646,9 @@ export default function Library() {
                 placeholder="New folder name"
                 className="flex-1"
               />
-              <Button intent="primary" size="sm" onClick={() => { if (newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}><Plus className="h-3.5 w-3.5" /></Button>
+              <Button intent="primary" size="sm" onClick={() => { if (newFolderName.trim()) { createFolder(newFolderName.trim()); setNewFolderName(''); } }}>
+                <Plus className="h-3.5 w-3.5" />
+              </Button>
             </div>
           </div>
           <DialogFooter>
@@ -684,51 +672,59 @@ export default function Library() {
   );
 }
 
-function EmptyState({ active, isTrash }) {
+function LibraryEmptyState({ active, isTrash }) {
   if (isTrash) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
-        <Trash2 className="h-8 w-8 text-ink-tertiary" />
-        <h2 className="mt-3 type-section-title text-ink-primary">Trash is empty</h2>
-        <p className="mt-1.5 max-w-sm type-body-small text-ink-secondary">Scores you remove go here first. You can restore them anytime within 30 days.</p>
-      </div>
+      <Surface tone="panel" padding="none">
+        <EmptyState
+          icon={Trash2}
+          title="Trash is empty"
+          description="Scores you remove go here first. You can restore them anytime within 30 days."
+        />
+      </Surface>
     );
   }
   if (active === 'all') {
     return (
-      <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
-        <h2 className="type-section-title text-ink-primary">Start with something you love.</h2>
-        <p className="mt-2 max-w-sm type-body-small text-ink-secondary">
-          Add sheet music you have always wanted to play — whether scan, photo, or MusicXML.
-        </p>
-        <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">
-          <Button intent="primary" size="md" asChild>
-            <Link to="/add-score">
-              <Plus className="icon-sm" />
-              <span>Add sheet music</span>
-            </Link>
-          </Button>
-          <span className="type-caption text-ink-tertiary">or</span>
-          <Button intent="secondary" size="md" asChild>
-            <Link to="/score/moonlight">
-              Explore Moonlight Sonata
-            </Link>
-          </Button>
-        </div>
-      </div>
+      <Surface tone="panel" padding="none">
+        <EmptyState
+          title="Start with something you love."
+          description="Add sheet music you have always wanted to play — whether scan, photo, or MusicXML."
+          action={
+            <div className="flex flex-col items-center gap-3 sm:flex-row">
+              <Button intent="primary" size="md" asChild>
+                <Link to="/add-score">
+                  <Plus className="icon-sm" />
+                  <span>Add sheet music</span>
+                </Link>
+              </Button>
+              <span className="type-caption text-ink-tertiary">or</span>
+              <Button intent="secondary" size="md" asChild>
+                <Link to="/score/moonlight">
+                  Explore Moonlight Sonata
+                </Link>
+              </Button>
+            </div>
+          }
+        />
+      </Surface>
     );
   }
   const labels = { mine: 'your own scores', shared: 'scores shared with you', saved: 'saved scores', favorites: 'favorites' };
   return (
-    <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
-      <h2 className="type-section-title text-ink-primary">Nothing here yet</h2>
-      <p className="mt-1.5 max-w-sm type-body-small text-ink-secondary">This is where {labels[active] || 'these scores'} will appear.</p>
-      <Button intent="primary" size="md" className="mt-5" asChild>
-        <Link to="/add-score">
-          <Plus className="icon-sm" />
-          <span>Add a score</span>
-        </Link>
-      </Button>
-    </div>
+    <Surface tone="panel" padding="none">
+      <EmptyState
+        title="Nothing here yet"
+        description={`This is where ${labels[active] || 'these scores'} will appear.`}
+        action={
+          <Button intent="primary" size="md" asChild>
+            <Link to="/add-score">
+              <Plus className="icon-sm" />
+              <span>Add a score</span>
+            </Link>
+          </Button>
+        }
+      />
+    </Surface>
   );
 }

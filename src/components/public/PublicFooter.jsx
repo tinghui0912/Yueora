@@ -12,7 +12,7 @@ import { ScoreSheetGlyph } from '@/components/brand/MusicalGlyphs';
  */
 export default function PublicFooter() {
   return (
-    <footer className="border-t border-line-subtle/80 bg-surface-panel/40">
+    <footer className="border-t border-line-subtle bg-surface-panel">
       <div className="mx-auto max-w-7xl px-6 md:px-10 py-16 md:py-20">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-12 lg:gap-16">
           {/* Brand & Editorial Manifesto Block */}
@@ -127,7 +127,7 @@ export default function PublicFooter() {
         </div>
 
         {/* Minimal Bottom Baseline */}
-        <div className="mt-16 pt-8 border-t border-line-subtle/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ink-tertiary">
+        <div className="mt-16 pt-8 border-t border-line-subtle flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ink-tertiary">
           <p>© 2026 Yueora Inc. Made for musicians who love the pieces they play.</p>
           <p className="font-display italic text-sm text-ink-secondary">Every piece has a life in Yueora.</p>
         </div>

@@ -95,9 +95,9 @@ export default function VerifyEmail() {
           {cooldown > 0 ? (
             <span className="text-ink-tertiary">Resend in {cooldown}s</span>
           ) : (
-            <button type="button" onClick={resend} disabled={sending} className="flex items-center gap-1.5 text-brand hover:underline disabled:opacity-50">
+            <Button type="button" intent="link" size="sm" onClick={resend} disabled={sending}>
               {sending ? <><Loader2 className="icon-xs animate-spin" /> Sending…</> : <><RefreshCw className="icon-xs" /> Resend code</>}
-            </button>
+            </Button>
           )}
           <span>·</span>
           <Link to="/login" className="hover:text-ink-primary hover:underline">Back to log in</Link>

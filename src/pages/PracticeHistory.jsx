@@ -5,7 +5,8 @@ import { usePrototypeStore } from '@/stores/prototypeStore';
 import { dayLabel, minutesLabel, modeLabel } from '@/lib/practiceUtils';
 import AppPage from '@/components/patterns/AppPage';
 import PageHeader from '@/components/patterns/PageHeader';
-import StateMessage from '@/components/patterns/StateMessage';
+import EmptyState from '@/components/patterns/EmptyState';
+import PracticeHistoryRow from '@/components/practice/PracticeHistoryRow';
 import { Button } from '@/components/ui/button';
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
@@ -39,12 +40,11 @@ export default function PracticeHistory() {
 
       {mine.length === 0 ? (
         <div className="mt-8">
-          <StateMessage
-            tone="neutral"
+          <EmptyState
             icon={Music2}
             title="No practice yet"
             description="When you practice, the activity shows up here — just the piece, the date and how long. This record stays private to you."
-            primaryAction={<Button asChild><Link to="/practice">Choose something to play</Link></Button>}
+            action={<Button asChild intent="primary" size="md"><Link to="/practice">Choose something to play</Link></Button>}
           />
         </div>
       ) : (
@@ -54,18 +54,11 @@ export default function PracticeHistory() {
               <h2 className="mb-2 type-caption text-ink-tertiary">{date}</h2>
               <div className="divide-y divide-line-subtle rounded-container border border-line-subtle bg-surface-panel overflow-hidden">
                 {items.map((a) => (
-                  <button
+                  <PracticeHistoryRow
                     key={a.id}
-                    type="button"
-                    onClick={() => setDetail(a)}
-                    className="block w-full p-4 text-left transition-colors hover:bg-neutral-hover"
-                  >
-                    <p className="font-medium text-ink-primary">{a.scoreTitleSnapshot}</p>
-                    <p className="mt-0.5 type-body-small text-ink-secondary">
-                      {minutesLabel(a.durationSeconds)} · {modeLabel(a.mode)}{a.tempoBpm ? ` · ${a.tempoBpm} BPM` : ''}
-                    </p>
-                    <p className="mt-1 type-metadata text-ink-tertiary">{a.rangeSummary}</p>
-                  </button>
+                    item={a}
+                    onSelect={setDetail}
+                  />
                 ))}
               </div>
             </section>

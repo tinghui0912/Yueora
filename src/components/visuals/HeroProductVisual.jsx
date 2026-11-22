@@ -58,12 +58,12 @@ export default function HeroProductVisual() {
         </div>
 
         {/* Organic relationship metadata */}
-        <div className="mt-2.5 flex flex-wrap items-center gap-3 rounded-control bg-surface-canvas/60 px-2.5 py-1.5 text-xs text-ink-secondary">
+        <div className="mt-2.5 flex flex-wrap items-center gap-3 rounded-control bg-surface-canvas px-2.5 py-1.5 text-xs text-ink-secondary">
           <span className="flex items-center gap-1 text-brand font-medium">
             <PracticeGlyph className="h-3 w-3" /> Continue from bar 14
           </span>
           <span className="text-ink-tertiary">·</span>
-          <span className="flex items-center gap-1 text-ink-secondary/70">
+          <span className="flex items-center gap-1 text-ink-tertiary">
             <MemoryGlyph className="h-3 w-3" /> 1 take kept
           </span>
         </div>

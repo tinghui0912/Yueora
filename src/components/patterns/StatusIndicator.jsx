@@ -1,33 +1,24 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-const toneDot = {
-  neutral: 'bg-ink-tertiary',
-  brand: 'bg-brand',
-  success: 'bg-success',
-  warning: 'bg-warning',
-  danger: 'bg-danger',
-  practice: 'bg-practice-current',
-};
-
-const toneText = {
-  neutral: 'text-ink-secondary',
-  brand: 'text-ink-primary',
-  success: 'text-success',
-  warning: 'text-warning',
-  danger: 'text-danger',
-  practice: 'text-practice-current',
-};
-
 /**
- * StatusIndicator — dot + label for import status, save state, live input, MIDI, sharing, invitation.
+ * StatusIndicator — status badge/pill for import status, save state, live input, MIDI, sharing, invitation.
+ * Sourced from canonical Numis brand, neutral, and destructive alert primitives.
  */
+const toneStyles = {
+  neutral: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+  brand: 'border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80',
+  success: 'border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80',
+  warning: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+  danger: 'border-transparent bg-danger text-danger-foreground shadow hover:bg-danger/80',
+  practice: 'border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80',
+};
+
 export default function StatusIndicator({ tone = 'neutral', label, className = '', pulse = false }) {
-  const dot = toneDot[tone] || toneDot.neutral;
-  const text = toneText[tone] || toneText.neutral;
+  const recipe = toneStyles[tone] || toneStyles.neutral;
   return (
-    <span className={cn('inline-flex items-center gap-1.5 type-body-small', text, className)}>
-      <span className={cn('h-2 w-2 rounded-full', dot, pulse && 'animate-pulse')} />
+    <span className={cn('inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 type-body-small font-medium', recipe, className)}>
+      {pulse && <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />}
       {label}
     </span>
   );
