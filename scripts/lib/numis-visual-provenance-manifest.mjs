@@ -1046,7 +1046,14 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "destructive-toast-close"
     ],
-    "mappingType": "exact"
+    "mappingType": "exact",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "ToastClose",
+      "target": "ToastPrimitives.Close",
+      "prefixFilter": "group-[.destructive]:",
+      "stripPrefix": true
+    }
   },
   {
     "id": "badge-default",
@@ -1086,7 +1093,26 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "practice",
       "attention"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnits": {
+      "src/components/ui/badge.jsx": {
+        "type": "cva-variant",
+        "variable": "badgeVariants",
+        "variantGroup": "variant",
+        "key": "default"
+      },
+      "src/components/patterns/StatusIndicator.jsx": {
+        "type": "object-property",
+        "variable": "toneStyles",
+        "key": "brand"
+      },
+      "src/components/patterns/CountBadge.jsx": {
+        "type": "cva-variant",
+        "variable": "countBadgeVariants",
+        "variantGroup": "tone",
+        "key": "attention"
+      }
+    }
   },
   {
     "id": "badge-secondary",
@@ -1123,7 +1149,26 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "warning",
       "informational"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnits": {
+      "src/components/ui/badge.jsx": {
+        "type": "cva-variant",
+        "variable": "badgeVariants",
+        "variantGroup": "variant",
+        "key": "secondary"
+      },
+      "src/components/patterns/StatusIndicator.jsx": {
+        "type": "object-property",
+        "variable": "toneStyles",
+        "key": "neutral"
+      },
+      "src/components/patterns/CountBadge.jsx": {
+        "type": "cva-variant",
+        "variable": "countBadgeVariants",
+        "variantGroup": "tone",
+        "key": "informational"
+      }
+    }
   },
   {
     "id": "badge-destructive",
@@ -1160,7 +1205,26 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "destructive",
       "danger"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnits": {
+      "src/components/ui/badge.jsx": {
+        "type": "cva-variant",
+        "variable": "badgeVariants",
+        "variantGroup": "variant",
+        "key": "destructive"
+      },
+      "src/components/patterns/StatusIndicator.jsx": {
+        "type": "object-property",
+        "variable": "toneStyles",
+        "key": "danger"
+      },
+      "src/components/patterns/CountBadge.jsx": {
+        "type": "cva-variant",
+        "variable": "countBadgeVariants",
+        "variantGroup": "tone",
+        "key": "danger"
+      }
+    }
   },
   {
     "id": "badge-outline",
@@ -1187,7 +1251,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "outline"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "cva-variant",
+      "variable": "badgeVariants",
+      "variantGroup": "variant",
+      "key": "outline"
+    }
   },
   {
     "id": "toast-destructive",
@@ -1221,7 +1291,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "destructive-toast"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "cva-variant",
+      "variable": "toastVariants",
+      "variantGroup": "variant",
+      "key": "destructive"
+    }
   },
   {
     "id": "toast-action",
@@ -1255,7 +1331,14 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "destructive-toast-action"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "ToastAction",
+      "target": "ToastPrimitives.Action",
+      "prefixFilter": "group-[.destructive]:",
+      "stripPrefix": false
+    }
   },
   {
     "id": "button-default",
@@ -1287,7 +1370,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "primary"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "cva-variant",
+      "variable": "buttonVariants",
+      "variantGroup": "intent",
+      "key": "primary"
+    }
   },
   {
     "id": "button-destructive",
@@ -1319,7 +1408,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "danger"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "cva-variant",
+      "variable": "buttonVariants",
+      "variantGroup": "intent",
+      "key": "danger"
+    }
   },
   {
     "id": "button-outline",
@@ -1356,7 +1451,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "secondary"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "cva-variant",
+      "variable": "buttonVariants",
+      "variantGroup": "intent",
+      "key": "secondary"
+    }
   },
   {
     "id": "button-secondary",
@@ -1388,7 +1489,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "subtle"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "cva-variant",
+      "variable": "buttonVariants",
+      "variantGroup": "intent",
+      "key": "subtle"
+    }
   },
   {
     "id": "button-ghost",
@@ -1416,7 +1523,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "quiet"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "cva-variant",
+      "variable": "buttonVariants",
+      "variantGroup": "intent",
+      "key": "quiet"
+    }
   },
   {
     "id": "button-link",
@@ -1446,7 +1559,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "link"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "cva-variant",
+      "variable": "buttonVariants",
+      "variantGroup": "intent",
+      "key": "link"
+    }
   },
   {
     "id": "button-size-icon",
@@ -1474,7 +1593,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "icon-md"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "cva-variant",
+      "variable": "iconButtonVariants",
+      "variantGroup": "size",
+      "key": "md"
+    }
   },
   {
     "id": "input-default",
@@ -1516,7 +1641,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "shadow-control",
       "placeholder:text-ink-tertiary",
       "focus-visible:ring-1",
-      "focus-visible:ring-brand"
+      "focus-visible:ring-brand",
+      "text-ink-primary"
     ],
     "allowedOwners": [
       "src/components/ui/input.jsx"
@@ -1524,7 +1650,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "default"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "Input",
+      "target": "input",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "select-trigger",
@@ -1570,7 +1702,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "shadow-control",
       "data-[placeholder]:text-ink-tertiary",
       "focus:ring-1",
-      "focus:ring-brand"
+      "focus:ring-brand",
+      "text-ink-primary"
     ],
     "allowedOwners": [
       "src/components/ui/select.jsx"
@@ -1578,7 +1711,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "trigger"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "SelectTrigger",
+      "target": "SelectPrimitive.Trigger",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "select-content",
@@ -1623,7 +1762,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "content"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "SelectContent",
+      "target": "SelectPrimitive.Content",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "select-item",
@@ -1665,7 +1810,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "pr-8",
       "outline-none",
       "focus:bg-brand-soft",
-      "focus:text-brand-soft-foreground"
+      "focus:text-brand-soft-foreground",
+      "text-ink-primary"
     ],
     "allowedOwners": [
       "src/components/ui/select.jsx"
@@ -1673,7 +1819,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "item"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "SelectItem",
+      "target": "SelectPrimitive.Item",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "checkbox-default",
@@ -1722,7 +1874,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "default"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "Checkbox",
+      "target": "CheckboxPrimitive.Root",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "radio-item",
@@ -1766,7 +1924,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "item"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "RadioGroupItem",
+      "target": "RadioGroupPrimitive.Item",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "switch-root",
@@ -1808,7 +1972,9 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "border-transparent",
       "shadow-sm",
       "data-[state=checked]:bg-brand",
-      "data-[state=unchecked]:bg-input"
+      "data-[state=unchecked]:bg-input",
+      "focus-visible:ring-2",
+      "focus-visible:ring-brand"
     ],
     "allowedOwners": [
       "src/components/ui/switch.jsx"
@@ -1816,7 +1982,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "root"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "Switch",
+      "target": "SwitchPrimitives.Root",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "switch-thumb",
@@ -1862,7 +2034,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "thumb"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "Switch",
+      "target": "SwitchPrimitives.Thumb",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "dialog-overlay",
@@ -1894,7 +2072,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "overlay"
     ],
-    "mappingType": "exact"
+    "mappingType": "exact",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "DialogOverlay",
+      "target": "DialogPrimitive.Overlay",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "dialog-content",
@@ -1950,7 +2134,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "content"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "DialogContent",
+      "target": "DialogPrimitive.Content",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "popover-content",
@@ -1991,7 +2181,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "content"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "PopoverContent",
+      "target": "PopoverPrimitive.Content",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "dropdown-menu-content",
@@ -2034,7 +2230,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "content"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "DropdownMenuContent",
+      "target": "DropdownMenuPrimitive.Content",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "dropdown-menu-item",
@@ -2087,7 +2289,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "item"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "DropdownMenuItem",
+      "target": "DropdownMenuPrimitive.Item",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "tooltip-content",
@@ -2127,7 +2335,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "content"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "TooltipContent",
+      "target": "TooltipPrimitive.Content",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "tabs-list",
@@ -2167,7 +2381,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "list"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "TabsList",
+      "target": "TabsPrimitive.List",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "tabs-trigger",
@@ -2208,7 +2428,9 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "text-ink-tertiary",
       "data-[state=active]:bg-surface-canvas",
       "data-[state=active]:text-ink-primary",
-      "data-[state=active]:shadow"
+      "data-[state=active]:shadow",
+      "focus-visible:ring-2",
+      "focus-visible:ring-ring"
     ],
     "allowedOwners": [
       "src/components/ui/tabs.jsx"
@@ -2216,7 +2438,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "trigger"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "TabsTrigger",
+      "target": "TabsPrimitive.Trigger",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "toggle-default",
@@ -2242,7 +2470,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "default"
     ],
-    "mappingType": "exact"
+    "mappingType": "exact",
+    "ownerUnit": {
+      "type": "cva-variant",
+      "variable": "toggleVariants",
+      "variantGroup": "variant",
+      "key": "default"
+    }
   },
   {
     "id": "toggle-outline",
@@ -2278,7 +2512,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "outline"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "cva-variant",
+      "variable": "toggleVariants",
+      "variantGroup": "variant",
+      "key": "outline"
+    }
   },
   {
     "id": "empty-state",
@@ -2334,7 +2574,11 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "empty-state"
     ],
-    "mappingType": "structural-adaptation"
+    "mappingType": "structural-adaptation",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "EmptyState"
+    }
   },
   {
     "id": "dashboard-segmented-toggle",
@@ -2392,7 +2636,15 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "segmented-control"
     ],
-    "mappingType": "structural-adaptation"
+    "mappingType": "structural-adaptation",
+    "ownerUnit": {
+      "type": "jsx-component-group",
+      "components": [
+        "SegmentedControl",
+        "SegmentedControlItem"
+      ],
+      "targetItemExpr": true
+    }
   },
   {
     "id": "flat-content-panel",
@@ -2425,7 +2677,22 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "panel"
     ],
-    "mappingType": "structural-adaptation"
+    "mappingType": "structural-adaptation",
+    "ownerUnit": {
+      "type": "cva-variant-composite",
+      "variable": "surfaceVariants",
+      "variants": [
+        {
+          "group": "tone",
+          "key": "panel"
+        },
+        {
+          "group": "border",
+          "key": "true"
+        }
+      ],
+      "includeBase": true
+    }
   },
   {
     "id": "statcard-interactive-panel",
@@ -2468,7 +2735,26 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "surface-interactive"
     ],
-    "mappingType": "structural-adaptation"
+    "mappingType": "structural-adaptation",
+    "ownerUnit": {
+      "type": "cva-variant-composite",
+      "variable": "surfaceVariants",
+      "variants": [
+        {
+          "group": "tone",
+          "key": "panel"
+        },
+        {
+          "group": "border",
+          "key": "true"
+        },
+        {
+          "group": "interactive",
+          "key": "true"
+        }
+      ],
+      "includeBase": true
+    }
   },
   {
     "id": "itemcard-interactive-card",
@@ -2517,7 +2803,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "score-card"
     ],
-    "mappingType": "structural-adaptation"
+    "mappingType": "structural-adaptation",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "ScoreCard",
+      "target": "div",
+      "cnArgumentIndex": 0
+    }
   },
   {
     "id": "sidebar-active-navigation",
@@ -2554,7 +2846,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "nav-active"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "SidebarNavItem",
+      "target": "NavLink",
+      "cnArgumentIndex": 1
+    }
   },
   {
     "id": "dashboard-quick-link",
@@ -2588,7 +2886,9 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "border",
       "border-brand/10",
       "hover:border-brand/30",
-      "transition-all"
+      "transition-all",
+      "focus-visible:ring-1",
+      "focus-visible:ring-brand"
     ],
     "allowedOwners": [
       "src/components/practice/PracticeQuickLink.jsx"
@@ -2596,7 +2896,13 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "approvedYueoraRoles": [
       "quick-link"
     ],
-    "mappingType": "semantic-alias"
+    "mappingType": "semantic-alias",
+    "ownerUnit": {
+      "type": "jsx-component",
+      "component": "PracticeQuickLink",
+      "target": "Link",
+      "cnArgumentIndex": 0
+    }
   }
 ];
 

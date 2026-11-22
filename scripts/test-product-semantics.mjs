@@ -115,11 +115,8 @@ console.log('--- Practice Session Control Toggle Semantics ---');
 const practiceCode = fs.readFileSync('src/pages/PracticeSession.jsx', 'utf8');
 assert(practiceCode.includes('<Toggle') && practiceCode.includes('aria-label="Loop playback"'), 'PracticeSession uses canonical Toggle for stateful controls');
 assert(!practiceCode.includes('<Button intent="primary" onClick={() => setLoop'), 'Loop toggle does NOT use dominant Button intent="primary"');
-
-const pcbCode = fs.readFileSync('src/components/practice/PracticeControlButton.jsx', 'utf8');
-assert(pcbCode.includes("from '@/components/ui/toggle'"), 'PracticeControlButton wraps canonical Toggle');
-assert(!pcbCode.includes('<button'), 'PracticeControlButton does NOT use raw <button>');
-assert(!pcbCode.includes('border-brand bg-neutral-muted'), 'PracticeControlButton does NOT invent custom visual styling');
+assert(!practiceCode.includes('PracticeControlButton'), 'PracticeSession does NOT use dead PracticeControlButton wrapper');
+assert(!fs.existsSync('src/components/practice/PracticeControlButton.jsx'), 'Dead PracticeControlButton.jsx is completely removed');
 
 // -----------------------------------------------------------------------------
 // SUMMARY

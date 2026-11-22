@@ -2335,21 +2335,50 @@ assertColorPositive(
 // -----------------------------------------------------------------------------
 console.log('--- Cross-Family Recipe Unit & State Modifier Mutations ---');
 
-function assertRecipeUnitMutation(name, filePath, mutatedContent, recipeId, expectedMissingClass) {
+function assertRecipeUnitMutation(name, filePath, mutatedContent, recipeId, expectedSubstring) {
   totalTests++;
   try {
     const recipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === recipeId);
     if (!recipe) throw new Error(`Unknown recipe ${recipeId}`);
-    const tokens = extractRecipeUnitTokens(filePath, mutatedContent, recipe);
-    const missing = recipe.yueoraClasses.filter((cls) => !tokens.has(cls));
-    const found = !expectedMissingClass || missing.includes(expectedMissingClass);
-    if (missing.length > 0 && found) {
+    const issues = verifyVisualRecipes([recipe], {
+      contentOverrides: {
+        [filePath]: mutatedContent,
+      },
+    });
+    const found = issues.some(
+      (i) => !expectedSubstring || (i.message && i.message.includes(expectedSubstring))
+    );
+    if (issues.length > 0 && found) {
       console.log(`  ✓ [FAIL as expected] ${name}`);
       passedTests++;
     } else {
       console.error(`  ❌ [UNEXPECTED PASS] ${name}`);
-      console.error(`     Expected missing: ${expectedMissingClass}`);
-      console.error(`     Actual missing: ${missing.join(', ')}`);
+      console.error(`     Expected issue containing: ${expectedSubstring}`);
+      console.error(`     Actual issues: ${JSON.stringify(issues)}`);
+      failedTests++;
+    }
+  } catch (err) {
+    console.error(`  ❌ [ERROR] ${name}: ${err.message}`);
+    failedTests++;
+  }
+}
+
+function assertRecipeUnitPositive(name, filePath, mutatedContent, recipeId) {
+  totalTests++;
+  try {
+    const recipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === recipeId);
+    if (!recipe) throw new Error(`Unknown recipe ${recipeId}`);
+    const issues = verifyVisualRecipes([recipe], {
+      contentOverrides: {
+        [filePath]: mutatedContent,
+      },
+    });
+    if (issues.length === 0) {
+      console.log(`  ✓ [PASS as expected] ${name}`);
+      passedTests++;
+    } else {
+      console.error(`  ❌ [UNEXPECTED FAIL] ${name}`);
+      console.error(`     Actual issues: ${JSON.stringify(issues)}`);
       failedTests++;
     }
   } catch (err) {
@@ -2397,29 +2426,60 @@ assertRecipeUnitMutation(
   'text-brand-foreground'
 );
 
-// 2. Toggle mutations
-const toggleCode = fs.readFileSync('src/components/ui/toggle.jsx', 'utf8');
-
-// 2a. Toggle outline wrong hover text
+// 1e. Mandatory Mutation 1: Button primary + active:scale-110 -> FAIL (unexpected protected token)
 assertRecipeUnitMutation(
-  'Toggle outline: wrong hover text caught',
-  'src/components/ui/toggle.jsx',
-  toggleCode.replace('hover:text-brand-soft-foreground', 'hover:text-ink-primary'),
-  'toggle-outline',
-  'hover:text-brand-soft-foreground'
+  'Mandatory Mutation 1: Button primary with unauthorized active:scale-110 rejected',
+  'src/components/ui/button.jsx',
+  btnCode.replace('hover:bg-brand/90', 'hover:bg-brand/90 active:scale-110'),
+  'button-default',
+  'active:scale-110'
 );
 
-// 2b. Toggle outline stripped hover modifier (bg-brand-soft without hover:)
+// 1f. Mandatory Mutation 2: Button primary + active:bg-brand-soft -> FAIL (unexpected protected chromatic state)
 assertRecipeUnitMutation(
-  'Toggle outline: stripped hover modifier caught',
-  'src/components/ui/toggle.jsx',
-  toggleCode.replace('hover:bg-brand-soft', 'bg-brand-soft'),
-  'toggle-outline',
-  'hover:bg-brand-soft'
+  'Mandatory Mutation 2: Button primary with unauthorized active:bg-brand-soft rejected',
+  'src/components/ui/button.jsx',
+  btnCode.replace('hover:bg-brand/90', 'hover:bg-brand/90 active:bg-brand-soft'),
+  'button-default',
+  'active:bg-brand-soft'
 );
 
-// 3. Tooltip wrong text
+// 1g. Mandatory Positive Control 7: Button primary + allowed structural utility gap-2 -> PASS
+assertRecipeUnitPositive(
+  'Mandatory Positive Control 7: Button primary with allowed structural utility gap-2 accepted',
+  'src/components/ui/button.jsx',
+  btnCode.replace('hover:bg-brand/90', 'hover:bg-brand/90 gap-2'),
+  'button-default'
+);
+
+// 2. Select mutations & cross-component leakage guards
+const selectCode = fs.readFileSync('src/components/ui/select.jsx', 'utf8');
+
+// 2a. Mandatory Mutation 3: SelectTrigger missing shadow-control while NativeSelect has it -> FAIL
+assertRecipeUnitMutation(
+  'Mandatory Mutation 3: SelectTrigger missing shadow-control caught (isolated from NativeSelect)',
+  'src/components/ui/select.jsx',
+  selectCode.replace(
+    'text-ink-primary shadow-control transition-colors',
+    'text-ink-primary transition-colors'
+  ),
+  'select-trigger',
+  'shadow-control'
+);
+
+// 2b. Mandatory Mutation 4: SelectTrigger wrong focus ring while NativeSelect has correct ring -> FAIL
+assertRecipeUnitMutation(
+  'Mandatory Mutation 4: SelectTrigger wrong focus ring (focus:ring-danger) caught',
+  'src/components/ui/select.jsx',
+  selectCode.replace('focus:ring-1 focus:ring-brand', 'focus:ring-1 focus:ring-danger'),
+  'select-trigger',
+  'focus:ring-danger'
+);
+
+// 3. Tooltip mutations
 const tooltipCode = fs.readFileSync('src/components/ui/tooltip.jsx', 'utf8');
+
+// 3a. Tooltip wrong text
 assertRecipeUnitMutation(
   'Tooltip: wrong text foreground caught',
   'src/components/ui/tooltip.jsx',
@@ -2428,7 +2488,52 @@ assertRecipeUnitMutation(
   'text-brand-foreground'
 );
 
-// 4. Form primitive mutations
+// 3b. Mandatory Mutation 5: TooltipContent extra hover state -> FAIL (unexpected protected token)
+assertRecipeUnitMutation(
+  'Mandatory Mutation 5: TooltipContent with unauthorized hover:bg-brand-soft rejected',
+  'src/components/ui/tooltip.jsx',
+  tooltipCode.replace(
+    'text-brand-foreground animate-in',
+    'text-brand-foreground hover:bg-brand-soft animate-in'
+  ),
+  'tooltip-content',
+  'hover:bg-brand-soft'
+);
+
+// 4. Toggle mutations
+const toggleCode = fs.readFileSync('src/components/ui/toggle.jsx', 'utf8');
+
+// 4a. Toggle outline wrong hover text
+assertRecipeUnitMutation(
+  'Toggle outline: wrong hover text caught',
+  'src/components/ui/toggle.jsx',
+  toggleCode.replace('hover:text-brand-soft-foreground', 'hover:text-ink-primary'),
+  'toggle-outline',
+  'hover:text-brand-soft-foreground'
+);
+
+// 4b. Toggle outline stripped hover modifier (bg-brand-soft without hover:)
+assertRecipeUnitMutation(
+  'Toggle outline: stripped hover modifier caught',
+  'src/components/ui/toggle.jsx',
+  toggleCode.replace('hover:bg-brand-soft', 'bg-brand-soft'),
+  'toggle-outline',
+  'hover:bg-brand-soft'
+);
+
+// 4c. Mandatory Mutation 6: Toggle outline extra selected visual data-[state=on]:shadow-lg -> FAIL
+assertRecipeUnitMutation(
+  'Mandatory Mutation 6: Toggle outline with unauthorized data-[state=on]:shadow-lg rejected',
+  'src/components/ui/toggle.jsx',
+  toggleCode.replace(
+    'hover:text-brand-soft-foreground',
+    'hover:text-brand-soft-foreground data-[state=on]:shadow-lg'
+  ),
+  'toggle-outline',
+  'data-[state=on]:shadow-lg'
+);
+
+// 5. Form primitive mutations
 const inputCode = fs.readFileSync('src/components/ui/input.jsx', 'utf8');
 assertRecipeUnitMutation(
   'Input: missing focus-visible:ring-brand caught',

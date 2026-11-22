@@ -16,6 +16,99 @@ const VALID_MAPPING_TYPES = new Set(['exact', 'semantic-alias', 'structural-adap
 const FROZEN_FIXTURES_DIR = path.resolve('scripts/fixtures/numis-frozen');
 const FROZEN_METADATA_PATH = path.join(FROZEN_FIXTURES_DIR, 'metadata.json');
 
+export function isTypographyStructuralText(cls) {
+  if (/^text-(xs|sm|base|lg|[2-9]?xl)$/.test(cls)) return true;
+  if (/^text-(left|center|right|justify|start|end)$/.test(cls)) return true;
+  if (/^text-(wrap|nowrap|balance|pretty|ellipsis|clip)$/.test(cls)) return true;
+  return false;
+}
+
+export function isControlInfrastructure(token) {
+  if (token.includes('cursor-') || token.includes('pointer-events-')) return true;
+  if (token.includes('outline-none')) return true;
+  if (token.includes('ring-offset-')) return true;
+  if (token === 'disabled:opacity-50' || token === 'disabled:opacity-40' || token === 'data-[disabled]:opacity-50') return true;
+  if (
+    token === 'animate-in' ||
+    token.startsWith('animate-in') ||
+    token.startsWith('fade-in-') ||
+    token.startsWith('fade-out-') ||
+    token.startsWith('zoom-in-') ||
+    token.startsWith('zoom-out-') ||
+    /data-\[(state|side)=[^\]]+\]:(animate-|fade-|zoom-|slide-)/.test(token)
+  ) {
+    return true;
+  }
+  return false;
+}
+
+export function isProtectedToken(token) {
+  if (!token || typeof token !== 'string') return false;
+  if (isControlInfrastructure(token)) return false;
+
+  if (token.startsWith('active:')) {
+    return true;
+  }
+
+  if (token.startsWith('hover:') || token.startsWith('group-hover:') || token.includes(':hover:')) {
+    return true;
+  }
+
+  if (token.startsWith('focus:') || token.startsWith('focus-visible:') || token.includes(':focus:')) {
+    return true;
+  }
+
+  if (/data-\[state=[^\]]+\]:/.test(token)) {
+    return true;
+  }
+  if (/data-\[placeholder\]:/.test(token) || token.startsWith('placeholder:')) {
+    return true;
+  }
+  if (/group-\[[^\]]+\]:/.test(token)) {
+    return true;
+  }
+
+  if (
+    token.startsWith('bg-') ||
+    token.startsWith('from-') ||
+    token.startsWith('via-') ||
+    token.startsWith('to-') ||
+    token.startsWith('ring-') ||
+    token.startsWith('fill-') ||
+    token.startsWith('stroke-')
+  ) {
+    return true;
+  }
+
+  if (token === 'border' || token === 'border-2' || token.startsWith('border-')) {
+    return true;
+  }
+
+  if (token.startsWith('text-')) {
+    return !isTypographyStructuralText(token);
+  }
+
+  if (token === 'shadow' || token.startsWith('shadow-') || token.startsWith('opacity-')) {
+    return true;
+  }
+
+  if (
+    token.startsWith('scale-') ||
+    token.startsWith('translate-') ||
+    token.startsWith('rotate-') ||
+    token.startsWith('duration-') ||
+    token.startsWith('ease-')
+  ) {
+    return true;
+  }
+
+  if (token === 'destructive' || token === 'underline' || token.startsWith('underline-')) {
+    return true;
+  }
+
+  return false;
+}
+
 function extractStringsFromNode(node) {
   const res = [];
   if (!node) return res;
@@ -24,6 +117,25 @@ function extractStringsFromNode(node) {
   } else if (node.type === 'TemplateLiteral') {
     for (const q of node.quasis) {
       if (q.value?.raw) res.push(q.value.raw);
+    }
+  } else if (node.type === 'JSXExpressionContainer') {
+    res.push(...extractStringsFromNode(node.expression));
+  } else if (node.type === 'ConditionalExpression') {
+    res.push(...extractStringsFromNode(node.consequent));
+    res.push(...extractStringsFromNode(node.alternate));
+  } else if (node.type === 'LogicalExpression') {
+    res.push(...extractStringsFromNode(node.right));
+  } else if (node.type === 'CallExpression') {
+    for (const arg of node.arguments) {
+      res.push(...extractStringsFromNode(arg));
+    }
+  } else if (node.type === 'ArrowFunctionExpression' || node.type === 'FunctionExpression') {
+    res.push(...extractStringsFromNode(node.body));
+  } else if (node.type === 'BlockStatement') {
+    for (const stmt of node.body) {
+      if (stmt.type === 'ReturnStatement') {
+        res.push(...extractStringsFromNode(stmt.argument));
+      }
     }
   }
   return res;
@@ -42,14 +154,10 @@ function findObjectProp(objNode, keyName) {
   return null;
 }
 
-const ROLE_ALIASES = {
-  'destructive-toast': ['destructive'],
-  'icon-md': ['md'],
-};
-
 /**
  * Extracts exact recipe unit tokens from an owner file using AST parsing.
- * Preserves all state and variant modifiers (hover:, focus:, data-[state=*]:, etc.)
+ * Restricts extraction strictly to the declared ownerUnit node.
+ * Zero whole-file fallback: fails closed if the unit cannot be resolved.
  *
  * @param {string} filePath
  * @param {string} fileContent
@@ -57,103 +165,217 @@ const ROLE_ALIASES = {
  * @returns {Set<string>}
  */
 export function extractRecipeUnitTokens(filePath, fileContent, recipe) {
-  const ast = parser.parse(fileContent, { sourceType: 'module', plugins: ['jsx'] });
-  const tokens = new Set();
-
-  const searchRoles = new Set(recipe.approvedYueoraRoles || []);
-  for (const r of recipe.approvedYueoraRoles || []) {
-    if (ROLE_ALIASES[r]) {
-      ROLE_ALIASES[r].forEach((a) => searchRoles.add(a));
-    }
+  const normPath = filePath.replace(/\\/g, '/');
+  const unitDef = recipe.ownerUnits ? recipe.ownerUnits[normPath] : recipe.ownerUnit;
+  if (!unitDef) {
+    throw new Error(`Visual recipe '${recipe.id}' does not declare an ownerUnit for owner '${normPath}'. Fail closed.`);
   }
 
-  const addTokens = (str) => {
+  const ast = parser.parse(fileContent, { sourceType: 'module', plugins: ['jsx'] });
+  const rawTokens = new Set();
+
+  function addString(str) {
     if (!str) return;
     str.trim().split(/\s+/).forEach((t) => {
       if (!t) return;
-      tokens.add(t);
-      const strippedGroup = t.replace(/^group-\[\.destructive\]:/, '');
-      if (strippedGroup !== t) tokens.add(strippedGroup);
-    });
-  };
-
-  const addNodeTokens = (node) => {
-    extractStringsFromNode(node).forEach(addTokens);
-  };
-
-  traverse(ast, {
-    CallExpression(path) {
-      const callee = path.node.callee;
-      if (callee.type === 'Identifier' && callee.name === 'cva') {
-        const baseArg = path.node.arguments[0];
-        const configArg = path.node.arguments[1];
-
-        if (recipe.id.startsWith('toggle-') || recipe.id.includes('panel') || recipe.id.includes('surface')) {
-          addNodeTokens(baseArg);
+      if (unitDef.prefixFilter) {
+        if (t.startsWith(unitDef.prefixFilter)) {
+          if (unitDef.stripPrefix) {
+            rawTokens.add(t.slice(unitDef.prefixFilter.length));
+          } else {
+            rawTokens.add(t);
+          }
         }
+      } else {
+        rawTokens.add(t);
+      }
+    });
+  }
 
-        if (configArg && configArg.type === 'ObjectExpression') {
-          const variantsProp = findObjectProp(configArg, 'variants');
-          if (variantsProp && variantsProp.type === 'ObjectExpression') {
-            for (const groupProp of variantsProp.properties) {
-              if (groupProp.type === 'ObjectProperty' && groupProp.value.type === 'ObjectExpression') {
-                for (const itemProp of groupProp.value.properties) {
-                  if (itemProp.type === 'ObjectProperty') {
-                    const itemKey = itemProp.key.type === 'Identifier' ? itemProp.key.name : itemProp.key.value;
-                    if (searchRoles.has(String(itemKey))) {
-                      addNodeTokens(itemProp.value);
-                    }
+  function addNode(node) {
+    extractStringsFromNode(node).forEach(addString);
+  }
+
+  if (unitDef.type === 'cva-variant') {
+    let matched = 0;
+    traverse(ast, {
+      VariableDeclarator(p) {
+        if (p.node.id?.name === unitDef.variable) {
+          const init = p.node.init;
+          if (init?.type === 'CallExpression' && init.callee?.name === 'cva') {
+            const config = init.arguments[1];
+            if (config?.type === 'ObjectExpression') {
+              const variants = findObjectProp(config, 'variants');
+              if (variants) {
+                const group = findObjectProp(variants, unitDef.variantGroup);
+                if (group) {
+                  const val = findObjectProp(group, unitDef.key);
+                  if (val) {
+                    matched++;
+                    addNode(val);
                   }
                 }
               }
             }
           }
-          if (recipe.id === 'flat-content-panel' || recipe.id === 'statcard-interactive-panel') {
-            const toneProp = findObjectProp(variantsProp, 'tone');
-            if (toneProp) addNodeTokens(findObjectProp(toneProp, 'panel'));
-            const borderProp = findObjectProp(variantsProp, 'border');
-            if (borderProp) addNodeTokens(findObjectProp(borderProp, 'true'));
-          }
-          if (recipe.id === 'statcard-interactive-panel') {
-            const interProp = findObjectProp(variantsProp, 'interactive');
-            if (interProp) addNodeTokens(findObjectProp(interProp, 'true'));
-          }
         }
-      }
-    },
-    VariableDeclarator(path) {
-      if (path.node.id.type === 'Identifier' && path.node.init?.type === 'ObjectExpression') {
-        const obj = path.node.init;
-        for (const prop of obj.properties) {
-          if (prop.type === 'ObjectProperty') {
-            const k = prop.key.type === 'Identifier' ? prop.key.name : prop.key.value;
-            if (searchRoles.has(String(k))) {
-              addNodeTokens(prop.value);
+      },
+    });
+    if (matched === 0) throw new Error(`cva-variant not found: ${unitDef.variable}.${unitDef.variantGroup}.${unitDef.key}`);
+    if (matched > 1) throw new Error(`Ambiguous cva-variant matches (${matched}): ${unitDef.variable}.${unitDef.variantGroup}.${unitDef.key}`);
+  } else if (unitDef.type === 'cva-variant-composite') {
+    let matchedVar = 0;
+    traverse(ast, {
+      VariableDeclarator(p) {
+        if (p.node.id?.name === unitDef.variable) {
+          matchedVar++;
+          const init = p.node.init;
+          if (init?.type === 'CallExpression' && init.callee?.name === 'cva') {
+            if (unitDef.includeBase && init.arguments[0]) {
+              addNode(init.arguments[0]);
+            }
+            const config = init.arguments[1];
+            if (config?.type === 'ObjectExpression') {
+              const variants = findObjectProp(config, 'variants');
+              if (variants) {
+                for (const v of unitDef.variants) {
+                  const group = findObjectProp(variants, v.group);
+                  if (!group) throw new Error(`Variant group not found: ${v.group}`);
+                  const val = findObjectProp(group, v.key);
+                  if (!val) throw new Error(`Variant key not found: ${v.group}.${v.key}`);
+                  addNode(val);
+                }
+              }
             }
           }
         }
+      },
+    });
+    if (matchedVar === 0) throw new Error(`Variable not found: ${unitDef.variable}`);
+    if (matchedVar > 1) throw new Error(`Ambiguous variable matches (${matchedVar}): ${unitDef.variable}`);
+  } else if (unitDef.type === 'object-property') {
+    let matched = 0;
+    traverse(ast, {
+      VariableDeclarator(p) {
+        if (p.node.id?.name === unitDef.variable) {
+          const init = p.node.init;
+          if (init?.type === 'ObjectExpression') {
+            const val = findObjectProp(init, unitDef.key);
+            if (val) {
+              matched++;
+              addNode(val);
+            }
+          }
+        }
+      },
+    });
+    if (matched === 0) throw new Error(`object-property not found: ${unitDef.variable}.${unitDef.key}`);
+    if (matched > 1) throw new Error(`Ambiguous object-property matches (${matched}): ${unitDef.variable}.${unitDef.key}`);
+  } else if (unitDef.type === 'jsx-component') {
+    let compPath = null;
+    traverse(ast, {
+      VariableDeclarator(p) {
+        if (p.node.id?.name === unitDef.component) {
+          compPath = p;
+        }
+      },
+      FunctionDeclaration(p) {
+        if (p.node.id?.name === unitDef.component) {
+          compPath = p;
+        }
+      },
+    });
+
+    if (!compPath) throw new Error(`Component definition not found: ${unitDef.component}`);
+
+    function getTagName(node) {
+      if (node.name?.type === 'JSXIdentifier') return node.name.name;
+      if (node.name?.type === 'JSXMemberExpression') {
+        const obj = node.name.object?.name || (node.name.object?.property && `${node.name.object.object?.name}.${node.name.object.property.name}`);
+        return `${obj}.${node.name.property?.name}`;
       }
-    },
-    JSXAttribute(path) {
-      if (path.node.name.name === 'className') {
-        if (path.node.value?.type === 'StringLiteral') {
-          addTokens(path.node.value.value);
-        } else if (path.node.value?.type === 'JSXExpressionContainer') {
-          traverse(path.node.value.expression, {
-            noScope: true,
-            StringLiteral(strPath) {
-              addTokens(strPath.node.value);
-            },
-            TemplateLiteral(tmplPath) {
-              tmplPath.node.quasis.forEach((q) => q.value?.raw && addTokens(q.value.raw));
-            },
-          });
+      return '';
+    }
+
+    if (unitDef.target) {
+      let matchedElements = [];
+      compPath.traverse({
+        JSXOpeningElement(p) {
+          const name = getTagName(p.node);
+          if (name === unitDef.target) {
+            matchedElements.push(p);
+          }
+        },
+      });
+
+      if (matchedElements.length === 0) throw new Error(`Target JSX element <${unitDef.target}> not found in ${unitDef.component}`);
+      if (matchedElements.length > 1) {
+        matchedElements = [matchedElements[0]];
+      }
+
+      const el = matchedElements[0];
+      const attrName = unitDef.attribute || 'className';
+      const attr = el.node.attributes?.find((a) => a.type === 'JSXAttribute' && a.name?.name === attrName);
+      if (!attr) throw new Error(`Attribute ${attrName} not found on <${unitDef.target}> in ${unitDef.component}`);
+
+      if (attr.value?.type === 'StringLiteral') {
+        addString(attr.value.value);
+      } else if (attr.value?.type === 'JSXExpressionContainer') {
+        const expr = attr.value.expression;
+        if (expr.type === 'CallExpression' && expr.callee?.name === 'cn' && typeof unitDef.cnArgumentIndex === 'number') {
+          addNode(expr.arguments[unitDef.cnArgumentIndex]);
+        } else if ((expr.type === 'ArrowFunctionExpression' || expr.type === 'FunctionExpression') && typeof unitDef.cnArgumentIndex === 'number') {
+          const body = expr.body;
+          if (body.type === 'CallExpression' && body.callee?.name === 'cn') {
+            addNode(body.arguments[unitDef.cnArgumentIndex]);
+          } else {
+            addNode(body);
+          }
+        } else {
+          addNode(expr);
         }
       }
-    },
-  });
+    } else {
+      compPath.traverse({
+        JSXAttribute(p) {
+          if (p.node.name?.name === 'className') {
+            addNode(p.node.value);
+          }
+        },
+      });
+    }
+  } else if (unitDef.type === 'jsx-component-group') {
+    for (const compName of unitDef.components) {
+      let compPath = null;
+      traverse(ast, {
+        VariableDeclarator(p) {
+          if (p.node.id?.name === compName) compPath = p;
+        },
+        FunctionDeclaration(p) {
+          if (p.node.id?.name === compName) compPath = p;
+        },
+      });
+      if (!compPath) throw new Error(`Component in group not found: ${compName}`);
+      compPath.traverse({
+        JSXAttribute(p) {
+          if (p.node.name?.name === 'className') {
+            if (compName === 'SegmentedControlItem' && unitDef.targetItemExpr) {
+              const expr = p.node.value?.expression;
+              if (expr?.type === 'CallExpression' && expr.callee?.name === 'cn') {
+                addNode(expr.arguments[1]);
+              }
+            } else {
+              addNode(p.node.value);
+            }
+          }
+        },
+      });
+    }
+  } else {
+    throw new Error(`Unsupported ownerUnit type '${unitDef.type}' for recipe '${recipe.id}'`);
+  }
 
-  return tokens;
+  return rawTokens;
 }
 
 /**
@@ -166,7 +388,8 @@ export function extractRecipeUnitTokens(filePath, fileContent, recipe) {
  * @param {Array<Object>} [recipes=YUEORA_AUTHORIZED_RECIPES] - Recipes to verify
  * @returns {Array<{ file: string, line: number, matched: string, message: string }>}
  */
-export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES) {
+export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES, options = {}) {
+  const { contentOverrides = {} } = options;
   const issues = [];
 
   let frozenMetadata = null;
@@ -319,21 +542,35 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES) {
         continue;
       }
 
-      // 4. Owner source code recipe unit verification (Fail closed: every declared class must exist in the exact recipe unit)
+      // 4. Owner source code recipe unit verification (Fail closed: exact match on protected visual tokens)
       try {
-        const ownerContent = fs.readFileSync(normPath, 'utf8');
-        if (Array.isArray(recipe.yueoraClasses) && recipe.yueoraClasses.length > 0) {
-          const unitTokens = extractRecipeUnitTokens(normPath, ownerContent, recipe);
-          const missingClasses = recipe.yueoraClasses.filter((cls) => !unitTokens.has(cls));
+        const ownerContent =
+          contentOverrides[normPath] !== undefined
+            ? contentOverrides[normPath]
+            : fs.readFileSync(normPath, 'utf8');
+        const unitTokens = extractRecipeUnitTokens(normPath, ownerContent, recipe);
+        const actualProtected = Array.from(unitTokens).filter(isProtectedToken);
+        const expectedProtected = (recipe.yueoraClasses || []).filter(isProtectedToken);
 
-          if (missingClasses.length > 0) {
-            issues.push({
-              file: normPath,
-              line: 1,
-              matched: recipe.id,
-              message: `Owner file '${normPath}' does not contain authorized visual recipe '${recipe.id}' classes (${missingClasses.join(' ')}).`,
-            });
-          }
+        const missingClasses = expectedProtected.filter((cls) => !unitTokens.has(cls));
+        const unexpectedClasses = actualProtected.filter((cls) => !expectedProtected.includes(cls));
+
+        if (missingClasses.length > 0 || unexpectedClasses.length > 0) {
+          const unitDef = recipe.ownerUnits ? recipe.ownerUnits[normPath] : recipe.ownerUnit;
+          const unitDesc = unitDef
+            ? `${unitDef.type} (${unitDef.variable || unitDef.component || unitDef.components?.join('+') || ''})`
+            : 'unknown-unit';
+
+          const details = [];
+          if (missingClasses.length > 0) details.push(`Missing protected tokens: ${missingClasses.join(' ')}`);
+          if (unexpectedClasses.length > 0) details.push(`Unexpected protected tokens: ${unexpectedClasses.join(' ')}`);
+
+          issues.push({
+            file: normPath,
+            line: 1,
+            matched: recipe.id,
+            message: `Visual recipe '${recipe.id}' mismatch in owner '${normPath}' [unit: ${unitDesc}]:\n  ${details.join('\n  ')}`,
+          });
         }
       } catch (err) {
         issues.push({
