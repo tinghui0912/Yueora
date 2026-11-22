@@ -901,17 +901,17 @@ export const NUMIS_REFERENCE_RECIPES = [
     "source": {
       "repository": "tinghui0912/NumisCollection",
       "commit": "efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c",
-      "file": "src/components/ui/card.jsx",
-      "line": 8,
-      "exactSnippet": "className={cn(\"rounded-xl border bg-card text-card-foreground shadow\", className)}"
+      "file": "src/pages/Dashboard.jsx",
+      "line": 121,
+      "exactSnippet": "className=\"bg-card rounded-2xl border border-border/50 p-6\""
     },
-    "sourceSemanticRole": "standard card panel container visual",
+    "sourceSemanticRole": "dashboard resting content panel container visual",
     "sourceClasses": [
-      "rounded-xl",
-      "border",
       "bg-card",
-      "text-card-foreground",
-      "shadow"
+      "rounded-2xl",
+      "border",
+      "border-border/50",
+      "p-6"
     ]
   },
   {
@@ -1651,6 +1651,7 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "transition-colors",
       "file:border-0",
       "file:bg-transparent",
+      "file:text-ink-primary",
       "disabled:opacity-50"
     ],
     "allowedOwners": [
@@ -2686,18 +2687,18 @@ export const YUEORA_AUTHORIZED_RECIPES = [
     "source": {
       "repository": "tinghui0912/NumisCollection",
       "commit": "efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c",
-      "file": "src/components/ui/card.jsx",
-      "line": 8,
-      "exactSnippet": "className={cn(\"rounded-xl border bg-card text-card-foreground shadow\", className)}"
+      "file": "src/pages/Dashboard.jsx",
+      "line": 121,
+      "exactSnippet": "className=\"bg-card rounded-2xl border border-border/50 p-6\""
     },
-    "sourceSemanticRole": "standard card panel container visual",
+    "sourceSemanticRole": "dashboard resting content panel container visual",
     "approvedYueoraRole": "Surface tone=\"panel\" container",
     "sourceClasses": [
-      "rounded-xl",
-      "border",
       "bg-card",
-      "text-card-foreground",
-      "shadow"
+      "rounded-2xl",
+      "border",
+      "border-border/50",
+      "p-6"
     ],
     "yueoraClasses": [
       "rounded-container",

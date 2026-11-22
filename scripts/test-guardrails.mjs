@@ -2543,6 +2543,14 @@ assertRecipeUnitMutation(
   'focus-visible:ring-brand'
 );
 
+assertRecipeUnitMutation(
+  'Input: missing file:text-ink-primary caught',
+  'src/components/ui/input.jsx',
+  inputCode.replace('file:text-ink-primary', ''),
+  'input-default',
+  'Missing protected tokens: file:text-ink-primary'
+);
+
 const switchCode = fs.readFileSync('src/components/ui/switch.jsx', 'utf8');
 assertRecipeUnitMutation(
   'Switch: missing data-[state=checked]:bg-brand caught',
@@ -2837,6 +2845,180 @@ try {
   }
 } catch (e) {
   console.error(`  ❌ [ERROR] Frozen fixture tampering test threw: ${e.message}`);
+  failedTests++;
+}
+
+// 10. Source-to-Manifest Protected Semantic Category Mutations & Documentation Truth Guards
+console.log('--- Source-to-Manifest Category Invariant & Documentation Truth Guards ---');
+
+// 10a. Manifest drops protected shadow mapping -> FAIL
+totalTests++;
+try {
+  const buttonRecipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === 'button-default');
+  const mutatedRecipe = {
+    ...buttonRecipe,
+    yueoraClasses: buttonRecipe.yueoraClasses.filter((cls) => cls !== 'shadow'),
+  };
+  const issues = verifyVisualRecipes([mutatedRecipe]);
+  const hasDroppedShadow = issues.some(
+    (i) => i.message && i.message.includes("drops protected Numis visual category 'resting::shadow'")
+  );
+  if (issues.length > 0 && hasDroppedShadow) {
+    console.log('  ✓ [FAIL as expected] Manifest drops protected shadow mapping rejected');
+    passedTests++;
+  } else {
+    console.error('  ❌ [UNEXPECTED PASS] Manifest drops protected shadow mapping was NOT rejected');
+    failedTests++;
+  }
+} catch (e) {
+  console.error(`  ❌ [ERROR] Manifest shadow test threw: ${e.message}`);
+  failedTests++;
+}
+
+// 10b. Manifest drops protected foreground mapping -> FAIL
+totalTests++;
+try {
+  const buttonRecipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === 'button-default');
+  const mutatedRecipe = {
+    ...buttonRecipe,
+    yueoraClasses: buttonRecipe.yueoraClasses.filter((cls) => cls !== 'text-brand-foreground'),
+  };
+  const issues = verifyVisualRecipes([mutatedRecipe]);
+  const hasDroppedForeground = issues.some(
+    (i) => i.message && i.message.includes("drops protected Numis visual category 'resting::text'")
+  );
+  if (issues.length > 0 && hasDroppedForeground) {
+    console.log('  ✓ [FAIL as expected] Manifest drops protected foreground mapping rejected');
+    passedTests++;
+  } else {
+    console.error('  ❌ [UNEXPECTED PASS] Manifest drops protected foreground mapping was NOT rejected');
+    failedTests++;
+  }
+} catch (e) {
+  console.error(`  ❌ [ERROR] Manifest foreground test threw: ${e.message}`);
+  failedTests++;
+}
+
+// 10c. Input manifest missing file:text-ink-primary mapping -> FAIL
+totalTests++;
+try {
+  const inputRecipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === 'input-default');
+  const mutatedRecipe = {
+    ...inputRecipe,
+    yueoraClasses: inputRecipe.yueoraClasses.filter((cls) => cls !== 'file:text-ink-primary'),
+  };
+  const issues = verifyVisualRecipes([mutatedRecipe]);
+  const hasDroppedFileText = issues.some(
+    (i) => i.message && i.message.includes("drops protected Numis visual category 'file::text'")
+  );
+  if (issues.length > 0 && hasDroppedFileText) {
+    console.log('  ✓ [FAIL as expected] Input manifest missing file:text-ink-primary mapping rejected');
+    passedTests++;
+  } else {
+    console.error('  ❌ [UNEXPECTED PASS] Input manifest missing file:text-ink-primary mapping was NOT rejected');
+    failedTests++;
+  }
+} catch (e) {
+  console.error(`  ❌ [ERROR] Input manifest file-text test threw: ${e.message}`);
+  failedTests++;
+}
+
+// 10d. Positive control: flat-content-panel structural adaptation preserves all protected semantics -> PASS
+totalTests++;
+try {
+  const flatPanelRecipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === 'flat-content-panel');
+  const issues = verifyVisualRecipes([flatPanelRecipe]);
+  if (issues.length === 0) {
+    console.log('  ✓ [PASS as expected] Positive Control: flat-content-panel structural adaptation preserves all protected semantics');
+    passedTests++;
+  } else {
+    console.error(`  ❌ [UNEXPECTED FAIL] flat-content-panel failed verification: ${JSON.stringify(issues)}`);
+    failedTests++;
+  }
+} catch (e) {
+  console.error(`  ❌ [ERROR] flat-content-panel positive test threw: ${e.message}`);
+  failedTests++;
+}
+
+// 10e. Documentation Truth Assertions on Real Files
+const realAgentsContent = fs.readFileSync('AGENTS.md', 'utf8');
+const realDocsContent = fs.readFileSync('docs/design-system.md', 'utf8');
+
+totalTests++;
+if (!realAgentsContent.includes('active:scale-[0.98]')) {
+  console.log('  ✓ [PASS as expected] Real AGENTS.md does not contain retired Button active:scale-[0.98]');
+  passedTests++;
+} else {
+  console.error('  ❌ [FAIL] Real AGENTS.md contains retired Button active:scale-[0.98]');
+  failedTests++;
+}
+
+totalTests++;
+if (!realAgentsContent.includes('border-brand bg-neutral-muted text-ink-primary')) {
+  console.log('  ✓ [PASS as expected] Real AGENTS.md does not contain retired Practice toggle grammar');
+  passedTests++;
+} else {
+  console.error('  ❌ [FAIL] Real AGENTS.md contains retired Practice toggle grammar');
+  failedTests++;
+}
+
+totalTests++;
+if (!realDocsContent.includes('hover:-translate-y-0.5')) {
+  console.log('  ✓ [PASS as expected] Real docs/design-system.md does not claim Surface translate/lift');
+  passedTests++;
+} else {
+  console.error('  ❌ [FAIL] Real docs/design-system.md claims Surface translate/lift');
+  failedTests++;
+}
+
+totalTests++;
+if (!realDocsContent.includes('Inputs and Selects consume `h-control-lg`')) {
+  console.log('  ✓ [PASS as expected] Real docs/design-system.md does not claim h-control-lg for inputs/selects');
+  passedTests++;
+} else {
+  console.error('  ❌ [FAIL] Real docs/design-system.md claims h-control-lg for inputs/selects');
+  failedTests++;
+}
+
+// 10f. Mutation tests proving documentation truth guard catches regressions
+function checkDocTruth(content) {
+  const forbidden = [
+    'active:scale-[0.98]',
+    'border-brand bg-neutral-muted text-ink-primary',
+    'hover:-translate-y-0.5',
+    'Inputs and Selects consume `h-control-lg`',
+    'rounded-control` (12px)',
+  ];
+  return forbidden.filter((p) => content.includes(p));
+}
+
+totalTests++;
+const agentsMutatedToggle = realAgentsContent + '\nControl Toggles: border-brand bg-neutral-muted text-ink-primary\n';
+if (checkDocTruth(agentsMutatedToggle).length > 0) {
+  console.log('  ✓ [FAIL as expected] Stale Practice toggle grammar in AGENTS.md rejected by doc guard');
+  passedTests++;
+} else {
+  console.error('  ❌ [UNEXPECTED PASS] Stale Practice toggle grammar in AGENTS.md was not rejected');
+  failedTests++;
+}
+
+totalTests++;
+const agentsMutatedBtn = realAgentsContent + '\nPrimary CTA: active:scale-[0.98]\n';
+if (checkDocTruth(agentsMutatedBtn).length > 0) {
+  console.log('  ✓ [FAIL as expected] Stale Button active:scale-[0.98] in AGENTS.md rejected by doc guard');
+  passedTests++;
+} else {
+  console.error('  ❌ [UNEXPECTED PASS] Stale Button active:scale-[0.98] was not rejected');
+  failedTests++;
+}
+
+totalTests++;
+const docsMutatedSurface = realDocsContent + '\nSurface interactive: hover:-translate-y-0.5\n';
+if (checkDocTruth(docsMutatedSurface).length > 0) {
+  console.log('  ✓ [FAIL as expected] Surface translate/lift claim in docs rejected by doc guard');
+  passedTests++;
+} else {
+  console.error('  ❌ [UNEXPECTED PASS] Surface translate/lift claim in docs was not rejected');
   failedTests++;
 }
 

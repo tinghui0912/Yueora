@@ -137,6 +137,60 @@ export function isProtectedToken(token) {
   return isProtectedBase(base);
 }
 
+export function getProtectedSemanticCategory(token) {
+  if (!token || typeof token !== 'string') return null;
+  const { modifiers, base } = parseTailwindToken(token);
+  if (!isProtectedBase(base)) return null;
+
+  let category = '';
+  if (base.startsWith('bg-') || base.startsWith('from-') || base.startsWith('via-') || base.startsWith('to-')) {
+    category = 'bg';
+  } else if (base.startsWith('text-') && !isTypographyStructuralText(base)) {
+    category = 'text';
+  } else if (base === 'border' || base === 'border-2' || base.startsWith('border-')) {
+    category = 'border';
+  } else if (base.startsWith('ring-')) {
+    category = 'ring';
+  } else if (base === 'shadow' || base.startsWith('shadow-')) {
+    category = 'shadow';
+  } else if (base.startsWith('opacity-')) {
+    category = 'opacity';
+  } else if (base.startsWith('transition')) {
+    category = 'transition';
+  } else if (base.startsWith('duration-') || base.startsWith('ease-')) {
+    category = 'motion-timing';
+  } else if (base.includes('scale-') || base.includes('translate-') || base.includes('rotate-')) {
+    category = 'transform';
+  } else if (base.startsWith('fill-') || base.startsWith('stroke-')) {
+    category = 'fill-stroke';
+  } else if (base === 'underline' || base.startsWith('underline-')) {
+    category = 'underline';
+  } else {
+    category = 'other-visual';
+  }
+
+  const normalizedMods = modifiers.map((mod) => {
+    if (mod === 'focus-visible' || mod === 'focus') return 'focus';
+    if (mod === 'data-[placeholder]' || mod === 'placeholder') return 'placeholder';
+    if (
+      mod === 'data-[state=checked]' ||
+      mod === 'data-[state=on]' ||
+      mod === 'data-[state=active]' ||
+      mod === 'data-[state=open]'
+    ) {
+      return 'state-active';
+    }
+    if (mod === 'data-[state=unchecked]' || mod === 'data-[state=closed]') return 'state-inactive';
+    if (mod === 'disabled' || mod === 'data-[disabled]') return 'disabled';
+    if (mod === 'group-[.destructive]') return 'group-destructive';
+    return mod;
+  });
+
+  normalizedMods.sort();
+  const modKey = normalizedMods.length > 0 ? normalizedMods.join(':') : 'resting';
+  return `${modKey}::${category}`;
+}
+
 function extractStringsFromNode(node) {
   const res = [];
   if (!node) return res;
@@ -654,6 +708,24 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES, options
           }
         }
       }
+    }
+
+    // 2c. Source-to-Manifest Protected Semantic Category Verification (Fail closed: manifest cannot drop Numis visual semantics)
+    const sourceProtectedCats = new Set(
+      (recipe.sourceClasses || []).map(getProtectedSemanticCategory).filter(Boolean)
+    );
+    const yueoraProtectedCats = new Set(
+      (recipe.yueoraClasses || []).map(getProtectedSemanticCategory).filter(Boolean)
+    );
+
+    const missingProtectedCats = [...sourceProtectedCats].filter((c) => !yueoraProtectedCats.has(c));
+    if (missingProtectedCats.length > 0) {
+      issues.push({
+        file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
+        line: 1,
+        matched: recipe.id,
+        message: `Recipe '${recipe.id}' drops protected Numis visual category '${missingProtectedCats.join(', ')}' from frozen source '${recipe.source?.file}:${recipe.source?.line}'. Fail closed.`,
+      });
     }
 
     // 3. Allowed owners verification (Fail closed: every owner must exist)

@@ -96,7 +96,9 @@ The system is strictly partitioned into 4 provenance layers:
    - Condition Badges: `border-emerald-200 bg-emerald-500/10 text-emerald-700` (Positive), `border-amber-200 bg-amber-500/10 text-amber-700` (Warning), `border-red-200 bg-red-500/10 text-red-700` (Danger).
    - Overlays: All 4 overlays (`AlertDialog`, `Dialog`, `Drawer`, `Sheet`) strictly use `bg-black/80`.
    - SegmentedControl: Exact replica of Numis Dashboard toggle (`bg-neutral-muted rounded-overlay p-1 select-none`, items `px-3 py-1 rounded-control text-xs font-medium transition-colors`, active `bg-surface-panel text-ink-primary shadow`, inactive `text-ink-tertiary hover:text-ink-primary`).
-   - StatCard Hover: `border border-line-subtle/50 hover:border-brand/30 transition-all duration-300 hover:shadow-lg hover:shadow-brand/5`.
+   - StatCard Hover (Surface interactive): `border border-line-subtle/50 hover:border-brand/30 transition-all duration-300 hover:shadow-lg hover:shadow-brand/5` (flat at rest, zero resting shadow, no translate/lift).
+   - ItemCard Hover (ScoreCard): `group bg-surface-panel rounded-container border border-line-subtle/50 hover:border-brand/40 transition-all duration-300 hover:shadow-xl hover:shadow-brand/5 hover:-translate-y-1`.
+   - Dashboard Resting Content Panel (Surface tone="panel"): `bg-surface-panel rounded-container border border-line-subtle/50` (flat at rest, zero resting shadow, derived directly from NumisCollection `Dashboard.jsx:121`).
 4. **Yueora Semantic Aliases & Domain Abstractions:**
    - 3 Canonical Surfaces: `surface-canvas`, `surface-panel`, `surface-raised`.
    - Text Hierarchy: `ink-primary`, `ink-secondary`, `ink-tertiary`, `ink-subtle`.
@@ -150,7 +152,8 @@ The system is strictly partitioned into 4 provenance layers:
 | **Tab Trigger** | `transparent` | `bg-neutral-hover` | `bg-surface-panel` | `none` | `text-ink-primary` |
 | **Filter Pill (Compact)** | `transparent` | `bg-neutral-hover` | `bg-brand-soft` | `border-line-subtle` | `text-brand-soft-foreground` |
 | **ChoiceCard (Large)** | `bg-surface-panel` | `bg-neutral-hover` | `bg-neutral-hover` | `border-brand` | `text-ink-primary` |
-| **Standard Card / Score Container** | `bg-surface-panel` | `hover:-translate-y-1` | `border-brand` | `hover:border-brand/40` | `text-ink-primary` |
+| **Standard Content Panel (Surface tone="panel")** | `bg-surface-panel` | — (flat at rest) | `border-brand` | `hover:border-brand/30` (if interactive) | `text-ink-primary` |
+| **ScoreCard (ItemCard-derived)** | `bg-surface-panel` | `hover:-translate-y-1` | `border-brand` | `hover:border-brand/40` | `text-ink-primary` |
 | **Form Input** | `bg-surface-panel` (36px) | `border-line-strong` | `ring-brand/20 border-brand` | `border-line-subtle` | `text-ink-primary` |
 | **Neutral Badge** | `bg-neutral-muted` | — | — | `border-transparent` | `text-ink-secondary` |
 | **Selected Badge (Compact)**| `bg-brand-soft` | — | — | `border-transparent` | `text-brand-soft-foreground` |
@@ -200,7 +203,7 @@ Practice runtime conveys musical feedback without looking like a rainbow arcade 
 Authenticated application layout converges on 3 canonical surfaces with zero notation exceptions:
 
 1. **App Canvas (`bg-surface-canvas`):** Warm archive paper backdrop for all application views (`hsl(40 20% 97%)` ≈ `#F9F8F6`).
-2. **Standard Content Panel (`bg-surface-panel`):** Universal clean white container with `border border-line-subtle` and `rounded-container` (flat by default, no shadow). All application cards, list containers, resume modules, stats, pricing cards, forms, and musical notation containers use this universal container.
+2. **Standard Content Panel (`bg-surface-panel`):** Universal clean container with `border border-line-subtle/50` and `rounded-container` (flat by default, zero resting shadow, derived directly from NumisCollection `Dashboard.jsx:121`). All application cards, list containers, resume modules, stats, pricing cards, forms, and musical notation containers use this universal container.
 3. **Floating Raised Overlays (`bg-surface-raised`):** Elevated overlay surface with `shadow-overlay` or `shadow-raised` (popovers, menus, modal dialogs, search trigger).
 
 ### 2.4 Marketing Surface Rhythm Contract (Landing Page)
@@ -240,11 +243,12 @@ One visual decision has one owner. All interactive controls, inputs, and icon el
   - Control radius: `--radius-control: 0.625rem` (`10px`) for inputs, selects, buttons, icon buttons, dropdown menus.
   - Container radius: `--radius-container: 1rem` (`16px`) for panels, cards, dialogs.
   - Overlay radius: `--radius-overlay: 0.75rem` (`12px`) for popovers, menus.
-  - Button geometry: compact controls (`rounded-control: 10px`), quiet `shadow-raised`.
+  - Button geometry: compact controls (`rounded-control: 10px`); primary uses `shadow`, secondary/danger/subtle use `shadow-control`, quiet/link are flat.
   - Badge geometry: compact badges (`rounded-control: 10px`).
   - **Zero Arbitrary & Generic Radii:** Arbitrary radius utilities (`rounded-[...]`) and generic Tailwind radius utilities (`rounded`, `rounded-sm..3xl`, and directional variants) are banned across all application pages in `src/pages/**`. Pages must strictly use semantic radii (`rounded-control`, `rounded-container`, `rounded-overlay`, and justified `rounded-full` for badges/pills/dots).
 - **Quiet Elevation & Surface Tactility:** Controls and surfaces compose quiet elevation (`shadow-raised` / `shadow-overlay`). Standard content panels are flat by default (`surface-panel` + `border-line-subtle`). Repetitive panel patterns should compose `<Surface padding="...">`.
-- **Surface Interactivity:** `<Surface interactive>` provides built-in tactile hover (`hover:border-brand/40 hover:shadow-raised hover:-translate-y-0.5 cursor-pointer`).
+- **Surface Interactivity (Numis StatCard-derived):** `<Surface interactive>` provides subtle hover border and elevation (`hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300`; flat at rest, zero resting shadow, no translate/lift).
+- **ScoreCard Interactivity (Numis ItemCard-derived):** `ScoreCard` provides tactile card hover with elevation and lift (`hover:border-brand/40 hover:shadow-xl hover:shadow-brand/5 hover:-translate-y-1 transition-all duration-300`).
 
 ---
 
@@ -269,7 +273,7 @@ Pages compose using `<AppPage size="...">` rather than arbitrary `max-w-*` strin
 Yueora enforces a contracted, single-owner Button API. **Pages compose; Button completely owns appearance.**
 
 #### Canonical Yueora Button API
-- **Geometry:** Compact controls (`rounded-control: 10px`) with quiet `shadow-raised`.
+- **Geometry & Elevation:** Compact controls (`rounded-control: 10px`). Primary CTA uses `shadow`; secondary, danger, and subtle actions use `shadow-control`; quiet and link actions are flat.
 - **Single Prop Contract:** Button exposes a single semantic prop: `intent`. The legacy `variant` prop and legacy aliases (`default`, `outline`, `ghost`, `destructive`) are permanently retired and banned in CI.
 - **Intents:**
   - `primary`: Antique Bronze Gold (`#C38322`) identity CTA with warm white text (`text-brand-foreground`: `hsl(40 20% 98%)` / `rgb(251, 250, 249)`), shadow, and `hover:bg-brand/90`. Maps 1:1 to Numis `default`.
@@ -348,7 +352,7 @@ import BackLink from '@/components/patterns/BackLink';
 
 ### 4.5 Form Field, Input & Select
 
-Inputs and Selects consume `h-control-lg` (`40px`), `rounded-control` (12px), and `.type-body-small`. Planar (no `shadow-xs`):
+Inputs and Selects consume `h-control-md` (`36px` height, `min-h-control-md`), `rounded-control` (10px), `.type-body-small`, and `shadow-control` for application-first density:
 
 ```jsx
 import { Field } from '@/components/ui/field';
@@ -400,7 +404,9 @@ import { Upload } from 'lucide-react';
 
 ### 4.7 Surfaces: Surface
 
-- Use `<Surface tone="panel">` for general application containers, dialogs, summaries, score workspaces, and cards (flat by default; use `elevation="raised"` or `elevation="overlay"` only when contextual elevation is required).
+- Use `<Surface tone="panel">` for general application containers, dialogs, summaries, score workspaces, and cards (flat by default, zero resting shadow, derived directly from Numis `Dashboard.jsx:121`; use `elevation="raised"` or `elevation="overlay"` only when contextual elevation is required).
+- `<Surface interactive>` (derived from Numis StatCard): `hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5 transition-all duration-300` (flat at rest, zero resting shadow, no translate/lift).
+- `ScoreCard` (derived from Numis ItemCard): `hover:border-brand/40 hover:shadow-xl hover:shadow-brand/5 hover:-translate-y-1 transition-all duration-300` (tactile card with lift).
 - Musical notation is domain content and renders within the standard `Surface` container.
 - **Do not** wrap every trivial element in a card. Let whitespace separate content naturally.
 

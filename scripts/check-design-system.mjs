@@ -1546,6 +1546,9 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
       'primitive-gold-700',
       'primitive-gold-600',
       'primitive-gold-800',
+      'active:scale-[0.98]',
+      'border-brand bg-neutral-muted text-ink-primary',
+      'hover:-translate-y-1 hover:border-brand/40 hover:shadow-raised',
     ];
     forbiddenAgentsPatterns.forEach((p) => {
       if (code.includes(p)) {
@@ -1574,6 +1577,11 @@ function verifyNavigationAndSurfaceContracts(issues = []) {
       'primitive-gold-700',
       'primitive-gold-600',
       'primitive-gold-800',
+      'active:scale-[0.98]',
+      'border-brand bg-neutral-muted text-ink-primary',
+      'Inputs and Selects consume `h-control-lg`',
+      'rounded-control` (12px)',
+      'hover:-translate-y-0.5',
     ];
     forbiddenDocsPatterns.forEach((p) => {
       if (code.includes(p)) {
