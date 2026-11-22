@@ -1626,7 +1626,12 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "shadow-sm",
       "placeholder:text-muted-foreground",
       "focus-visible:ring-1",
-      "focus-visible:ring-ring"
+      "focus-visible:ring-ring",
+      "transition-colors",
+      "file:border-0",
+      "file:bg-transparent",
+      "file:text-foreground",
+      "disabled:opacity-50"
     ],
     "yueoraClasses": [
       "flex",
@@ -1642,7 +1647,11 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "placeholder:text-ink-tertiary",
       "focus-visible:ring-1",
       "focus-visible:ring-brand",
-      "text-ink-primary"
+      "text-ink-primary",
+      "transition-colors",
+      "file:border-0",
+      "file:bg-transparent",
+      "disabled:opacity-50"
     ],
     "allowedOwners": [
       "src/components/ui/input.jsx"
@@ -1685,7 +1694,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "shadow-sm",
       "data-[placeholder]:text-muted-foreground",
       "focus:ring-1",
-      "focus:ring-ring"
+      "focus:ring-ring",
+      "disabled:opacity-50"
     ],
     "yueoraClasses": [
       "flex",
@@ -1703,7 +1713,9 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "data-[placeholder]:text-ink-tertiary",
       "focus:ring-1",
       "focus:ring-brand",
-      "text-ink-primary"
+      "text-ink-primary",
+      "disabled:opacity-50",
+      "transition-colors"
     ],
     "allowedOwners": [
       "src/components/ui/select.jsx"
@@ -1795,7 +1807,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "pr-8",
       "outline-none",
       "focus:bg-accent",
-      "focus:text-accent-foreground"
+      "focus:text-accent-foreground",
+      "data-[disabled]:opacity-50"
     ],
     "yueoraClasses": [
       "relative",
@@ -1811,7 +1824,9 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "outline-none",
       "focus:bg-brand-soft",
       "focus:text-brand-soft-foreground",
-      "text-ink-primary"
+      "text-ink-primary",
+      "transition-colors",
+      "data-[disabled]:opacity-50"
     ],
     "allowedOwners": [
       "src/components/ui/select.jsx"
@@ -1850,6 +1865,7 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "shadow",
       "focus-visible:ring-1",
       "focus-visible:ring-ring",
+      "disabled:opacity-50",
       "data-[state=checked]:bg-primary",
       "data-[state=checked]:text-primary-foreground"
     ],
@@ -1864,6 +1880,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "shadow",
       "focus-visible:ring-1",
       "focus-visible:ring-brand",
+      "disabled:opacity-50",
+      "transition-colors",
       "data-[state=checked]:border-brand",
       "data-[state=checked]:bg-brand",
       "data-[state=checked]:text-brand-foreground"
@@ -1904,7 +1922,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "text-primary",
       "shadow",
       "focus-visible:ring-1",
-      "focus-visible:ring-ring"
+      "focus-visible:ring-ring",
+      "disabled:opacity-50"
     ],
     "yueoraClasses": [
       "aspect-square",
@@ -1916,7 +1935,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "text-brand",
       "shadow",
       "focus-visible:ring-1",
-      "focus-visible:ring-brand"
+      "focus-visible:ring-brand",
+      "disabled:opacity-50"
     ],
     "allowedOwners": [
       "src/components/ui/radio-group.jsx"
@@ -1956,6 +1976,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "border-2",
       "border-transparent",
       "shadow-sm",
+      "transition-colors",
+      "disabled:opacity-50",
       "data-[state=checked]:bg-primary",
       "data-[state=unchecked]:bg-input"
     ],
@@ -1971,6 +1993,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "border-2",
       "border-transparent",
       "shadow-sm",
+      "transition-colors",
+      "disabled:opacity-50",
       "data-[state=checked]:bg-brand",
       "data-[state=unchecked]:bg-input",
       "focus-visible:ring-2",
@@ -2264,7 +2288,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "outline-none",
       "transition-colors",
       "focus:bg-accent",
-      "focus:text-accent-foreground"
+      "focus:text-accent-foreground",
+      "data-[disabled]:opacity-50"
     ],
     "yueoraClasses": [
       "relative",
@@ -2281,7 +2306,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "outline-none",
       "transition-colors",
       "focus:bg-brand-soft",
-      "focus:text-brand-soft-foreground"
+      "focus:text-brand-soft-foreground",
+      "data-[disabled]:opacity-50"
     ],
     "allowedOwners": [
       "src/components/ui/dropdown-menu.jsx"
@@ -2411,6 +2437,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "py-1",
       "text-sm",
       "font-medium",
+      "transition-all",
+      "disabled:opacity-50",
       "data-[state=active]:bg-background",
       "data-[state=active]:text-foreground",
       "data-[state=active]:shadow"
@@ -2426,6 +2454,8 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "type-body-small",
       "font-medium",
       "text-ink-tertiary",
+      "transition-all",
+      "disabled:opacity-50",
       "data-[state=active]:bg-surface-canvas",
       "data-[state=active]:text-ink-primary",
       "data-[state=active]:shadow",
@@ -2605,6 +2635,7 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "text-xs",
       "font-medium",
       "transition-colors",
+      "disabled:opacity-50",
       "bg-card",
       "shadow",
       "text-foreground",
@@ -2624,6 +2655,9 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "text-xs",
       "font-medium",
       "transition-colors",
+      "focus-visible:ring-1",
+      "focus-visible:ring-ring",
+      "disabled:opacity-50",
       "bg-surface-panel",
       "shadow",
       "text-ink-primary",
@@ -2808,6 +2842,9 @@ export const YUEORA_AUTHORIZED_RECIPES = [
       "type": "jsx-component",
       "component": "ScoreCard",
       "target": "div",
+      "attributes": {
+        "data-qa": "score-card"
+      },
       "cnArgumentIndex": 0
     }
   },

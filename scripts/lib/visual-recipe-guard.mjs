@@ -23,90 +23,118 @@ export function isTypographyStructuralText(cls) {
   return false;
 }
 
-export function isControlInfrastructure(token) {
-  if (token.includes('cursor-') || token.includes('pointer-events-')) return true;
-  if (token.includes('outline-none')) return true;
-  if (token.includes('ring-offset-')) return true;
-  if (token === 'disabled:opacity-50' || token === 'disabled:opacity-40' || token === 'data-[disabled]:opacity-50') return true;
+export function parseTailwindToken(token) {
+  if (!token || typeof token !== 'string') return { modifiers: [], base: '' };
+  const parts = [];
+  let current = '';
+  let bracketDepth = 0;
+  for (let i = 0; i < token.length; i++) {
+    const ch = token[i];
+    if (ch === '[') {
+      bracketDepth++;
+      current += ch;
+    } else if (ch === ']') {
+      if (bracketDepth > 0) bracketDepth--;
+      current += ch;
+    } else if (ch === ':' && bracketDepth === 0) {
+      parts.push(current);
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  parts.push(current);
+  const base = parts.pop() || '';
+  const modifiers = parts;
+  return { modifiers, base };
+}
+
+export function isNonVisualInfrastructure(base) {
+  if (!base) return false;
+  if (base.startsWith('cursor-')) return true;
+  if (base.startsWith('pointer-events-')) return true;
+  if (base === 'outline-none') return true;
+  if (base.startsWith('ring-offset-')) return true;
+  if (base === 'select-none') return true;
+  // Standard Radix UI portal animation boilerplate (when not part of a component motion recipe)
   if (
-    token === 'animate-in' ||
-    token.startsWith('animate-in') ||
-    token.startsWith('fade-in-') ||
-    token.startsWith('fade-out-') ||
-    token.startsWith('zoom-in-') ||
-    token.startsWith('zoom-out-') ||
-    /data-\[(state|side)=[^\]]+\]:(animate-|fade-|zoom-|slide-)/.test(token)
+    base === 'animate-in' ||
+    base === 'animate-out' ||
+    base.startsWith('fade-in-') ||
+    base.startsWith('fade-out-') ||
+    base.startsWith('zoom-in-') ||
+    base.startsWith('zoom-out-') ||
+    base.startsWith('slide-in-') ||
+    base.startsWith('slide-out-')
   ) {
     return true;
   }
   return false;
 }
 
-export function isProtectedToken(token) {
-  if (!token || typeof token !== 'string') return false;
-  if (isControlInfrastructure(token)) return false;
+export function isProtectedBase(base) {
+  if (!base || typeof base !== 'string') return false;
+  if (isNonVisualInfrastructure(base)) return false;
 
-  if (token.startsWith('active:')) {
-    return true;
-  }
-
-  if (token.startsWith('hover:') || token.startsWith('group-hover:') || token.includes(':hover:')) {
-    return true;
-  }
-
-  if (token.startsWith('focus:') || token.startsWith('focus-visible:') || token.includes(':focus:')) {
-    return true;
-  }
-
-  if (/data-\[state=[^\]]+\]:/.test(token)) {
-    return true;
-  }
-  if (/data-\[placeholder\]:/.test(token) || token.startsWith('placeholder:')) {
-    return true;
-  }
-  if (/group-\[[^\]]+\]:/.test(token)) {
-    return true;
-  }
-
+  // Chromatic
   if (
-    token.startsWith('bg-') ||
-    token.startsWith('from-') ||
-    token.startsWith('via-') ||
-    token.startsWith('to-') ||
-    token.startsWith('ring-') ||
-    token.startsWith('fill-') ||
-    token.startsWith('stroke-')
+    base.startsWith('bg-') ||
+    base.startsWith('from-') ||
+    base.startsWith('via-') ||
+    base.startsWith('to-') ||
+    base.startsWith('ring-') ||
+    base.startsWith('fill-') ||
+    base.startsWith('stroke-')
   ) {
     return true;
   }
 
-  if (token === 'border' || token === 'border-2' || token.startsWith('border-')) {
+  if (base === 'border' || base === 'border-2' || base.startsWith('border-')) {
     return true;
   }
 
-  if (token.startsWith('text-')) {
-    return !isTypographyStructuralText(token);
+  if (base.startsWith('text-')) {
+    return !isTypographyStructuralText(base);
   }
 
-  if (token === 'shadow' || token.startsWith('shadow-') || token.startsWith('opacity-')) {
+  // Elevation / visibility
+  if (base === 'shadow' || base.startsWith('shadow-') || base.startsWith('opacity-')) {
     return true;
   }
 
+  // Motion / transform
   if (
-    token.startsWith('scale-') ||
-    token.startsWith('translate-') ||
-    token.startsWith('rotate-') ||
-    token.startsWith('duration-') ||
-    token.startsWith('ease-')
+    base.startsWith('transition') || // transition, transition-all, transition-colors, transition-transform, etc.
+    base.startsWith('animate-') ||
+    base.startsWith('duration-') ||
+    base.startsWith('ease-') ||
+    base.startsWith('scale-') ||
+    base.startsWith('-scale-') ||
+    base.startsWith('translate-') ||
+    base.startsWith('-translate-') ||
+    base.startsWith('rotate-') ||
+    base.startsWith('-rotate-')
   ) {
     return true;
   }
 
-  if (token === 'destructive' || token === 'underline' || token.startsWith('underline-')) {
+  if (base === 'destructive' || base === 'underline' || base.startsWith('underline-')) {
     return true;
   }
 
   return false;
+}
+
+export function isControlInfrastructure(token) {
+  if (!token || typeof token !== 'string') return true;
+  const { base } = parseTailwindToken(token);
+  return isNonVisualInfrastructure(base);
+}
+
+export function isProtectedToken(token) {
+  if (!token || typeof token !== 'string') return false;
+  const { base } = parseTailwindToken(token);
+  return isProtectedBase(base);
 }
 
 function extractStringsFromNode(node) {
@@ -303,14 +331,30 @@ export function extractRecipeUnitTokens(filePath, fileContent, recipe) {
         JSXOpeningElement(p) {
           const name = getTagName(p.node);
           if (name === unitDef.target) {
-            matchedElements.push(p);
+            if (unitDef.attributes) {
+              const matchesAll = Object.entries(unitDef.attributes).every(([attrK, attrV]) => {
+                const found = p.node.attributes?.find(
+                  (a) => a.type === 'JSXAttribute' && a.name?.name === attrK
+                );
+                if (!found) return false;
+                if (found.value?.type === 'StringLiteral') {
+                  return found.value.value === attrV;
+                }
+                return false;
+              });
+              if (matchesAll) matchedElements.push(p);
+            } else {
+              matchedElements.push(p);
+            }
           }
         },
       });
 
-      if (matchedElements.length === 0) throw new Error(`Target JSX element <${unitDef.target}> not found in ${unitDef.component}`);
+      if (matchedElements.length === 0) {
+        throw new Error(`Target JSX element <${unitDef.target}> matching constraints not found in ${unitDef.component}. Fail closed.`);
+      }
       if (matchedElements.length > 1) {
-        matchedElements = [matchedElements[0]];
+        throw new Error(`Ambiguous JSX element matches (${matchedElements.length}) for <${unitDef.target}> in ${unitDef.component}. Fail closed.`);
       }
 
       const el = matchedElements[0];
@@ -362,6 +406,7 @@ export function extractRecipeUnitTokens(filePath, fileContent, recipe) {
             if (compName === 'SegmentedControlItem' && unitDef.targetItemExpr) {
               const expr = p.node.value?.expression;
               if (expr?.type === 'CallExpression' && expr.callee?.name === 'cn') {
+                addNode(expr.arguments[0]);
                 addNode(expr.arguments[1]);
               }
             } else {
@@ -389,11 +434,27 @@ export function extractRecipeUnitTokens(filePath, fileContent, recipe) {
  * @returns {Array<{ file: string, line: number, matched: string, message: string }>}
  */
 export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES, options = {}) {
-  const { contentOverrides = {} } = options;
+  const { contentOverrides = {}, metadataOverride = null } = options;
   const issues = [];
 
   let frozenMetadata = null;
-  if (fs.existsSync(FROZEN_METADATA_PATH)) {
+  if (metadataOverride === 'MISSING') {
+    issues.push({
+      file: FROZEN_METADATA_PATH,
+      line: 1,
+      matched: 'metadata.json',
+      message: 'Frozen Numis metadata file metadata.json does not exist. Fail closed.',
+    });
+  } else if (metadataOverride !== null) {
+    frozenMetadata = metadataOverride;
+  } else if (!fs.existsSync(FROZEN_METADATA_PATH)) {
+    issues.push({
+      file: FROZEN_METADATA_PATH,
+      line: 1,
+      matched: 'metadata.json',
+      message: 'Frozen Numis metadata file metadata.json does not exist. Fail closed.',
+    });
+  } else {
     try {
       frozenMetadata = JSON.parse(fs.readFileSync(FROZEN_METADATA_PATH, 'utf8'));
     } catch (e) {
@@ -407,21 +468,47 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES, options
   }
 
   if (frozenMetadata) {
-    if (frozenMetadata.commit !== NUMIS_REFERENCE_META.commit) {
+    if (!frozenMetadata.repository || frozenMetadata.repository !== NUMIS_REFERENCE_META.repository) {
       issues.push({
         file: FROZEN_METADATA_PATH,
         line: 1,
-        matched: frozenMetadata.commit,
+        matched: String(frozenMetadata.repository),
+        message: `Frozen metadata repository mismatch (expected ${NUMIS_REFERENCE_META.repository}, got ${frozenMetadata.repository})`,
+      });
+    }
+    if (!frozenMetadata.commit || frozenMetadata.commit !== NUMIS_REFERENCE_META.commit) {
+      issues.push({
+        file: FROZEN_METADATA_PATH,
+        line: 1,
+        matched: String(frozenMetadata.commit),
         message: `Frozen metadata commit mismatch (expected ${NUMIS_REFERENCE_META.commit}, got ${frozenMetadata.commit})`,
       });
     }
     const expectedTree = NUMIS_REFERENCE_META.treeSha || NUMIS_REFERENCE_META.tree;
-    if (frozenMetadata.tree !== expectedTree) {
+    if (!frozenMetadata.tree || frozenMetadata.tree !== expectedTree) {
       issues.push({
         file: FROZEN_METADATA_PATH,
         line: 1,
-        matched: frozenMetadata.tree,
+        matched: String(frozenMetadata.tree),
         message: `Frozen metadata tree SHA mismatch (expected ${expectedTree}, got ${frozenMetadata.tree})`,
+      });
+    }
+    if (!frozenMetadata.files || typeof frozenMetadata.files !== 'object') {
+      issues.push({
+        file: FROZEN_METADATA_PATH,
+        line: 1,
+        matched: 'files',
+        message: 'Frozen metadata files object is missing. Fail closed.',
+      });
+    } else if (
+      typeof frozenMetadata.fileCount === 'number' &&
+      Object.keys(frozenMetadata.files).length !== frozenMetadata.fileCount
+    ) {
+      issues.push({
+        file: FROZEN_METADATA_PATH,
+        line: 1,
+        matched: String(frozenMetadata.fileCount),
+        message: `Frozen metadata fileCount mismatch (expected ${frozenMetadata.fileCount}, found ${Object.keys(frozenMetadata.files).length})`,
       });
     }
   }
@@ -465,56 +552,106 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES, options
     }
 
     // 2b. Frozen Numis snapshot content and hash verification (both sha256 and gitBlobSha)
-    if (frozenMetadata && recipe.source?.file) {
-      const fixtureFilePath = path.join(FROZEN_FIXTURES_DIR, recipe.source.file);
-      if (!fs.existsSync(fixtureFilePath)) {
+    if (!frozenMetadata || !frozenMetadata.files) {
+      issues.push({
+        file: FROZEN_METADATA_PATH,
+        line: 1,
+        matched: recipe.id,
+        message: `Frozen metadata oracle is missing or invalid for recipe '${recipe.id}'. Fail closed.`,
+      });
+    } else if (recipe.source?.file) {
+      const fileMeta = frozenMetadata.files[recipe.source.file];
+      if (!fileMeta) {
         issues.push({
-          file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
+          file: FROZEN_METADATA_PATH,
           line: 1,
-          matched: recipe.id,
-          message: `Frozen source fixture '${fixtureFilePath}' for recipe '${recipe.id}' does not exist.`,
+          matched: recipe.source.file,
+          message: `Frozen metadata entry for file '${recipe.source.file}' in recipe '${recipe.id}' is missing. Fail closed.`,
         });
       } else {
-        const fixtureContent = fs.readFileSync(fixtureFilePath, 'utf8');
-        const normalizedContent = fixtureContent.replace(/\r\n/g, '\n');
-        const contentBuffer = Buffer.from(normalizedContent, 'utf8');
-
-        // Verify SHA-256
-        const hash = crypto.createHash('sha256').update(contentBuffer).digest('hex');
-        const expectedHash = frozenMetadata?.files?.[recipe.source.file]?.sha256;
-        if (expectedHash && hash !== expectedHash) {
+        if (!fileMeta.sha256 || typeof fileMeta.sha256 !== 'string') {
           issues.push({
-            file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
+            file: FROZEN_METADATA_PATH,
             line: 1,
-            matched: recipe.id,
-            message: `Frozen source fixture '${recipe.source.file}' sha256 mismatch for recipe '${recipe.id}' (expected ${expectedHash}, got ${hash}).`,
+            matched: recipe.source.file,
+            message: `Frozen metadata sha256 field missing or invalid for file '${recipe.source.file}'. Fail closed.`,
+          });
+        }
+        if (!fileMeta.gitBlobSha || typeof fileMeta.gitBlobSha !== 'string') {
+          issues.push({
+            file: FROZEN_METADATA_PATH,
+            line: 1,
+            matched: recipe.source.file,
+            message: `Frozen metadata gitBlobSha field missing or invalid for file '${recipe.source.file}'. Fail closed.`,
+          });
+        }
+        if (typeof fileMeta.bytes !== 'number') {
+          issues.push({
+            file: FROZEN_METADATA_PATH,
+            line: 1,
+            matched: recipe.source.file,
+            message: `Frozen metadata bytes field missing or invalid for file '${recipe.source.file}'. Fail closed.`,
           });
         }
 
-        // Verify Git Blob SHA-1 (blob <size>\0<content>)
-        const header = Buffer.from(`blob ${contentBuffer.length}\0`);
-        const gitBlobSha = crypto.createHash('sha1').update(Buffer.concat([header, contentBuffer])).digest('hex');
-        const expectedGitBlobSha = frozenMetadata?.files?.[recipe.source.file]?.gitBlobSha;
-        if (expectedGitBlobSha && gitBlobSha !== expectedGitBlobSha) {
+        const fixtureFilePath = path.join(FROZEN_FIXTURES_DIR, recipe.source.file);
+        if (!fs.existsSync(fixtureFilePath)) {
           issues.push({
             file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
             line: 1,
             matched: recipe.id,
-            message: `Frozen source fixture '${recipe.source.file}' git blob SHA mismatch for recipe '${recipe.id}' (expected ${expectedGitBlobSha}, got ${gitBlobSha}).`,
+            message: `Frozen source fixture '${fixtureFilePath}' for recipe '${recipe.id}' does not exist.`,
           });
-        }
+        } else {
+          const fixtureContent = fs.readFileSync(fixtureFilePath, 'utf8');
+          const normalizedContent = fixtureContent.replace(/\r\n/g, '\n');
+          const contentBuffer = Buffer.from(normalizedContent, 'utf8');
 
-        const lines = fixtureContent.split(/\r?\n/);
-        const sourceLineText = lines[recipe.source.line - 1] || '';
-        const exact = recipe.source.exactSnippet || '';
-        const unquoted = exact.replace(/^["']|["'],?$/g, '').trim();
-        if (!sourceLineText.includes(exact) && (!unquoted || !sourceLineText.includes(unquoted))) {
-          issues.push({
-            file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
-            line: 1,
-            matched: recipe.id,
-            message: `Frozen source snippet mismatch for recipe '${recipe.id}': line ${recipe.source.line} in '${recipe.source.file}' does not contain expected snippet: ${exact}`,
-          });
+          // Verify SHA-256
+          const hash = crypto.createHash('sha256').update(contentBuffer).digest('hex');
+          if (fileMeta.sha256 && hash !== fileMeta.sha256) {
+            issues.push({
+              file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
+              line: 1,
+              matched: recipe.id,
+              message: `Frozen source fixture '${recipe.source.file}' sha256 mismatch for recipe '${recipe.id}' (expected ${fileMeta.sha256}, got ${hash}).`,
+            });
+          }
+
+          // Verify Git Blob SHA-1 (blob <size>\0<content>)
+          const header = Buffer.from(`blob ${contentBuffer.length}\0`);
+          const gitBlobSha = crypto.createHash('sha1').update(Buffer.concat([header, contentBuffer])).digest('hex');
+          if (fileMeta.gitBlobSha && gitBlobSha !== fileMeta.gitBlobSha) {
+            issues.push({
+              file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
+              line: 1,
+              matched: recipe.id,
+              message: `Frozen source fixture '${recipe.source.file}' git blob SHA mismatch for recipe '${recipe.id}' (expected ${fileMeta.gitBlobSha}, got ${gitBlobSha}).`,
+            });
+          }
+
+          // Verify Bytes length
+          if (typeof fileMeta.bytes === 'number' && contentBuffer.length !== fileMeta.bytes) {
+            issues.push({
+              file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
+              line: 1,
+              matched: recipe.id,
+              message: `Frozen source fixture '${recipe.source.file}' byte count mismatch for recipe '${recipe.id}' (expected ${fileMeta.bytes}, got ${contentBuffer.length}).`,
+            });
+          }
+
+          const lines = fixtureContent.split(/\r?\n/);
+          const sourceLineText = lines[recipe.source.line - 1] || '';
+          const exact = recipe.source.exactSnippet || '';
+          const unquoted = exact.replace(/^["']|["'],?$/g, '').trim();
+          if (!sourceLineText.includes(exact) && (!unquoted || !sourceLineText.includes(unquoted))) {
+            issues.push({
+              file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
+              line: 1,
+              matched: recipe.id,
+              message: `Frozen source snippet mismatch for recipe '${recipe.id}': line ${recipe.source.line} in '${recipe.source.file}' does not contain expected snippet: ${exact}`,
+            });
+          }
         }
       }
     }

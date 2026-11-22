@@ -2570,7 +2570,250 @@ assertRecipeUnitMutation(
   'border-brand'
 );
 
-// 5. Frozen fixture metadata and git blob verification mutations
+// 6. AST Ambiguity Fail-Closed Mutations (Blocker 1)
+console.log('--- AST Ambiguity Fail-Closed Mutations ---');
+
+const toastCode = fs.readFileSync('src/components/ui/toast.jsx', 'utf8');
+assertRecipeUnitMutation(
+  'Ambiguity Guard: duplicate target <ToastPrimitives.Close> in ToastClose rejected',
+  'src/components/ui/toast.jsx',
+  toastCode.replace(
+    '<ToastPrimitives.Close',
+    '<div><ToastPrimitives.Close'
+  ).replace(
+    '</ToastPrimitives.Close>',
+    '</ToastPrimitives.Close><ToastPrimitives.Close className={className}><X className="h-4 w-4" /></ToastPrimitives.Close></div>'
+  ),
+  'toast-destructive-close',
+  'Ambiguous JSX element matches'
+);
+
+const scoreCardCode = fs.readFileSync('src/components/library/ScoreCard.jsx', 'utf8');
+assertRecipeUnitPositive(
+  'ScoreCard outer container unique resolution via attributes accepted',
+  'src/components/library/ScoreCard.jsx',
+  scoreCardCode,
+  'itemcard-interactive-card'
+);
+
+assertRecipeUnitMutation(
+  'ScoreCard duplicate <div data-qa="score-card"> rejected as ambiguous',
+  'src/components/library/ScoreCard.jsx',
+  scoreCardCode.replace(
+    'data-qa="score-card-visual"',
+    'data-qa="score-card"'
+  ),
+  'itemcard-interactive-card',
+  'Ambiguous JSX element matches'
+);
+
+// 7. Motion & Transition Protection Mutations (Blocker 2)
+console.log('--- Motion & Transition Protection Mutations ---');
+
+// 7a. Button primary unexpected transition-all -> FAIL
+assertRecipeUnitMutation(
+  'Button primary: unexpected transition-all rejected',
+  'src/components/ui/button.jsx',
+  btnCode.replace('hover:bg-brand/90', 'hover:bg-brand/90 transition-all'),
+  'button-default',
+  'Unexpected protected tokens: transition-all'
+);
+
+// 7b. Switch thumb missing transition-transform -> FAIL
+assertRecipeUnitMutation(
+  'Switch thumb: missing transition-transform caught',
+  'src/components/ui/switch.jsx',
+  switchCode.replace('transition-transform', ''),
+  'switch-thumb',
+  'Missing protected tokens: transition-transform'
+);
+
+// 7c. Interactive Surface missing transition-all while keeping duration-300 -> FAIL
+const surfaceCode = fs.readFileSync('src/components/patterns/Surface.jsx', 'utf8');
+assertRecipeUnitMutation(
+  'Interactive Surface: missing transition-all while keeping duration-300 caught',
+  'src/components/patterns/Surface.jsx',
+  surfaceCode.replace('transition-all', ''),
+  'statcard-interactive-panel',
+  'Missing protected tokens: transition-all'
+);
+
+// 7d. ScoreCard missing transition-all -> FAIL
+assertRecipeUnitMutation(
+  'ScoreCard: missing transition-all caught',
+  'src/components/library/ScoreCard.jsx',
+  scoreCardCode.replace('transition-all', ''),
+  'itemcard-interactive-card',
+  'Missing protected tokens: transition-all'
+);
+
+// 7e. Input missing disabled:opacity-50 -> FAIL
+assertRecipeUnitMutation(
+  'Input: missing disabled:opacity-50 caught',
+  'src/components/ui/input.jsx',
+  inputCode.replace('disabled:opacity-50', ''),
+  'input-default',
+  'Missing protected tokens: disabled:opacity-50'
+);
+
+// 7f. Switch wrong disabled opacity (disabled:opacity-20) -> FAIL
+assertRecipeUnitMutation(
+  'Switch root: wrong disabled opacity (disabled:opacity-20) caught',
+  'src/components/ui/switch.jsx',
+  switchCode.replace('disabled:opacity-50', 'disabled:opacity-20'),
+  'switch-root',
+  'Missing protected tokens: disabled:opacity-50'
+);
+
+// 8. Frozen Metadata Fail-Closed Verification (Blocker 3)
+console.log('--- Frozen Metadata Fail-Closed Mutations ---');
+
+function assertMetadataMutation(name, metadataOverride, expectedSubstring) {
+  totalTests++;
+  try {
+    const baseRecipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === 'badge-default');
+    const issues = verifyVisualRecipes([baseRecipe], { metadataOverride });
+    const found = issues.some(
+      (i) => !expectedSubstring || (i.message && i.message.includes(expectedSubstring))
+    );
+    if (issues.length > 0 && found) {
+      console.log(`  ✓ [FAIL as expected] ${name}`);
+      passedTests++;
+    } else {
+      console.error(`  ❌ [UNEXPECTED PASS] ${name}`);
+      console.error(`     Expected issue containing: ${expectedSubstring}`);
+      console.error(`     Actual issues: ${JSON.stringify(issues)}`);
+      failedTests++;
+    }
+  } catch (err) {
+    console.error(`  ❌ [ERROR] ${name}: ${err.message}`);
+    failedTests++;
+  }
+}
+
+const rawMeta = fs.readFileSync('scripts/fixtures/numis-frozen/metadata.json', 'utf8');
+const validMeta = JSON.parse(rawMeta);
+const baseBadgeRecipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === 'badge-default');
+const targetFile = baseBadgeRecipe.source.file;
+
+// 8a. Missing metadata.json
+assertMetadataMutation(
+  'Metadata fail-closed: metadata.json missing rejected',
+  'MISSING',
+  'metadata.json does not exist'
+);
+
+// 8b. Missing files object
+assertMetadataMutation(
+  'Metadata fail-closed: missing files object rejected',
+  { repository: validMeta.repository, commit: validMeta.commit, tree: validMeta.tree },
+  'files object is missing'
+);
+
+// 8c. Missing target file entry
+assertMetadataMutation(
+  'Metadata fail-closed: missing file entry rejected',
+  { ...validMeta, files: {} },
+  'is missing. Fail closed.'
+);
+
+// 8d. File missing sha256
+assertMetadataMutation(
+  'Metadata fail-closed: missing sha256 field rejected',
+  {
+    ...validMeta,
+    files: {
+      ...validMeta.files,
+      [targetFile]: {
+        gitBlobSha: validMeta.files[targetFile].gitBlobSha,
+        bytes: validMeta.files[targetFile].bytes,
+      },
+    },
+  },
+  'sha256 field missing'
+);
+
+// 8e. File missing gitBlobSha
+assertMetadataMutation(
+  'Metadata fail-closed: missing gitBlobSha field rejected',
+  {
+    ...validMeta,
+    files: {
+      ...validMeta.files,
+      [targetFile]: {
+        sha256: validMeta.files[targetFile].sha256,
+        bytes: validMeta.files[targetFile].bytes,
+      },
+    },
+  },
+  'gitBlobSha field missing'
+);
+
+// 8f. File missing bytes
+assertMetadataMutation(
+  'Metadata fail-closed: missing bytes field rejected',
+  {
+    ...validMeta,
+    files: {
+      ...validMeta.files,
+      [targetFile]: {
+        sha256: validMeta.files[targetFile].sha256,
+        gitBlobSha: validMeta.files[targetFile].gitBlobSha,
+      },
+    },
+  },
+  'bytes field missing'
+);
+
+// 8g. File with wrong sha256
+assertMetadataMutation(
+  'Metadata fail-closed: sha256 mismatch rejected',
+  {
+    ...validMeta,
+    files: {
+      ...validMeta.files,
+      [targetFile]: {
+        ...validMeta.files[targetFile],
+        sha256: '0000000000000000000000000000000000000000000000000000000000000000',
+      },
+    },
+  },
+  'sha256 mismatch'
+);
+
+// 8h. File with wrong gitBlobSha
+assertMetadataMutation(
+  'Metadata fail-closed: gitBlobSha mismatch rejected',
+  {
+    ...validMeta,
+    files: {
+      ...validMeta.files,
+      [targetFile]: {
+        ...validMeta.files[targetFile],
+        gitBlobSha: '0000000000000000000000000000000000000000',
+      },
+    },
+  },
+  'git blob SHA mismatch'
+);
+
+// 8i. Positive control with valid metadataOverride
+totalTests++;
+try {
+  const issues = verifyVisualRecipes([baseBadgeRecipe], { metadataOverride: validMeta });
+  if (issues.length === 0) {
+    console.log('  ✓ [PASS as expected] Valid metadataOverride accepted');
+    passedTests++;
+  } else {
+    console.error(`  ❌ [UNEXPECTED FAIL] Valid metadataOverride failed with: ${JSON.stringify(issues)}`);
+    failedTests++;
+  }
+} catch (e) {
+  console.error(`  ❌ [ERROR] Valid metadataOverride test threw: ${e.message}`);
+  failedTests++;
+}
+
+// 9. Frozen fixture disk metadata and git blob verification mutation (end-to-end check)
 totalTests++;
 try {
   const baseRecipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === 'badge-default');

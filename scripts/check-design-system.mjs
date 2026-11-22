@@ -172,8 +172,8 @@ export const WCAG_AA_PASSING_PAIRS = [
 
 export const FROZEN_REFERENCE_PRESERVED_PAIRS = [
   { name: 'brand-foreground on brand', fg: '--brand-foreground', bg: '--brand', min: 3.0, expectedRatio: 3.06, role: 'Frozen Numis reference-preserved contrast pair. Known contrast limitation for ordinary small text (~3.06:1). Preserved intentionally to maintain visual truth; accessibility improvements must not recolor the frozen Numis palette.' },
-  { name: 'ink-tertiary on panel', fg: '--ink-tertiary', bg: '--surface-panel', min: 4.0, expectedRatio: 4.44, role: 'incidental metadata and secondary captions (Numis card / muted-foreground)' },
-  { name: 'ink-tertiary on canvas', fg: '--ink-tertiary', bg: '--surface-canvas', min: 4.0, expectedRatio: 4.26, role: 'incidental metadata and canvas annotations (Numis background / muted-foreground)' },
+  { name: 'ink-tertiary on panel', fg: '--ink-tertiary', bg: '--surface-panel', min: 4.0, expectedRatio: 4.44, role: 'Frozen Numis reference-preserved muted-text pair. Below WCAG AA normal-text threshold (~4.44:1); preserved as frozen visual truth.' },
+  { name: 'ink-tertiary on canvas', fg: '--ink-tertiary', bg: '--surface-canvas', min: 4.0, expectedRatio: 4.26, role: 'Frozen Numis reference-preserved muted-text pair. Below WCAG AA normal-text threshold (~4.26:1); preserved as frozen visual truth.' },
 ];
 
 export const CANONICAL_CONTRAST_PAIRS = [
@@ -186,7 +186,7 @@ function verifyContrastIntegrity(issues = []) {
   const css = fs.readFileSync(INDEX_CSS_PATH, 'utf8');
   const tokenMap = parseCssCustomProperties(css);
 
-  CANONICAL_CONTRAST_PAIRS.forEach((pair) => {
+  WCAG_AA_PASSING_PAIRS.forEach((pair) => {
     try {
       const fgHsl = resolveCssTokenHsl(pair.fg, tokenMap);
       const bgHsl = resolveCssTokenHsl(pair.bg, tokenMap);
@@ -208,6 +208,30 @@ function verifyContrastIntegrity(issues = []) {
       });
     }
   });
+
+  FROZEN_REFERENCE_PRESERVED_PAIRS.forEach((pair) => {
+    try {
+      const fgHsl = resolveCssTokenHsl(pair.fg, tokenMap);
+      const bgHsl = resolveCssTokenHsl(pair.bg, tokenMap);
+      const ratio = getContrastRatio(fgHsl, bgHsl);
+      if (ratio < pair.min) {
+        issues.push({
+          file: 'src/index.css',
+          line: 1,
+          matched: `Frozen reference contrast failure: ${pair.name} (${ratio.toFixed(2)}:1)`,
+          message: `Frozen reference token pair '${pair.name}' (${pair.fg} on ${pair.bg}) has contrast ${ratio.toFixed(2)}:1, which fails reference-preserved contrast threshold (${pair.min}:1).`,
+        });
+      }
+    } catch (err) {
+      issues.push({
+        file: 'src/index.css',
+        line: 1,
+        matched: `Contrast token resolution error: ${pair.name}`,
+        message: err.message,
+      });
+    }
+  });
+
   return issues;
 }
 
