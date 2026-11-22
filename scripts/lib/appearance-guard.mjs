@@ -163,6 +163,34 @@ export function extractClassTokens(node) {
   return result;
 }
 
+function isImportMetaDev(node) {
+  if (!node) return false;
+  return (
+    node.type === 'MemberExpression' &&
+    node.property?.name === 'DEV' &&
+    node.object?.type === 'MemberExpression' &&
+    node.object.property?.name === 'env' &&
+    node.object.object?.type === 'MetaProperty'
+  );
+}
+
+function isDevGated(jsxPath) {
+  let curr = jsxPath;
+  while (curr) {
+    const node = curr.node;
+    if (node) {
+      if (node.type === 'LogicalExpression' && node.operator === '&&') {
+        if (isImportMetaDev(node.left)) return true;
+      }
+      if (node.type === 'IfStatement') {
+        if (isImportMetaDev(node.test)) return true;
+      }
+    }
+    curr = curr.parentPath;
+  }
+  return false;
+}
+
 /**
  * Scans JSX/TSX content for Design System appearance ownership violations.
  * Evaluates without ds-allow bypass: appearance rules are strictly non-negotiable.
@@ -441,6 +469,70 @@ export function scanPageAppearanceContent(content, filePath = 'anonymous.jsx') {
     JSXOpeningElement(path) {
       const canonicalPrimitive = resolveCanonical(path.node.name);
       const elemLine = path.node.loc?.start?.line || 1;
+
+      // Page Native Interactive Elements Guard (Phase 8)
+      // Under src/pages/**, pages must compose canonical primitives or domain components.
+      // Raw <button>, <select>, <textarea>, or visible <input> outside DEV/demo blocks are banned.
+      const isPageFile = filePath.replace(/\\/g, '/').includes('pages/') || filePath.startsWith('page');
+      if (isPageFile && path.node.name.type === 'JSXIdentifier') {
+        const rawTag = path.node.name.name;
+        if (rawTag === 'button') {
+          if (!isDevGated(path)) {
+            issues.push({
+              file: filePath,
+              line: elemLine,
+              matched: '<button>',
+              message: 'Raw <button> is banned in pages. Pages compose; use canonical primitive <Button>, <IconButton>, or dedicated domain components.',
+            });
+          }
+        } else if (rawTag === 'select') {
+          if (!isDevGated(path)) {
+            issues.push({
+              file: filePath,
+              line: elemLine,
+              matched: '<select>',
+              message: 'Raw <select> is banned in pages. Pages compose; use canonical primitive <NativeSelect> or Radix <Select>.',
+            });
+          }
+        } else if (rawTag === 'textarea') {
+          if (!isDevGated(path)) {
+            issues.push({
+              file: filePath,
+              line: elemLine,
+              matched: '<textarea>',
+              message: 'Raw <textarea> is banned in pages. Pages compose; use canonical form primitive <Textarea>.',
+            });
+          }
+        } else if (rawTag === 'input') {
+          if (!isDevGated(path)) {
+            let isAllowedHiddenInput = false;
+            for (const attr of path.node.attributes) {
+              if (attr.type === 'JSXAttribute') {
+                if (attr.name?.name === 'type' && (attr.value?.value === 'file' || attr.value?.value === 'hidden')) {
+                  isAllowedHiddenInput = true;
+                  break;
+                }
+                if (attr.name?.name === 'hidden' && (attr.value === null || attr.value?.value === true)) {
+                  isAllowedHiddenInput = true;
+                  break;
+                }
+                if (attr.name?.name === 'className' && typeof attr.value?.value === 'string' && attr.value.value.includes('hidden')) {
+                  isAllowedHiddenInput = true;
+                  break;
+                }
+              }
+            }
+            if (!isAllowedHiddenInput) {
+              issues.push({
+                file: filePath,
+                line: elemLine,
+                matched: '<input>',
+                message: 'Raw visible <input> is banned in pages. Pages compose; use canonical form primitive <Input> or <SearchInput>.',
+              });
+            }
+          }
+        }
+      }
 
       // 1. Button specific API checks
       if (canonicalPrimitive === 'Button') {

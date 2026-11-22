@@ -5,6 +5,7 @@ import { MemoryGlyph } from '@/components/brand/MusicalGlyphs';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { IconButton } from '@/components/ui/icon-button';
 
 /**
  * PerformanceRow: A preserved musical moment, not just a media row.
@@ -19,7 +20,7 @@ export default function PerformanceRow({
   const progress = durationSeconds ? Math.min(100, (position / durationSeconds) * 100) : 0;
 
   return (
-    <div className="rounded-container border border-line-subtle bg-surface-panel p-4 sm:p-5 transition-colors hover:border-line-strong duration-base">
+    <div className="rounded-container border border-line-subtle bg-surface-panel p-4 sm:p-5 transition-colors hover:border-line-strong">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -58,12 +59,12 @@ export default function PerformanceRow({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
-                className="rounded-control border border-line-subtle p-1.5 text-ink-secondary hover:text-ink-primary hover:bg-neutral-hover transition-colors"
-                aria-label={`Actions for ${performance.scoreTitleSnapshot}`}
-              >
-                <MoreHorizontal className="h-3.5 w-3.5" />
-              </button>
+              <IconButton
+                icon={MoreHorizontal}
+                label={`Actions for ${performance.scoreTitleSnapshot}`}
+                tone="outline"
+                size="xs"
+              />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52 border-line-subtle bg-surface-panel shadow-overlay">
               <DropdownMenuItem onClick={onDownload} disabled={!canPlay} className="text-sm">
@@ -87,21 +88,15 @@ export default function PerformanceRow({
 
       {/* Musical Playback Interface */}
       <div className="mt-4 flex items-center gap-3.5 pt-2 border-t border-line-subtle">
-        <button
-          type="button"
+        <IconButton
+          icon={loading ? Loader2 : (playing ? Pause : Play)}
+          label={playing ? `Pause ${performance.scoreTitleSnapshot}` : `Play ${performance.scoreTitleSnapshot}`}
+          tone="primary"
+          size="md"
           onClick={onToggle}
           disabled={!canPlay || loading}
-          aria-label={playing ? `Pause ${performance.scoreTitleSnapshot}` : `Play ${performance.scoreTitleSnapshot}`}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line-subtle bg-surface-panel text-brand transition-[color,background-color,border-color,transform] hover:bg-brand hover:text-brand-foreground active:scale-95 disabled:opacity-40"
-        >
-          {loading ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          ) : playing ? (
-            <Pause className="h-3.5 w-3.5 fill-current" />
-          ) : (
-            <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
-          )}
-        </button>
+          className={loading ? '[&_svg]:animate-spin' : ''}
+        />
 
         <div className="min-w-0 flex-1">
           <div className="relative flex items-center">

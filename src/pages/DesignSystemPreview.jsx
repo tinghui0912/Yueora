@@ -183,11 +183,11 @@ export default function DesignSystemPreview() {
               </Surface>
               <div className="rounded-control border border-transparent bg-brand p-3 text-center text-brand-foreground">
                 <span className="type-caption text-brand-foreground">Brand Primary</span>
-                <p className="type-metadata text-brand-foreground/80">Primary Gold</p>
+                <p className="type-metadata text-brand-foreground">Primary Gold</p>
               </div>
               <div className="rounded-control border border-brand bg-brand-soft p-3 text-center">
                 <span className="type-caption text-brand-soft-foreground">Brand Soft</span>
-                <p className="type-metadata text-brand-soft-foreground/80">Compact Selection</p>
+                <p className="type-metadata text-brand-soft-foreground">Compact Selection</p>
               </div>
               <div className="rounded-control border border-line-subrail bg-surface-subrail p-3 text-center">
                 <span className="type-caption text-ink-primary font-medium">SubRail</span>
@@ -453,7 +453,7 @@ export default function DesignSystemPreview() {
 
             {/* Tooltip specimen */}
             <div className="space-y-3">
-              <span className="type-caption text-ink-secondary/70">Tooltip (WCAG AA gold badge)</span>
+              <span className="type-caption text-ink-secondary/70">Tooltip (Canonical Numis brand tooltip)</span>
               <div>
                 <TooltipProvider delayDuration={0}>
                   <Tooltip>

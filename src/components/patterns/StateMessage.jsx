@@ -10,8 +10,10 @@ const toneStyles = {
 };
 
 /**
- * StateMessage — unified empty / error / access denied / expired / revoked / not found / processing.
- * One component replaces EmptyState, ErrorState, ExpiredState, RevokedState, etc.
+ * StateMessage — handles exceptional processing states: error, unavailable, revoked, expired, not-found.
+ * Distinct semantic ownership from EmptyState:
+ * - EmptyState: genuine empty-data / nothing-yet states (bound to Numis EmptyState specimen)
+ * - StateMessage: exceptional, revoked, error, expired, or access-denied processing states
  */
 export default function StateMessage({
   tone = 'neutral',

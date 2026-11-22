@@ -24,6 +24,7 @@ import { dayLabel, minutesLabel } from '@/lib/practiceUtils';
 import StateMessage from '@/components/patterns/StateMessage';
 import AppPage from '@/components/patterns/AppPage';
 import BackLink from '@/components/patterns/BackLink';
+import { FolderOptionRow } from '@/components/library/FolderOptionRow';
 
 export default function ScoreDetail() {
   const { scoreId } = useParams();
@@ -90,8 +91,8 @@ export default function ScoreDetail() {
         <BackLink to="/library" label="Back to Repertoire" />
 
         {score.favorite && (
-          <span className="flex items-center gap-1 type-body-small font-medium text-gold">
-            <Star className="h-4 w-4 fill-gold text-gold" />
+          <span className="flex items-center gap-1 type-body-small font-medium text-brand">
+            <Star className="h-4 w-4 fill-brand text-brand" />
             <span>Favorited piece</span>
           </span>
         )}
@@ -104,17 +105,14 @@ export default function ScoreDetail() {
             <h1 className="type-page-title text-ink-primary">
               {score.title}
             </h1>
-            <button
+            <IconButton
+              icon={Star}
+              tone="quiet"
+              size="sm"
               onClick={handleFavorite}
-              className="text-ink-tertiary hover:text-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-control p-0.5"
-              aria-label={score.favorite ? 'Remove favorite' : 'Add to favorites'}
-            >
-              {score.favorite ? (
-                <Star className="h-5 w-5 fill-gold text-gold" />
-              ) : (
-                <Star className="h-5 w-5" />
-              )}
-            </button>
+              label={score.favorite ? 'Remove favorite' : 'Add to favorites'}
+              active={Boolean(score.favorite)}
+            />
           </div>
           <p className="mt-1 type-body-small text-ink-secondary font-medium">{score.composer} · {score.instrument}</p>
           <div className="mt-2 flex flex-wrap items-center gap-2 type-metadata text-ink-secondary">
@@ -340,14 +338,11 @@ export default function ScoreDetail() {
           <DialogHeader><DialogTitle>Move to folder</DialogTitle></DialogHeader>
           <div className="space-y-1 mt-2">
             {folders.map((f) => (
-              <button
+              <FolderOptionRow
                 key={f.id}
+                name={f.name}
                 onClick={() => { moveToFolder(score.id, f.id); setMoveFolderOpen(false); toast({ title: 'Moved', description: `${score.title} moved to ${f.name}.` }); }}
-                className="flex w-full items-center gap-2 rounded-control border border-line-subtle px-3 py-2 text-left type-body-small hover:bg-neutral-hover"
-              >
-                <FolderInput className="h-4 w-4 text-ink-secondary" />
-                <span className="font-medium text-ink-primary">{f.name}</span>
-              </button>
+              />
             ))}
             {folders.length === 0 && <p className="py-4 text-center type-metadata text-ink-tertiary">No folders yet.</p>}
           </div>

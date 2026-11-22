@@ -165,12 +165,13 @@ export default function Performances() {
           <Link to={`/score/${contextualScore.id}`} className="font-semibold text-brand hover:underline">
             {contextualScore.title}
           </Link>
-          <button
+          <Button
+            intent="secondary"
+            size="xs"
             onClick={clearScoreFilter}
-            className="flex items-center gap-1 rounded-control border border-line-subtle bg-surface-panel px-2 py-0.5 hover:bg-neutral-hover"
           >
-            <X className="h-3 w-3" /> Show all
-          </button>
+            <X className="icon-xs" /> Show all
+          </Button>
         </div>
       )}
 

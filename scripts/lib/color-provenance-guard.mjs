@@ -470,7 +470,19 @@ export function scanColorProvenanceContent(content, filePath = 'test.jsx') {
     // 14. Check Exact Utility + Color + Opacity Recipes across ALL semantic color families
     // COLOR_UTILITY_PREFIXES includes via as well as bg, text, border, ring, shadow, from, to, stroke, fill.
     const prefixGroup = COLOR_UTILITY_PREFIXES.join('|');
-    const chromaticOpacityRegex = new RegExp(`\\b((?:${prefixGroup})-(?:brand|danger|warning|success|info|surface-[a-z]+|line-[a-z]+|neutral-[a-z]+|ink-[a-z]+|practice-[a-z]+|secondary|muted|accent|destructive|primary|card|popover|background|foreground|sidebar-[a-z]+)\\/(\\d+))\\b`, 'g');
+    const allSemanticTokens = [
+      ...Object.keys(YUEORA_SEMANTIC_COLOR_ALIASES).map((t) => t.replace(/^--/, '')),
+      ...Object.keys(YUEORA_COMPATIBILITY_COLOR_ALIASES).map((t) => t.replace(/^--/, '')),
+      ...Object.keys(NUMIS_ROOT_TOKENS).map((t) => t.replace(/^--numis-/, '')),
+      'warning',
+      'warning-foreground',
+      'success',
+      'success-foreground',
+    ];
+    // Sort descending by length so longer compound tokens match before sub-tokens (e.g. brand-soft before brand)
+    allSemanticTokens.sort((a, b) => b.length - a.length);
+    const tokenRegexPart = allSemanticTokens.join('|');
+    const chromaticOpacityRegex = new RegExp(`(?:\\b|:)((?:${prefixGroup})-(?:${tokenRegexPart})\\/(\\d+))\\b`, 'g');
     const chromaticOpacityMatches = line.matchAll(chromaticOpacityRegex);
     for (const m of chromaticOpacityMatches) {
       const fullUtil = m[1];

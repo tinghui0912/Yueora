@@ -25,7 +25,7 @@
     "warning-callout": {
       "file": "src/components/collection/BulkEstimateButton.jsx",
       "line": 44,
-      "exactSnippet": "<div className=\"p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-600 text-sm\">",
+      "exactSnippet": "<p className=\"text-xs text-amber-600 font-body bg-amber-50 rounded-lg p-3\">",
       "classes": [
         "text-amber-600",
         "bg-amber-50"
@@ -42,10 +42,34 @@
         "focus:ring-offset-red-600"
       ]
     },
+    "toast-destructive": {
+      "file": "src/components/ui/toast.jsx",
+      "line": 31,
+      "exactSnippet": "\"destructive group border-destructive bg-destructive text-destructive-foreground\",",
+      "classes": [
+        "destructive",
+        "group",
+        "border-destructive",
+        "bg-destructive",
+        "text-destructive-foreground"
+      ]
+    },
+    "toast-action": {
+      "file": "src/components/ui/toast.jsx",
+      "line": 55,
+      "exactSnippet": "group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive",
+      "classes": [
+        "group-[.destructive]:border-muted/40",
+        "group-[.destructive]:hover:border-destructive/30",
+        "group-[.destructive]:hover:bg-destructive",
+        "group-[.destructive]:hover:text-destructive-foreground",
+        "group-[.destructive]:focus:ring-destructive"
+      ]
+    },
     "badge-default": {
       "file": "src/components/ui/badge.jsx",
       "line": 12,
-      "exactSnippet": "default: \"border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80\",",
+      "exactSnippet": "\"border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80\",",
       "classes": [
         "border-transparent",
         "bg-primary",
@@ -57,7 +81,7 @@
     "badge-secondary": {
       "file": "src/components/ui/badge.jsx",
       "line": 14,
-      "exactSnippet": "secondary: \"border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80\",",
+      "exactSnippet": "\"border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80\",",
       "classes": [
         "border-transparent",
         "bg-secondary",
@@ -68,7 +92,7 @@
     "badge-destructive": {
       "file": "src/components/ui/badge.jsx",
       "line": 16,
-      "exactSnippet": "destructive: \"border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80\",",
+      "exactSnippet": "\"border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80\",",
       "classes": [
         "border-transparent",
         "bg-destructive",
@@ -87,7 +111,72 @@
     },
     "button-default": {
       "file": "src/components/ui/button.jsx",
-      "line": 32,
+      "line": 13,
+      "exactSnippet": "\"bg-primary text-primary-foreground shadow hover:bg-primary/90\",",
+      "classes": [
+        "bg-primary",
+        "text-primary-foreground",
+        "shadow",
+        "hover:bg-primary/90"
+      ]
+    },
+    "button-destructive": {
+      "file": "src/components/ui/button.jsx",
+      "line": 15,
+      "exactSnippet": "\"bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90\",",
+      "classes": [
+        "bg-destructive",
+        "text-destructive-foreground",
+        "shadow-sm",
+        "hover:bg-destructive/90"
+      ]
+    },
+    "button-outline": {
+      "file": "src/components/ui/button.jsx",
+      "line": 17,
+      "exactSnippet": "\"border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground\",",
+      "classes": [
+        "border",
+        "border-input",
+        "bg-transparent",
+        "shadow-sm",
+        "hover:bg-accent",
+        "hover:text-accent-foreground"
+      ]
+    },
+    "button-secondary": {
+      "file": "src/components/ui/button.jsx",
+      "line": 19,
+      "exactSnippet": "\"bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80\",",
+      "classes": [
+        "bg-secondary",
+        "text-secondary-foreground",
+        "shadow-sm",
+        "hover:bg-secondary/80"
+      ]
+    },
+    "button-ghost": {
+      "file": "src/components/ui/button.jsx",
+      "line": 20,
+      "exactSnippet": "ghost: \"hover:bg-accent hover:text-accent-foreground\",",
+      "classes": [
+        "hover:bg-accent",
+        "hover:text-accent-foreground"
+      ]
+    },
+    "button-link": {
+      "file": "src/components/ui/button.jsx",
+      "line": 21,
+      "exactSnippet": "link: \"text-primary underline-offset-4 hover:underline\",",
+      "classes": [
+        "text-primary",
+        "underline-offset-4",
+        "hover:underline"
+      ]
+    },
+    "button-size-default": {
+      "file": "src/components/ui/button.jsx",
+      "line": 24,
       "exactSnippet": "default: \"h-9 px-4 py-2\",",
       "classes": [
         "h-9",
@@ -95,9 +184,9 @@
         "py-2"
       ]
     },
-    "button-sm": {
+    "button-size-sm": {
       "file": "src/components/ui/button.jsx",
-      "line": 33,
+      "line": 25,
       "exactSnippet": "sm: \"h-8 rounded-md px-3 text-xs\",",
       "classes": [
         "h-8",
@@ -106,9 +195,9 @@
         "text-xs"
       ]
     },
-    "button-lg": {
+    "button-size-lg": {
       "file": "src/components/ui/button.jsx",
-      "line": 34,
+      "line": 26,
       "exactSnippet": "lg: \"h-10 rounded-md px-8\",",
       "classes": [
         "h-10",
@@ -116,12 +205,486 @@
         "px-8"
       ]
     },
+    "button-size-icon": {
+      "file": "src/components/ui/button.jsx",
+      "line": 27,
+      "exactSnippet": "icon: \"h-9 w-9\",",
+      "classes": [
+        "h-9",
+        "w-9"
+      ]
+    },
     "button-svg": {
       "file": "src/components/ui/button.jsx",
-      "line": 9,
-      "exactSnippet": "[&_svg]:size-4",
+      "line": 8,
+      "exactSnippet": "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
       "classes": [
         "[&_svg]:size-4"
+      ]
+    },
+    "input-default": {
+      "file": "src/components/ui/input.jsx",
+      "line": 10,
+      "exactSnippet": "\"flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm\",",
+      "classes": [
+        "flex",
+        "h-9",
+        "w-full",
+        "rounded-md",
+        "border",
+        "border-input",
+        "bg-transparent",
+        "px-3",
+        "py-1",
+        "shadow-sm",
+        "transition-colors",
+        "placeholder:text-muted-foreground",
+        "focus-visible:outline-none",
+        "focus-visible:ring-1",
+        "focus-visible:ring-ring"
+      ]
+    },
+    "select-trigger": {
+      "file": "src/components/ui/select.jsx",
+      "line": 19,
+      "exactSnippet": "\"flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1\",",
+      "classes": [
+        "flex",
+        "h-9",
+        "w-full",
+        "items-center",
+        "justify-between",
+        "rounded-md",
+        "border",
+        "border-input",
+        "bg-transparent",
+        "px-3",
+        "py-2",
+        "text-sm",
+        "shadow-sm",
+        "data-[placeholder]:text-muted-foreground",
+        "focus:outline-none",
+        "focus:ring-1",
+        "focus:ring-ring"
+      ]
+    },
+    "select-content": {
+      "file": "src/components/ui/select.jsx",
+      "line": 57,
+      "exactSnippet": "\"relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
+      "classes": [
+        "relative",
+        "z-50",
+        "max-h-96",
+        "min-w-[8rem]",
+        "overflow-hidden",
+        "rounded-md",
+        "border",
+        "bg-popover",
+        "text-popover-foreground",
+        "shadow-md"
+      ]
+    },
+    "select-item": {
+      "file": "src/components/ui/select.jsx",
+      "line": 88,
+      "exactSnippet": "\"relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50\",",
+      "classes": [
+        "relative",
+        "flex",
+        "w-full",
+        "cursor-default",
+        "select-none",
+        "items-center",
+        "rounded-sm",
+        "py-1.5",
+        "pl-2",
+        "pr-8",
+        "text-sm",
+        "outline-none",
+        "focus:bg-accent",
+        "focus:text-accent-foreground"
+      ]
+    },
+    "checkbox-default": {
+      "file": "src/components/ui/checkbox.jsx",
+      "line": 11,
+      "exactSnippet": "\"peer h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground\",",
+      "classes": [
+        "peer",
+        "h-4",
+        "w-4",
+        "shrink-0",
+        "rounded-sm",
+        "border",
+        "border-primary",
+        "shadow",
+        "focus-visible:outline-none",
+        "focus-visible:ring-1",
+        "focus-visible:ring-ring",
+        "data-[state=checked]:bg-primary",
+        "data-[state=checked]:text-primary-foreground"
+      ]
+    },
+    "radio-item": {
+      "file": "src/components/ui/radio-group.jsx",
+      "line": 17,
+      "exactSnippet": "\"aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50\",",
+      "classes": [
+        "aspect-square",
+        "h-4",
+        "w-4",
+        "rounded-full",
+        "border",
+        "border-primary",
+        "text-primary",
+        "shadow",
+        "focus:outline-none",
+        "focus-visible:ring-1",
+        "focus-visible:ring-ring"
+      ]
+    },
+    "switch-root": {
+      "file": "src/components/ui/switch.jsx",
+      "line": 9,
+      "exactSnippet": "\"peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input\",",
+      "classes": [
+        "peer",
+        "inline-flex",
+        "h-5",
+        "w-9",
+        "shrink-0",
+        "rounded-full",
+        "border-2",
+        "border-transparent",
+        "shadow-sm",
+        "transition-colors",
+        "focus-visible:outline-none",
+        "focus-visible:ring-2",
+        "focus-visible:ring-ring",
+        "focus-visible:ring-offset-2",
+        "focus-visible:ring-offset-background",
+        "data-[state=checked]:bg-primary",
+        "data-[state=unchecked]:bg-input"
+      ]
+    },
+    "switch-thumb": {
+      "file": "src/components/ui/switch.jsx",
+      "line": 16,
+      "exactSnippet": "\"pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0\"",
+      "classes": [
+        "pointer-events-none",
+        "block",
+        "h-4",
+        "w-4",
+        "rounded-full",
+        "bg-background",
+        "shadow-lg",
+        "ring-0",
+        "transition-transform",
+        "data-[state=checked]:translate-x-4",
+        "data-[state=unchecked]:translate-x-0"
+      ]
+    },
+    "dialog-overlay": {
+      "file": "src/components/ui/dialog.jsx",
+      "line": 21,
+      "exactSnippet": "\"fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0\",",
+      "classes": [
+        "fixed",
+        "inset-0",
+        "z-50",
+        "bg-black/80"
+      ]
+    },
+    "dialog-content": {
+      "file": "src/components/ui/dialog.jsx",
+      "line": 34,
+      "exactSnippet": "\"fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200",
+      "classes": [
+        "fixed",
+        "z-50",
+        "grid",
+        "gap-4",
+        "border",
+        "bg-background",
+        "p-6",
+        "shadow-lg",
+        "duration-200"
+      ]
+    },
+    "popover-content": {
+      "file": "src/components/ui/popover.jsx",
+      "line": 19,
+      "exactSnippet": "\"z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none",
+      "classes": [
+        "z-50",
+        "w-72",
+        "rounded-md",
+        "border",
+        "bg-popover",
+        "p-4",
+        "text-popover-foreground",
+        "shadow-md",
+        "outline-none"
+      ]
+    },
+    "dropdown-menu-content": {
+      "file": "src/components/ui/dropdown-menu.jsx",
+      "line": 53,
+      "exactSnippet": "\"z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md\",",
+      "classes": [
+        "z-50",
+        "min-w-[8rem]",
+        "overflow-hidden",
+        "rounded-md",
+        "border",
+        "bg-popover",
+        "p-1",
+        "text-popover-foreground",
+        "shadow-md"
+      ]
+    },
+    "dropdown-menu-item": {
+      "file": "src/components/ui/dropdown-menu.jsx",
+      "line": 66,
+      "exactSnippet": "\"relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0\",",
+      "classes": [
+        "relative",
+        "flex",
+        "cursor-default",
+        "select-none",
+        "items-center",
+        "gap-2",
+        "rounded-sm",
+        "px-2",
+        "py-1.5",
+        "text-sm",
+        "outline-none",
+        "transition-colors",
+        "focus:bg-accent",
+        "focus:text-accent-foreground"
+      ]
+    },
+    "tooltip-content": {
+      "file": "src/components/ui/tooltip.jsx",
+      "line": 20,
+      "exactSnippet": "\"z-50 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground animate-in fade-in-0 zoom-in-95",
+      "classes": [
+        "z-50",
+        "overflow-hidden",
+        "rounded-md",
+        "bg-primary",
+        "px-3",
+        "py-1.5",
+        "text-xs",
+        "text-primary-foreground"
+      ]
+    },
+    "tabs-list": {
+      "file": "src/components/ui/tabs.jsx",
+      "line": 12,
+      "exactSnippet": "\"inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground\",",
+      "classes": [
+        "inline-flex",
+        "h-9",
+        "items-center",
+        "justify-center",
+        "rounded-lg",
+        "bg-muted",
+        "p-1",
+        "text-muted-foreground"
+      ]
+    },
+    "tabs-trigger": {
+      "file": "src/components/ui/tabs.jsx",
+      "line": 23,
+      "exactSnippet": "\"inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow\",",
+      "classes": [
+        "inline-flex",
+        "items-center",
+        "justify-center",
+        "whitespace-nowrap",
+        "rounded-md",
+        "px-3",
+        "py-1",
+        "text-sm",
+        "font-medium",
+        "transition-all",
+        "focus-visible:outline-none",
+        "focus-visible:ring-2",
+        "focus-visible:ring-ring",
+        "data-[state=active]:bg-background",
+        "data-[state=active]:text-foreground",
+        "data-[state=active]:shadow"
+      ]
+    },
+    "toggle-default": {
+      "file": "src/components/ui/toggle.jsx",
+      "line": 12,
+      "exactSnippet": "default: \"bg-transparent\",",
+      "classes": [
+        "bg-transparent"
+      ]
+    },
+    "toggle-outline": {
+      "file": "src/components/ui/toggle.jsx",
+      "line": 14,
+      "exactSnippet": "\"border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground\",",
+      "classes": [
+        "border",
+        "border-input",
+        "bg-transparent",
+        "shadow-sm",
+        "hover:bg-accent",
+        "hover:text-accent-foreground"
+      ]
+    },
+    "toggle-base": {
+      "file": "src/components/ui/toggle.jsx",
+      "line": 8,
+      "exactSnippet": "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+      "classes": [
+        "inline-flex",
+        "items-center",
+        "justify-center",
+        "gap-2",
+        "rounded-md",
+        "text-sm",
+        "font-medium",
+        "transition-colors",
+        "hover:bg-muted",
+        "hover:text-muted-foreground",
+        "focus-visible:outline-none",
+        "focus-visible:ring-1",
+        "focus-visible:ring-ring",
+        "data-[state=on]:bg-accent",
+        "data-[state=on]:text-accent-foreground"
+      ]
+    },
+    "empty-state": {
+      "file": "src/components/collection/EmptyState.jsx",
+      "line": 12,
+      "exactSnippet": "<div className=\"p-6 rounded-full bg-primary/5 mb-6\">",
+      "classes": [
+        "py-20",
+        "text-center",
+        "p-6",
+        "rounded-full",
+        "bg-primary/5",
+        "w-12",
+        "h-12",
+        "text-primary/40",
+        "font-heading",
+        "text-xl",
+        "font-semibold",
+        "text-foreground",
+        "text-muted-foreground",
+        "font-body"
+      ]
+    },
+    "dashboard-segmented-toggle": {
+      "file": "src/pages/Dashboard.jsx",
+      "line": 134,
+      "exactSnippet": "className={`px-3 py-1 rounded-md text-xs font-body font-medium transition-colors ${chartMode === key ? \"bg-card shadow text-foreground\" : \"text-muted-foreground hover:text-foreground\"}`}",
+      "classes": [
+        "flex",
+        "items-center",
+        "gap-1",
+        "bg-muted",
+        "p-1",
+        "rounded-lg",
+        "px-3",
+        "py-1",
+        "rounded-md",
+        "text-xs",
+        "font-medium",
+        "transition-colors",
+        "bg-card",
+        "shadow",
+        "text-foreground",
+        "text-muted-foreground",
+        "hover:text-foreground"
+      ]
+    },
+    "flat-content-panel": {
+      "file": "src/components/ui/card.jsx",
+      "line": 8,
+      "exactSnippet": "className={cn(\"rounded-xl border bg-card text-card-foreground shadow\", className)}",
+      "classes": [
+        "rounded-xl",
+        "border",
+        "bg-card",
+        "text-card-foreground",
+        "shadow"
+      ]
+    },
+    "statcard-interactive-panel": {
+      "file": "src/components/collection/StatCard.jsx",
+      "line": 9,
+      "exactSnippet": "className=\"bg-card rounded-2xl p-6 border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5\"",
+      "classes": [
+        "bg-card",
+        "rounded-2xl",
+        "p-6",
+        "border",
+        "border-border/50",
+        "hover:border-primary/30",
+        "transition-all",
+        "duration-300",
+        "hover:shadow-lg",
+        "hover:shadow-primary/5"
+      ]
+    },
+    "itemcard-interactive-card": {
+      "file": "src/components/collection/ItemCard.jsx",
+      "line": 35,
+      "exactSnippet": "className=\"group bg-card rounded-2xl border border-border/50 overflow-hidden cursor-pointer hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1\"",
+      "classes": [
+        "group",
+        "bg-card",
+        "rounded-2xl",
+        "border",
+        "border-border/50",
+        "overflow-hidden",
+        "cursor-pointer",
+        "hover:border-primary/40",
+        "transition-all",
+        "duration-300",
+        "hover:shadow-xl",
+        "hover:shadow-primary/5",
+        "hover:-translate-y-1"
+      ]
+    },
+    "sidebar-active-navigation": {
+      "file": "src/components/layout/Sidebar.jsx",
+      "line": 36,
+      "exactSnippet": "className=\"absolute inset-0 bg-primary/10 rounded-xl\"",
+      "classes": [
+        "absolute",
+        "inset-0",
+        "bg-primary/10",
+        "rounded-xl",
+        "text-primary",
+        "font-medium",
+        "text-muted-foreground",
+        "hover:text-foreground"
+      ]
+    },
+    "dashboard-quick-link": {
+      "file": "src/pages/Dashboard.jsx",
+      "line": 221,
+      "exactSnippet": "className=\"bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-6 border border-primary/10 flex items-center justify-between hover:border-primary/30 transition-all\"",
+      "classes": [
+        "bg-gradient-to-br",
+        "from-primary/10",
+        "to-primary/5",
+        "rounded-2xl",
+        "p-6",
+        "border",
+        "border-primary/10",
+        "hover:border-primary/30",
+        "transition-all"
       ]
     }
   }

@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { checkoutPath, formatPrice, intervalNoun, monthlyEquivalent, yearlySavingPercent } from '@/lib/commercial';
 import { Button } from '@/components/ui/button';
+import { SegmentedControl, SegmentedControlItem } from '@/components/patterns/SegmentedControl';
 
 const features = [
   { label: 'Scores in library', key: 'scores' },
@@ -61,27 +62,19 @@ export default function Pricing() {
               </p>
 
               {/* Billing Cycle Pill Switch */}
-              <div className="mt-8 inline-flex items-center gap-1 rounded-full border border-line-subtle bg-surface-panel p-1.5">
-                <button
-                  onClick={() => setYearly(false)}
-                  className={`rounded-full px-5 py-2 type-label font-medium transition-all ${
-                    !yearly
-                      ? 'bg-neutral-muted font-semibold text-ink-primary border border-line-subtle'
-                      : 'text-ink-secondary hover:text-ink-primary'
-                  }`}
+              <div className="mt-8">
+                <SegmentedControl
+                  value={yearly ? 'yearly' : 'monthly'}
+                  onValueChange={(val) => setYearly(val === 'yearly')}
+                  aria-label="Billing cycle"
                 >
-                  Monthly
-                </button>
-                <button
-                  onClick={() => setYearly(true)}
-                  className={`rounded-full px-5 py-2 type-label font-medium transition-all ${
-                    yearly
-                      ? 'bg-neutral-muted font-semibold text-ink-primary border border-line-subtle'
-                      : 'text-ink-secondary hover:text-ink-primary'
-                  }`}
-                >
-                  Yearly <span className="ml-1.5 type-metadata text-brand font-semibold">save {saving}%</span>
-                </button>
+                  <SegmentedControlItem value="monthly">
+                    Monthly
+                  </SegmentedControlItem>
+                  <SegmentedControlItem value="yearly">
+                    Yearly <span className="ml-1.5 type-metadata text-brand font-semibold">save {saving}%</span>
+                  </SegmentedControlItem>
+                </SegmentedControl>
               </div>
             </Reveal>
           </div>

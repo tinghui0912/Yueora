@@ -55,7 +55,7 @@ export default function ScoreCard({ score, selected, onToggleSelect }) {
         <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-10 pointer-events-auto">
           {score.favorite && (
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-surface-panel/90 backdrop-blur-xs border border-line-subtle/50">
-              <Star className="icon-xs fill-gold text-gold" />
+              <Star className="icon-xs fill-brand text-brand" />
             </span>
           )}
           {onToggleSelect && (

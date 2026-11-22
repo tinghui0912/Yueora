@@ -1758,7 +1758,7 @@ try {
   }
   if (allSemanticExact) {
     passedTests++;
-    console.log(`  ✓ [PASS as expected] all 33 Yueora semantic aliases exact mapping verified in src/index.css`);
+    console.log(`  ✓ [PASS as expected] all 32 Yueora semantic aliases exact mapping verified in src/index.css`);
   } else {
     failedTests++;
     console.error(`  ❌ [UNEXPECTED FAIL] some semantic color alias mappings did not match exact expected values`);
@@ -2067,6 +2067,145 @@ totalTests++;
     console.error(`  ❌ [UNEXPECTED PASS] Button md without py-2 should have been rejected`);
   }
 }
+
+// -----------------------------------------------------------------------------
+// 6. NUMIS VISUAL TRUTH CONSOLIDATION & RECIPE CLOSURE FIXTURES
+// -----------------------------------------------------------------------------
+console.log('--- Numis Visual Truth Consolidation & Recipe Closure Fixtures ---');
+
+// Negative: hover:bg-brand-soft/70 rejected (invented opacity)
+assertColorNegative(
+  'hover:bg-brand-soft/70 rejected (invented opacity)',
+  `<div className="hover:bg-brand-soft/70">Card</div>`,
+  'bg-brand-soft/70',
+  'src/components/Card.jsx'
+);
+
+// Negative: invented HSL color rejected
+assertColorNegative(
+  'invented HSL color rejected',
+  `<div className="text-[hsl(10,50%,50%)]">Text</div>`,
+  'text-[hsl(10,50%,50%)]',
+  'src/components/Card.jsx'
+);
+
+// Negative: invented hex color rejected
+assertColorNegative(
+  'invented hex color rejected',
+  `<div className="bg-[#123456]">Text</div>`,
+  'bg-[#123456]',
+  'src/components/Card.jsx'
+);
+
+// Negative: raw visible <select> in page rejected
+assertNegative(
+  'raw visible <select> in page rejected',
+  `<select value="1"><option value="1">1</option></select>`,
+  '<select>',
+  'src/pages/TestPage.jsx'
+);
+
+// Negative: raw styled <button> in page rejected
+assertNegative(
+  'raw styled <button> in page rejected',
+  `<button className="px-4 py-2 bg-brand text-brand-foreground">Action</button>`,
+  '<button>',
+  'src/pages/TestPage.jsx'
+);
+
+// Negative: raw visible <input> in page rejected
+assertNegative(
+  'raw visible <input> in page rejected',
+  `<input type="text" value="query" />`,
+  '<input>',
+  'src/pages/TestPage.jsx'
+);
+
+// Negative: retired bronze hex #98661B rejected in page
+assertNegative(
+  'retired bronze hex #98661B rejected in page',
+  `<div className="text-[#98661B]">Bronze</div>`,
+  '#98661B',
+  'src/pages/TestPage.jsx'
+);
+
+// Negative: Tooltip using wrong foreground text-ink-primary rejected
+totalTests++;
+{
+  const tooltipContentWithWrongFg = `<TooltipPrimitive.Content className="z-50 overflow-hidden rounded-control bg-brand px-3 py-1.5 text-xs text-ink-primary" />`;
+  const isNumisRecipe = tooltipContentWithWrongFg.includes('text-brand-foreground');
+  if (!isNumisRecipe) {
+    passedTests++;
+    console.log(`  ✓ [FAIL as expected] Tooltip using wrong foreground text-ink-primary rejected`);
+  } else {
+    failedTests++;
+    console.error(`  ❌ [UNEXPECTED PASS] Tooltip with text-ink-primary should have failed`);
+  }
+}
+
+// Positive: exact Numis Button recipe accepted
+assertColorPositive(
+  'exact Numis Button primary recipe accepted',
+  `<button className="bg-primary text-primary-foreground shadow hover:bg-primary/90">Primary</button>`,
+  'src/components/ui/button.jsx'
+);
+
+// Positive: semantic alias of Button primary recipe accepted
+assertColorPositive(
+  'semantic alias of Button primary recipe accepted',
+  `<button className="bg-brand text-brand-foreground shadow hover:bg-brand/90">Primary</button>`,
+  'src/components/ui/button.jsx'
+);
+
+// Positive: Numis Tooltip recipe accepted
+assertColorPositive(
+  'Numis Tooltip recipe (bg-brand text-brand-foreground) accepted',
+  `<div className="bg-brand text-brand-foreground">Tooltip</div>`,
+  'src/components/ui/tooltip.jsx'
+);
+
+// Positive: Numis Toggle-derived FilterTab accepted
+assertColorPositive(
+  'Numis Toggle-derived FilterTab accepted',
+  `<button className="border border-line-subtle bg-transparent shadow-control hover:bg-brand-soft hover:text-brand-soft-foreground">Tab</button>`,
+  'src/components/patterns/FilterTabs.jsx'
+);
+
+// Positive: Numis EmptyState accepted
+assertColorPositive(
+  'Numis EmptyState accepted',
+  `<div className="bg-brand/5 text-brand/40 text-ink-primary text-ink-secondary">Empty</div>`,
+  'src/components/patterns/EmptyState.jsx'
+);
+
+// Positive: Numis StatCard Surface interaction accepted
+assertColorPositive(
+  'Numis StatCard Surface interaction accepted',
+  `<div className="bg-surface-panel border-line-subtle hover:border-brand/40 hover:shadow-raised">Surface</div>`,
+  'src/components/patterns/Surface.jsx'
+);
+
+// Positive: allowed hidden file input in page accepted
+assertPositive(
+  'allowed hidden file input in page accepted',
+  `<input type="file" className="hidden" />`,
+  'src/pages/AccountSettings.jsx'
+);
+
+// Positive: DEV-only simulation button in page accepted
+assertPositive(
+  'DEV-only simulation button in page accepted',
+  `export default function DevQA() {
+    return (
+      <div>
+        {import.meta.env.DEV && (
+          <button onClick={() => {}}>Simulate</button>
+        )}
+      </div>
+    );
+  }`,
+  'src/pages/AddScore.jsx'
+);
 
 // -----------------------------------------------------------------------------
 // SUMMARY

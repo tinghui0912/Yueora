@@ -58,8 +58,8 @@ export const FilterTab = React.forwardRef(function FilterTab(
       className={cn(
         'inline-flex items-center gap-1.5 whitespace-nowrap rounded-control px-3.5 py-1.5 type-body-small transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand',
         active
-          ? 'bg-brand-soft font-medium text-ink-primary shadow-none'
-          : 'bg-transparent text-ink-tertiary hover:bg-brand-soft/70 hover:text-ink-primary',
+          ? 'bg-brand-soft font-medium text-brand-soft-foreground shadow-none'
+          : 'bg-transparent text-ink-tertiary hover:bg-neutral-hover hover:text-ink-primary',
         className
       )}
       {...props}

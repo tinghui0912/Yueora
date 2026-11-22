@@ -91,7 +91,9 @@ import {
   YUEORA_SEMANTIC_COLOR_ALIASES,
   YUEORA_COMPATIBILITY_COLOR_ALIASES,
   ELEVATION_SHADOW_TOKENS,
+  YUEORA_AUTHORIZED_RECIPES,
 } from './lib/numis-visual-provenance-manifest.mjs';
+import { verifyVisualRecipes } from './lib/visual-recipe-guard.mjs';
 
 // Fixed Numis Reference Manifest
 export const NUMIS_REFERENCE_MANIFEST = {
@@ -159,16 +161,24 @@ function resolveCssTokenHsl(tokenName, tokenMap, visited = new Set()) {
   return [parseFloat(hslMatch[1]), parseFloat(hslMatch[2]), parseFloat(hslMatch[3])];
 }
 
-const CANONICAL_CONTRAST_PAIRS = [
+export const WCAG_AA_PASSING_PAIRS = [
   { name: 'ink-primary on panel', fg: '--ink-primary', bg: '--surface-panel', min: 4.5 },
   { name: 'ink-primary on canvas', fg: '--ink-primary', bg: '--surface-canvas', min: 4.5 },
   { name: 'ink-secondary on panel', fg: '--ink-secondary', bg: '--surface-panel', min: 4.5 },
   { name: 'ink-secondary on canvas', fg: '--ink-secondary', bg: '--surface-canvas', min: 4.5 },
-  { name: 'ink-tertiary on panel', fg: '--ink-tertiary', bg: '--surface-panel', min: 4.0 },
-  { name: 'ink-tertiary on canvas', fg: '--ink-tertiary', bg: '--surface-canvas', min: 4.0 },
-  { name: 'brand-foreground on brand', fg: '--brand-foreground', bg: '--brand', min: 3.0 },
   { name: 'danger-foreground on danger', fg: '--danger-foreground', bg: '--danger', min: 4.5 },
   { name: 'ink-primary on info', fg: '--ink-primary', bg: '--info', min: 4.5 },
+];
+
+export const FROZEN_REFERENCE_PRESERVED_PAIRS = [
+  { name: 'brand-foreground on brand', fg: '--brand-foreground', bg: '--brand', min: 3.0, expectedRatio: 3.06, role: 'large buttons and primary controls (satisfies 3:1 large-scale AA)' },
+  { name: 'ink-tertiary on panel', fg: '--ink-tertiary', bg: '--surface-panel', min: 4.0, expectedRatio: 4.44, role: 'incidental metadata and secondary captions (Numis card / muted-foreground)' },
+  { name: 'ink-tertiary on canvas', fg: '--ink-tertiary', bg: '--surface-canvas', min: 4.0, expectedRatio: 4.26, role: 'incidental metadata and canvas annotations (Numis background / muted-foreground)' },
+];
+
+export const CANONICAL_CONTRAST_PAIRS = [
+  ...WCAG_AA_PASSING_PAIRS,
+  ...FROZEN_REFERENCE_PRESERVED_PAIRS,
 ];
 
 function verifyContrastIntegrity(issues = []) {
@@ -1742,6 +1752,10 @@ function verifyCodebaseColorProvenance(issues = []) {
 }
 verifyCodebaseColorProvenance(totalViolations);
 
+// Verify Authorized Visual Recipes against Numis Source Truth
+const recipeViolations = verifyVisualRecipes();
+totalViolations.push(...recipeViolations);
+
 if (totalViolations.length === 0) {
   console.log('✅ Design System integrity checks passed.');
   console.log(`   - Verified ${REQUIRED_TYPOGRAPHY.length} semantic typography roles in src/index.css`);
@@ -1775,7 +1789,9 @@ if (totalViolations.length === 0) {
   console.log(`   - Verified retired tokens permanently removed and forbidden from product code`);
   console.log(`   - Verified standard AppPage adoption on core overview and detail pages`);
   console.log(`   - Verified visual-rendering token invariant across application rendering modules (src/lib)`);
-  console.log(`   - Verified WCAG AA contrast compliance across ${CANONICAL_CONTRAST_PAIRS.length} canonical foreground/background pairs via computed relative luminance`);
+  console.log(`   - Verified ${YUEORA_AUTHORIZED_RECIPES.length} authorized visual recipes and owner permissions against frozen Numis source truth`);
+  console.log('   - Verified Page Native Interactive Guard (zero raw button, select, textarea, or visible input in src/pages)');
+  console.log(`   - Verified contrast integrity: ${WCAG_AA_PASSING_PAIRS.length} pairs meet WCAG AA normal text threshold (>= 4.5:1), and ${FROZEN_REFERENCE_PRESERVED_PAIRS.length} frozen Numis reference pairs preserved as visual truth (brand-foreground on brand ~3.06:1, ink-tertiary ~4.02:1 - 4.44:1)`);
   console.log(`   - Scanned ${scannedFilesCount} JSX files across ${SCAN_DIRECTORIES.length} root directories\n`);
   process.exit(0);
 } else {

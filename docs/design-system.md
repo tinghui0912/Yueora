@@ -69,6 +69,16 @@ Repeated product hierarchy roles use semantic typography roles. Do not override 
 
 > **NumisCollection owns visual truth; Yueora owns semantic domain organization.**
 >
+> **"Yueora owns semantic architecture. NumisCollection owns physical visual truth."**
+> Yueora owns: semantic token names, component APIs, primitive ownership, semantic patterns, domain components, page composition rules, accessibility semantics, guardrails, docs, test architecture.
+> NumisCollection owns: physical color values, approved color opacity recipes, canonical color combinations, primary primitive visual recipes, shadows/elevation recipes, hover/active/selected/motion behavior.
+>
+> **Contrast Truth:** Numis reference primary on primary-foreground has a computed contrast ratio of ~3.06:1, which satisfies the WCAG AA minimum threshold (>= 3:1) for large-scale UI components, graphical objects, and primary action buttons, but does not meet 4.5:1 for normal body text. Yueora preserves Numis visual values as frozen truth without recoloring. Ink-tertiary on panel has a computed contrast ratio of ~4.02:1 - 4.44:1 (satisfies 3:1 for incidental metadata and secondary captions).
+>
+> **Dark Mode Policy:** Dark mode is NOT a production feature in Yueora V2. No dormant promises or dark-mode-specific overrides that deviate from frozen Numis truth.
+>
+> **Page Native Interactive Guard:** Under `src/pages/**`, raw `<button>`, `<select>`, `<textarea>`, and visible `<input>` elements are strictly banned. Pages compose canonical primitives and domain components.
+>
 > All visual color values derive strictly from frozen commit:
 > **`tinghui0912/NumisCollection`** (`efd2af4c5c1f8a2955b5c2c6d358cc9ecc3ec79c`).
 > Yueora never invents physical colors, rounded approximate HSLs, or unproven opacity numbers.
@@ -133,8 +143,8 @@ The system is strictly partitioned into 4 provenance layers:
 | UI Context | Default Surface | Hover Surface | Active / Selected | Border | Text |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Primary Button** | `bg-brand` | `hover:bg-brand/90` | `hover:bg-brand/90` | `border-transparent` | `text-brand-foreground` |
-| **Secondary Button** | `bg-surface-panel` | `hover:bg-brand-soft/60` | `bg-neutral-muted` | `hover:border-brand/40` | `text-ink-primary` |
-| **Quiet Button** | `transparent` | `hover:bg-brand-soft/50` | `bg-neutral-muted` | `border-transparent` | `hover:text-ink-primary` |
+| **Secondary Button** | `bg-surface-panel` | `hover:bg-brand-soft` | `bg-neutral-muted` | `hover:border-brand/40` | `text-ink-primary` |
+| **Quiet Button** | `transparent` | `hover:bg-brand-soft` | `bg-neutral-muted` | `border-transparent` | `hover:text-ink-primary` |
 | **Danger Button** | `bg-danger` | `hover:bg-danger/90` | `bg-danger` | `border-transparent` | `text-danger-foreground` |
 | **Dropdown Item** | `transparent` | `bg-neutral-hover` | `bg-neutral-muted` | `none` | `text-ink-primary` |
 | **Tab Trigger** | `transparent` | `bg-neutral-hover` | `bg-surface-panel` | `none` | `text-ink-primary` |
@@ -155,7 +165,7 @@ Yueora's physical colors are strictly derived from NumisCollection commit `efd2a
 | `--numis-foreground` | `30 10% 12%` | `ink-primary` (dark warm ink) |
 | `--numis-card` | `40 25% 99%` | `surface-panel`, `surface-raised` (warm white panel) |
 | `--numis-card-foreground` | `30 10% 12%` | `card-foreground` |
-| `--numis-primary` | `36 70% 45%` | `brand`, `gold`, `practice-current`, `warning` |
+| `--numis-primary` | `36 70% 45%` | `brand`, `practice-current`, `warning` |
 | `--numis-primary-foreground` | `40 20% 98%` | `brand-foreground`, `*-foreground` |
 | `--numis-secondary` | `35 15% 93%` | `secondary` |
 | `--numis-secondary-foreground` | `30 10% 20%` | `ink-secondary` |

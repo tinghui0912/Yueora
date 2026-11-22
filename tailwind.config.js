@@ -50,7 +50,6 @@ module.exports = {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
-				gold: 'hsl(var(--gold))',
 				/* ---- Surface semantic (3 Canonical Surfaces) ---- */
 				surface: {
 					canvas: 'hsl(var(--surface-canvas))',

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import PublicShell from '@/components/public/PublicShell';
 import Reveal from '@/components/public/Reveal';
+import ContinuumStep from '@/components/public/ContinuumStep';
 import Surface from '@/components/patterns/Surface';
 import ScorePreview from '@/components/library/ScorePreview';
 import HeroProductVisual from '@/components/visuals/HeroProductVisual';
@@ -317,41 +318,18 @@ export default function Landing() {
           <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
             {/* Steps list — 5 columns */}
             <div className="lg:col-span-5 space-y-3">
-              {journeySteps.map((s, idx) => {
-                const isActive = activeStep === idx;
-                return (
-                  <button
-                    key={s.step}
-                    type="button"
-                    onClick={() => setActiveStep(idx)}
-                    className={`w-full text-left rounded-container p-5 transition-all duration-300 ${
-                      isActive
-                        ? 'bg-surface-panel border border-line-subtle'
-                        : 'border border-transparent hover:bg-neutral-hover'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="type-caption font-mono text-ink-primary">
-                        {s.step}
-                      </span>
-                      <span className="type-caption rounded-full bg-surface-canvas px-3 py-0.5 text-ink-tertiary border border-line-subtle/50">
-                        {s.tag}
-                      </span>
-                    </div>
-                    <h3 className="mt-2 type-subsection text-ink-primary">
-                      {s.title}
-                    </h3>
-                    <p className="mt-1 type-body-small text-ink-secondary">
-                      {s.summary}
-                    </p>
-                    {isActive && (
-                      <p className="mt-3 border-t border-line-subtle pt-2.5 type-body-small italic font-serif text-ink-secondary">
-                        {s.description}
-                      </p>
-                    )}
-                  </button>
-                );
-              })}
+              {journeySteps.map((s, idx) => (
+                <ContinuumStep
+                  key={s.step}
+                  step={s.step}
+                  tag={s.tag}
+                  title={s.title}
+                  summary={s.summary}
+                  description={s.description}
+                  active={activeStep === idx}
+                  onClick={() => setActiveStep(idx)}
+                />
+              ))}
             </div>
 
             {/* Dynamic Stage Preview Visual — 7 columns */}

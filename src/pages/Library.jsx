@@ -22,6 +22,10 @@ import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
+import { FolderOptionRow } from '@/components/library/FolderOptionRow';
 
 const librarySections = [
   { key: 'all', label: 'All music' },
@@ -275,29 +279,25 @@ export default function Library() {
                 <p className="type-menu-label text-ink-primary">Instrument</p>
                 <div className="mt-1.5 flex flex-wrap gap-1">
                   {instruments.map((ins) => (
-                    <button
+                    <FilterTab
                       key={ins}
+                      active={filterInstrument === ins}
                       onClick={() => setFilterInstrument(ins)}
-                      className={`rounded-control px-2 py-1 type-body-small ${
-                        filterInstrument === ins ? 'bg-brand-soft font-semibold text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover'
-                      }`}
                     >
                       {ins === 'all' ? 'All' : ins}
-                    </button>
+                    </FilterTab>
                   ))}
                 </div>
                 <p className="mt-3 type-menu-label text-ink-primary">Practice history</p>
                 <div className="mt-1.5 flex flex-wrap gap-1">
                   {[['any', 'Any'], ['recent', 'Played recently'], ['notplayed', 'Not played yet']].map(([k, l]) => (
-                    <button
+                    <FilterTab
                       key={k}
+                      active={filterPlayed === k}
                       onClick={() => setFilterPlayed(k)}
-                      className={`rounded-control px-2 py-1 type-body-small ${
-                        filterPlayed === k ? 'bg-brand-soft font-semibold text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover'
-                      }`}
                     >
                       {l}
-                    </button>
+                    </FilterTab>
                   ))}
                 </div>
                 <label className="mt-3 flex items-center gap-2 type-label text-ink-primary cursor-pointer select-none">
@@ -313,33 +313,30 @@ export default function Library() {
           </div>
 
           {/* Sort dropdown */}
-          <div className="relative">
-            <Button
-              intent="secondary"
-              size="md"
-              onClick={() => { setShowSort((s) => !s); setShowFilters(false); }}
-              aria-label="Sort repertoire"
-            >
-              <ArrowUpDown className="icon-sm" />
-              <span className="hidden sm:inline">Sort</span>
-            </Button>
-            {showSort && (
-              <Surface tone="raised" elevation="overlay" padding="none" className="absolute right-0 z-20 mt-1 w-44 p-1">
-                {sortOptions.map((o) => (
-                  <button
-                    key={o.key}
-                    onClick={() => { setParam('sort', o.key); setShowSort(false); }}
-                    className={`flex w-full items-center justify-between rounded-control px-2.5 py-2 text-left type-body-small ${
-                      sort === o.key ? 'bg-brand-soft font-semibold text-brand-soft-foreground' : 'text-ink-secondary hover:bg-neutral-hover'
-                    }`}
-                  >
-                    <span>{o.label}</span>
-                    {sort === o.key && <Check className="h-3 w-3" />}
-                  </button>
-                ))}
-              </Surface>
-            )}
-          </div>
+          <DropdownMenu open={showSort} onOpenChange={setShowSort}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                intent="secondary"
+                size="md"
+                aria-label="Sort repertoire"
+              >
+                <ArrowUpDown className="icon-sm" />
+                <span className="hidden sm:inline">Sort</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              {sortOptions.map((o) => (
+                <DropdownMenuItem
+                  key={o.key}
+                  onClick={() => setParam('sort', o.key)}
+                  className="flex items-center justify-between"
+                >
+                  <span>{o.label}</span>
+                  {sort === o.key && <Check className="h-3 w-3" />}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Grid / List switch (canonical SegmentedControl) */}
           <SegmentedControl value={view} onValueChange={(v) => setParam('layout', v)} aria-label="View layout">
@@ -474,7 +471,7 @@ export default function Library() {
                     <p className="truncate type-subsection text-ink-primary">{s.title}</p>
                     <p className="truncate type-metadata text-ink-secondary">{s.composer} · {s.instrument}</p>
                   </div>
-                  {s.favorite && <Star className="h-3.5 w-3.5 fill-gold text-gold shrink-0" />}
+                  {s.favorite && <Star className="h-3.5 w-3.5 fill-brand text-brand shrink-0" />}
                   <span className="hidden type-metadata text-ink-tertiary sm:block">
                     {s.lastPlayed === 'never' || !s.lastPlayed ? 'Awaiting practice' : `Played ${s.lastPlayed}`}
                   </span>
@@ -503,14 +500,11 @@ export default function Library() {
           <DialogHeader><DialogTitle>Move to folder</DialogTitle></DialogHeader>
           <div className="space-y-1 mt-2">
             {folders.map((f) => (
-              <button
+              <FolderOptionRow
                 key={f.id}
+                name={f.name}
                 onClick={() => moveSelected(f.id)}
-                className="flex w-full items-center gap-2 rounded-control border border-line-subtle px-3 py-2 text-left type-body-small hover:bg-neutral-hover"
-              >
-                <FolderInput className="h-3.5 w-3.5 text-ink-secondary" />
-                <span className="font-medium text-ink-primary">{f.name}</span>
-              </button>
+              />
             ))}
             {folders.length === 0 && <p className="py-4 text-center type-metadata text-ink-tertiary">No folders yet.</p>}
           </div>

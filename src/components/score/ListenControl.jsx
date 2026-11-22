@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Loader2, Pause, Play } from 'lucide-react';
 import { fmtClock } from '@/lib/practiceUtils';
+import { IconButton } from '@/components/ui/icon-button';
 
 // Listening to a score is a different act from practicing it: no feedback, no
 // listening model, just the music at its own tempo.
@@ -55,14 +56,14 @@ export default function ListenControl({ score }) {
 
   return (
     <div className="mt-3 flex items-center gap-3 border-t border-line-subtle pt-3">
-      <button
-        type="button"
+      <IconButton
+        icon={busy ? Loader2 : (status === 'playing' ? Pause : Play)}
+        label={status === 'playing' ? 'Pause listening' : 'Listen to this score'}
+        tone="primary"
+        size="md"
         onClick={toggle}
-        aria-label={status === 'playing' ? 'Pause listening' : 'Listen to this score'}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line-subtle text-ink-primary hover:bg-neutral-hover"
-      >
-        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : status === 'playing' ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-      </button>
+        className={busy ? '[&_svg]:animate-spin' : ''}
+      />
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between type-metadata text-ink-secondary">
           <span>{stateLabel}</span>

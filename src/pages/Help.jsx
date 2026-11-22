@@ -7,6 +7,7 @@ import { helpArticles, helpCategories } from '@/lib/mockData';
 import PublicShell from '@/components/public/PublicShell';
 import AppPage from '@/components/patterns/AppPage';
 import { Surface } from '@/components/patterns/Surface';
+import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
 import ContactSupportDialog from '@/components/help/ContactSupportDialog';
 
 export default function Help() {
@@ -38,19 +39,17 @@ export default function Help() {
         </div>
 
         {!query && (
-          <div className="mt-4 flex flex-wrap gap-1.5">
+          <FilterTabs className="mt-4" aria-label="Help categories">
             {helpCategories.map((c) => (
-              <button
+              <FilterTab
                 key={c}
+                active={active === c}
                 onClick={() => setActive(c)}
-                className={`rounded-control px-3 py-1.5 type-body-small transition-colors ${
-                  active === c ? 'bg-neutral-muted font-semibold text-ink-primary' : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
-                }`}
               >
                 {c}
-              </button>
+              </FilterTab>
             ))}
-          </div>
+          </FilterTabs>
         )}
 
         <div className="mt-8 space-y-8">

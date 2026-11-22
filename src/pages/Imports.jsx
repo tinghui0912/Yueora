@@ -4,7 +4,7 @@ import { ChevronRight, Inbox } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import AppPage from '@/components/patterns/AppPage';
 import PageHeader from '@/components/patterns/PageHeader';
-import StateMessage from '@/components/patterns/StateMessage';
+import EmptyState from '@/components/patterns/EmptyState';
 import StatusIndicator from '@/components/patterns/StatusIndicator';
 import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
 import { Button } from '@/components/ui/button';
@@ -70,12 +70,11 @@ export default function Imports() {
 
       {list.length === 0 ? (
         <div className="mt-4">
-          <StateMessage
-            tone="neutral"
+          <EmptyState
             icon={Inbox}
             title="No imports yet"
             description="Scores you add will show recognition progress here."
-            primaryAction={
+            action={
               <Button asChild intent="primary" size="md">
                 <Link to="/add-score">
                   Add a score

@@ -1667,10 +1667,10 @@ async function verifyComputedStyles(client, baseUrl) {
   if (!tooltipStyles.backgroundColor.includes('195, 131, 34')) {
     throw new Error(`Tooltip background is ${tooltipStyles.backgroundColor} (expected brand gold)`);
   }
-  if (!tooltipStyles.color.includes('34, 31, 28')) {
-    throw new Error(`Tooltip color is ${tooltipStyles.color} (expected dark ink)`);
+  if (!tooltipStyles.color.includes('251, 250, 249')) {
+    throw new Error(`Tooltip color is ${tooltipStyles.color} (expected brand-foreground / warm white)`);
   }
-  console.log(`  ✓ Tooltip Primitive: 12px text, 400 font-weight, 10px radius, no shadow, brand gold background, dark ink foreground verified.`);
+  console.log(`  ✓ Tooltip Primitive: 12px text, 400 font-weight, 10px radius, no shadow, brand gold background, brand-foreground verified.`);
 
   // 6b. EmptyState with Action Spacing Invariants (/design-system?demo=true)
   const emptyStateWithAction = await ev(`(() => {

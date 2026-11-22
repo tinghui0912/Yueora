@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { Check, Pencil, AlertTriangle, ChevronUp, ChevronDown, ScanLine } from 'lucide-react';
+import { Check, Pencil, ChevronUp, ChevronDown, ScanLine } from 'lucide-react';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import { generateNotes } from '@/lib/mockData';
 import ScoreCanvas from '@/components/editor/ScoreCanvas';
@@ -13,6 +13,7 @@ import Surface from '@/components/patterns/Surface';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import StateMessage from '@/components/patterns/StateMessage';
 import { useToast } from '@/components/ui/use-toast';
+import { ReviewIssueRow, ReviewMobileTrigger } from '@/components/recognition/ReviewIssueRow';
 
 export default function RecognitionReview() {
   const { importId } = useParams();
@@ -145,10 +146,11 @@ export default function RecognitionReview() {
       </div>
 
       {/* Mobile issues button */}
-      <button onClick={() => setMobileIssuesOpen(true)} className="flex items-center justify-between border-t border-line-subtle px-4 py-3 md:hidden">
-        <span className="type-body-small font-medium">{issues.length} issues · {reviewed} reviewed</span>
-        <ChevronUp className="h-4 w-4 text-ink-secondary" />
-      </button>
+      <ReviewMobileTrigger
+        count={issues.length}
+        reviewed={reviewed}
+        onClick={() => setMobileIssuesOpen(true)}
+      />
 
       {/* Mobile issues sheet */}
       <Sheet open={mobileIssuesOpen} onOpenChange={setMobileIssuesOpen}>
@@ -156,13 +158,13 @@ export default function RecognitionReview() {
           <SheetHeader><SheetTitle>Issues to review</SheetTitle></SheetHeader>
           <div className="mt-3 space-y-2">
             {issues.map((iss) => (
-              <button key={iss.id} onClick={() => { setActiveIssue(iss.id); setMobileIssuesOpen(false); }} className={`w-full rounded-control border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-neutral-hover' : 'border-line-subtle'} ${iss.resolved ? 'opacity-50' : ''}`}>
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="h-3.5 w-3.5 text-brand" /> Measure {iss.measure}</span>
-                  {iss.resolved && <Check className="h-3.5 w-3.5 text-brand" />}
-                </div>
-                <p className="mt-0.5 type-metadata text-ink-tertiary">{iss.type}</p>
-              </button>
+              <ReviewIssueRow
+                key={iss.id}
+                issue={iss}
+                active={activeIssue === iss.id}
+                compact
+                onClick={() => { setActiveIssue(iss.id); setMobileIssuesOpen(false); }}
+              />
             ))}
           </div>
           {active && (
@@ -204,19 +206,12 @@ function IssuesPanel({ issues, activeIssue, setActiveIssue, active, onMarkFixed,
       <div className="mt-3 space-y-2">
         {issues.length === 0 && <p className="type-body-small text-ink-secondary">No issues detected.</p>}
         {issues.map((iss) => (
-          <button
+          <ReviewIssueRow
             key={iss.id}
+            issue={iss}
+            active={activeIssue === iss.id}
             onClick={() => setActiveIssue(iss.id)}
-            className={`w-full rounded-container border p-3 text-left transition-colors ${activeIssue === iss.id ? 'border-brand bg-neutral-hover' : 'border-line-subtle bg-surface-panel hover:bg-neutral-hover'} ${iss.resolved ? 'opacity-50' : ''}`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 type-body-small font-medium"><AlertTriangle className="icon-xs text-brand" /> Measure {iss.measure}</span>
-              {iss.resolved && <Check className="icon-xs text-brand" />}
-            </div>
-            <p className="mt-0.5 type-metadata text-ink-secondary">{iss.type}</p>
-            <p className="mt-0.5 type-metadata text-ink-secondary">{iss.detail}</p>
-            <p className="mt-1 type-metadata text-ink-tertiary">Confidence: {iss.confidence}</p>
-          </button>
+          />
         ))}
       </div>
       {active && (

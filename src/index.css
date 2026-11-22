@@ -109,8 +109,6 @@
     --practice-error: var(--numis-destructive);
     --practice-error-foreground: var(--numis-destructive-foreground);
 
-    --gold: var(--numis-primary);
-
     /* ==========================================================================
        3. INTERNAL COMPATIBILITY LAYER
        Implementation detail for Radix / legacy third-party components only.
@@ -150,11 +148,10 @@
     --radius-menu: 0.625rem;
     --radius-overlay: 0.75rem;
 
-    /* ---- Motion ---- */
+    /* ---- Motion (Reconciled with frozen Numis reference) ---- */
     --motion-fast: 150ms;
-    --motion-base: 250ms;
-    --motion-slow: 350ms;
-    --motion-easing: cubic-bezier(0.22, 1, 0.36, 1);
+    --motion-base: 200ms;
+    --motion-slow: 300ms;
 
     /* ---- Elevation (Numis reference shadow recipes) ---- */
     --shadow-control: 0 1px 2px 0 rgb(0 0 0 / 0.05);

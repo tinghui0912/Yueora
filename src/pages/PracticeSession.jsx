@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
-  ArrowLeft, Play, Pause, Flag, Timer, RotateCcw, Repeat, Settings2,
+  Play, Pause, Flag, Timer, RotateCcw, Repeat, Settings2,
   MoreHorizontal, Video, ChevronLeft, ChevronRight, X,
 } from 'lucide-react';
 import { usePrototypeStore, getPermissions } from '@/stores/prototypeStore';
@@ -15,6 +15,7 @@ import FollowFeedback from '@/components/practice/FollowFeedback';
 import VirtualKeyboard from '@/components/practice/VirtualKeyboard';
 import PracticeSettingsDialog from '@/components/practice/PracticeSettingsDialog';
 import { Surface } from '@/components/patterns/Surface';
+import BackLink from '@/components/patterns/BackLink';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import {
@@ -364,13 +365,10 @@ export default function PracticeSession() {
           isPlaying ? 'opacity-40 hover:opacity-100' : 'opacity-100'
         }`}
       >
-        <button
+        <BackLink
           onClick={() => (phase === 'ready' ? navigate(`/score/${scoreId}`) : setExitOpen(true))}
-          className="flex min-w-0 items-center gap-2 type-label font-medium text-ink-secondary hover:text-ink-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-control"
-        >
-          <ArrowLeft className="h-4 w-4 shrink-0" />
-          <span className="truncate type-subsection text-ink-primary">{score.title}</span>
-        </button>
+          label={score.title}
+        />
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {recording === 'video' && !selfViewHidden && (
@@ -480,12 +478,13 @@ export default function PracticeSession() {
               <span>Showing bars {canvasStart}–{Math.min(totalMeasures, canvasStart + 3)} of {totalMeasures}</span>
 
               {!selecting && phase === 'paused' && measureWindowStart(activeMeasure) !== visibleMeasureStart && (
-                <button
+                <Button
+                  intent="link"
+                  size="xs"
                   onClick={() => setVisibleMeasureStart(measureWindowStart(activeMeasure))}
-                  className="text-brand font-semibold hover:underline"
                 >
                   Return to current position (Bar {activeMeasure})
-                </button>
+                </Button>
               )}
 
               {!selecting && phase !== 'running' && (
@@ -611,16 +610,14 @@ export default function PracticeSession() {
             <TempoPopover
               triggerLabel={tempoLocked ? 'Tempo is locked during play' : 'Tempo and metronome'}
               trigger={
-                <button
-                  type="button"
-                  className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
-                    metronome ? 'border-line-strong text-ink-primary' : 'border-line-subtle text-ink-secondary hover:text-ink-primary'
-                  }`}
+                <Button
+                  intent="secondary"
+                  size="md"
                 >
-                  <Timer className="h-4 w-4" />
+                  <Timer className="icon-xs" />
                   <span>♩ = {bpm}</span>
                   {metronome && <span className="h-1.5 w-1.5 rounded-full bg-brand" />}
-                </button>
+                </Button>
               }
               scoreTempo={score.tempo}
               hasTempoChanges={false}
@@ -634,30 +631,26 @@ export default function PracticeSession() {
               onMetronome={setMetronome}
             />
 
-            <button
-              type="button"
+            <Button
+              intent={selectedRange.kind === 'section' ? 'primary' : 'secondary'}
+              size="md"
               onClick={selecting ? () => { setSectionPhase('idle'); setPendingStart(null); } : startSectionPick}
-              className={`flex h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium transition-colors ${
-                selectedRange.kind === 'section'
-                  ? 'border-brand bg-neutral-muted font-semibold text-ink-primary'
-                  : 'border-line-subtle text-ink-secondary hover:bg-neutral-hover'
-              }`}
             >
               <span>Section{selectedRange.kind === 'section' ? ` ${selectedRange.startMeasure}–${selectedRange.endMeasure}` : ''}</span>
-            </button>
+            </Button>
 
             {loopAllowed && (
-              <button
-                type="button"
-                onClick={() => setLoop((l) => !l)}
-                aria-pressed={loop}
-                className={`hidden h-9 items-center gap-1.5 rounded-control border px-3 type-label font-medium sm:flex transition-colors ${
-                  loop ? 'border-brand bg-neutral-muted font-semibold text-ink-primary' : 'border-line-subtle text-ink-primary hover:bg-neutral-hover'
-                }`}
-              >
-                <Repeat className={`h-4 w-4 ${loop ? 'text-brand' : ''}`} />
-                <span>Loop</span>
-              </button>
+              <span className="hidden sm:inline-flex">
+                <Button
+                  intent={loop ? 'primary' : 'secondary'}
+                  size="md"
+                  onClick={() => setLoop((l) => !l)}
+                  aria-pressed={loop}
+                >
+                  <Repeat className="icon-xs" />
+                  <span>Loop</span>
+                </Button>
+              </span>
             )}
           </div>
 

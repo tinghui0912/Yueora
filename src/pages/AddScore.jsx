@@ -317,13 +317,15 @@ export default function AddScore() {
                 <AlertCircle className="mt-0.5 icon-sm shrink-0 text-danger" />
                 <div className="flex-1">
                   <p className="type-body-small font-medium text-danger">{errorTypes[fileError].msg}</p>
-                  <button
+                  <Button
                     type="button"
+                    intent="link"
+                    size="xs"
                     onClick={clearFileError}
-                    className="mt-1 type-metadata font-semibold text-danger underline hover:opacity-85"
+                    className="mt-1"
                   >
                     {errorTypes[fileError].action}
-                  </button>
+                  </Button>
                 </div>
                 <IconButton
                   icon={X}
@@ -397,14 +399,15 @@ export default function AddScore() {
                       <div key={f.id} className="relative flex-shrink-0 rounded-control border border-line-subtle bg-surface-panel p-2 flex flex-col items-center gap-1">
                         <FileThumbnail seed={f.id} className="h-16 w-12 rounded-control" />
                         <span className="type-caption text-ink-secondary">Page {i + 1}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeFile(f.id)}
-                          className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-surface-canvas border border-line-subtle text-ink-secondary hover:text-ink-primary flex items-center justify-center cursor-pointer"
-                          aria-label={`Remove page ${i + 1}`}
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
+                        <span className="absolute -top-1.5 -right-1.5">
+                          <IconButton
+                            icon={X}
+                            size="xs"
+                            tone="outline"
+                            onClick={() => removeFile(f.id)}
+                            label={`Remove page ${i + 1}`}
+                          />
+                        </span>
                       </div>
                     ))}
                     {files.length === 0 && (

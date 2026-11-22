@@ -15,6 +15,7 @@ import { IconButton } from '@/components/ui/icon-button';
 import { SegmentedControl, SegmentedControlItem } from '@/components/patterns/SegmentedControl';
 import BackLink from '@/components/patterns/BackLink';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { EditorToolButton, InspectorMobileTrigger } from '@/components/editor/EditorToolButton';
 
 const tools = [
   { id: 'select', icon: MousePointer2, label: 'Select' },
@@ -175,7 +176,7 @@ export default function Editor() {
         <div className="flex items-center gap-3">
           <BackLink to={score._pending && importId ? `/imports/${importId}` : `/score/${scoreId}`} label={score.title} />
           {activeIssue && (
-            <span className="hidden items-center gap-1.5 rounded-control bg-gold/10 px-2.5 py-1 type-caption text-gold sm:flex">
+            <span className="hidden items-center gap-1.5 rounded-control bg-brand-soft px-2.5 py-1 type-caption text-brand-soft-foreground sm:flex">
               <AlertCircle className="icon-xs" /> Issue {issueIdx + 1} of {issues.length} · Measure {activeIssue.measure} · {activeIssue.type}
             </span>
           )}
@@ -196,17 +197,17 @@ export default function Editor() {
 
       {/* Recovered unsaved changes banner */}
       {recovered && (
-        <div className="flex items-center justify-between border-b border-gold/30 bg-gold/5 px-4 py-2 type-body-small">
-          <span className="flex items-center gap-2 text-gold"><Check className="icon-sm" aria-hidden="true" /> Recovered unsaved changes from your recognition review.</span>
+        <div className="flex items-center justify-between border-b border-line-subtle bg-surface-panel px-4 py-2 type-body-small">
+          <span className="flex items-center gap-2 text-brand"><Check className="icon-sm" aria-hidden="true" /> Recovered unsaved changes from your recognition review.</span>
           <IconButton icon={X} label="Dismiss banner" tone="quiet" size="xs" onClick={() => setRecovered(false)} />
         </div>
       )}
 
       {/* Recognition issue nav bar */}
       {activeIssue && (
-        <div className="flex items-center justify-between border-b border-line-subtle bg-gold/5 px-4 py-2">
+        <div className="flex items-center justify-between border-b border-line-subtle bg-surface-panel px-4 py-2">
           <div className="flex items-center gap-2 type-body-small">
-            <span className="font-medium text-gold">Recognition issue {issueIdx + 1} of {issues.length}</span>
+            <span className="font-medium text-brand">Recognition issue {issueIdx + 1} of {issues.length}</span>
             <span className="text-ink-secondary">· Measure {activeIssue.measure} · {activeIssue.type}</span>
           </div>
           <div className="flex items-center gap-2">
@@ -234,17 +235,12 @@ export default function Editor() {
       {/* Mobile tool bar */}
       <div className="flex items-center gap-1 overflow-x-auto border-b border-line-subtle bg-surface-panel px-2 py-1.5 md:hidden no-scrollbar">
         {tools.map((t) => (
-          <button
+          <EditorToolButton
             key={t.id}
+            tool={t}
+            active={tool === t.id}
             onClick={() => setTool(t.id)}
-            className={`flex shrink-0 items-center gap-1.5 rounded-control px-2.5 py-1.5 type-body-small font-medium transition-colors ${
-              tool === t.id
-                ? 'bg-neutral-muted font-semibold text-ink-primary'
-                : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
-            }`}
-          >
-            <t.icon className={`h-4 w-4 ${tool === t.id ? 'text-brand' : ''}`} /> {t.label}
-          </button>
+          />
         ))}
         <div className="ml-auto flex items-center gap-1">
           <IconButton icon={ZoomOut} label="Zoom out" tone="quiet" size="xs" onClick={() => setZoom((z) => Math.max(0.6, +(z - 0.1).toFixed(2)))} />
@@ -275,18 +271,13 @@ export default function Editor() {
         {/* Tool rail */}
         <div className="hidden w-16 shrink-0 flex-col items-center gap-1.5 border-r border-line-subtle bg-surface-panel py-3 md:flex">
           {tools.map((t) => (
-            <button
+            <EditorToolButton
               key={t.id}
+              tool={t}
+              active={tool === t.id}
+              vertical
               onClick={() => setTool(t.id)}
-              className={`flex h-12 w-12 flex-col items-center justify-center gap-0.5 rounded-control transition-colors ${
-                tool === t.id
-                  ? 'bg-neutral-muted font-semibold text-ink-primary'
-                  : 'text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary'
-              }`}
-            >
-              <t.icon className={`h-4 w-4 ${tool === t.id ? 'text-brand' : ''}`} />
-              <span className="type-metadata font-medium">{t.label}</span>
-            </button>
+            />
           ))}
           <div className="mt-auto flex flex-col items-center gap-1">
             <IconButton icon={ZoomIn} label="Zoom in" tone="quiet" size="sm" onClick={() => setZoom((z) => Math.min(1.6, +(z + 0.1).toFixed(2)))} />
@@ -345,16 +336,16 @@ export default function Editor() {
 
       {/* Mobile inspector trigger */}
       {firstSelected && (
-        <button onClick={() => setMobileInspectorOpen(true)} className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 lg:hidden">
-          <span className="type-body-small font-medium text-ink-primary">Edit note · {/** @type {any} */ (firstSelected).type === 'rest' ? 'Rest' : 'Note'} {firstSelected.measure + 1}</span>
-          <ChevronRight className="icon-sm text-ink-secondary" />
-        </button>
+        <InspectorMobileTrigger
+          label={`Edit note · ${('type' in firstSelected && firstSelected.type === 'rest') ? 'Rest' : 'Note'} ${firstSelected.measure + 1}`}
+          onClick={() => setMobileInspectorOpen(true)}
+        />
       )}
 
       {/* Playback bar */}
       <div className="flex items-center justify-between border-t border-line-subtle bg-surface-panel px-4 py-2.5 type-body-small">
         <div className="flex items-center gap-2">
-          <IconButton icon={Play} label="Play" tone="primary" size="sm" />
+          <IconButton icon={Play} label="Play" tone="primary" size="md" />
           <span className="font-medium text-ink-primary">Playback</span>
         </div>
         <div className="flex items-center gap-2">
@@ -386,13 +377,17 @@ function SaveIndicator({ state, onRetry, onFail }) {
   if (state === 'failed') return (
     <span className="hidden items-center gap-2 sm:flex">
       <Button intent="danger" size="xs" onClick={onRetry}>Retry</Button>
-      <button onClick={onFail} className="type-metadata text-ink-tertiary underline" title="Demo: simulate save failure">Demo fail</button>
+      {import.meta.env.DEV && (
+        <button onClick={onFail} className="type-metadata text-ink-tertiary underline" title="Demo: simulate save failure">Demo fail</button>
+      )}
     </span>
   );
   return (
     <span className="hidden items-center gap-2 type-body-small text-brand font-medium sm:flex">
       <Check className="h-4 w-4" /> Saved
-      <button onClick={onFail} className="type-metadata text-ink-tertiary underline" title="Demo: simulate save failure">Demo fail</button>
+      {import.meta.env.DEV && (
+        <button onClick={onFail} className="type-metadata text-ink-tertiary underline" title="Demo: simulate save failure">Demo fail</button>
+      )}
     </span>
   );
 }

@@ -1,6 +1,7 @@
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
+import { NativeSelect } from '@/components/ui/select';
 import { usePrototypeStore } from '@/stores/prototypeStore';
 import SettingsSection from '@/components/patterns/SettingsSection';
 import { SegmentedControl, SegmentedControlItem } from '@/components/patterns/SegmentedControl';
@@ -44,14 +45,15 @@ export default function PreferencesSettings() {
       </SettingsSection>
 
       <SettingsSection title="Language" desc="Interface language.">
-        <select
-          value={prefs.language}
-          onChange={(e) => update({ language: e.target.value })}
-          className="h-9 w-full max-w-sm rounded-control border border-line-subtle bg-surface-panel px-3 type-body-small text-ink-primary"
-        >
-          <option>English</option>
-          <option>中文</option>
-        </select>
+        <div className="max-w-sm">
+          <NativeSelect
+            value={prefs.language}
+            onChange={(e) => update({ language: e.target.value })}
+          >
+            <option>English</option>
+            <option>中文</option>
+          </NativeSelect>
+        </div>
       </SettingsSection>
     </div>
   );

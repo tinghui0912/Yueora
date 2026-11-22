@@ -8,7 +8,7 @@ import AppPage from '@/components/patterns/AppPage';
 import PageHeader from '@/components/patterns/PageHeader';
 import SectionHeader from '@/components/patterns/SectionHeader';
 import Metric from '@/components/patterns/Metric';
-import StateMessage from '@/components/patterns/StateMessage';
+import EmptyState from '@/components/patterns/EmptyState';
 import { Surface } from '@/components/patterns/Surface';
 import { Button } from '@/components/ui/button';
 import { Sparkles, BarChart2, Calendar, Music } from 'lucide-react';
@@ -127,11 +127,11 @@ export default function PracticeProgress() {
 
       {activities.length === 0 ? (
         <div className="mt-8">
-          <StateMessage
-            tone="neutral"
+          <EmptyState
+            icon={Sparkles}
             title="Nothing to look back on yet"
             description="Once you practise, this page shows how much time you've spent and which pieces you keep returning to."
-            primaryAction={(
+            action={(
               <Button asChild intent="primary" size="md">
                 <Link to="/practice">Go to Practice</Link>
               </Button>
