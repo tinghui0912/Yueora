@@ -8,6 +8,11 @@ import PageHeader from '@/components/patterns/PageHeader';
 import EmptyState from '@/components/patterns/EmptyState';
 import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
 import NotificationRow from '@/components/notifications/NotificationRow';
+import {
+  isRecentNotificationTime,
+  filterNotificationsForRecipient,
+  filterNotificationsByTab,
+} from '@/lib/notificationSemantics';
 
 const filters = [
   { key: 'all', label: 'All' },
@@ -19,11 +24,6 @@ const filters = [
   { key: 'system', label: 'System' },
 ];
 
-function isRecentNotificationTime(time) {
-  if (!time) return false;
-  return /^(just now|\d+[mh]|\d+\s*[mh]\s*ago)$/i.test(time.trim());
-}
-
 export default function Notifications() {
   const navigate = useNavigate();
   const items = usePrototypeStore((s) => s.notifications);
@@ -33,16 +33,9 @@ export default function Notifications() {
   const [tab, setTab] = useState('all');
 
   // Notifications can be addressed to a specific person; only yours are listed.
-  const mine = useMemo(() => items.filter((n) => !n.recipientId || n.recipientId === 'you'), [items]);
+  const mine = useMemo(() => filterNotificationsForRecipient(items, 'you'), [items]);
 
-  const filtered = useMemo(() => {
-    if (tab === 'all') return mine;
-    if (tab === 'unread') return mine.filter((n) => n.unread);
-    if (tab === 'system') {
-      return mine.filter((n) => n.category === 'system' || n.category === 'security' || n.category === 'billing');
-    }
-    return mine.filter((n) => n.category === tab);
-  }, [mine, tab]);
+  const filtered = useMemo(() => filterNotificationsByTab(mine, tab), [mine, tab]);
 
   const unreadCount = useMemo(() => mine.filter((n) => n.unread).length, [mine]);
 

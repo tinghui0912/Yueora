@@ -1,5 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import {
+  isRecentNotificationTime,
+  filterNotificationsForRecipient,
+  filterNotificationsByTab,
+} from '../src/lib/notificationSemantics.js';
 
 console.log('🧪 Running Yueora Product Semantics Regression Tests...\n');
 
@@ -28,37 +33,28 @@ const sampleNotifications = [
   { id: '1', recipientId: 'you', title: 'Your score was reviewed', read: false, time: '2m', category: 'comment' },
   { id: '2', recipientId: null, title: 'System maintenance', read: true, time: '1h', category: 'system' },
   { id: '3', recipientId: 'other-user', title: 'Private message for other', read: false, time: '5h', category: 'sharing' },
-  { id: '4', recipientId: 'you', title: 'Performance uploaded', read: false, time: '1d', category: 'performance' },
-  { id: '5', recipientId: 'you', title: 'Import complete', read: true, time: '2d', category: 'import' },
+  { id: '4', recipientId: 'you', title: 'Performance uploaded', read: false, time: '1d', category: 'performances' },
+  { id: '5', recipientId: 'you', title: 'Import complete', read: true, time: '2d', category: 'imports' },
 ];
 
-const mine = sampleNotifications.filter((n) => !n.recipientId || n.recipientId === 'you');
+const mine = filterNotificationsForRecipient(sampleNotifications, 'you');
 assert(mine.length === 4, 'Recipient scoping excludes other prototype users (4 of 5 kept)');
 assert(!mine.some((n) => n.recipientId === 'other-user'), 'No notification addressed to other-user is present');
 
-// 1.2 Category Filters
-const unreadItems = mine.filter((n) => !n.read);
+// 1.2 Category Filters via filterNotificationsByTab
+const unreadItems = filterNotificationsByTab(mine, 'unread');
 assert(unreadItems.length === 2, 'Unread filter correctly identifies unread items (2 unread)');
 
-const performanceItems = mine.filter((n) => n.category === 'performance');
-assert(performanceItems.length === 1 && performanceItems[0].id === '4', 'Performance filter matches performance category');
+const performanceItems = filterNotificationsByTab(mine, 'performances');
+assert(performanceItems.length === 1 && performanceItems[0].id === '4', 'Performances filter matches performances category');
 
-const importItems = mine.filter((n) => n.category === 'import');
-assert(importItems.length === 1 && importItems[0].id === '5', 'Import filter matches import category');
+const importItems = filterNotificationsByTab(mine, 'imports');
+assert(importItems.length === 1 && importItems[0].id === '5', 'Imports filter matches imports category');
 
-const systemItems = mine.filter((n) => ['system', 'security', 'billing'].includes(n.category));
-assert(systemItems.length === 1 && systemItems[0].id === '2', 'System filter matches system/security/billing categories');
+const systemItems = filterNotificationsByTab(mine, 'system');
+assert(systemItems.length === 1 && systemItems[0].id === '2', 'System filter matches exact system category (pre-regression truth)');
 
 // 1.3 Today vs Earlier Time Grouping Helper
-function isRecentNotificationTime(time) {
-  if (!time || typeof time !== 'string') return false;
-  const t = time.trim().toLowerCase();
-  if (t === 'just now' || t === 'now') return true;
-  if (/^\d+\s*m(?:in|ins|inute|inutes)?(?:\s+ago)?$/.test(t)) return true;
-  if (/^\d+\s*h(?:r|rs|our|ours)?(?:\s+ago)?$/.test(t)) return true;
-  return false;
-}
-
 assert(isRecentNotificationTime('just now') === true, 'Time "just now" is grouped under Today');
 assert(isRecentNotificationTime('2m') === true, 'Time "2m" is grouped under Today');
 assert(isRecentNotificationTime('1h') === true, 'Time "1h" is grouped under Today');
@@ -73,6 +69,8 @@ assert(isRecentNotificationTime('2024-01-01') === false, 'Date string is grouped
 
 // 1.4 Notifications Source Code Contract
 const notifCode = fs.readFileSync('src/pages/Notifications.jsx', 'utf8');
+assert(notifCode.includes('filterNotificationsForRecipient'), 'Notifications imports and uses filterNotificationsForRecipient');
+assert(notifCode.includes('filterNotificationsByTab'), 'Notifications imports and uses filterNotificationsByTab');
 assert(notifCode.includes('size="standard"'), 'Notifications uses AppPage size="standard" (desktop width preserved)');
 assert(!notifCode.includes('size="compact"'), 'Notifications does NOT use compact width');
 assert(notifCode.includes('unreadCount'), 'Notifications displays dynamic unread count');
@@ -115,8 +113,13 @@ assert(stepsColIdx !== -1 && visualColIdx !== -1 && stepsColIdx < visualColIdx, 
 // -----------------------------------------------------------------------------
 console.log('--- Practice Session Control Toggle Semantics ---');
 const practiceCode = fs.readFileSync('src/pages/PracticeSession.jsx', 'utf8');
-assert(practiceCode.includes('PracticeControlButton'), 'PracticeSession uses PracticeControlButton for stateful toggles');
+assert(practiceCode.includes('<Toggle') && practiceCode.includes('aria-label="Loop playback"'), 'PracticeSession uses canonical Toggle for stateful controls');
 assert(!practiceCode.includes('<Button intent="primary" onClick={() => setLoop'), 'Loop toggle does NOT use dominant Button intent="primary"');
+
+const pcbCode = fs.readFileSync('src/components/practice/PracticeControlButton.jsx', 'utf8');
+assert(pcbCode.includes("from '@/components/ui/toggle'"), 'PracticeControlButton wraps canonical Toggle');
+assert(!pcbCode.includes('<button'), 'PracticeControlButton does NOT use raw <button>');
+assert(!pcbCode.includes('border-brand bg-neutral-muted'), 'PracticeControlButton does NOT invent custom visual styling');
 
 // -----------------------------------------------------------------------------
 // SUMMARY

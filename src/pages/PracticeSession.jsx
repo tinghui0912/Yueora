@@ -14,7 +14,7 @@ import TempoPopover from '@/components/practice/TempoPopover';
 import FollowFeedback from '@/components/practice/FollowFeedback';
 import VirtualKeyboard from '@/components/practice/VirtualKeyboard';
 import PracticeSettingsDialog from '@/components/practice/PracticeSettingsDialog';
-import { PracticeControlButton } from '@/components/practice/PracticeControlButton';
+import { Toggle } from '@/components/ui/toggle';
 import { Surface } from '@/components/patterns/Surface';
 import BackLink from '@/components/patterns/BackLink';
 import { Button } from '@/components/ui/button';
@@ -632,25 +632,33 @@ export default function PracticeSession() {
               onMetronome={setMetronome}
             />
 
-            <PracticeControlButton
-              active={selectedRange.kind === 'section'}
-              onClick={selecting ? () => { setSectionPhase('idle'); setPendingStart(null); } : startSectionPick}
+            <Toggle
+              pressed={selectedRange.kind === 'section'}
+              onPressedChange={() => {
+                if (selecting) {
+                  setSectionPhase('idle');
+                  setPendingStart(null);
+                } else {
+                  startSectionPick();
+                }
+              }}
+              variant="outline"
               aria-label="Select practice section"
             >
               <span>Section{selectedRange.kind === 'section' ? ` ${selectedRange.startMeasure}–${selectedRange.endMeasure}` : ''}</span>
-            </PracticeControlButton>
+            </Toggle>
 
             {loopAllowed && (
               <span className="hidden sm:inline-flex">
-                <PracticeControlButton
-                  active={loop}
-                  icon={Repeat}
-                  onClick={() => setLoop((l) => !l)}
-                  aria-pressed={loop}
+                <Toggle
+                  pressed={loop}
+                  onPressedChange={setLoop}
+                  variant="outline"
                   aria-label="Loop playback"
                 >
+                  <Repeat className="icon-xs shrink-0" aria-hidden="true" />
                   <span>Loop</span>
-                </PracticeControlButton>
+                </Toggle>
               </span>
             )}
           </div>

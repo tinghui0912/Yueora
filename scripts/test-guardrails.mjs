@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { scanPageAppearanceContent } from './lib/appearance-guard.mjs';
 import { scanColorProvenanceContent } from './lib/color-provenance-guard.mjs';
-import { verifyVisualRecipes } from './lib/visual-recipe-guard.mjs';
+import { verifyVisualRecipes, extractRecipeUnitTokens } from './lib/visual-recipe-guard.mjs';
 import {
   YUEORA_SEMANTIC_COLOR_ALIASES,
   YUEORA_COMPATIBILITY_COLOR_ALIASES,
@@ -2329,6 +2329,168 @@ assertColorPositive(
   `<div className="rounded-full h-5 px-2 font-medium border-transparent bg-brand text-brand-foreground shadow hover:bg-brand/80">Default / Brand</div>`,
   'src/components/ui/badge.jsx'
 );
+
+// -----------------------------------------------------------------------------
+// CROSS-FAMILY RECIPE UNIT & STATE MODIFIER MUTATIONS (Blocker 1 & 1A)
+// -----------------------------------------------------------------------------
+console.log('--- Cross-Family Recipe Unit & State Modifier Mutations ---');
+
+function assertRecipeUnitMutation(name, filePath, mutatedContent, recipeId, expectedMissingClass) {
+  totalTests++;
+  try {
+    const recipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === recipeId);
+    if (!recipe) throw new Error(`Unknown recipe ${recipeId}`);
+    const tokens = extractRecipeUnitTokens(filePath, mutatedContent, recipe);
+    const missing = recipe.yueoraClasses.filter((cls) => !tokens.has(cls));
+    const found = !expectedMissingClass || missing.includes(expectedMissingClass);
+    if (missing.length > 0 && found) {
+      console.log(`  ✓ [FAIL as expected] ${name}`);
+      passedTests++;
+    } else {
+      console.error(`  ❌ [UNEXPECTED PASS] ${name}`);
+      console.error(`     Expected missing: ${expectedMissingClass}`);
+      console.error(`     Actual missing: ${missing.join(', ')}`);
+      failedTests++;
+    }
+  } catch (err) {
+    console.error(`  ❌ [ERROR] ${name}: ${err.message}`);
+    failedTests++;
+  }
+}
+
+// 1. Button primary mutations
+const btnCode = fs.readFileSync('src/components/ui/button.jsx', 'utf8');
+
+// 1a. Button primary missing shadow (even when other variants in button.jsx have shadow-control)
+assertRecipeUnitMutation(
+  'Button primary: missing shadow caught (not leaked from other variants)',
+  'src/components/ui/button.jsx',
+  btnCode.replace('bg-brand text-brand-foreground shadow hover:bg-brand/90', 'bg-brand text-brand-foreground hover:bg-brand/90'),
+  'button-default',
+  'shadow'
+);
+
+// 1b. Button primary missing hover state
+assertRecipeUnitMutation(
+  'Button primary: missing hover state caught',
+  'src/components/ui/button.jsx',
+  btnCode.replace('hover:bg-brand/90', ''),
+  'button-default',
+  'hover:bg-brand/90'
+);
+
+// 1c. Button primary stripped hover modifier (bg-brand/90 without hover:)
+assertRecipeUnitMutation(
+  'Button primary: stripped hover modifier caught',
+  'src/components/ui/button.jsx',
+  btnCode.replace('hover:bg-brand/90', 'bg-brand/90'),
+  'button-default',
+  'hover:bg-brand/90'
+);
+
+// 1d. Button primary wrong text (text-ink-primary instead of text-brand-foreground)
+assertRecipeUnitMutation(
+  'Button primary: wrong text foreground caught',
+  'src/components/ui/button.jsx',
+  btnCode.replace('text-brand-foreground', 'text-ink-primary'),
+  'button-default',
+  'text-brand-foreground'
+);
+
+// 2. Toggle mutations
+const toggleCode = fs.readFileSync('src/components/ui/toggle.jsx', 'utf8');
+
+// 2a. Toggle outline wrong hover text
+assertRecipeUnitMutation(
+  'Toggle outline: wrong hover text caught',
+  'src/components/ui/toggle.jsx',
+  toggleCode.replace('hover:text-brand-soft-foreground', 'hover:text-ink-primary'),
+  'toggle-outline',
+  'hover:text-brand-soft-foreground'
+);
+
+// 2b. Toggle outline stripped hover modifier (bg-brand-soft without hover:)
+assertRecipeUnitMutation(
+  'Toggle outline: stripped hover modifier caught',
+  'src/components/ui/toggle.jsx',
+  toggleCode.replace('hover:bg-brand-soft', 'bg-brand-soft'),
+  'toggle-outline',
+  'hover:bg-brand-soft'
+);
+
+// 3. Tooltip wrong text
+const tooltipCode = fs.readFileSync('src/components/ui/tooltip.jsx', 'utf8');
+assertRecipeUnitMutation(
+  'Tooltip: wrong text foreground caught',
+  'src/components/ui/tooltip.jsx',
+  tooltipCode.replace('text-brand-foreground', 'text-ink-primary'),
+  'tooltip-content',
+  'text-brand-foreground'
+);
+
+// 4. Form primitive mutations
+const inputCode = fs.readFileSync('src/components/ui/input.jsx', 'utf8');
+assertRecipeUnitMutation(
+  'Input: missing focus-visible:ring-brand caught',
+  'src/components/ui/input.jsx',
+  inputCode.replace('focus-visible:ring-brand', ''),
+  'input-default',
+  'focus-visible:ring-brand'
+);
+
+const switchCode = fs.readFileSync('src/components/ui/switch.jsx', 'utf8');
+assertRecipeUnitMutation(
+  'Switch: missing data-[state=checked]:bg-brand caught',
+  'src/components/ui/switch.jsx',
+  switchCode.replace('data-[state=checked]:bg-brand', ''),
+  'switch-root',
+  'data-[state=checked]:bg-brand'
+);
+
+const checkboxCode = fs.readFileSync('src/components/ui/checkbox.jsx', 'utf8');
+assertRecipeUnitMutation(
+  'Checkbox: missing data-[state=checked]:bg-brand caught',
+  'src/components/ui/checkbox.jsx',
+  checkboxCode.replace('data-[state=checked]:bg-brand', ''),
+  'checkbox-default',
+  'data-[state=checked]:bg-brand'
+);
+
+const radioCode = fs.readFileSync('src/components/ui/radio-group.jsx', 'utf8');
+assertRecipeUnitMutation(
+  'RadioGroupItem: missing border-brand caught',
+  'src/components/ui/radio-group.jsx',
+  radioCode.replace('border-brand', 'border-line-subtle'),
+  'radio-item',
+  'border-brand'
+);
+
+// 5. Frozen fixture metadata and git blob verification mutations
+totalTests++;
+try {
+  const baseRecipe = YUEORA_AUTHORIZED_RECIPES.find((r) => r.id === 'badge-default');
+  const metadataPath = 'scripts/fixtures/numis-frozen/metadata.json';
+  const originalMeta = fs.readFileSync(metadataPath, 'utf8');
+  const metaObj = JSON.parse(originalMeta);
+  const targetFile = baseRecipe.source.file;
+  const originalSha = metaObj.files[targetFile].gitBlobSha;
+  metaObj.files[targetFile].gitBlobSha = '0000000000000000000000000000000000000000';
+  fs.writeFileSync(metadataPath, JSON.stringify(metaObj, null, 2), 'utf8');
+  const issues = verifyVisualRecipes([baseRecipe]);
+  fs.writeFileSync(metadataPath, originalMeta, 'utf8');
+
+  const hasBlobMismatch = issues.some((i) => i.message && i.message.includes('git blob SHA mismatch'));
+  if (issues.length > 0 && hasBlobMismatch) {
+    console.log('  ✓ [FAIL as expected] Frozen fixture gitBlobSha tampering detected');
+    passedTests++;
+  } else {
+    console.error('  ❌ [UNEXPECTED PASS] Frozen fixture gitBlobSha tampering was NOT detected');
+    failedTests++;
+  }
+} catch (e) {
+  console.error(`  ❌ [ERROR] Frozen fixture tampering test threw: ${e.message}`);
+  failedTests++;
+}
 
 // -----------------------------------------------------------------------------
 // SUMMARY

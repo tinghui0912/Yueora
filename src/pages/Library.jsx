@@ -16,6 +16,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { IconButton } from '@/components/ui/icon-button';
 import { Input } from '@/components/ui/input';
 import Surface from '@/components/patterns/Surface';
+import EmptyState from '@/components/patterns/EmptyState';
 import { SegmentedControl, SegmentedControlItem } from '@/components/patterns/SegmentedControl';
 import { FilterTabs, FilterTab } from '@/components/patterns/FilterTabs';
 import { FolderOptionRow } from '@/components/library/FolderOptionRow';
@@ -432,7 +433,7 @@ export default function Library() {
           onClick={() => { setShowFilters(false); setShowSort(false); }}
         >
           {isEmpty ? (
-            <EmptyState active={active} isTrash={isTrash} />
+            <LibraryEmptyState active={active} isTrash={isTrash} />
           ) : isTrash ? (
             <div className="space-y-3">
               {isAtScoreLimit && (
@@ -671,51 +672,59 @@ export default function Library() {
   );
 }
 
-function EmptyState({ active, isTrash }) {
+function LibraryEmptyState({ active, isTrash }) {
   if (isTrash) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
-        <Trash2 className="h-8 w-8 text-ink-tertiary" />
-        <h2 className="mt-3 type-section-title text-ink-primary">Trash is empty</h2>
-        <p className="mt-1.5 max-w-sm type-body-small text-ink-secondary">Scores you remove go here first. You can restore them anytime within 30 days.</p>
-      </div>
+      <Surface tone="panel" padding="none">
+        <EmptyState
+          icon={Trash2}
+          title="Trash is empty"
+          description="Scores you remove go here first. You can restore them anytime within 30 days."
+        />
+      </Surface>
     );
   }
   if (active === 'all') {
     return (
-      <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
-        <h2 className="type-section-title text-ink-primary">Start with something you love.</h2>
-        <p className="mt-2 max-w-sm type-body-small text-ink-secondary">
-          Add sheet music you have always wanted to play — whether scan, photo, or MusicXML.
-        </p>
-        <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row">
-          <Button intent="primary" size="md" asChild>
-            <Link to="/add-score">
-              <Plus className="icon-sm" />
-              <span>Add sheet music</span>
-            </Link>
-          </Button>
-          <span className="type-caption text-ink-tertiary">or</span>
-          <Button intent="secondary" size="md" asChild>
-            <Link to="/score/moonlight">
-              Explore Moonlight Sonata
-            </Link>
-          </Button>
-        </div>
-      </div>
+      <Surface tone="panel" padding="none">
+        <EmptyState
+          title="Start with something you love."
+          description="Add sheet music you have always wanted to play — whether scan, photo, or MusicXML."
+          action={
+            <div className="flex flex-col items-center gap-3 sm:flex-row">
+              <Button intent="primary" size="md" asChild>
+                <Link to="/add-score">
+                  <Plus className="icon-sm" />
+                  <span>Add sheet music</span>
+                </Link>
+              </Button>
+              <span className="type-caption text-ink-tertiary">or</span>
+              <Button intent="secondary" size="md" asChild>
+                <Link to="/score/moonlight">
+                  Explore Moonlight Sonata
+                </Link>
+              </Button>
+            </div>
+          }
+        />
+      </Surface>
     );
   }
   const labels = { mine: 'your own scores', shared: 'scores shared with you', saved: 'saved scores', favorites: 'favorites' };
   return (
-    <div className="flex flex-col items-center justify-center rounded-container border border-dashed border-line-subtle bg-surface-panel py-20 text-center">
-      <h2 className="type-section-title text-ink-primary">Nothing here yet</h2>
-      <p className="mt-1.5 max-w-sm type-body-small text-ink-secondary">This is where {labels[active] || 'these scores'} will appear.</p>
-      <Button intent="primary" size="md" className="mt-5" asChild>
-        <Link to="/add-score">
-          <Plus className="icon-sm" />
-          <span>Add a score</span>
-        </Link>
-      </Button>
-    </div>
+    <Surface tone="panel" padding="none">
+      <EmptyState
+        title="Nothing here yet"
+        description={`This is where ${labels[active] || 'these scores'} will appear.`}
+        action={
+          <Button intent="primary" size="md" asChild>
+            <Link to="/add-score">
+              <Plus className="icon-sm" />
+              <span>Add a score</span>
+            </Link>
+          </Button>
+        }
+      />
+    </Surface>
   );
 }

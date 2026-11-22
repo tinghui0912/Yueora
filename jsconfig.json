@@ -45,7 +45,6 @@
     "src/components/ui/scroll-area.jsx",
     "src/components/ui/sidebar.jsx",
     "src/components/ui/table.jsx",
-    "src/components/ui/toggle-group.jsx",
-    "src/components/ui/toggle.jsx"
+    "src/components/ui/toggle-group.jsx"
   ]
 }

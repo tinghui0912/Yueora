@@ -1,15 +1,16 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { Toggle } from '@/components/ui/toggle';
 
 /**
- * PracticeControlButton — Domain control toggle button for PracticeSession.
- * Follows Numis control toggle grammar: border-brand bg-neutral-muted text-ink-primary with text-brand icon when active.
+ * PracticeControlButton — Domain control toggle wrapper for PracticeSession using canonical Toggle.
+ * Follows Numis control toggle grammar: uses canonical Toggle primitive with outline variant.
  *
- * @param {React.ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean, icon?: React.ElementType }} props
+ * @param {React.ComponentProps<typeof Toggle> & { active?: boolean, icon?: React.ElementType, onClick?: () => void }} props
  */
 export function PracticeControlButton({
   active = false,
   onClick,
+  onPressedChange,
   className = '',
   children,
   icon: Icon = null,
@@ -18,23 +19,17 @@ export function PracticeControlButton({
   ...props
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={ariaPressed ?? active}
+    <Toggle
+      pressed={ariaPressed === true || ariaPressed === 'true' || (ariaPressed === undefined && Boolean(active))}
+      onPressedChange={onPressedChange ?? (() => onClick && onClick())}
+      variant="outline"
       aria-label={ariaLabel}
-      className={cn(
-        'inline-flex h-control-md items-center justify-center gap-2 rounded-control px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand border shadow-control',
-        active
-          ? 'border-brand bg-neutral-muted font-semibold text-ink-primary'
-          : 'border-line-subtle bg-transparent text-ink-secondary hover:bg-neutral-hover hover:text-ink-primary',
-        className
-      )}
+      className={className}
       {...props}
     >
-      {Icon && <Icon className={cn('icon-xs shrink-0', active ? 'text-brand' : 'text-current')} aria-hidden="true" />}
+      {Icon && <Icon className="icon-xs shrink-0" aria-hidden="true" />}
       {children}
-    </button>
+    </Toggle>
   );
 }
 

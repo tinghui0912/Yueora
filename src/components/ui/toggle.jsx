@@ -26,6 +26,11 @@ const toggleVariants = cva(
   }
 )
 
+/**
+ * @typedef {React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> & import("class-variance-authority").VariantProps<typeof toggleVariants>} ToggleProps
+ */
+
+/** @type {React.ForwardRefExoticComponent<ToggleProps & React.RefAttributes<React.ElementRef<typeof TogglePrimitive.Root>>>} */
 const Toggle = React.forwardRef(({ className, variant, size, ...props }, ref) => (
   <TogglePrimitive.Root
     ref={ref}

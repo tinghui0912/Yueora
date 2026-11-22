@@ -1,16 +1,160 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import parser from '@babel/parser';
+import traverseModule from '@babel/traverse';
 import {
   NUMIS_REFERENCE_META,
   YUEORA_AUTHORIZED_RECIPES,
   ELEVATION_SHADOW_TOKENS,
 } from './numis-visual-provenance-manifest.mjs';
 
+const traverse = traverseModule.default || traverseModule;
+
 const VALID_MAPPING_TYPES = new Set(['exact', 'semantic-alias', 'structural-adaptation']);
 
 const FROZEN_FIXTURES_DIR = path.resolve('scripts/fixtures/numis-frozen');
 const FROZEN_METADATA_PATH = path.join(FROZEN_FIXTURES_DIR, 'metadata.json');
+
+function extractStringsFromNode(node) {
+  const res = [];
+  if (!node) return res;
+  if (node.type === 'StringLiteral') {
+    res.push(node.value);
+  } else if (node.type === 'TemplateLiteral') {
+    for (const q of node.quasis) {
+      if (q.value?.raw) res.push(q.value.raw);
+    }
+  }
+  return res;
+}
+
+function findObjectProp(objNode, keyName) {
+  if (!objNode || objNode.type !== 'ObjectExpression') return null;
+  for (const prop of objNode.properties) {
+    if (prop.type === 'ObjectProperty') {
+      const k = prop.key.type === 'Identifier' ? prop.key.name : prop.key.value;
+      if (k === keyName || String(k) === String(keyName)) {
+        return prop.value;
+      }
+    }
+  }
+  return null;
+}
+
+const ROLE_ALIASES = {
+  'destructive-toast': ['destructive'],
+  'icon-md': ['md'],
+};
+
+/**
+ * Extracts exact recipe unit tokens from an owner file using AST parsing.
+ * Preserves all state and variant modifiers (hover:, focus:, data-[state=*]:, etc.)
+ *
+ * @param {string} filePath
+ * @param {string} fileContent
+ * @param {Object} recipe
+ * @returns {Set<string>}
+ */
+export function extractRecipeUnitTokens(filePath, fileContent, recipe) {
+  const ast = parser.parse(fileContent, { sourceType: 'module', plugins: ['jsx'] });
+  const tokens = new Set();
+
+  const searchRoles = new Set(recipe.approvedYueoraRoles || []);
+  for (const r of recipe.approvedYueoraRoles || []) {
+    if (ROLE_ALIASES[r]) {
+      ROLE_ALIASES[r].forEach((a) => searchRoles.add(a));
+    }
+  }
+
+  const addTokens = (str) => {
+    if (!str) return;
+    str.trim().split(/\s+/).forEach((t) => {
+      if (!t) return;
+      tokens.add(t);
+      const strippedGroup = t.replace(/^group-\[\.destructive\]:/, '');
+      if (strippedGroup !== t) tokens.add(strippedGroup);
+    });
+  };
+
+  const addNodeTokens = (node) => {
+    extractStringsFromNode(node).forEach(addTokens);
+  };
+
+  traverse(ast, {
+    CallExpression(path) {
+      const callee = path.node.callee;
+      if (callee.type === 'Identifier' && callee.name === 'cva') {
+        const baseArg = path.node.arguments[0];
+        const configArg = path.node.arguments[1];
+
+        if (recipe.id.startsWith('toggle-') || recipe.id.includes('panel') || recipe.id.includes('surface')) {
+          addNodeTokens(baseArg);
+        }
+
+        if (configArg && configArg.type === 'ObjectExpression') {
+          const variantsProp = findObjectProp(configArg, 'variants');
+          if (variantsProp && variantsProp.type === 'ObjectExpression') {
+            for (const groupProp of variantsProp.properties) {
+              if (groupProp.type === 'ObjectProperty' && groupProp.value.type === 'ObjectExpression') {
+                for (const itemProp of groupProp.value.properties) {
+                  if (itemProp.type === 'ObjectProperty') {
+                    const itemKey = itemProp.key.type === 'Identifier' ? itemProp.key.name : itemProp.key.value;
+                    if (searchRoles.has(String(itemKey))) {
+                      addNodeTokens(itemProp.value);
+                    }
+                  }
+                }
+              }
+            }
+          }
+          if (recipe.id === 'flat-content-panel' || recipe.id === 'statcard-interactive-panel') {
+            const toneProp = findObjectProp(variantsProp, 'tone');
+            if (toneProp) addNodeTokens(findObjectProp(toneProp, 'panel'));
+            const borderProp = findObjectProp(variantsProp, 'border');
+            if (borderProp) addNodeTokens(findObjectProp(borderProp, 'true'));
+          }
+          if (recipe.id === 'statcard-interactive-panel') {
+            const interProp = findObjectProp(variantsProp, 'interactive');
+            if (interProp) addNodeTokens(findObjectProp(interProp, 'true'));
+          }
+        }
+      }
+    },
+    VariableDeclarator(path) {
+      if (path.node.id.type === 'Identifier' && path.node.init?.type === 'ObjectExpression') {
+        const obj = path.node.init;
+        for (const prop of obj.properties) {
+          if (prop.type === 'ObjectProperty') {
+            const k = prop.key.type === 'Identifier' ? prop.key.name : prop.key.value;
+            if (searchRoles.has(String(k))) {
+              addNodeTokens(prop.value);
+            }
+          }
+        }
+      }
+    },
+    JSXAttribute(path) {
+      if (path.node.name.name === 'className') {
+        if (path.node.value?.type === 'StringLiteral') {
+          addTokens(path.node.value.value);
+        } else if (path.node.value?.type === 'JSXExpressionContainer') {
+          traverse(path.node.value.expression, {
+            noScope: true,
+            StringLiteral(strPath) {
+              addTokens(strPath.node.value);
+            },
+            TemplateLiteral(tmplPath) {
+              tmplPath.node.quasis.forEach((q) => q.value?.raw && addTokens(q.value.raw));
+            },
+          });
+        }
+      }
+    },
+  });
+
+  return tokens;
+}
 
 /**
  * Visual Recipe Guard
@@ -35,6 +179,26 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES) {
         line: 1,
         matched: 'metadata.json',
         message: `Failed to parse frozen Numis metadata: ${e.message}`,
+      });
+    }
+  }
+
+  if (frozenMetadata) {
+    if (frozenMetadata.commit !== NUMIS_REFERENCE_META.commit) {
+      issues.push({
+        file: FROZEN_METADATA_PATH,
+        line: 1,
+        matched: frozenMetadata.commit,
+        message: `Frozen metadata commit mismatch (expected ${NUMIS_REFERENCE_META.commit}, got ${frozenMetadata.commit})`,
+      });
+    }
+    const expectedTree = NUMIS_REFERENCE_META.treeSha || NUMIS_REFERENCE_META.tree;
+    if (frozenMetadata.tree !== expectedTree) {
+      issues.push({
+        file: FROZEN_METADATA_PATH,
+        line: 1,
+        matched: frozenMetadata.tree,
+        message: `Frozen metadata tree SHA mismatch (expected ${expectedTree}, got ${frozenMetadata.tree})`,
       });
     }
   }
@@ -77,7 +241,7 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES) {
       });
     }
 
-    // 2b. Frozen Numis snapshot content and hash verification
+    // 2b. Frozen Numis snapshot content and hash verification (both sha256 and gitBlobSha)
     if (frozenMetadata && recipe.source?.file) {
       const fixtureFilePath = path.join(FROZEN_FIXTURES_DIR, recipe.source.file);
       if (!fs.existsSync(fixtureFilePath)) {
@@ -90,14 +254,30 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES) {
       } else {
         const fixtureContent = fs.readFileSync(fixtureFilePath, 'utf8');
         const normalizedContent = fixtureContent.replace(/\r\n/g, '\n');
-        const hash = crypto.createHash('sha256').update(normalizedContent, 'utf8').digest('hex');
+        const contentBuffer = Buffer.from(normalizedContent, 'utf8');
+
+        // Verify SHA-256
+        const hash = crypto.createHash('sha256').update(contentBuffer).digest('hex');
         const expectedHash = frozenMetadata?.files?.[recipe.source.file]?.sha256;
         if (expectedHash && hash !== expectedHash) {
           issues.push({
             file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
             line: 1,
             matched: recipe.id,
-            message: `Frozen source fixture '${recipe.source.file}' hash mismatch for recipe '${recipe.id}' (expected ${expectedHash}, got ${hash}).`,
+            message: `Frozen source fixture '${recipe.source.file}' sha256 mismatch for recipe '${recipe.id}' (expected ${expectedHash}, got ${hash}).`,
+          });
+        }
+
+        // Verify Git Blob SHA-1 (blob <size>\0<content>)
+        const header = Buffer.from(`blob ${contentBuffer.length}\0`);
+        const gitBlobSha = crypto.createHash('sha1').update(Buffer.concat([header, contentBuffer])).digest('hex');
+        const expectedGitBlobSha = frozenMetadata?.files?.[recipe.source.file]?.gitBlobSha;
+        if (expectedGitBlobSha && gitBlobSha !== expectedGitBlobSha) {
+          issues.push({
+            file: 'scripts/lib/numis-visual-provenance-manifest.mjs',
+            line: 1,
+            matched: recipe.id,
+            message: `Frozen source fixture '${recipe.source.file}' git blob SHA mismatch for recipe '${recipe.id}' (expected ${expectedGitBlobSha}, got ${gitBlobSha}).`,
           });
         }
 
@@ -139,15 +319,12 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES) {
         continue;
       }
 
-      // 4. Owner source code verification (Fail closed: every declared class must exist)
+      // 4. Owner source code recipe unit verification (Fail closed: every declared class must exist in the exact recipe unit)
       try {
         const ownerContent = fs.readFileSync(normPath, 'utf8');
         if (Array.isArray(recipe.yueoraClasses) && recipe.yueoraClasses.length > 0) {
-          const missingClasses = recipe.yueoraClasses.filter((cls) => {
-            // Strip complex pseudo-modifiers if searching
-            const bare = cls.replace(/^(?:group-\[[^\]]+\]:|hover:|focus:|active:|focus-visible:|data-\[[^\]]+\]:)+/, '');
-            return !ownerContent.includes(bare);
-          });
+          const unitTokens = extractRecipeUnitTokens(normPath, ownerContent, recipe);
+          const missingClasses = recipe.yueoraClasses.filter((cls) => !unitTokens.has(cls));
 
           if (missingClasses.length > 0) {
             issues.push({
@@ -163,7 +340,7 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES) {
           file: normPath,
           line: 1,
           matched: recipe.id,
-          message: `Failed to read owner file '${normPath}': ${err.message}`,
+          message: `Failed to verify owner file '${normPath}': ${err.message}`,
         });
       }
     }
