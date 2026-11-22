@@ -37,13 +37,14 @@ for (const relFile of [...files].sort()) {
     console.error(`Missing source file: ${srcPath}`);
     process.exit(1);
   }
-  const content = fs.readFileSync(srcPath);
+  const rawContent = fs.readFileSync(srcPath, 'utf8');
+  const normalizedContent = rawContent.replace(/\r\n/g, '\n');
   fs.mkdirSync(path.dirname(destPath), { recursive: true });
-  fs.writeFileSync(destPath, content);
-  const hash = crypto.createHash('sha256').update(content).digest('hex');
+  fs.writeFileSync(destPath, normalizedContent, 'utf8');
+  const hash = crypto.createHash('sha256').update(normalizedContent, 'utf8').digest('hex');
   metadata.files[relFile] = {
     sha256: hash,
-    bytes: content.length,
+    bytes: Buffer.byteLength(normalizedContent, 'utf8'),
   };
 }
 

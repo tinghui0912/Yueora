@@ -5,92 +5,92 @@
   "fileCount": 22,
   "files": {
     "src/components/collection/BulkEstimateButton.jsx": {
-      "sha256": "f8871fe1f731dc54393ce9cd663c532d75b85c453b96a6057de68e851260de75",
-      "bytes": 4187
+      "sha256": "1cc0cfc0a745e6dc4ab453634c0293e5d1170603e6e908f7715777a7837596db",
+      "bytes": 4094
     },
     "src/components/collection/EmptyState.jsx": {
-      "sha256": "c7169f16b6bb8ba8f76871344fb4a719ba76ce9a55374678868e51dbece8986c",
-      "bytes": 896
+      "sha256": "84382cb70b63509eae5f805346ff5122c812f3ae3ac232e66bfe668f75b0c05d",
+      "bytes": 873
     },
     "src/components/collection/ItemCard.jsx": {
-      "sha256": "f14377c631366c28add0ba8e3a97a8dc30b2f4cfa3396c630fb1bdac3ea7ae2c",
-      "bytes": 4120
+      "sha256": "82ce6da0b3cdf137c3c6dae041870f2c912ed85cf539c3ebd4d4c03bbd85f5eb",
+      "bytes": 4028
     },
     "src/components/collection/StatCard.jsx": {
-      "sha256": "3285b1568a148bef004e25b904f34fe419faf4e49308dd21e239d1371d282a89",
-      "bytes": 1059
+      "sha256": "8a95d14ca1be080da8c5d750371791b543cbf067c0e8fba4c535286e335a29eb",
+      "bytes": 1033
     },
     "src/components/layout/Sidebar.jsx": {
-      "sha256": "d0c0ff6a7ae2c0498452e178be35458f63ce05c7d27f93052a589e442ec708d0",
-      "bytes": 2410
+      "sha256": "cc640b06b3c329a9b04c8b94ec898957c1f4f7e501119e9f1cef8032ce7247b1",
+      "bytes": 2353
     },
     "src/components/ui/badge.jsx": {
-      "sha256": "fc8b4e031c04004ec0b19cdb90efcadfb26f2287c8d6798523c271bf96e090cf",
-      "bytes": 1024
+      "sha256": "380dcda78ff8fdd80c82b89cb7dd38ffd84c355735fc8f16300ff647e15988aa",
+      "bytes": 990
     },
     "src/components/ui/button.jsx": {
-      "sha256": "516a4f55d8aae0e6d226a0402dc06932ded402039b4acb2f71dd9c9dbeda4a0b",
-      "bytes": 1727
+      "sha256": "6c28699c64ff8c36ec5a2baf835d6bfa141cedeaf472b97d64671dac6cf7cbf8",
+      "bytes": 1679
     },
     "src/components/ui/card.jsx": {
-      "sha256": "93f9674c69410d360fbba260dce1f63f987624b08a8dd39c999e4ca81740a548",
-      "bytes": 1490
+      "sha256": "8ab6f42e722e9c51752ce2f14aabb2696bddc0b6818041fb8f313f670955c2c4",
+      "bytes": 1440
     },
     "src/components/ui/checkbox.jsx": {
-      "sha256": "b2b6819b326af045bedca84f081de6e49c7bf086110835b5b893d903ef0ec44b",
-      "bytes": 902
+      "sha256": "b0260cb7767493d8273f5def1b7d32e844d068db5f5760258d333ae6ad88f0d8",
+      "bytes": 880
     },
     "src/components/ui/dialog.jsx": {
-      "sha256": "fdaf1e8db8cd7971d14fa9625b3123970527154dbbfbf405c1ed25e46114ec08",
-      "bytes": 3324
+      "sha256": "50a7cc4ae5ce0f2527662ed9742d35b8c4933d1629a2740b26890793aee00742",
+      "bytes": 3228
     },
     "src/components/ui/dropdown-menu.jsx": {
-      "sha256": "5888a783e926273b78f8e69399e2b1d31d966230cafa52f21764266158d31c92",
-      "bytes": 6313
+      "sha256": "d36cd67e71781bbb03059b057b6f686445477a4275120359178729574398c465",
+      "bytes": 6157
     },
     "src/components/ui/input.jsx": {
-      "sha256": "02932b64ab7b05099d42aaf8a733622dfe1d3abec681a299f68fdbdf7ce09ac0",
-      "bytes": 709
+      "sha256": "4455aea152904f128df0ecd82047bbceb23e06ffcc9ccc7cbb3bcc87df5bcc4f",
+      "bytes": 690
     },
     "src/components/ui/popover.jsx": {
-      "sha256": "6da6b28bd13c1a07889320c2baf8657f2a0cb9c210851e144d4a063e4a9b6bae",
-      "bytes": 1193
+      "sha256": "199cc7b3d810013867ae91305f0966b8a66526a1c13d10248c38ee1797d169db",
+      "bytes": 1166
     },
     "src/components/ui/radio-group.jsx": {
-      "sha256": "58b832a7a8842ec8ec1bcd5115b4fa19487fbc1ff8a5ebd9a6c00b746668f9d2",
-      "bytes": 1164
+      "sha256": "10ced1e6932e4fe53d6c18201f50b8bb4b334b4372f01ce5f0993aa2a6bb9110",
+      "bytes": 1135
     },
     "src/components/ui/select.jsx": {
-      "sha256": "0098cd61ccf4cbbf4cb95e019f8a6b6d6e737d129b97098c300c2f7418d83b08",
-      "bytes": 4798
+      "sha256": "15c7a0e4c45b655ffa8d3f3be8bdaab727a19fd6baa95b34056bf02c7254243e",
+      "bytes": 4677
     },
     "src/components/ui/switch.jsx": {
-      "sha256": "d3692433ca2fcb3bd74b587cd096942c5582452a6a95ddaf1806dceda899d592",
-      "bytes": 1047
+      "sha256": "880e95637cc1d90ef4476f79114afd2fa7b5f6e5da1f49a70e0efc1f84aa0c8a",
+      "bytes": 1025
     },
     "src/components/ui/tabs.jsx": {
-      "sha256": "efefae7020ecab8eac458a60b684569f0b1c7adac0e8622fbe9b9cec9ef588cf",
-      "bytes": 1570
+      "sha256": "57591bdfb3fa931b06edcf4168b6881a79785c674ad0618003d12cd656072350",
+      "bytes": 1529
     },
     "src/components/ui/toast.jsx": {
-      "sha256": "fe43f2d5ec322666b49432d4611336ede6f4276811a631faa9c63423bf2deab2",
-      "bytes": 3907
+      "sha256": "8a98ef70908fd33627d09f6a5c715417b243502836539acda857843dd4817070",
+      "bytes": 3804
     },
     "src/components/ui/toggle.jsx": {
-      "sha256": "1a4d7a483e843c69a2cd65f189a66f31dfd5660846d64100ed74b78fb99d493b",
-      "bytes": 1348
+      "sha256": "e8fe6de52ef73d6fa868229ae7a21e681fb3088975847d6ee65a8387731c1c79",
+      "bytes": 1310
     },
     "src/components/ui/tooltip.jsx": {
-      "sha256": "5c4e99fe6b80e658d165cb01e0204b67ab944ab53ce438d8b411705744bfb58f",
-      "bytes": 1119
+      "sha256": "73e47a5dde6c55aca2e32e429ba95d8746ce2cca02cc718613f337b5bc9f5f19",
+      "bytes": 1091
     },
     "src/pages/Dashboard.jsx": {
-      "sha256": "3867f444c12fc9604b3b17d05db3bf4b8ddd9a71d12305969436cda3be7395ef",
-      "bytes": 12298
+      "sha256": "eba5b49250466a20cf5976872b8fd158c153e26a3d1eb61ec8d52727c32111f8",
+      "bytes": 12046
     },
     "src/pages/UserProfile.jsx": {
-      "sha256": "7d4cf223ca438e2a552224ba14b6de6a3acd418ab75efb8feba0a408fa6dd621",
-      "bytes": 6023
+      "sha256": "0dbba3208962cf2e80d5b78f528b226b94bb70f7d778205b4370d9f3bc287e36",
+      "bytes": 5879
     }
   }
 }

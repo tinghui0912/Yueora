@@ -89,7 +89,8 @@ export function verifyVisualRecipes(recipes = YUEORA_AUTHORIZED_RECIPES) {
         });
       } else {
         const fixtureContent = fs.readFileSync(fixtureFilePath, 'utf8');
-        const hash = crypto.createHash('sha256').update(fixtureContent, 'utf8').digest('hex');
+        const normalizedContent = fixtureContent.replace(/\r\n/g, '\n');
+        const hash = crypto.createHash('sha256').update(normalizedContent, 'utf8').digest('hex');
         const expectedHash = frozenMetadata?.files?.[recipe.source.file]?.sha256;
         if (expectedHash && hash !== expectedHash) {
           issues.push({
